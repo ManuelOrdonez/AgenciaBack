@@ -1,0 +1,130 @@
+﻿using System;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
+using AgenciaDeEmpleoVirutal.ExternalServices;
+
+namespace AgenciaDeEmpleoVirutal.Services
+{
+    using Business;
+    using Contracts.Business;
+    using Contracts.Referentials;
+    using Entities;
+    using Entities.Referentials;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using DataAccess.Referentials;
+    using Swashbuckle.AspNetCore.Swagger;
+    using System.Collections.Generic;
+
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+        public IConfiguration Configuration { get; }
+
+        // This method gets called by the runtime. Use this method to add services to the container.
+        public void ConfigureServices(IServiceCollection services)
+        {
+            DependencySettings(services);
+            DependencyRepositories(services);
+            DependencyExternalServices(services);
+            DependencyBusiness(services);
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = "Jwt";
+                options.DefaultChallengeScheme = "Jwt";
+            }).AddJwtBearer("Jwt", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateAudience = false,
+                    //ValidAudience = "the audience you want to validate",
+                    ValidateIssuer = false,
+                    //ValidIssuer = "the isser you want to validate",
+
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the secret code.")),
+
+                    ValidateLifetime = true, //validate the expiration and not before values in the token
+
+                    ClockSkew = TimeSpan.FromMinutes(15) //15 minute tolerance for the expiration date
+                };
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolitic",
+                    builder => builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .SetPreflightMaxAge(TimeSpan.FromSeconds(2520)).Build());
+            });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Services Agencia de Empleo Virtual", Version = "v1" });
+            });
+
+            services.AddMvc();
+        }
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            app.UseCors("CorsPolitic");
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Services Agencia de Empleo Virtual");
+            });
+            app.UseAuthentication();
+            app.UseMvc();
+        }
+
+        private void DependencySettings(IServiceCollection services)
+        {
+            services.Configure<AppSettings>(opt => Configuration.GetSection("AppSettings").Bind(opt));
+            services.Configure<SendMailData>(opt => Configuration.GetSection("SendMailData").Bind(opt));
+            services.Configure<List<ServiceSettings>>(opt => Configuration.GetSection("ServiceSettings").Bind(opt));
+            services.Configure<UserSecretSettings>(Configuration);
+        }
+
+        private static void DependencyRepositories(IServiceCollection services)
+        {
+            services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
+            services.AddSingleton<IGenericRep<UserVip>, TableStorageBase<UserVip>>();
+            services.AddSingleton<IGenericRep<CallHistoryTrace>, TableStorageBase<CallHistoryTrace>>();
+            services.AddSingleton<IGenericRep<Agent>, TableStorageBase<Agent>>();
+            services.AddSingleton<IGenericRep<AgentByCompany>, TableStorageBase<AgentByCompany>>();
+        }
+
+        private static void DependencyExternalServices(IServiceCollection services)
+        {
+            services.AddTransient<ISendGridExternalService, SendGridExternalService>();
+            services.AddTransient<IOpenTokExternalService, OpenTokExternalService>();
+        }
+
+        private static void DependencyBusiness(IServiceCollection services)
+        {
+            services.AddTransient<IUserBl, UserBl>();
+            services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
+            services.AddTransient<IAgentBl, AgentBl>();
+            services.AddTransient<IUserVipBl, UserVipBl>();
+
+
+        }
+    }
+}
