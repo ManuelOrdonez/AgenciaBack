@@ -1,7 +1,6 @@
-﻿using System.Linq;
-
-namespace AgenciaDeEmpleoVirutal.Business.Referentials
+﻿namespace AgenciaDeEmpleoVirutal.Business.Referentials
 {
+    using System.Linq;
     using System;
     using System.Collections.Generic;
     using Entities.Referentials;

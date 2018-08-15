@@ -105,10 +105,7 @@ namespace AgenciaDeEmpleoVirutal.Services
         private static void DependencyRepositories(IServiceCollection services)
         {
             services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
-            services.AddSingleton<IGenericRep<UserVip>, TableStorageBase<UserVip>>();
-            services.AddSingleton<IGenericRep<CallHistoryTrace>, TableStorageBase<CallHistoryTrace>>();
-            services.AddSingleton<IGenericRep<Agent>, TableStorageBase<Agent>>();
-            services.AddSingleton<IGenericRep<AgentByCompany>, TableStorageBase<AgentByCompany>>();
+
         }
 
         private static void DependencyExternalServices(IServiceCollection services)
@@ -119,12 +116,7 @@ namespace AgenciaDeEmpleoVirutal.Services
 
         private static void DependencyBusiness(IServiceCollection services)
         {
-            services.AddTransient<IUserBl, UserBl>();
-            services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
-            services.AddTransient<IAgentBl, AgentBl>();
-            services.AddTransient<IUserVipBl, UserVipBl>();
-
-
+            services.AddTransient<IAdminBl, AdminBl>();
         }
     }
 }

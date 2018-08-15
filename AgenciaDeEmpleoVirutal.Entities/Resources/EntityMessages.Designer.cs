@@ -39,7 +39,7 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AgenciaDeEmpleoVirtual.Entities.Resources.EntityMessages", typeof(EntityMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AgenciaDeEmpleoVirutal.Entities.Resources.EntityMessages", typeof(EntityMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,155 +61,38 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campo token de seguridad es obligatorio..
+        ///   Looks up a localized string similar to El apellido es obligatorio.
         /// </summary>
-        public static string AuthenticateRequest_TokenMail_Required {
+        public static string LastName_Required {
             get {
-                return ResourceManager.GetString("AuthenticateRequest_TokenMail_Required", resourceCulture);
+                return ResourceManager.GetString("LastName_Required", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campo Numero de Celular es obligatorio.
+        ///   Looks up a localized string similar to El nombre del funcionario es obligatorio.
         /// </summary>
-        public static string CreateAgentRequest_CellPhone_Required {
+        public static string Name_Required {
             get {
-                return ResourceManager.GetString("CreateAgentRequest_CellPhone_Required", resourceCulture);
+                return ResourceManager.GetString("Name_Required", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campo Compañias es obligatorio.
+        ///   Looks up a localized string similar to El campo contraseña es obligatorio.
         /// </summary>
-        public static string CreateAgentRequest_Companies_Required {
+        public static string Password_Required {
             get {
-                return ResourceManager.GetString("CreateAgentRequest_Companies_Required", resourceCulture);
+                return ResourceManager.GetString("Password_Required", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campo Nombre es obligatorio.
+        ///   Looks up a localized string similar to El cargo del funcionario es obligatorio.
         /// </summary>
-        public static string CreateAgentRequest_FirstName_Required {
+        public static string Position_Required {
             get {
-                return ResourceManager.GetString("CreateAgentRequest_FirstName_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El campo Apellidos es obligatorio.
-        /// </summary>
-        public static string CreateAgentRequest_LastName_Required {
-            get {
-                return ResourceManager.GetString("CreateAgentRequest_LastName_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La fecha de llamada no es valida..
-        /// </summary>
-        public static string DateCallRequest_DateCall_CurrentDate {
-            get {
-                return ResourceManager.GetString("DateCallRequest_DateCall_CurrentDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La dirección de correo electrónico es obligatoria..
-        /// </summary>
-        public static string DateCallRequest_EmailUserAddress_Required {
-            get {
-                return ResourceManager.GetString("DateCallRequest_EmailUserAddress_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El campo token es obligatorio.
-        /// </summary>
-        public static string DateCallRequest_OpenTokAccessToken_Required {
-            get {
-                return ResourceManager.GetString("DateCallRequest_OpenTokAccessToken_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El Session Id es obligatorio..
-        /// </summary>
-        public static string DateCallRequest_OpenTokSessionId_Required {
-            get {
-                return ResourceManager.GetString("DateCallRequest_OpenTokSessionId_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El estado de la llamada es obligatorio..
-        /// </summary>
-        public static string DateCallRequest_State_Required {
-            get {
-                return ResourceManager.GetString("DateCallRequest_State_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El estado de la llamada no es valido.
-        /// </summary>
-        public static string DateCallRequest_State_Valid {
-            get {
-                return ResourceManager.GetString("DateCallRequest_State_Valid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La descripción de la llamada es obligatoria..
-        /// </summary>
-        public static string DateCallRequest_Trace_Required {
-            get {
-                return ResourceManager.GetString("DateCallRequest_Trace_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El tipo de cliente es requerido (Web/Mobile).
-        /// </summary>
-        public static string GenerateTokenMailRequest_ClientType_Required {
-            get {
-                return ResourceManager.GetString("GenerateTokenMailRequest_ClientType_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El identificador de dispositivo es obligatorio..
-        /// </summary>
-        public static string GenerateTokenMailRequest_DeviceId_Required {
-            get {
-                return ResourceManager.GetString("GenerateTokenMailRequest_DeviceId_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La dirección de correo electrónico no es valida..
-        /// </summary>
-        public static string GenerateTokenMailRequest_EmailAddress_FormatEmail {
-            get {
-                return ResourceManager.GetString("GenerateTokenMailRequest_EmailAddress_FormatEmail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La dirección de correo electrónico es obligatoria..
-        /// </summary>
-        public static string GenerateTokenMailRequest_EmailAddress_Required {
-            get {
-                return ResourceManager.GetString("GenerateTokenMailRequest_EmailAddress_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to La propiedad uno es requerida..
-        /// </summary>
-        public static string Sample_PropertyOne_Required {
-            get {
-                return ResourceManager.GetString("Sample_PropertyOne_Required", resourceCulture);
+                return ResourceManager.GetString("Position_Required", resourceCulture);
             }
         }
     }
