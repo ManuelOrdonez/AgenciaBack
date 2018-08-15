@@ -8,7 +8,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
-    [Route("api/Agent")]
+    [Route("api/Admin")]
     [EnableCors("CorsPolitic")]
     // [Authorize]
     public class AdminController : Controller
@@ -31,7 +31,7 @@
         [HttpGet]
         [Route("GetFuncionaryInfo")]
         [Produces(typeof(Response<FuncionaryInfoResponse>))]
-        public IActionResult GetFuncionaryInfo([FromBody] string funcionaryMail)
+        public IActionResult GetFuncionaryInfo(string funcionaryMail)
         {
             return Ok(_AdminBussines.GetFuncionaryInfo(funcionaryMail));
         }

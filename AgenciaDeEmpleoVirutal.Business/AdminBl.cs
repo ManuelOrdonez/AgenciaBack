@@ -24,13 +24,11 @@
         public Response<CreateOrUpdateFuncionaryResponse> CreateOrUpdateFuncionary(CreateOrUpdateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
-            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
-            if (funcionaryReq.InternalMail.ToList().Contains('@')) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
-
+            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);           
             var funcionaryEntity = new User()
             {
                 State = funcionaryReq.State,
-                EmailAddress = funcionaryReq.InternalMail,
+                EmailAddress = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
                 Password = funcionaryReq.Password,
@@ -45,13 +43,14 @@
 
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
-            if (string.IsNullOrEmpty(funcionaryMail)) ResponseFail(ServiceResponseCode.BadRequest);
+            if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
             var result = _funcionaryRepo.GetAsync(funcionaryMail).Result;
-            if (result == null || string.IsNullOrEmpty(result.EmailAddress)) ResponseFail<FuncionaryInfoResponse>();
+            if (result == null || string.IsNullOrEmpty(result.EmailAddress)) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
                 new FuncionaryInfoResponse()
                 {
+                    Role = result.Role,
                     Position = result.Position,
                     Mail = result.EmailAddress,
                     Name = result.Name,
@@ -64,11 +63,12 @@
 
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
-            var funcionaries = _funcionaryRepo.GetAll().Result;
+            var funcionaries = _funcionaryRepo.GetByPatitionKeyAsync("funcionary").Result;
             if (funcionaries.Count == 0 || funcionaries == null) return ResponseFail<FuncionaryInfoResponse>();
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             funcionaries.ForEach(f => {
                 funcionariesInfo.Add(new FuncionaryInfoResponse(){
+                    Role = f.Role,
                     Mail = f.EmailAddress,
                     State = f.State,
                     Name = f.Name,

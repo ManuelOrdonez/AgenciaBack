@@ -4,7 +4,10 @@
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
@@ -21,7 +24,7 @@
             var result = AdminBusinessLogic.CreateOrUpdateFuncionary(Funcionatyrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.AreEqual(expected.Message, result.Message);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.IsFalse(expected.TransactionMade);
         }
 
@@ -29,16 +32,12 @@
         public void CreateOrUpdateFuncionary_whenMailIsNullOrEmpty_ReturnBadRequest()
         {
             //arrange
-            var Funcionatyrequest = new CreateOrUpdateFuncionaryRequest()
-            {
-                InternalMail = "", Enable = true, LastName = "pepe", Name = "pepe", Password = "123", Position = "Orientador"
-            };
-            var expected = ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(Funcionatyrequest.Validate().ToList());
+            var expected = ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(FuncionatyBadrequest.Validate().ToList());
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(Funcionatyrequest);
+            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(FuncionatyBadrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.AreEqual(expected.Message, result.Message);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.IsFalse(expected.TransactionMade);
         }
 
@@ -46,31 +45,13 @@
         public void CreateOrUpdateFuncionary_whenTableStorageFeild_ReturnInternalError()
         {
             //arrange
-            var Funcionatyrequest = new CreateOrUpdateFuncionaryRequest()
-            {
-                InternalMail = "pepe12",
-                Enable = true,
-                LastName = "pepe",
-                Name = "pepe",
-                Password = "123",
-                Position = "Orientador"
-            };
-            var FuncionatyEntity = new Funcionary()
-            {
-                Mail = "pepe12",
-                Enable = true,
-                LastName = "pepe",
-                Name = "pepe",
-                Password = "123",
-                Position = "Orientador"
-            };
-            FuncionaryRepMock.Setup(f => f.AddOrUpdate(FuncionatyEntity)).Returns(Task.FromResult(false));
+            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(false));
             var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>();
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(Funcionatyrequest);
+            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(FuncionatyGodrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.AreEqual(expected.Message, result.Message);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.IsFalse(expected.TransactionMade);
         }
 
@@ -78,32 +59,14 @@
         public void CreateOrUpdateFuncionary_WhenAllFieldsAreSuccess_ReturnSuccess()
         {
             //arrange
-            var Funcionatyrequest = new CreateOrUpdateFuncionaryRequest()
-            {
-                InternalMail = "pepe12",
-                Enable = true,
-                LastName = "pepe",
-                Name = "pepe",
-                Password = "123",
-                Position = "Orientador"
-            };
-            var FuncionatyEntity = new Funcionary()
-            {
-                Mail = "pepe12",
-                Enable = true,
-                LastName = "pepe",
-                Name = "pepe",
-                Password = "123",
-                Position = "Orientador"
-            };
-            FuncionaryRepMock.Setup(f => f.AddOrUpdate(FuncionatyEntity)).Returns(Task.FromResult(true));
-            var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(true));
+            var expected = ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(Funcionatyrequest);
+            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(FuncionatyGodrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.AreEqual(expected.Message, result.Message);
-            Assert.IsFalse(expected.TransactionMade);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsTrue(expected.TransactionMade);
         }
     }
 }

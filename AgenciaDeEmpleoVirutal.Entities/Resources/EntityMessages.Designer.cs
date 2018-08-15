@@ -61,6 +61,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El correo electronico es requerido.
+        /// </summary>
+        public static string EmailAddress_Required {
+            get {
+                return ResourceManager.GetString("EmailAddress_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El apellido es obligatorio.
         /// </summary>
         public static string LastName_Required {
@@ -93,6 +102,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string Position_Required {
             get {
                 return ResourceManager.GetString("Position_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El rol del empleado es requerido.
+        /// </summary>
+        public static string Role_Required {
+            get {
+                return ResourceManager.GetString("Role_Required", resourceCulture);
             }
         }
     }
