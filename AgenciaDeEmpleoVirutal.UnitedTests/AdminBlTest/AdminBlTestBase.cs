@@ -31,23 +31,23 @@
             FuncionatyGodrequest = new CreateOrUpdateFuncionaryRequest()
             {
                 InternalMail = "pepe12",
-                State = UserStates.Enable.ToString(),
+                State = true,
                 LastName = "pepe",
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                Role = "Funcionario"
+                Role = UsersRole.Orientador.ToString()
             };
 
             FuncionatyBadrequest = new CreateOrUpdateFuncionaryRequest()
             {
                 InternalMail = "",
-                State = UserStates.Enable.ToString(),
+                State = true,
                 LastName = "pepe",
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                Role = "Funcionario"
+                Role = UsersRole.Orientador.ToString()
             };
         }
     }

@@ -117,6 +117,7 @@ namespace AgenciaDeEmpleoVirutal.Services
         private static void DependencyBusiness(IServiceCollection services)
         {
             services.AddTransient<IAdminBl, AdminBl>();
+            services.AddTransient<IUserBl, UserBl>();
         }
     }
 }

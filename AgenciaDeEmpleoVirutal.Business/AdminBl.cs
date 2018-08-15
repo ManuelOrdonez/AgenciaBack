@@ -8,17 +8,19 @@
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Linq;
 
     public class AdminBl : BusinessBase<User> , IAdminBl
     {
-        private IGenericRep<User> _funcionaryRepo;
+        private IGenericRep<User> _usersRepo;
 
-        public AdminBl(IGenericRep<User> funcionaryRepo)
+        public AdminBl(IGenericRep<User> usersRepo)
         {
-            _funcionaryRepo = funcionaryRepo;
+            _usersRepo = usersRepo;
         }
 
         public Response<CreateOrUpdateFuncionaryResponse> CreateOrUpdateFuncionary(CreateOrUpdateFuncionaryRequest funcionaryReq)
@@ -27,15 +29,15 @@
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);           
             var funcionaryEntity = new User()
             {
-                State = funcionaryReq.State,
+                Position = funcionaryReq.Position,
+                State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
                 EmailAddress = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
                 Password = funcionaryReq.Password,
-                Position = funcionaryReq.Position,
                 Role = funcionaryReq.Role
             };
-            var result = _funcionaryRepo.AddOrUpdate(funcionaryEntity).Result;
+            var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
             return result ? ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>()) : 
                 ResponseFail<CreateOrUpdateFuncionaryResponse>();            
@@ -44,14 +46,14 @@
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
-            var result = _funcionaryRepo.GetAsync(funcionaryMail).Result;
+            var result = _usersRepo.GetAsync(funcionaryMail).Result;
             if (result == null || string.IsNullOrEmpty(result.EmailAddress)) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
                 new FuncionaryInfoResponse()
                 {
-                    Role = result.Role,
                     Position = result.Position,
+                    Role = result.Role,
                     Mail = result.EmailAddress,
                     Name = result.Name,
                     LastName = result.LastName,
@@ -63,17 +65,46 @@
 
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
-            var funcionaries = _funcionaryRepo.GetByPatitionKeyAsync("funcionary").Result;
+            var condition = new List<ConditionParameter>
+            {
+                new ConditionParameter
+                {
+                    ColumnName = "PartitionKey",
+                    Condition = QueryComparisons.Equal,
+                    Value = UsersRole.Auxiliar.ToString(),
+                },
+                new ConditionParameter
+                {
+                    ColumnName = "PartitionKey",
+                    Condition = QueryComparisons.Equal,
+                    Value = UsersRole.Orientador.ToString(),
+                },
+                new ConditionParameter
+                {
+                    ColumnName = "PartitionKey",
+                    Condition = QueryComparisons.Equal,
+                    Value = UsersRole.Supervisor.ToString(),
+                },
+                new ConditionParameter
+                {
+                    ColumnName = "PartitionKey",
+                    Condition = QueryComparisons.Equal,
+                    Value = UsersRole.Administrador.ToString(),
+                },
+            };
+            var funcionaries = _usersRepo.GetSomeAsync(condition).Result;
             if (funcionaries.Count == 0 || funcionaries == null) return ResponseFail<FuncionaryInfoResponse>();
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             funcionaries.ForEach(f => {
-                funcionariesInfo.Add(new FuncionaryInfoResponse(){
+                funcionariesInfo.Add(new FuncionaryInfoResponse()
+                {
+                    Position = f.Position,
                     Role = f.Role,
                     Mail = f.EmailAddress,
                     State = f.State,
                     Name = f.Name,
                     LastName = f.LastName,
-                    Position = f.Position });
+                });
             });
             return ResponseSuccess(funcionariesInfo);
         }

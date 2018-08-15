@@ -1,6 +1,5 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities
 {
-    using System.Collections.Generic;
     using Microsoft.WindowsAzure.Storage.Table;
 
     public class User : TableEntity
@@ -24,8 +23,6 @@
         public string Name { get; set; }
 
         public string LastName { get; set; }
-
-        public string Position { get; set; }
         
         public string TypeId { get; set; }
         
@@ -33,7 +30,9 @@
 
         public string Genre { get; set; }
 
-        public List<int> CellPhone { get; set; }
+        public string CellPhone1 { get; set; }
+
+        public string CellPhone2 { get; set; }
 
         public string Addrerss { get; set; }
 
@@ -43,8 +42,14 @@
 
         public string State { get; set; }
 
-        public string Device { get; set; }
+        public string DeviceId { get; set; }
 
         public bool Authenticated { get; set; }
+
+        public string Position { get; set; }
+
+        public string SocialReason { get; set; }
+
+        public string ContactName { get; set; }
     }
 }

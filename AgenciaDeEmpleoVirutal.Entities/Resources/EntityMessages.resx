@@ -117,14 +117,41 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Address_Required" xml:space="preserve">
+    <value>El campo dirección es obligatorio</value>
+  </data>
+  <data name="Cellphones_Required" xml:space="preserve">
+    <value>Debes ingresar por lo menos un telefono de contacto</value>
+  </data>
+  <data name="City_Required" xml:space="preserve">
+    <value>El campo ciudad es obligatorio</value>
+  </data>
+  <data name="ContactName_Required" xml:space="preserve">
+    <value>El campo nombre de contacto es obligatorio</value>
+  </data>
+  <data name="EmailAddress_FormatEmail" xml:space="preserve">
+    <value>El correo no es valido</value>
+  </data>
   <data name="EmailAddress_Required" xml:space="preserve">
     <value>El correo electronico es requerido</value>
+  </data>
+  <data name="Genre_Required" xml:space="preserve">
+    <value>El campo genero es obligatorio</value>
+  </data>
+  <data name="IdDevice_Required" xml:space="preserve">
+    <value>El id del dispocitivo es obligatorio</value>
+  </data>
+  <data name="Id_Required" xml:space="preserve">
+    <value>El campo Id es obligatorio</value>
   </data>
   <data name="LastName_Required" xml:space="preserve">
     <value>El apellido es obligatorio</value>
   </data>
   <data name="Name_Required" xml:space="preserve">
-    <value>El nombre del funcionario es obligatorio</value>
+    <value>El nombre es obligatorio</value>
+  </data>
+  <data name="Password_LengthPassword" xml:space="preserve">
+    <value>la contraseña debe tener minimo 8 caracteres</value>
   </data>
   <data name="Password_Required" xml:space="preserve">
     <value>El campo contraseña es obligatorio</value>
@@ -134,5 +161,14 @@
   </data>
   <data name="Role_Required" xml:space="preserve">
     <value>El rol del empleado es requerido</value>
+  </data>
+  <data name="SocialReason_Required" xml:space="preserve">
+    <value>El campo razón social de la emresa es obligatorio</value>
+  </data>
+  <data name="TypeId_Required" xml:space="preserve">
+    <value>Seleccione el tipo de identificación</value>
+  </data>
+  <data name="UserMail_Required" xml:space="preserve">
+    <value>El campo usuario es obligatorio y corresponde al correo electronico de registro</value>
   </data>
 </root>

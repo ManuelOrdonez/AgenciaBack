@@ -4,8 +4,6 @@
     {
         public string Role { get; set; }
 
-        public string Position { get; set; }
-
         public string Mail { get; set; }
 
         public string Name { get; set; }
@@ -13,5 +11,7 @@
         public string LastName { get; set; }
 
         public string State { get; set; }
+
+        public string Position { get; set; }
     }
 }

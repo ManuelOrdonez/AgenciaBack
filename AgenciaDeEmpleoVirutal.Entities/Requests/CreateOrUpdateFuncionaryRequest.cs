@@ -21,13 +21,13 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "LastName_Required")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Position_Required")]
-        public string Position { get; set; }
-
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Role_Required")]
         public string Role { get; set; }
 
-        public string State { get; set; }
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Position_Required")]
+        public string Position { get; set; }
+
+        public bool State { get; set; }
 
     }
 }

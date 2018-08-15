@@ -61,11 +61,83 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El campo dirección es obligatorio.
+        /// </summary>
+        public static string Address_Required {
+            get {
+                return ResourceManager.GetString("Address_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debes ingresar por lo menos un telefono de contacto.
+        /// </summary>
+        public static string Cellphones_Required {
+            get {
+                return ResourceManager.GetString("Cellphones_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo ciudad es obligatorio.
+        /// </summary>
+        public static string City_Required {
+            get {
+                return ResourceManager.GetString("City_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo nombre de contacto es obligatorio.
+        /// </summary>
+        public static string ContactName_Required {
+            get {
+                return ResourceManager.GetString("ContactName_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El correo no es valido.
+        /// </summary>
+        public static string EmailAddress_FormatEmail {
+            get {
+                return ResourceManager.GetString("EmailAddress_FormatEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El correo electronico es requerido.
         /// </summary>
         public static string EmailAddress_Required {
             get {
                 return ResourceManager.GetString("EmailAddress_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo genero es obligatorio.
+        /// </summary>
+        public static string Genre_Required {
+            get {
+                return ResourceManager.GetString("Genre_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo Id es obligatorio.
+        /// </summary>
+        public static string Id_Required {
+            get {
+                return ResourceManager.GetString("Id_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El id del dispocitivo es obligatorio.
+        /// </summary>
+        public static string IdDevice_Required {
+            get {
+                return ResourceManager.GetString("IdDevice_Required", resourceCulture);
             }
         }
         
@@ -79,11 +151,20 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El nombre del funcionario es obligatorio.
+        ///   Looks up a localized string similar to El nombre es obligatorio.
         /// </summary>
         public static string Name_Required {
             get {
                 return ResourceManager.GetString("Name_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to la contraseña debe tener minimo 8 caracteres.
+        /// </summary>
+        public static string Password_LengthPassword {
+            get {
+                return ResourceManager.GetString("Password_LengthPassword", resourceCulture);
             }
         }
         
@@ -111,6 +192,33 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string Role_Required {
             get {
                 return ResourceManager.GetString("Role_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo razón social de la emresa es obligatorio.
+        /// </summary>
+        public static string SocialReason_Required {
+            get {
+                return ResourceManager.GetString("SocialReason_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seleccione el tipo de identificación.
+        /// </summary>
+        public static string TypeId_Required {
+            get {
+                return ResourceManager.GetString("TypeId_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo usuario es obligatorio y corresponde al correo electronico de registro.
+        /// </summary>
+        public static string UserMail_Required {
+            get {
+                return ResourceManager.GetString("UserMail_Required", resourceCulture);
             }
         }
     }
