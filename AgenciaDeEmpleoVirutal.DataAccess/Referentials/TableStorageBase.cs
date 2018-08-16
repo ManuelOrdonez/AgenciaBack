@@ -115,7 +115,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         public async Task<List<T>> GetByPatitionKeyAsync(string partitionKey)
         {
             //await CreateTableInStorage();
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower()));
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey /*.ToLower()*/));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
             return entities;
         }
