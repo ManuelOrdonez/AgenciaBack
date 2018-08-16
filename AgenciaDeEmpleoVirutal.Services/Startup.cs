@@ -105,6 +105,7 @@ namespace AgenciaDeEmpleoVirutal.Services
         private static void DependencyRepositories(IServiceCollection services)
         {
             services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
+            services.AddSingleton<IGenericRep<DepartamenCity>, TableStorageBase<DepartamenCity>>();
 
         }
 
@@ -118,6 +119,7 @@ namespace AgenciaDeEmpleoVirutal.Services
         {
             services.AddTransient<IAdminBl, AdminBl>();
             services.AddTransient<IUserBl, UserBl>();
+            services.AddTransient<IDepartamentBl, DepartamentBl>();
         }
     }
 }
