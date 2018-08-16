@@ -10,7 +10,7 @@
 
         public string LastName { get; set; }
 
-        public string State { get; set; }
+        public bool State { get; set; }
 
         public string Position { get; set; }
     }

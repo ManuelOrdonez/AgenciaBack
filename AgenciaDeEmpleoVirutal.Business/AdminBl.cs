@@ -35,7 +35,8 @@
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
                 Password = funcionaryReq.Password,
-                Role = funcionaryReq.Role
+                Role = funcionaryReq.Role,
+                Authenticated = true
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
@@ -46,7 +47,7 @@
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
-            var result = _usersRepo.GetAsync(funcionaryMail).Result;
+            var result = _usersRepo.GetAsync(string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
             if (result == null || string.IsNullOrEmpty(result.EmailAddress)) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
@@ -57,7 +58,7 @@
                     Mail = result.EmailAddress,
                     Name = result.Name,
                     LastName = result.LastName,
-                    State = result.State,
+                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
                 }
             };
             return ResponseSuccess(funcionary);
@@ -101,7 +102,7 @@
                     Position = f.Position,
                     Role = f.Role,
                     Mail = f.EmailAddress,
-                    State = f.State,
+                    State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
                     Name = f.Name,
                     LastName = f.LastName,
                 });

@@ -61,7 +61,7 @@
                     Mail = user.EmailAddress,
                     Name = user.Name,
                     Position = user.Position,
-                    State = user.State
+                    State = user.State.Equals(UserStates.Enable.ToString()) ? true : false,
                 }
             });
             //Action
