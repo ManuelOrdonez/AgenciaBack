@@ -35,11 +35,14 @@
         /// <returns></returns>
         public bool SendMail(User userInfo)
         {
+            /*
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.EmailAddress;
             _sendMailOptions.BodyMail = ParametersApp.BodyMail;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, _sendMailOptions.EmailAddressTo, userInfo.TokenMail);
             SendGridHelper.SenMailRelay(_sendMailOptions);
+            return true;
+            */
             return true;
         }
     }

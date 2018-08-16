@@ -1,39 +1,38 @@
-﻿using Microsoft.AspNetCore.Cors;
-using Microsoft.AspNetCore.Mvc;
-using AgenciaDeEmpleoVirutal.Contracts.Business;
-using AgenciaDeEmpleoVirutal.Entities.Referentials;
-using AgenciaDeEmpleoVirutal.Entities.Requests;
-using AgenciaDeEmpleoVirutal.Entities.Responses;
-
-namespace AgenciaDeEmpleoVirutal.Services.Controllers
+﻿namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
+    using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using Microsoft.AspNetCore.Cors;
+    using Microsoft.AspNetCore.Mvc;
+
     [Produces("application/json")]
     [Route("api/User")]
     [EnableCors("CorsPolitic")]
     public class UserController : Controller
     {
-        private readonly IUserBl _userBusiness;
+        private readonly IUserBl _UserBussines;
 
-        public UserController(IUserBl userBusiness)
+        public UserController(IUserBl UserBussines)
         {
-            _userBusiness = userBusiness;
+            _UserBussines = UserBussines;
         }
 
         [HttpPost]
-        [Route("GenerateTokenMail")]
-        [Produces(typeof(Response<AuthenticateResponse>))]
-        public IActionResult GenerateTokenMail([FromBody] GenerateTokenMailRequest user)
+        [Route("AuthenticateUser")]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        public IActionResult AuthenticateUser([FromBody] AuthenticateUserRequest userRequest)
         {
-            return Ok(_userBusiness.GenerateTokenMail(user));
+            return Ok(_UserBussines.AuthenticateUser(userRequest));
         }
 
         [HttpPost]
-        [Route("Authenticate")]
-        [Produces(typeof(Response<AuthenticateResponse>))]
-        public IActionResult Authenticate([FromBody] AuthenticateRequest authInfo)
+        [Route("RegisterUser")]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        public IActionResult RegisterUser([FromBody] RegisterUserRequest userRequest)
         {
-            return Ok(_userBusiness.Authenticate(authInfo));
+            return Ok(_UserBussines.RegisterUser(userRequest));
         }
-        
     }
 }

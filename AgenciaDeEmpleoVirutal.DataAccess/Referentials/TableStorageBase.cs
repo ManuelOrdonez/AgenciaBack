@@ -170,6 +170,15 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
             return entities;
         }
-      
+
+        /// <summary>
+        /// Get all rows from a entity T
+        /// </summary>
+        /// <returns></returns>
+        public async Task<List<T>> GetAll()
+        {
+            var entities = (await Table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), null)).Results;
+            return entities;
+        }
     }
 }

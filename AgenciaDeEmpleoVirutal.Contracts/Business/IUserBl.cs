@@ -1,23 +1,13 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.Business
 {
-    using Entities.Referentials;
-    using Entities.Requests;
-    using Entities.Responses;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
 
     public interface IUserBl
     {
-        /// <summary>
-        /// Generates the token mail.
-        /// </summary>
-        /// <param name="userRequest">The user request.</param>
-        /// <returns></returns>
-        Response<AuthenticateResponse> GenerateTokenMail(GenerateTokenMailRequest userRequest);
+        Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq);
 
-        /// <summary>
-        /// Authenticates the specified authentication request.
-        /// </summary>
-        /// <param name="authRequest">The authentication request.</param>
-        /// <returns></returns>
-        Response<AuthenticateResponse> Authenticate(AuthenticateRequest authRequest);
+        Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq);
     }
 }

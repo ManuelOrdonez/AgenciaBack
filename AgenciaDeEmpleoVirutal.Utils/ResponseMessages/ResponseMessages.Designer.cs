@@ -39,7 +39,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AgenciaDeEmpleoVirtual.Utils.ResponseMessages.ResponseMessages", typeof(ResponseMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AgenciaDeEmpleoVirutal.Utils.ResponseMessages.ResponseMessages", typeof(ResponseMessages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -66,6 +66,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string BadRequest {
             get {
                 return ResourceManager.GetString("BadRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El Correo no es valido.
+        /// </summary>
+        internal static string EmailAddress_FormatEmail {
+            get {
+                return ResourceManager.GetString("EmailAddress_FormatEmail", resourceCulture);
             }
         }
         

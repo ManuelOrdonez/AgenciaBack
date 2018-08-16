@@ -117,55 +117,58 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AuthenticateRequest_TokenMail_Required" xml:space="preserve">
-    <value>El campo token de seguridad es obligatorio.</value>
+  <data name="Address_Required" xml:space="preserve">
+    <value>El campo dirección es obligatorio</value>
   </data>
-  <data name="DateCallRequest_DateCall_CurrentDate" xml:space="preserve">
-    <value>La fecha de llamada no es valida.</value>
+  <data name="Cellphones_Required" xml:space="preserve">
+    <value>Debes ingresar por lo menos un telefono de contacto</value>
   </data>
-  <data name="DateCallRequest_EmailUserAddress_Required" xml:space="preserve">
-    <value>La dirección de correo electrónico es obligatoria.</value>
+  <data name="City_Required" xml:space="preserve">
+    <value>El campo ciudad es obligatorio</value>
   </data>
-  <data name="DateCallRequest_OpenTokSessionId_Required" xml:space="preserve">
-    <value>El Session Id es obligatorio.</value>
+  <data name="ContactName_Required" xml:space="preserve">
+    <value>El campo nombre de contacto es obligatorio</value>
   </data>
-  <data name="DateCallRequest_State_Required" xml:space="preserve">
-    <value>El estado de la llamada es obligatorio.</value>
+  <data name="EmailAddress_FormatEmail" xml:space="preserve">
+    <value>El correo no es valido</value>
   </data>
-  <data name="DateCallRequest_State_Valid" xml:space="preserve">
-    <value>El estado de la llamada no es valido</value>
+  <data name="EmailAddress_Required" xml:space="preserve">
+    <value>El correo electronico es requerido</value>
   </data>
-  <data name="DateCallRequest_Trace_Required" xml:space="preserve">
-    <value>La descripción de la llamada es obligatoria.</value>
+  <data name="Genre_Required" xml:space="preserve">
+    <value>El campo genero es obligatorio</value>
   </data>
-  <data name="CreateAgentRequest_CellPhone_Required" xml:space="preserve">
-    <value>El campo Numero de Celular es obligatorio</value>
+  <data name="IdDevice_Required" xml:space="preserve">
+    <value>El id del dispocitivo es obligatorio</value>
   </data>
-  <data name="CreateAgentRequest_Companies_Required" xml:space="preserve">
-    <value>El campo Compañias es obligatorio</value>
+  <data name="Id_Required" xml:space="preserve">
+    <value>El campo Id es obligatorio</value>
   </data>
-  <data name="CreateAgentRequest_FirstName_Required" xml:space="preserve">
-    <value>El campo Nombre es obligatorio</value>
+  <data name="LastName_Required" xml:space="preserve">
+    <value>El apellido es obligatorio</value>
   </data>
-  <data name="CreateAgentRequest_LastName_Required" xml:space="preserve">
-    <value>El campo Apellidos es obligatorio</value>
+  <data name="Name_Required" xml:space="preserve">
+    <value>El nombre es obligatorio</value>
   </data>
-  <data name="GenerateTokenMailRequest_ClientType_Required" xml:space="preserve">
-    <value>El tipo de cliente es requerido (Web/Mobile)</value>
+  <data name="Password_LengthPassword" xml:space="preserve">
+    <value>la contraseña debe tener minimo 8 caracteres</value>
   </data>
-  <data name="GenerateTokenMailRequest_DeviceId_Required" xml:space="preserve">
-    <value>El identificador de dispositivo es obligatorio.</value>
+  <data name="Password_Required" xml:space="preserve">
+    <value>El campo contraseña es obligatorio</value>
   </data>
-  <data name="GenerateTokenMailRequest_EmailAddress_FormatEmail" xml:space="preserve">
-    <value>La dirección de correo electrónico no es valida.</value>
+  <data name="Position_Required" xml:space="preserve">
+    <value>El cargo del funcionario es obligatorio</value>
   </data>
-  <data name="GenerateTokenMailRequest_EmailAddress_Required" xml:space="preserve">
-    <value>La dirección de correo electrónico es obligatoria.</value>
+  <data name="Role_Required" xml:space="preserve">
+    <value>El rol del empleado es requerido</value>
   </data>
-  <data name="Sample_PropertyOne_Required" xml:space="preserve">
-    <value>La propiedad uno es requerida.</value>
+  <data name="SocialReason_Required" xml:space="preserve">
+    <value>El campo razón social de la emresa es obligatorio</value>
   </data>
-  <data name="DateCallRequest_OpenTokAccessToken_Required" xml:space="preserve">
-    <value>El campo token es obligatorio</value>
+  <data name="TypeId_Required" xml:space="preserve">
+    <value>Seleccione el tipo de identificación</value>
+  </data>
+  <data name="UserMail_Required" xml:space="preserve">
+    <value>El campo usuario es obligatorio y corresponde al correo electronico de registro</value>
   </data>
 </root>

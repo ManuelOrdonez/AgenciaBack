@@ -31,6 +31,12 @@
         Task<T> GetAsync(string rowKey);
 
         /// <summary>
+        ///  Gets all rows from a table
+        /// </summary>
+        /// <returns></returns>
+        Task<List<T>> GetAll();
+
+        /// <summary>
         /// Consulta table storage by partitionKey
         /// </summary>
         /// <param name="partitionKey"></param>
