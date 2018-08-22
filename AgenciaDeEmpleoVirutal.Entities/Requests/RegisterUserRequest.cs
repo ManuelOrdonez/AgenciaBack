@@ -34,8 +34,7 @@
 
         public string Genre { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_Required")]
-        [StringLength(30, MinimumLength = 7, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
+        [StringLength(30, MinimumLength = 8, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
         public string Password { get; set; }
 
         public string SocialReason { get; set; }

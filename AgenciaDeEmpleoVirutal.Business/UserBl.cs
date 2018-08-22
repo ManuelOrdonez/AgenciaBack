@@ -143,7 +143,6 @@
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Addrerss = userReq.Address,
-                    Password = userReq.Password,
                     Position = userReq.Position,
                     DeviceId = userReq.DeviceId,
                     State = UserStates.Enable.ToString()
@@ -166,7 +165,6 @@
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Genre = userReq.Genre,
-                    Password = userReq.Password,
                     DeviceId = userReq.DeviceId,
                     Position = userReq.Position,
                     State = UserStates.Enable.ToString()
@@ -189,7 +187,7 @@
                 segundoApellido = lastNames.ToList().Count > 2 ? lastNames[1] : string.Empty,
             };
 
-            var resultLdap = _LdapServices.Register(regLdap);
+            var resultLdap = _LdapServices.Register(regLdap); // pasar password en servicio
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             return ResponseSuccess(new List<RegisterUserResponse>());
