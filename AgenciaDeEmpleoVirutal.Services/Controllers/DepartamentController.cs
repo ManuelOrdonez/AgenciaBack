@@ -7,7 +7,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
-    [Route("api/Admin")]
+    [Route("api/Departament")]
     [EnableCors("CorsPolitic")]
     public class DepartamentController : Controller
     {

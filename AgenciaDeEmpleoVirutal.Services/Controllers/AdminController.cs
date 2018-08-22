@@ -21,11 +21,19 @@
         }
 
         [HttpPost]
-        [Route("CreateOrUpdateFuncionary")]
+        [Route("CreateFuncionary")]
         [Produces(typeof(Response<CreateOrUpdateFuncionaryResponse>))]
-        public IActionResult CreateOrUpdateFuncionary([FromBody] CreateOrUpdateFuncionaryRequest funcionary)
+        public IActionResult CreateFuncionary([FromBody] CreateFuncionaryRequest funcionary)
         {
-            return Ok(_AdminBussines.CreateOrUpdateFuncionary(funcionary));
+            return Ok(_AdminBussines.CreateFuncionary(funcionary));
+        }
+
+        [HttpPost]
+        [Route("UpdateFuncionariesInfo")]
+        [Produces(typeof(Response<CreateOrUpdateFuncionaryResponse>))]
+        public IActionResult UpdateFuncionaryInfo([FromBody] UpdateFuncionaryRequest userReq)
+        {
+            return Ok(_AdminBussines.UpdateFuncionary(userReq));
         }
 
         [HttpGet]

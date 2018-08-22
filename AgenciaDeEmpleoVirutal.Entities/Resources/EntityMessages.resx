@@ -123,11 +123,17 @@
   <data name="Cellphones_Required" xml:space="preserve">
     <value>Debes ingresar por lo menos un telefono de contacto</value>
   </data>
+  <data name="CellPhon_Number" xml:space="preserve">
+    <value>El telefono no es valido</value>
+  </data>
   <data name="City_Required" xml:space="preserve">
     <value>El campo ciudad es obligatorio</value>
   </data>
   <data name="ContactName_Required" xml:space="preserve">
     <value>El campo nombre de contacto es obligatorio</value>
+  </data>
+  <data name="Device_Required" xml:space="preserve">
+    <value>El Id del dispositivo es requirido para realizar el registro</value>
   </data>
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El correo no es valido</value>
@@ -170,5 +176,8 @@
   </data>
   <data name="UserMail_Required" xml:space="preserve">
     <value>El campo usuario es obligatorio y corresponde al correo electronico de registro</value>
+  </data>
+  <data name="State_Required" xml:space="preserve">
+    <value>El estado del funcionario es obligatorio</value>
   </data>
 </root>

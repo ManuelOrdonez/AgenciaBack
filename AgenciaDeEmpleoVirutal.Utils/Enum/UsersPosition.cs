@@ -1,6 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Utils.Enum
 {
-    public enum UsersRole
+    public enum UsersPosition
     {
         Empresa,
         Cesante,

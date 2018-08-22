@@ -34,5 +34,21 @@
         {
             return Ok(_UserBussines.RegisterUser(userRequest));
         }
+
+        [HttpGet]
+        [Route("IsAuthenticated")]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        public IActionResult IsAuthenticated(string deviceId)
+        {
+            return Ok(_UserBussines.IsAuthenticate(deviceId));
+        }
+
+        [HttpPost]
+        [Route("IsRegister")]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        public IActionResult IsRegister([FromBody] IsRegisterUserRequest userReq)
+        {
+            return Ok(_UserBussines.IsRegsiter(userReq));
+        }
     }
 }

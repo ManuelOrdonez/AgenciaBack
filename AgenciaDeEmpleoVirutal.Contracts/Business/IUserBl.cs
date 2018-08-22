@@ -9,5 +9,9 @@
         Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq);
 
         Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq);
+
+        Response<AuthenticateUserResponse> IsAuthenticate(string deviceId);
+
+        Response<RegisterUserResponse> IsRegsiter(IsRegisterUserRequest userReq);
     }
 }

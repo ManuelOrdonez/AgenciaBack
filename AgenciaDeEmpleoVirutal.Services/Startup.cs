@@ -113,6 +113,7 @@ namespace AgenciaDeEmpleoVirutal.Services
         {
             services.AddTransient<ISendGridExternalService, SendGridExternalService>();
             services.AddTransient<IOpenTokExternalService, OpenTokExternalService>();
+            services.AddTransient<ILdapServices, LdapServices>();
         }
 
         private static void DependencyBusiness(IServiceCollection services)

@@ -5,18 +5,20 @@
     public class User : TableEntity
     {
         [IgnoreProperty]
-        public string Role
+        public string Position // empresa cesante aux orientador supervisor administrador
         {
             get => PartitionKey;
             set => PartitionKey=value;
         }
 
         [IgnoreProperty]
-        public string EmailAddress
+        public string NoDocument
         {
             get => RowKey;
             set => RowKey = value;
         }
+
+        public string EMail { get; set; }
 
         public string Password { get; set; }
                 
@@ -24,9 +26,7 @@
 
         public string LastName { get; set; }
         
-        public string TypeId { get; set; }
-        
-        public string NoId { get; set; }
+        public string TypeDocument { get; set; }        
 
         public string Genre { get; set; }
 
@@ -46,7 +46,7 @@
 
         public bool Authenticated { get; set; }
 
-        public string Position { get; set; }
+        public string Role { get; set; }
 
         public string SocialReason { get; set; }
 

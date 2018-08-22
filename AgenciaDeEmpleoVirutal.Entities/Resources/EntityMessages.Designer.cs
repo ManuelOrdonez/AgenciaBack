@@ -70,6 +70,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El telefono no es valido.
+        /// </summary>
+        public static string CellPhon_Number {
+            get {
+                return ResourceManager.GetString("CellPhon_Number", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Debes ingresar por lo menos un telefono de contacto.
         /// </summary>
         public static string Cellphones_Required {
@@ -93,6 +102,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string ContactName_Required {
             get {
                 return ResourceManager.GetString("ContactName_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El Id del dispositivo es requirido para realizar el registro.
+        /// </summary>
+        public static string Device_Required {
+            get {
+                return ResourceManager.GetString("Device_Required", resourceCulture);
             }
         }
         
@@ -201,6 +219,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string SocialReason_Required {
             get {
                 return ResourceManager.GetString("SocialReason_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El estado del funcionario es obligatorio.
+        /// </summary>
+        public static string State_Required {
+            get {
+                return ResourceManager.GetString("State_Required", resourceCulture);
             }
         }
         

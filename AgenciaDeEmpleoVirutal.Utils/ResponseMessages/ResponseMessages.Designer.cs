@@ -70,6 +70,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El dispocitivo no se encuentra registrado.
+        /// </summary>
+        internal static string DeviceNotFound {
+            get {
+                return ResourceManager.GetString("DeviceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El Correo no es valido.
         /// </summary>
         internal static string EmailAddress_FormatEmail {
@@ -84,6 +93,33 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string InternalError {
             get {
                 return ResourceManager.GetString("InternalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El id del dispositivo no se encuentra autenticado.
+        /// </summary>
+        internal static string IsNotAuthenticate {
+            get {
+                return ResourceManager.GetString("IsNotAuthenticate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario no esta registrado en Azure TableStorage.
+        /// </summary>
+        internal static string IsNotRegisterInAz {
+            get {
+                return ResourceManager.GetString("IsNotRegisterInAz", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario no esta registrado en Ldap.
+        /// </summary>
+        internal static string IsNotRegisterInLdap {
+            get {
+                return ResourceManager.GetString("IsNotRegisterInLdap", resourceCulture);
             }
         }
         
@@ -111,6 +147,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string TokenAndDeviceNotFound {
             get {
                 return ResourceManager.GetString("TokenAndDeviceNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El correo ya esta registrado.
+        /// </summary>
+        internal static string UserAlreadyExist {
+            get {
+                return ResourceManager.GetString("UserAlreadyExist", resourceCulture);
             }
         }
         

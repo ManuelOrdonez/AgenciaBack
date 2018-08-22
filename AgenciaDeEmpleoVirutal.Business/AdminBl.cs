@@ -10,7 +10,6 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
-    using Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -23,20 +22,25 @@
             _usersRepo = usersRepo;
         }
 
-        public Response<CreateOrUpdateFuncionaryResponse> CreateOrUpdateFuncionary(CreateOrUpdateFuncionaryRequest funcionaryReq)
+        public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
-            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);           
+            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
+            var funcoinaries =_usersRepo.GetAll().Result;
+            if (funcoinaries.Any(f => f.EMail == string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)))
+                return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
             var funcionaryEntity = new User()
             {
                 Position = funcionaryReq.Position,
                 State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
-                EmailAddress = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
+                EMail = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
-                Password = funcionaryReq.Password,
+                Password = funcionaryReq.Password.GetHashCode().ToString(),
                 Role = funcionaryReq.Role,
-                Authenticated = true
+                DeviceId = string.Empty,
+                NoDocument = funcoinaries == null ? "FUNC-01" : string.Format("FUNC-0{0}",funcoinaries.ToList().Count + 1),
+                TypeDocument = ""                
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
@@ -44,21 +48,40 @@
                 ResponseFail<CreateOrUpdateFuncionaryResponse>();            
         }
 
+        public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionary(UpdateFuncionaryRequest funcionaryReq)
+        {
+            var errorsMesage = funcionaryReq.Validate().ToList();
+            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
+
+            var funcionary = _usersRepo.GetSomeAsync("EMail", string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)).Result;
+            if (funcionary.Count == 0) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            var modFuncionary = funcionary.FirstOrDefault();
+
+            modFuncionary.Name = funcionaryReq.Name;
+            modFuncionary.LastName = funcionaryReq.LastName;
+            modFuncionary.Role = funcionaryReq.Role;
+            modFuncionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
+
+            var result = _usersRepo.AddOrUpdate(modFuncionary).Result;
+            if (!result) ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
+        }
+
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
-            var result = _usersRepo.GetAsync(string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
-            if (result == null || string.IsNullOrEmpty(result.EmailAddress)) return ResponseFail<FuncionaryInfoResponse>();
+            var result = _usersRepo.GetSomeAsync("EMail",string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
+            if (result.Count == 0) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
                 new FuncionaryInfoResponse()
                 {
-                    Position = result.Position,
-                    Role = result.Role,
-                    Mail = result.EmailAddress,
-                    Name = result.Name,
-                    LastName = result.LastName,
-                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    Position = result.FirstOrDefault().Position,
+                    Role = result.FirstOrDefault().Role,
+                    Mail = result.FirstOrDefault().EMail,
+                    Name = result.FirstOrDefault().Name,
+                    LastName = result.FirstOrDefault().LastName,
+                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()) ? true : false,
                 }
             };
             return ResponseSuccess(funcionary);
@@ -66,34 +89,7 @@
 
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
-            var condition = new List<ConditionParameter>
-            {
-                new ConditionParameter
-                {
-                    ColumnName = "PartitionKey",
-                    Condition = QueryComparisons.Equal,
-                    Value = UsersRole.Auxiliar.ToString(),
-                },
-                new ConditionParameter
-                {
-                    ColumnName = "PartitionKey",
-                    Condition = QueryComparisons.Equal,
-                    Value = UsersRole.Orientador.ToString(),
-                },
-                new ConditionParameter
-                {
-                    ColumnName = "PartitionKey",
-                    Condition = QueryComparisons.Equal,
-                    Value = UsersRole.Supervisor.ToString(),
-                },
-                new ConditionParameter
-                {
-                    ColumnName = "PartitionKey",
-                    Condition = QueryComparisons.Equal,
-                    Value = UsersRole.Administrador.ToString(),
-                },
-            };
-            var funcionaries = _usersRepo.GetSomeAsync(condition).Result;
+            var funcionaries = _usersRepo.GetSomeAsync("TypeDocument", string.Empty).Result;
             if (funcionaries.Count == 0 || funcionaries == null) return ResponseFail<FuncionaryInfoResponse>();
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             funcionaries.ForEach(f => {
@@ -101,7 +97,7 @@
                 {
                     Position = f.Position,
                     Role = f.Role,
-                    Mail = f.EmailAddress,
+                    Mail = f.EMail,
                     State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
                     Name = f.Name,
                     LastName = f.LastName,
