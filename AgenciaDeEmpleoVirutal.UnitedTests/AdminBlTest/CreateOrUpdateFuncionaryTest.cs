@@ -18,10 +18,10 @@
         public void CreateOrUpdateFuncionary_whenAllFieldsAreNullOrEmpty_ReturnBadRequest()
         {
             //arrange
-            var Funcionatyrequest = new CreateOrUpdateFuncionaryRequest();
+            var Funcionatyrequest = new CreateFuncionaryRequest();
             var expected = ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(Funcionatyrequest.Validate().ToList());
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(Funcionatyrequest);
+            var result = AdminBusinessLogic.CreateFuncionary(Funcionatyrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
@@ -34,7 +34,7 @@
             //arrange
             var expected = ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(FuncionatyBadrequest.Validate().ToList());
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(FuncionatyBadrequest);
+            var result = AdminBusinessLogic.CreateFuncionary(FuncionatyBadrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
@@ -48,7 +48,7 @@
             FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(false));
             var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>();
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(FuncionatyGodrequest);
+            var result = AdminBusinessLogic.CreateFuncionary(FuncionatyGodrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
@@ -62,7 +62,7 @@
             FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(true));
             var expected = ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
             //action
-            var result = AdminBusinessLogic.CreateOrUpdateFuncionary(FuncionatyGodrequest);
+            var result = AdminBusinessLogic.CreateFuncionary(FuncionatyGodrequest);
             //assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());

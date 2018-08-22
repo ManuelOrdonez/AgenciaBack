@@ -6,10 +6,12 @@
 
     public interface IAdminBl
     {
-        Response<CreateOrUpdateFuncionaryResponse> CreateOrUpdateFuncionary(CreateOrUpdateFuncionaryRequest funcionary);
+        Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionary);
 
         Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail);
 
         Response<FuncionaryInfoResponse> GetAllFuncionaries();
+
+        Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionary(UpdateFuncionaryRequest funcionaryReq);
     }
 }

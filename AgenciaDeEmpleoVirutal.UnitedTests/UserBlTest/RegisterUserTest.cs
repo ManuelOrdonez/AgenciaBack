@@ -16,7 +16,7 @@
             //Arrange
             var request = new RegisterUserRequest()
             {
-                Names = "pepe",
+                Name = "pepe",
                 LastNames = "perez",
                 TypeId = "c.c.",
                 NoId = "123456789",
@@ -28,7 +28,7 @@
                 ContactName = "pepa",
                 Address = "###########",
                 City = "Bogotá",
-                Role = UsersRole.Cesante.ToString()
+                Role = UsersPosition.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
@@ -48,7 +48,7 @@
             //Arrange
             var request = new RegisterUserRequest()
             {
-                Names = "pepe",
+                Name = "pepe",
                 LastNames = "perez",
                 TypeId = "c.c.",
                 NoId = "123456789",
@@ -60,7 +60,7 @@
                 ContactName = "pepa",
                 Address = "###########",
                 City = "Bogotá",
-                Role = UsersRole.Cesante.ToString()
+                Role = UsersPosition.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
@@ -79,7 +79,7 @@
             //Arrange
             var request = new RegisterUserRequest()
             {
-                Names = "pepe",
+                Name = "pepe",
                 LastNames = "perez",
                 TypeId = "c.c.",
                 NoId = "123456789",
@@ -91,7 +91,7 @@
                 ContactName = "pepa",
                 Address = "###########",
                 City = "Bogotá",
-                Role = UsersRole.Cesante.ToString()
+                Role = UsersPosition.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
@@ -110,7 +110,7 @@
             //Arrange
             var request = new RegisterUserRequest()
             {
-                Names = "pepe",
+                Name = "pepe",
                 LastNames = "perez",
                 TypeId = "c.c.",
                 NoId = "123456789",
@@ -122,7 +122,7 @@
                 ContactName = "",
                 Address = "",
                 City = "Bogotá",
-                Role = UsersRole.Cesante.ToString()
+                Role = UsersPosition.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);

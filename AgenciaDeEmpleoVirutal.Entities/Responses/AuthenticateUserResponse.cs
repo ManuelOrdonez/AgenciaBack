@@ -4,8 +4,6 @@
     {
         public string Role { get; set; }
 
-        public string Postion { get; set; }
-
         public string UserPosition { get; set; }
 
         public string UserName { get; set; }

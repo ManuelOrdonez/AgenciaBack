@@ -15,9 +15,9 @@
 
         protected AdminBl AdminBusinessLogic;
 
-        protected CreateOrUpdateFuncionaryRequest FuncionatyGodrequest;
+        protected CreateFuncionaryRequest FuncionatyGodrequest;
 
-        protected CreateOrUpdateFuncionaryRequest FuncionatyBadrequest;
+        protected CreateFuncionaryRequest FuncionatyBadrequest;
 
         public AdminBlTestBase()
         {
@@ -28,7 +28,7 @@
 
         private void LoadMoqs()
         {
-            FuncionatyGodrequest = new CreateOrUpdateFuncionaryRequest()
+            FuncionatyGodrequest = new CreateFuncionaryRequest()
             {
                 InternalMail = "pepe12",
                 State = true,
@@ -36,10 +36,10 @@
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                Role = UsersRole.Orientador.ToString()
+                Role = UsersPosition.Orientador.ToString()
             };
 
-            FuncionatyBadrequest = new CreateOrUpdateFuncionaryRequest()
+            FuncionatyBadrequest = new CreateFuncionaryRequest()
             {
                 InternalMail = "",
                 State = true,
@@ -47,7 +47,7 @@
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                Role = UsersRole.Orientador.ToString()
+                Role = UsersPosition.Orientador.ToString()
             };
         }
     }

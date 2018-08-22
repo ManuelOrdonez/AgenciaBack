@@ -120,11 +120,23 @@
   <data name="BadRequest" xml:space="preserve">
     <value>Error en los siguientes campos: {0}{1}</value>
   </data>
+  <data name="DeviceNotFound" xml:space="preserve">
+    <value>El dispocitivo no se encuentra registrado</value>
+  </data>
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
   </data>
   <data name="InternalError" xml:space="preserve">
     <value>Operación fallida, por favor intenta mas tarde.</value>
+  </data>
+  <data name="IsNotAuthenticate" xml:space="preserve">
+    <value>El id del dispositivo no se encuentra autenticado</value>
+  </data>
+  <data name="IsNotRegisterInAz" xml:space="preserve">
+    <value>El usuario no esta registrado en Azure TableStorage</value>
+  </data>
+  <data name="IsNotRegisterInLdap" xml:space="preserve">
+    <value>El usuario no esta registrado en Ldap</value>
   </data>
   <data name="ServiceExternalError" xml:space="preserve">
     <value>Error inesperado en un servicio externo, por favor intentar mas tarde.</value>
@@ -134,6 +146,9 @@
   </data>
   <data name="TokenAndDeviceNotFound" xml:space="preserve">
     <value>El token y el dispositivo no corresponden.</value>
+  </data>
+  <data name="UserAlreadyExist" xml:space="preserve">
+    <value>El correo ya esta registrado</value>
   </data>
   <data name="UserIsNotVip" xml:space="preserve">
     <value>Usuario no autorizado.</value>

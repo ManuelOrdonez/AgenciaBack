@@ -6,8 +6,11 @@
     public class AuthenticateUserRequest
     {
 
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "UserMail_Required")]
-        [RegularExpression(@"\A(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)\Z", ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "EmailAddress_FormatEmail")]
+        public string NoDocument { get; set; }
+
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "TypeId_Required")]
+        public string TypeDocument { get; set; }
+
         public string UserMail { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_Required")]
