@@ -241,6 +241,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El campu usuario es obligatorio.
+        /// </summary>
+        public static string User_Required {
+            get {
+                return ResourceManager.GetString("User_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El campo usuario es obligatorio y corresponde al correo electronico de registro.
         /// </summary>
         public static string UserMail_Required {

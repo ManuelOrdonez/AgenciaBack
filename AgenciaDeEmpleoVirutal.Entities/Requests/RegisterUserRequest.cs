@@ -49,5 +49,7 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Device_Required")]
         public string DeviceId { get; set; }
 
+        public bool OnlyAzureRegister { get; set; }
+
     }
 }

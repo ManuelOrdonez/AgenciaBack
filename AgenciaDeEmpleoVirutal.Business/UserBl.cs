@@ -11,7 +11,6 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
-    using Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -32,24 +31,20 @@
             if (string.IsNullOrEmpty(deviceId))
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
 
-            var result = _userRep.GetSomeAsync("DeviceId", deviceId).Result;
-            if (result.Count == 0 || result == null)
+            var result = _userRep.GetSomeAsync("DeviceId", deviceId).Result.FirstOrDefault();
+            if (result == null)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
 
-            var userAuthenticate = result.Where(r => r.Authenticated == true);
-            if (userAuthenticate.ToList().Count == 0 || userAuthenticate == null)
+            var userAuthenticate = result.Authenticated;
+            if (!userAuthenticate)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
-            var response = new List<AuthenticateUserResponse>();
-            foreach (var user in userAuthenticate)
+            var response = new List<AuthenticateUserResponse>
             {
-                response.Add(new AuthenticateUserResponse()
+                new AuthenticateUserResponse()
                 {
-                    UserPosition = user.Position,
-                    Role = user.Role,
-                    UserLastName = user.LastName,
-                    UserName = user.Name
-                });
-            }
+                    UserInfo = result
+                }
+            };
             return ResponseSuccess(response);
         }
 
@@ -59,96 +54,86 @@
             if (errorsMessage.Count > 0)
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
 
-            User userExist = new User();
-            if (userReq.TypeDocument.Equals("FUNC"))
-                userExist = _userRep.GetSomeAsync("EMail", string.Format("{0}@colsubsidio.com",userReq.UserMail)).Result.FirstOrDefault();
+            var user = _userRep.GetAsync(userReq.UserName).Result;
+            if (userReq.UserName.Contains("@colsubsidio.com"))
+            {               
+                if (user == null)
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                if (!user.Password.Equals(userReq.Password))
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword); 
+            }
             else
-                userExist = _userRep.GetSomeAsync(GetUserConditions(userReq.NoDocument,userReq.TypeDocument)).Result.FirstOrDefault();
-
-            if (userExist == null)
-                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-
-            if (!userReq.TypeDocument.Equals("FUNC"))
             {
-                var result = _LdapServices.Authenticate(userReq.NoDocument, userReq.Password);
+                /// pendiente definir servicio Ldap pass user?
+                var result = _LdapServices.Authenticate(userReq.UserName, userReq.Password);
                 if (!result.data.FirstOrDefault().status.Equals("success"))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+                if (user == null)
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             }
+            user.Authenticated = true;
+            user.DeviceId = userReq.DeviceId;
+            user.Password = userReq.Password;
 
-            if (!userExist.DeviceId.Equals(userReq.DeviceId) || !userExist.Authenticated)
-            {
-                userExist.Authenticated = true;
-                userExist.DeviceId = userReq.DeviceId;
-                _userRep.AddOrUpdate(userExist);
-            }
-            
             var response = new List<AuthenticateUserResponse>()
             {
                 new AuthenticateUserResponse()
                 {
-                    UserPosition = userExist.Position,
-                    Role = userExist.Role,
-                    UserLastName = userExist.LastName,
-                    UserName = userExist.Name
+                    UserInfo = user
                 }
             };
+            var resultUptade = _userRep.AddOrUpdate(user).Result;
+            if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
+
             return ResponseSuccess(response);
         }
 
-        public Response<RegisterUserResponse> IsRegsiter(IsRegisterUserRequest userReq)
+        public Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-
-            if (userReq.TypeDocument.Equals("FUNC"))
+            var result = _userRep.GetAsync(userReq.UserName).Result;
+            if (result == null)
+                return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+            return ResponseSuccess(new List<RegisterUserResponse>()
             {
-                if (string.IsNullOrEmpty(userReq.Email))
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.BadRequest);
-
-                var result = _userRep.GetSomeAsync("EMail", string.Format("{0}@colsubsidio.com", userReq.Email)).Result.FirstOrDefault();
-                if (result == null)
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(userReq.NoDocument))
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.BadRequest);
-
-                var result = _userRep.GetSomeAsync(GetUserConditions(userReq.NoDocument,userReq.TypeDocument)).Result;
-                if (result.Count == 0)
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-            }
-
-            return ResponseSuccess(new List<RegisterUserResponse>());
+                new RegisterUserResponse()
+                {
+                    IsRegister = true,
+                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false
+                }
+            });
         }
 
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-
+            var response = new List<RegisterUserResponse>();
             if (userReq.Position == UsersPosition.Empresa.ToString())
             {
                 //registro como empresa
                 var company = new User()
                 {
                     TypeDocument = "Nit",
-                    NoDocument = userReq.NoId,
+                    UserName = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = userReq.ContactName,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2,
-                    EMail = userReq.Mail,
+                    NoDocument = userReq.NoId,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Addrerss = userReq.Address,
                     Position = userReq.Position,
                     DeviceId = userReq.DeviceId,
-                    State = UserStates.Enable.ToString()
+                    State = UserStates.Enable.ToString(),
+                    Password = userReq.Password
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
+                response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = company });
             }
             if (userReq.Position == UsersPosition.Cesante.ToString())
             {
@@ -158,8 +143,8 @@
                     Name = userReq.Name,
                     LastName = userReq.LastNames,
                     TypeDocument = userReq.TypeId,
+                    UserName = userReq.Mail,
                     NoDocument = userReq.NoId,
-                    EMail = userReq.Mail,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2,
                     City = userReq.City,
@@ -167,12 +152,15 @@
                     Genre = userReq.Genre,
                     DeviceId = userReq.DeviceId,
                     Position = userReq.Position,
-                    State = UserStates.Enable.ToString()
+                    State = UserStates.Enable.ToString(),
+                    Password = userReq.Password
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
+                response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
 
             }
+            if (userReq.OnlyAzureRegister) return ResponseSuccess(response); 
             var names = userReq.Name.Split(new char[] { ' ' });
             var lastNames = userReq.LastNames.Split(new char[] { ' ' });
             RegisterInLdapRequest regLdap = new RegisterInLdapRequest()
@@ -190,26 +178,7 @@
             var resultLdap = _LdapServices.Register(regLdap); // pasar password en servicio
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
-            return ResponseSuccess(new List<RegisterUserResponse>());
-        }
-        
-        private List<ConditionParameter> GetUserConditions(string noDoc, string typeDoc)
-        {
-            return new List<ConditionParameter>()
-            {
-                new ConditionParameter
-                {
-                    ColumnName = "RowKey",
-                    Condition = QueryComparisons.Equal,
-                    Value = noDoc,
-                },
-                new ConditionParameter
-                {
-                    ColumnName = "TypeDocument",
-                    Condition = QueryComparisons.Equal,
-                    Value = typeDoc,
-                }
-            };
+            return ResponseSuccess(response);
         }
     }
 }

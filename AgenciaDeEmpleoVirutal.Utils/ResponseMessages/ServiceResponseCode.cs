@@ -57,6 +57,9 @@
         /// User Already Exist
         /// </summary>
         UserAlreadyExist = 208,
-
+        /// <summary>
+        /// Incorrect Password in Login
+        /// </summary>
+        IncorrectPassword = 110
     }
 }

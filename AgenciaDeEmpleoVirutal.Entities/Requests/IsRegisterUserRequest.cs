@@ -5,11 +5,7 @@
 
     public class IsRegisterUserRequest
     {
-        public string Email { get; set; }
-
-        public string NoDocument { get; set; }
-
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "TypeId_Required")]
-        public string TypeDocument { get; set; }
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "UserMail_Required")]
+        public string UserName { get; set; }
     }
 }

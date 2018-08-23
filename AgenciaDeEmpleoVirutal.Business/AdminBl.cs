@@ -27,19 +27,19 @@
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             var funcoinaries =_usersRepo.GetAll().Result;
-            if (funcoinaries.Any(f => f.EMail == string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)))
+            if (funcoinaries.Any(f => f.UserName == string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)))
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
             var funcionaryEntity = new User()
             {
                 Position = funcionaryReq.Position,
                 State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
-                EMail = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
+                NoDocument = funcoinaries == null ? "FUNC-01" : string.Format("FUNC-0{0}", funcoinaries.ToList().Count + 1),
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
-                Password = funcionaryReq.Password.GetHashCode().ToString(),
+                Password = funcionaryReq.Password,
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
-                NoDocument = funcoinaries == null ? "FUNC-01" : string.Format("FUNC-0{0}",funcoinaries.ToList().Count + 1),
+                UserName = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
                 TypeDocument = ""                
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
@@ -47,15 +47,15 @@
             return result ? ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>()) : 
                 ResponseFail<CreateOrUpdateFuncionaryResponse>();            
         }
-
-        public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionary(UpdateFuncionaryRequest funcionaryReq)
+        
+        public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
 
-            var funcionary = _usersRepo.GetSomeAsync("EMail", string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)).Result;
-            if (funcionary.Count == 0) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
-            var modFuncionary = funcionary.FirstOrDefault();
+            var funcionary = _usersRepo.GetAsync(string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)).Result;
+            if (funcionary == null) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            var modFuncionary = funcionary;
 
             modFuncionary.Name = funcionaryReq.Name;
             modFuncionary.LastName = funcionaryReq.LastName;
@@ -65,23 +65,23 @@
             var result = _usersRepo.AddOrUpdate(modFuncionary).Result;
             if (!result) ResponseFail<CreateOrUpdateFuncionaryResponse>();
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
-        }
+        }       
 
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
-            var result = _usersRepo.GetSomeAsync("EMail",string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
-            if (result.Count == 0) return ResponseFail<FuncionaryInfoResponse>();
+            var result = _usersRepo.GetAsync(string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
+            if (result == null) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
                 new FuncionaryInfoResponse()
                 {
-                    Position = result.FirstOrDefault().Position,
-                    Role = result.FirstOrDefault().Role,
-                    Mail = result.FirstOrDefault().EMail,
-                    Name = result.FirstOrDefault().Name,
-                    LastName = result.FirstOrDefault().LastName,
-                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    Position = result.Position,
+                    Role = result.Role,
+                    Mail = result.NoDocument,
+                    Name = result.Name,
+                    LastName = result.LastName,
+                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
                 }
             };
             return ResponseSuccess(funcionary);
@@ -97,7 +97,7 @@
                 {
                     Position = f.Position,
                     Role = f.Role,
-                    Mail = f.EMail,
+                    Mail = f.NoDocument,
                     State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
                     Name = f.Name,
                     LastName = f.LastName,

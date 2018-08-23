@@ -12,6 +12,6 @@
 
         Response<FuncionaryInfoResponse> GetAllFuncionaries();
 
-        Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionary(UpdateFuncionaryRequest funcionaryReq);
+        Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq);
     }
 }
