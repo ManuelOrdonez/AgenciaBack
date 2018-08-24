@@ -33,7 +33,7 @@
         [Produces(typeof(Response<CreateOrUpdateFuncionaryResponse>))]
         public IActionResult UpdateFuncionaryInfo([FromBody] UpdateFuncionaryRequest userReq)
         {
-            return Ok(_AdminBussines.UpdateFuncionary(userReq));
+            return Ok(_AdminBussines.UpdateFuncionaryInfo(userReq));
         }
 
         [HttpGet]

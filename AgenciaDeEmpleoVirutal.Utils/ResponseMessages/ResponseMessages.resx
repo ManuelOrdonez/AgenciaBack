@@ -126,6 +126,9 @@
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
   </data>
+  <data name="IncorrectPassword" xml:space="preserve">
+    <value>Contraseña Incorrecta</value>
+  </data>
   <data name="InternalError" xml:space="preserve">
     <value>Operación fallida, por favor intenta mas tarde.</value>
   </data>

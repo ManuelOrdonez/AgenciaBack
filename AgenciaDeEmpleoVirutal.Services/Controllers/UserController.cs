@@ -48,7 +48,7 @@
         [Produces(typeof(Response<AuthenticateUserResponse>))]
         public IActionResult IsRegister([FromBody] IsRegisterUserRequest userReq)
         {
-            return Ok(_UserBussines.IsRegsiter(userReq));
+            return Ok(_UserBussines.IsRegister(userReq));
         }
     }
 }

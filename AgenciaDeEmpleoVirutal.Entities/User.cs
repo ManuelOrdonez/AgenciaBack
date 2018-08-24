@@ -12,13 +12,13 @@
         }
 
         [IgnoreProperty]
-        public string NoDocument
+        public string UserName
         {
             get => RowKey;
             set => RowKey = value;
         }
 
-        public string EMail { get; set; }
+        public string NoDocument { get; set; }
 
         public string Password { get; set; }
                 

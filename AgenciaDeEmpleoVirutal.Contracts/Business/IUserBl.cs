@@ -12,6 +12,6 @@
 
         Response<AuthenticateUserResponse> IsAuthenticate(string deviceId);
 
-        Response<RegisterUserResponse> IsRegsiter(IsRegisterUserRequest userReq);
+        Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq);
     }
 }

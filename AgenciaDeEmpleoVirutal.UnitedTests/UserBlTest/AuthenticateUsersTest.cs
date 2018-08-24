@@ -16,7 +16,7 @@
             var request = new AuthenticateUserRequest()
             {
                 Password = "12345678",
-                UserMail = "",
+                UserName = "",
                 DeviceId = "123"
             };
             var message = request.Validate().ToList();
@@ -36,7 +36,7 @@
             var request = new AuthenticateUserRequest()
             {
                 Password = "",
-                UserMail = "pepe@gmail.com",
+                UserName = "pepe@gmail.com",
                 DeviceId = "123"
             };
             var message = request.Validate().ToList();
@@ -56,7 +56,7 @@
             var request = new AuthenticateUserRequest()
             {
                 Password = "12345678",
-                UserMail = "pepe2gmail.com",
+                UserName = "pepe2gmail.com",
                 DeviceId = "123"
             };
             var message = request.Validate().ToList();
@@ -76,7 +76,7 @@
             var request = new AuthenticateUserRequest()
             {
                 Password = "",
-                UserMail = "",
+                UserName = "",
                 DeviceId = "123"
             };
             var message = request.Validate().ToList();
@@ -96,7 +96,7 @@
             var request = new AuthenticateUserRequest()
             {
                 Password = "123",
-                UserMail = "pepe2gmail.com",
+                UserName = "pepe2gmail.com",
                 DeviceId = "123"
             };
             var message = request.Validate().ToList();

@@ -180,4 +180,7 @@
   <data name="State_Required" xml:space="preserve">
     <value>El estado del funcionario es obligatorio</value>
   </data>
+  <data name="User_Required" xml:space="preserve">
+    <value>El campu usuario es obligatorio</value>
+  </data>
 </root>
