@@ -37,7 +37,7 @@
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
 
             var userAuthenticate = result.Where(r => r.Authenticated == true);
-            if (userAuthenticate == null)
+            if (!userAuthenticate.Any())
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
             var response = new List<AuthenticateUserResponse>
             {
