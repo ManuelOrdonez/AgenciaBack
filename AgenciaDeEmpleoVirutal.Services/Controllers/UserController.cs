@@ -29,26 +29,34 @@
 
         [HttpPost]
         [Route("RegisterUser")]
-        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        [Produces(typeof(Response<RegisterUserResponse>))]
         public IActionResult RegisterUser([FromBody] RegisterUserRequest userRequest)
         {
             return Ok(_UserBussines.RegisterUser(userRequest));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("IsAuthenticated")]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
-        public IActionResult IsAuthenticated(string deviceId)
+        public IActionResult IsAuthenticated([FromBody] IsAuthenticateRequest deviceId)
         {
             return Ok(_UserBussines.IsAuthenticate(deviceId));
         }
 
         [HttpPost]
         [Route("IsRegister")]
-        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        [Produces(typeof(Response<RegisterUserResponse>))]
         public IActionResult IsRegister([FromBody] IsRegisterUserRequest userReq)
         {
             return Ok(_UserBussines.IsRegister(userReq));
+        }
+
+        [HttpPost]
+        [Route("LogOut")]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        public IActionResult LogOut([FromBody] LogOutRequest logOutReq)
+        {
+            return Ok(_UserBussines.LogOut(logOutReq));
         }
     }
 }

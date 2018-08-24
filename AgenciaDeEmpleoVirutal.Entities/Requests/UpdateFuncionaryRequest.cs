@@ -11,6 +11,9 @@ namespace AgenciaDeEmpleoVirutal.Entities.Requests
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "EmailAddress_Required")]
         public string InternalMail { get; set; }
 
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Position_Required")]
+        public string Position { get; set; }
+
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Name_Required")]
         public string Name { get; set; }
         

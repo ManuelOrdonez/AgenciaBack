@@ -183,4 +183,7 @@
   <data name="User_Required" xml:space="preserve">
     <value>El campu usuario es obligatorio</value>
   </data>
+  <data name="UserType_Required" xml:space="preserve">
+    <value>Debe definir el tipo de usuario a registrar</value>
+  </data>
 </root>

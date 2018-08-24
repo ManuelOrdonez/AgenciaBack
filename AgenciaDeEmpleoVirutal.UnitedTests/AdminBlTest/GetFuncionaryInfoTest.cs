@@ -46,7 +46,7 @@
             var user = new User()
             {
                 Position = "Orientador",
-                EmailAddress = "pepe@colsubsidio.com",
+                ///EmailAddress = "pepe@colsubsidio.com",
                 Name = "pepe",
                 LastName = "perez",
                 State = UserStates.Enable.ToString(),
@@ -58,7 +58,7 @@
                 new FuncionaryInfoResponse
                 {
                     LastName = user.LastName,
-                    Mail = user.EmailAddress,
+                    ///Mail = user.EmailAddress,
                     Name = user.Name,
                     Position = user.Position,
                     State = user.State.Equals(UserStates.Enable.ToString()) ? true : false,

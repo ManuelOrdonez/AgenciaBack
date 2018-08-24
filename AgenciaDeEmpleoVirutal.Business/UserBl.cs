@@ -11,6 +11,7 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -26,23 +27,23 @@
             _LdapServices = LdapServices;
         }
 
-        public Response<AuthenticateUserResponse> IsAuthenticate(string deviceId)
+        public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
         {
-            if (string.IsNullOrEmpty(deviceId))
+            if (string.IsNullOrEmpty(deviceId.DeviceId))
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
 
-            var result = _userRep.GetSomeAsync("DeviceId", deviceId).Result.FirstOrDefault();
-            if (result == null)
+            var result = _userRep.GetSomeAsync("DeviceId",deviceId.DeviceId).Result;
+            if (result.Count == 0 || result == null)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
 
-            var userAuthenticate = result.Authenticated;
-            if (!userAuthenticate)
+            var userAuthenticate = result.Where(r => r.Authenticated == true);
+            if (!userAuthenticate.Any())
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = result
+                    UserInfo = userAuthenticate.FirstOrDefault()
                 }
             };
             return ResponseSuccess(response);
@@ -110,32 +111,38 @@
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-            var response = new List<RegisterUserResponse>();
-            if (userReq.Position == UsersPosition.Empresa.ToString())
+            var userName = userReq.NoId; //armar usuarion con numero y tipo de documento
+            var userExist = _userRep.GetAsync(userName).Result;
+            if(userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+            List<RegisterUserResponse> response = new List<RegisterUserResponse>();
+            if (!userReq.IsCesante)
             {
                 //registro como empresa
                 var company = new User()
                 {
                     TypeDocument = "Nit",
-                    UserName = userReq.Mail,
+                    UserName = string.Format("{0}",userReq.NoId), // modificar NoDoc_TypeDoc
+                    Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = userReq.ContactName,
                     CellPhone1 = userReq.Cellphon1,
-                    CellPhone2 = userReq.Cellphon2,
+                    CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoId,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Addrerss = userReq.Address,
-                    Position = userReq.Position,
+                    Position = string.Empty, 
                     DeviceId = userReq.DeviceId,
                     State = UserStates.Enable.ToString(),
-                    Password = userReq.Password
+                    Password = userReq.Password,
+                    UserType = UsersTypes.Empresa.ToString(),
+                    Authenticated = true
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = company });
             }
-            if (userReq.Position == UsersPosition.Cesante.ToString())
+            if (userReq.IsCesante)
             {
                 //registro como cesante
                 var cesante = new User()
@@ -143,17 +150,20 @@
                     Name = userReq.Name,
                     LastName = userReq.LastNames,
                     TypeDocument = userReq.TypeId,
-                    UserName = userReq.Mail,
+                    UserName = string.Format("{0}", userReq.NoId), // modificar NoDoc_TypeDoc
                     NoDocument = userReq.NoId,
                     CellPhone1 = userReq.Cellphon1,
-                    CellPhone2 = userReq.Cellphon2,
+                    CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Genre = userReq.Genre,
                     DeviceId = userReq.DeviceId,
-                    Position = userReq.Position,
+                    Position = string.Empty,
                     State = UserStates.Enable.ToString(),
-                    Password = userReq.Password
+                    Password = userReq.Password,
+                    Email = userReq.Mail,
+                    UserType = UsersTypes.Cesante.ToString(),
+                    Authenticated = true
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
@@ -179,6 +189,17 @@
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             return ResponseSuccess(response);
+        }
+
+        public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
+        {
+            var errorsMessage = logOurReq.Validate().ToList();
+            if (errorsMessage.Count > 0) return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
+            var user = _userRep.GetAsync(logOurReq.UserName).Result;
+            if (user == null) return ResponseFail<AuthenticateUserResponse>();
+            user.Authenticated = false;
+            var result = _userRep.AddOrUpdate(user).Result;
+            return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
     }
 }

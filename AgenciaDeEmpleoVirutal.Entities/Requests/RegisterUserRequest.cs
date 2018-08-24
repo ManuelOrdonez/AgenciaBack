@@ -5,6 +5,9 @@
 
     public class RegisterUserRequest
     {
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "UserType_Required")]
+        public bool IsCesante { get; set; }
+
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Name_Required")]
         public string Name { get; set; }
 
@@ -34,7 +37,7 @@
 
         public string Genre { get; set; }
 
-        [StringLength(30, MinimumLength = 8, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
+        [StringLength(60, MinimumLength = 8, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
         public string Password { get; set; }
 
         public string SocialReason { get; set; }
@@ -42,9 +45,6 @@
         public string ContactName { get; set; }
 
         public string Address { get; set; }
-
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Position_Required")]
-        public string Position { get; set; } // empresa cesante aux sup ori
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Device_Required")]
         public string DeviceId { get; set; }

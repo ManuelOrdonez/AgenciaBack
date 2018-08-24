@@ -257,5 +257,14 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
                 return ResourceManager.GetString("UserMail_Required", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Debe definir el tipo de usuario a registrar.
+        /// </summary>
+        public static string UserType_Required {
+            get {
+                return ResourceManager.GetString("UserType_Required", resourceCulture);
+            }
+        }
     }
 }
