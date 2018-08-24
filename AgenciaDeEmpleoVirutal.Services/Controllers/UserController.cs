@@ -29,7 +29,7 @@
 
         [HttpPost]
         [Route("RegisterUser")]
-        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        [Produces(typeof(Response<RegisterUserResponse>))]
         public IActionResult RegisterUser([FromBody] RegisterUserRequest userRequest)
         {
             return Ok(_UserBussines.RegisterUser(userRequest));
@@ -45,7 +45,7 @@
 
         [HttpPost]
         [Route("IsRegister")]
-        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        [Produces(typeof(Response<RegisterUserResponse>))]
         public IActionResult IsRegister([FromBody] IsRegisterUserRequest userReq)
         {
             return Ok(_UserBussines.IsRegister(userReq));

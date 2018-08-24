@@ -11,6 +11,7 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -31,18 +32,18 @@
             if (string.IsNullOrEmpty(deviceId.DeviceId))
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
 
-            var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result.FirstOrDefault();
-            if (result == null)
+            var result = _userRep.GetSomeAsync("DeviceId",deviceId.DeviceId).Result;
+            if (result.Count == 0 || result == null)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
 
-            var userAuthenticate = result.Authenticated;
-            if (!userAuthenticate)
+            var userAuthenticate = result.Where(r => r.Authenticated == true);
+            if (userAuthenticate == null)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = result
+                    UserInfo = userAuthenticate.FirstOrDefault()
                 }
             };
             return ResponseSuccess(response);
@@ -110,7 +111,10 @@
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-            var response = new List<RegisterUserResponse>();
+            var userName = userReq.NoId; //armar usuarion con numero y tipo de documento
+            var userExist = _userRep.GetAsync(userName).Result;
+            if(userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+            List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
                 //registro como empresa
