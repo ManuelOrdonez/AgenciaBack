@@ -1,12 +1,16 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Utils.Enum
 {
-    public enum UsersPosition
+    public enum UsersTypes
     {
         Empresa,
         Cesante,
+        /*
         Administrador,
         Supervisor,
         Orientador,
         Auxiliar,
+        */
+        Funcionario,
+        
     }
 }

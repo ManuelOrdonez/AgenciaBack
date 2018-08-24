@@ -28,7 +28,7 @@
                 ContactName = "pepa",
                 Address = "###########",
                 City = "Bogotá",
-                Role = UsersPosition.Cesante.ToString()
+                Role = UsersTypes.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
@@ -60,7 +60,7 @@
                 ContactName = "pepa",
                 Address = "###########",
                 City = "Bogotá",
-                Role = UsersPosition.Cesante.ToString()
+                Role = UsersTypes.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
@@ -91,7 +91,7 @@
                 ContactName = "pepa",
                 Address = "###########",
                 City = "Bogotá",
-                Role = UsersPosition.Cesante.ToString()
+                Role = UsersTypes.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
@@ -122,7 +122,7 @@
                 ContactName = "",
                 Address = "",
                 City = "Bogotá",
-                Role = UsersPosition.Cesante.ToString()
+                Role = UsersTypes.Cesante.ToString()
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);

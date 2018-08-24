@@ -33,14 +33,16 @@
             {
                 Position = funcionaryReq.Position,
                 State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
-                NoDocument = funcoinaries == null ? "FUNC-01" : string.Format("FUNC-0{0}", funcoinaries.ToList().Count + 1),
+                NoDocument = "",
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
                 Password = funcionaryReq.Password,
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
                 UserName = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
-                TypeDocument = ""                
+                TypeDocument = "" ,
+                Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
+                UserType = UsersTypes.Funcionario.ToString()
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
@@ -60,6 +62,7 @@
             modFuncionary.Name = funcionaryReq.Name;
             modFuncionary.LastName = funcionaryReq.LastName;
             modFuncionary.Role = funcionaryReq.Role;
+            modFuncionary.Position = funcionaryReq.Position;
             modFuncionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
 
             var result = _usersRepo.AddOrUpdate(modFuncionary).Result;
@@ -78,7 +81,7 @@
                 {
                     Position = result.Position,
                     Role = result.Role,
-                    Mail = result.NoDocument,
+                    Mail = result.Email,
                     Name = result.Name,
                     LastName = result.LastName,
                     State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
@@ -89,15 +92,15 @@
 
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
-            var funcionaries = _usersRepo.GetSomeAsync("TypeDocument", string.Empty).Result;
+            var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
             if (funcionaries.Count == 0 || funcionaries == null) return ResponseFail<FuncionaryInfoResponse>();
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             funcionaries.ForEach(f => {
                 funcionariesInfo.Add(new FuncionaryInfoResponse()
                 {
                     Position = f.Position,
-                    Role = f.Role,
-                    Mail = f.NoDocument,
+                    Role = f.Role,                    
+                    Mail = f.Email,
                     State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
                     Name = f.Name,
                     LastName = f.LastName,

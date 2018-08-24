@@ -35,10 +35,10 @@
             return Ok(_UserBussines.RegisterUser(userRequest));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("IsAuthenticated")]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
-        public IActionResult IsAuthenticated(string deviceId)
+        public IActionResult IsAuthenticated([FromBody] IsAuthenticateRequest deviceId)
         {
             return Ok(_UserBussines.IsAuthenticate(deviceId));
         }

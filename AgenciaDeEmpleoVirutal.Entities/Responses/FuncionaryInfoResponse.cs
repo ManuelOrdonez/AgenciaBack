@@ -2,6 +2,7 @@
 {
     public class FuncionaryInfoResponse
     {
+
         public string Role { get; set; }
 
         public string Mail { get; set; }

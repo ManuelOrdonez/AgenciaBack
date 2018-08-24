@@ -36,7 +36,7 @@
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                Role = UsersPosition.Orientador.ToString()
+                Role = UsersTypes.Orientador.ToString()
             };
 
             FuncionatyBadrequest = new CreateFuncionaryRequest()
@@ -47,7 +47,7 @@
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                Role = UsersPosition.Orientador.ToString()
+                Role = UsersTypes.Orientador.ToString()
             };
         }
     }

@@ -5,7 +5,7 @@
     public class User : TableEntity
     {
         [IgnoreProperty]
-        public string Position // empresa cesante aux orientador supervisor administrador
+        public string UserType /// empresa cesante funcionario
         {
             get => PartitionKey;
             set => PartitionKey=value;
@@ -17,6 +17,10 @@
             get => RowKey;
             set => RowKey = value;
         }
+
+        public string Email { get; set; }
+
+        public string Position { get; set; } ///  aux orientador supervisor administrador
 
         public string NoDocument { get; set; }
 

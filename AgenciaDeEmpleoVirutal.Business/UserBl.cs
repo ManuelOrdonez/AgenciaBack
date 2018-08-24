@@ -26,12 +26,12 @@
             _LdapServices = LdapServices;
         }
 
-        public Response<AuthenticateUserResponse> IsAuthenticate(string deviceId)
+        public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
         {
-            if (string.IsNullOrEmpty(deviceId))
+            if (string.IsNullOrEmpty(deviceId.DeviceId))
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
 
-            var result = _userRep.GetSomeAsync("DeviceId", deviceId).Result.FirstOrDefault();
+            var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result.FirstOrDefault();
             if (result == null)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
 
@@ -111,31 +111,34 @@
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             var response = new List<RegisterUserResponse>();
-            if (userReq.Position == UsersPosition.Empresa.ToString())
+            if (!userReq.IsCesante)
             {
                 //registro como empresa
                 var company = new User()
                 {
                     TypeDocument = "Nit",
-                    UserName = userReq.Mail,
+                    UserName = string.Format("{0}",userReq.NoId), // modificar NoDoc_TypeDoc
+                    Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = userReq.ContactName,
                     CellPhone1 = userReq.Cellphon1,
-                    CellPhone2 = userReq.Cellphon2,
+                    CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoId,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Addrerss = userReq.Address,
-                    Position = userReq.Position,
+                    Position = string.Empty, 
                     DeviceId = userReq.DeviceId,
                     State = UserStates.Enable.ToString(),
-                    Password = userReq.Password
+                    Password = userReq.Password,
+                    UserType = UsersTypes.Empresa.ToString(),
+                    Authenticated = true
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = company });
             }
-            if (userReq.Position == UsersPosition.Cesante.ToString())
+            if (userReq.IsCesante)
             {
                 //registro como cesante
                 var cesante = new User()
@@ -143,17 +146,20 @@
                     Name = userReq.Name,
                     LastName = userReq.LastNames,
                     TypeDocument = userReq.TypeId,
-                    UserName = userReq.Mail,
+                    UserName = string.Format("{0}", userReq.NoId), // modificar NoDoc_TypeDoc
                     NoDocument = userReq.NoId,
                     CellPhone1 = userReq.Cellphon1,
-                    CellPhone2 = userReq.Cellphon2,
+                    CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Genre = userReq.Genre,
                     DeviceId = userReq.DeviceId,
-                    Position = userReq.Position,
+                    Position = string.Empty,
                     State = UserStates.Enable.ToString(),
-                    Password = userReq.Password
+                    Password = userReq.Password,
+                    Email = userReq.Mail,
+                    UserType = UsersTypes.Cesante.ToString(),
+                    Authenticated = true
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
