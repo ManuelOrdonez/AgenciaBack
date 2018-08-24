@@ -29,6 +29,7 @@
             var funcoinaries =_usersRepo.GetAll().Result;
             if (funcoinaries.Any(f => f.UserName == string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)))
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
+
             var funcionaryEntity = new User()
             {
                 Position = funcionaryReq.Position,

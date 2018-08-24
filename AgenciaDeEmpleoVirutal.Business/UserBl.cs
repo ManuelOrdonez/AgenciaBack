@@ -190,5 +190,16 @@
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             return ResponseSuccess(response);
         }
+
+        public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
+        {
+            var errorsMessage = logOurReq.Validate().ToList();
+            if (errorsMessage.Count > 0) return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
+            var user = _userRep.GetAsync(logOurReq.UserName).Result;
+            if (user == null) return ResponseFail<AuthenticateUserResponse>();
+            user.Authenticated = false;
+            var result = _userRep.AddOrUpdate(user).Result;
+            return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
+        }
     }
 }

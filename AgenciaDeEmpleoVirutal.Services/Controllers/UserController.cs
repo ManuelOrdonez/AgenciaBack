@@ -50,5 +50,13 @@
         {
             return Ok(_UserBussines.IsRegister(userReq));
         }
+
+        [HttpPost]
+        [Route("LogOut")]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
+        public IActionResult LogOut([FromBody] LogOutRequest logOutReq)
+        {
+            return Ok(_UserBussines.LogOut(logOutReq));
+        }
     }
 }

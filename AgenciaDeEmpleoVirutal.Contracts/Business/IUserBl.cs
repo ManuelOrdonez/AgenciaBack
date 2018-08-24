@@ -13,5 +13,7 @@
         Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId);
 
         Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq);
+
+        Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq);
     }
 }
