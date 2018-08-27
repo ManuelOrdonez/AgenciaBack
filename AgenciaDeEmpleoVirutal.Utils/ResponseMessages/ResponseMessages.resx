@@ -136,10 +136,10 @@
     <value>El id del dispositivo no se encuentra autenticado</value>
   </data>
   <data name="IsNotRegisterInAz" xml:space="preserve">
-    <value>El usuario no esta registrado en Azure TableStorage</value>
+    <value>El usuario no esta registrado en nuestra base de datos</value>
   </data>
   <data name="IsNotRegisterInLdap" xml:space="preserve">
-    <value>El usuario no esta registrado en Ldap</value>
+    <value>El usuario no esta registrado en colsubsidio</value>
   </data>
   <data name="ServiceExternalError" xml:space="preserve">
     <value>Error inesperado en un servicio externo, por favor intentar mas tarde.</value>

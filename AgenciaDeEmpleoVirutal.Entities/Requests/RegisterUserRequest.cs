@@ -32,7 +32,7 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "City_Required")]
         public string City { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "City_Required")]
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Dept_Required")]
         public string Departament { get; set; }
 
         public string Genre { get; set; }
@@ -46,7 +46,6 @@
 
         public string Address { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Device_Required")]
         public string DeviceId { get; set; }
 
         public bool OnlyAzureRegister { get; set; }

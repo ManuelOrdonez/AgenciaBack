@@ -115,7 +115,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El usuario no esta registrado en Azure TableStorage.
+        ///   Looks up a localized string similar to El usuario no esta registrado en nuestra base de datos.
         /// </summary>
         internal static string IsNotRegisterInAz {
             get {
@@ -124,7 +124,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El usuario no esta registrado en Ldap.
+        ///   Looks up a localized string similar to El usuario no esta registrado en colsubsidio.
         /// </summary>
         internal static string IsNotRegisterInLdap {
             get {

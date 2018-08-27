@@ -11,7 +11,6 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
-    using Microsoft.WindowsAzure.Storage.Table;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -136,7 +135,7 @@
                     State = UserStates.Enable.ToString(),
                     Password = userReq.Password,
                     UserType = UsersTypes.Empresa.ToString(),
-                    Authenticated = true
+                    Authenticated = string.IsNullOrEmpty(userReq.DeviceId) ? false : true 
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();

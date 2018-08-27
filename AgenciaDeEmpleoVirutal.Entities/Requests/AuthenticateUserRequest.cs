@@ -12,7 +12,7 @@
         [StringLength(60, MinimumLength = 8, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
         public string Password { get; set; }
 
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "IdDevice_Required")]
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Device_Required")]
         public string DeviceId { get; set; }
     }
 }

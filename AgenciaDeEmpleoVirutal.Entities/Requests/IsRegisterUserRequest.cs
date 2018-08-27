@@ -5,7 +5,7 @@
 
     public class IsRegisterUserRequest
     {
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "UserMail_Required")]
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "User_Required")]
         public string UserName { get; set; }
     }
 }
