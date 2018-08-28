@@ -2,6 +2,7 @@
 
 namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
 {
+    using System;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
@@ -179,6 +180,27 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         {
             var entities = (await Table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), null)).Results;
             return entities;
+        }
+
+        public async Task<List<T>> GetList()
+        {
+            
+            //Query
+            TableQuery<T> query = new TableQuery<T>();
+
+            List<T> results = new List<T>();
+            TableContinuationToken continuationToken = null;
+            do
+            {
+                TableQuerySegment<T> queryResults =
+                    await Table.ExecuteQuerySegmentedAsync(query, continuationToken);
+
+                continuationToken = queryResults.ContinuationToken;
+                results.AddRange(queryResults.Results);
+
+            } while (continuationToken != null);
+
+            return results;
         }
     }
 }

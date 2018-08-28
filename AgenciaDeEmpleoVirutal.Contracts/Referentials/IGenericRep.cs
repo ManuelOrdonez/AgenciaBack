@@ -36,6 +36,7 @@
         /// <returns></returns>
         Task<List<T>> GetAll();
 
+        Task<List<T>> GetList();
         /// <summary>
         /// Consulta table storage by partitionKey
         /// </summary>
