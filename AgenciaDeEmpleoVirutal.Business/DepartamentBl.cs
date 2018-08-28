@@ -21,7 +21,9 @@
         
         public Response<DepartamenCityResponse> GetDepartamens()
         {
-            var result = _departamentCityRep.GetAll().Result;
+            //var result = _departamentCityRep.GetAll().Result;
+            
+            var result = _departamentCityRep.GetList().Result; 
             if (result == null || result.Count == 0) return ResponseFail<DepartamenCityResponse>();
             var departaments = new List<string>(); 
             result.ForEach(r => departaments.Add(r.Departament));
