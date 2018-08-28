@@ -5,7 +5,7 @@
 
     public class IsAuthenticateRequest
     {
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "IdDevice_Required")]
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Device_Required")]
         public string DeviceId { get; set; }
     }
 }

@@ -106,7 +106,16 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El Id del dispositivo es requirido para realizar el registro.
+        ///   Looks up a localized string similar to El campo departamento es obligatorio.
+        /// </summary>
+        public static string Dept_Required {
+            get {
+                return ResourceManager.GetString("Dept_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El Id del dispositivo es requirido.
         /// </summary>
         public static string Device_Required {
             get {
@@ -142,20 +151,11 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campo Id es obligatorio.
+        ///   Looks up a localized string similar to El campo identificación es obligatorio.
         /// </summary>
         public static string Id_Required {
             get {
                 return ResourceManager.GetString("Id_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El id del dispocitivo es obligatorio.
-        /// </summary>
-        public static string IdDevice_Required {
-            get {
-                return ResourceManager.GetString("IdDevice_Required", resourceCulture);
             }
         }
         
@@ -178,7 +178,7 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to la contraseña debe tener minimo 8 caracteres.
+        ///   Looks up a localized string similar to La contraseña debe tener minimo 8 caracteres.
         /// </summary>
         public static string Password_LengthPassword {
             get {
@@ -205,7 +205,7 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El rol del empleado es requerido.
+        ///   Looks up a localized string similar to El rol del funcionario es requerido.
         /// </summary>
         public static string Role_Required {
             get {
@@ -214,7 +214,7 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campo razón social de la emresa es obligatorio.
+        ///   Looks up a localized string similar to El campo razón social de la empresa es obligatorio.
         /// </summary>
         public static string SocialReason_Required {
             get {
@@ -241,20 +241,11 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El campu usuario es obligatorio.
+        ///   Looks up a localized string similar to El campo usuario es obligatorio.
         /// </summary>
         public static string User_Required {
             get {
                 return ResourceManager.GetString("User_Required", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to El campo usuario es obligatorio y corresponde al correo electronico de registro.
-        /// </summary>
-        public static string UserMail_Required {
-            get {
-                return ResourceManager.GetString("UserMail_Required", resourceCulture);
             }
         }
         

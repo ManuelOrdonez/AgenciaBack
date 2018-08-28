@@ -55,5 +55,9 @@
         public string SocialReason { get; set; }
 
         public string ContactName { get; set; }
+
+        public string CodTypeDocument { get; set; }
+
+
     }
 }

@@ -26,22 +26,25 @@
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
-            var funcoinaries =_usersRepo.GetAll().Result;
-            if (funcoinaries.Any(f => f.UserName == string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)))
+
+            /// funcoinaries.Any(f => f.UserName == string.Format("{0}_{1}", funcionaryReq.NoDocument,funcionaryReq.CodTypeDocument))
+            var funcoinaries =_usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
+            if (funcoinaries != null)
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
 
             var funcionaryEntity = new User()
             {
                 Position = funcionaryReq.Position,
                 State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
-                NoDocument = "",
+                NoDocument = funcionaryReq.NoDocument,
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
                 Password = funcionaryReq.Password,
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
-                UserName = string.Format("{0}@colsubsidio.com",funcionaryReq.InternalMail),
-                TypeDocument = "" ,
+                UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),
+                CodTypeDocument = funcionaryReq.CodTypeDocument.ToString(),
+                TypeDocument = System.Enum.GetName(typeof(TypeDocument), funcionaryReq.CodTypeDocument),
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString()
             };
@@ -56,10 +59,11 @@
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
 
-            var funcionary = _usersRepo.GetAsync(string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail)).Result;
+            var funcionary = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             if (funcionary == null) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             var modFuncionary = funcionary;
 
+            modFuncionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
             modFuncionary.Name = funcionaryReq.Name;
             modFuncionary.LastName = funcionaryReq.LastName;
             modFuncionary.Role = funcionaryReq.Role;
@@ -74,18 +78,18 @@
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
-            var result = _usersRepo.GetAsync(string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
-            if (result == null) return ResponseFail<FuncionaryInfoResponse>();
+            var result = _usersRepo.GetSomeAsync("Email",string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
+            if (!result.Any()) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
                 new FuncionaryInfoResponse()
                 {
-                    Position = result.Position,
-                    Role = result.Role,
-                    Mail = result.Email,
-                    Name = result.Name,
-                    LastName = result.LastName,
-                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    Position = result.FirstOrDefault().Position,
+                    Role = result.FirstOrDefault().Role,
+                    Mail = result.FirstOrDefault().Email,
+                    Name = result.FirstOrDefault().Name,
+                    LastName = result.FirstOrDefault().LastName,
+                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()) ? true : false,
                 }
             };
             return ResponseSuccess(funcionary);
@@ -105,6 +109,8 @@
                     State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
                     Name = f.Name,
                     LastName = f.LastName,
+                    TypeDocument = f.TypeDocument,
+                    NoDocument = f.NoDocument
                 });
             });
             return ResponseSuccess(funcionariesInfo);

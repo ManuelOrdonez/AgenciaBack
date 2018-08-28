@@ -1,13 +1,16 @@
-﻿using AgenciaDeEmpleoVirutal.Entities.Resources;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-namespace AgenciaDeEmpleoVirutal.Entities.Requests
+﻿namespace AgenciaDeEmpleoVirutal.Entities.Requests
 {
+    using AgenciaDeEmpleoVirutal.Entities.Resources;
+    using System.ComponentModel.DataAnnotations;
+
     public class UpdateFuncionaryRequest
     {
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "TypeId_Required")]
+        public string TypeDocument { get; set; }
+
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Id_Required")]
+        public string NoDocument { get; set; }
+
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "EmailAddress_Required")]
         public string InternalMail { get; set; }
 

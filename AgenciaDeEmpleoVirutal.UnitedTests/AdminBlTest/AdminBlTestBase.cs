@@ -19,6 +19,10 @@
 
         protected CreateFuncionaryRequest FuncionatyBadrequest;
 
+        protected UpdateFuncionaryRequest FuncionatyUpdateRequest;
+
+        protected User MockInfoUser;
+
         public AdminBlTestBase()
         {
             FuncionaryRepMock = new Mock<IGenericRep<User>>();
@@ -28,6 +32,26 @@
 
         private void LoadMoqs()
         {
+            MockInfoUser = new User()
+            {
+                LastName = "Gil Garnica",
+                Name = "Juan Sebastian",
+                Position = "Auxiliar",
+                Role = "Auxiliar",
+                State = "Enable",
+                Email = "jgilg@colsubsidio.com",                
+            };
+
+            FuncionatyUpdateRequest = new UpdateFuncionaryRequest()
+            {
+                InternalMail = "juang",
+                LastName = "Gil Garnica",
+                Name = "Juan Sebastian",
+                Position = "Auxiliar",
+                Role = "Auxiliar",
+                State = true
+            };
+
             FuncionatyGodrequest = new CreateFuncionaryRequest()
             {
                 InternalMail = "pepe12",
@@ -36,7 +60,6 @@
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                //Role = UsersTypes.Orientador.ToString()
             };
 
             FuncionatyBadrequest = new CreateFuncionaryRequest()
@@ -47,7 +70,6 @@
                 Name = "pepe",
                 Password = "123",
                 Position = "Orientador",
-                //Role = UsersTypes.Orientador.ToString()
             };
         }
     }

@@ -18,8 +18,7 @@
             {
                 Name = "pepe",
                 LastNames = "perez",
-                TypeId = "c.c.",
-                NoId = "123456789",
+                NoDocument = "123456789",
                 Mail = "",
                 Cellphon1 = "1234567",
                 Genre = "M",
@@ -50,8 +49,7 @@
             {
                 Name = "pepe",
                 LastNames = "perez",
-                TypeId = "c.c.",
-                NoId = "123456789",
+                NoDocument = "123456789",
                 Mail = "pepegmail.com",
                 Cellphon1 = "1234567",
                 Genre = "M",
@@ -81,8 +79,7 @@
             {
                 Name = "pepe",
                 LastNames = "perez",
-                TypeId = "c.c.",
-                NoId = "123456789",
+                NoDocument = "123456789",
                 Mail = "pepe@gmail.com",
                 Cellphon1 = "1234567",
                 Genre = "M",
@@ -112,8 +109,7 @@
             {
                 Name = "pepe",
                 LastNames = "perez",
-                TypeId = "c.c.",
-                NoId = "123456789",
+                NoDocument = "123456789",
                 Mail = "",
                 Cellphon1 = "1234567",
                 Genre = "M",
