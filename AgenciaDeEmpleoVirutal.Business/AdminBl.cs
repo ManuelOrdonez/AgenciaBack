@@ -44,7 +44,7 @@
                 DeviceId = string.Empty,
                 UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),
                 CodTypeDocument = funcionaryReq.CodTypeDocument.ToString(),
-                TypeDocument = System.Enum.GetName(typeof(TypeDocument), funcionaryReq.CodTypeDocument),
+                TypeDocument = funcionaryReq.TypeDocument,
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString()
             };
