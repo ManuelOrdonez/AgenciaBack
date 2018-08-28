@@ -5,7 +5,12 @@
 
     public class CreateFuncionaryRequest
     {
-        
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "TypeId_Required")]
+        public int CodTypeDocument { get; set; }
+
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Id_Required")]
+        public string NoDocument { get; set; }
+
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "EmailAddress_Required")]
         public string InternalMail { get; set; }
 

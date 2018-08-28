@@ -8,6 +8,7 @@ namespace AgenciaDeEmpleoVirutal.Entities.Responses
     {
         public bool IsRegister { get; set; }
         public bool State { get; set; }
+        public string UserType { get; set; }
         public User User { get; set; }
     }
 }

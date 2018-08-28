@@ -14,5 +14,9 @@
         public bool State { get; set; }
 
         public string Position { get; set; }
+
+        public string TypeDocument { get; set; }
+
+        public string NoDocument { get; set; }
     }
 }

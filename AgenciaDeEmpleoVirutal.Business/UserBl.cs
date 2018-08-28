@@ -54,22 +54,26 @@
             if (errorsMessage.Count > 0)
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
 
-            var user = _userRep.GetAsync(userReq.UserName).Result;
-            if (userReq.UserName.Contains("@colsubsidio.com"))
-            {               
+            var user = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            if (userReq.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            {                      
                 if (user == null)
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                   return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                if (user.State.Equals(UserStates.Disable))
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
                 if (!user.Password.Equals(userReq.Password))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword); 
             }
             else
             {
                 /// pendiente definir servicio Ldap pass user?
-                var result = _LdapServices.Authenticate(userReq.UserName, userReq.Password);
+                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password); ///codificar pass
                 if (!result.data.FirstOrDefault().status.Equals("success"))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                if (user.State.Equals(UserStates.Disable))
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
@@ -93,7 +97,7 @@
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-            var result = _userRep.GetAsync(userReq.UserName).Result;
+            var result = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             if (result == null)
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             return ResponseSuccess(new List<RegisterUserResponse>()
@@ -101,7 +105,8 @@
                 new RegisterUserResponse()
                 {
                     IsRegister = true,
-                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false
+                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    UserType = result.PartitionKey
                 }
             });
         }
@@ -110,23 +115,23 @@
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-            var userName = userReq.NoId; //armar usuarion con numero y tipo de documento
-            var userExist = _userRep.GetAsync(userName).Result;
+            var userExist = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
             if(userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
-                //registro como empresa
+                /// registro como empresa
                 var company = new User()
                 {
-                    TypeDocument = "Nit",
-                    UserName = string.Format("{0}",userReq.NoId), // modificar NoDoc_TypeDoc
+                    CodTypeDocument = userReq.CodTypeDocument.ToString(),
+                    TypeDocument = System.Enum.GetName(typeof(TypeDocument), userReq.CodTypeDocument),
+                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)), 
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = userReq.ContactName,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
-                    NoDocument = userReq.NoId,
+                    NoDocument = userReq.NoDocument,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Addrerss = userReq.Address,
@@ -143,14 +148,15 @@
             }
             if (userReq.IsCesante)
             {
-                //registro como cesante
+                /// registro como cesante
                 var cesante = new User()
                 {
                     Name = userReq.Name,
                     LastName = userReq.LastNames,
-                    TypeDocument = userReq.TypeId,
-                    UserName = string.Format("{0}", userReq.NoId), // modificar NoDoc_TypeDoc
-                    NoDocument = userReq.NoId,
+                    CodTypeDocument = userReq.CodTypeDocument.ToString(),
+                    TypeDocument = System.Enum.GetName(typeof(TypeDocument), userReq.CodTypeDocument),
+                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    NoDocument = userReq.NoDocument,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     City = userReq.City,
@@ -167,16 +173,16 @@
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 if (!result) return ResponseFail<RegisterUserResponse>();
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
-
             }
+
             if (userReq.OnlyAzureRegister) return ResponseSuccess(response); 
             var names = userReq.Name.Split(new char[] { ' ' });
             var lastNames = userReq.LastNames.Split(new char[] { ' ' });
             RegisterInLdapRequest regLdap = new RegisterInLdapRequest()
             {
                 genero = userReq.Genre.Equals("Femenino") ? "1" : "0",
-                numeroDocumento = userReq.NoId,
-                tipoDocumento = userReq.TypeId,
+                numeroDocumento = userReq.NoDocument,
+                tipoDocumento = userReq.CodTypeDocument.ToString(),
                 telefono = userReq.Cellphon1,
                 primerNombre = names.FirstOrDefault(),
                 segundoNombre = names.ToList().Count > 2 ? names[1] : string.Empty,
@@ -184,7 +190,7 @@
                 segundoApellido = lastNames.ToList().Count > 2 ? lastNames[1] : string.Empty,
             };
 
-            var resultLdap = _LdapServices.Register(regLdap); // pasar password en servicio
+            var resultLdap = _LdapServices.Register(regLdap); /// pasar password en servicio codificado
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             return ResponseSuccess(response);
@@ -194,7 +200,7 @@
         {
             var errorsMessage = logOurReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
-            var user = _userRep.GetAsync(logOurReq.UserName).Result;
+            var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null) return ResponseFail<AuthenticateUserResponse>();
             user.Authenticated = false;
             var result = _userRep.AddOrUpdate(user).Result;

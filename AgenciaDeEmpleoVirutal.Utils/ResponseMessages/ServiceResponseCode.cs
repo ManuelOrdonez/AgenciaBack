@@ -60,6 +60,10 @@
         /// <summary>
         /// Incorrect Password in Login
         /// </summary>
-        IncorrectPassword = 110
+        IncorrectPassword = 110,
+        /// <summary>
+        /// User is desable
+        /// </summary>
+        UserDesable = 122,
     }
 }

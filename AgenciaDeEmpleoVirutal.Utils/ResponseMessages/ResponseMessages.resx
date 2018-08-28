@@ -151,7 +151,10 @@
     <value>El token y el dispositivo no corresponden.</value>
   </data>
   <data name="UserAlreadyExist" xml:space="preserve">
-    <value>El correo ya esta registrado</value>
+    <value>El usuario ya esta registrado</value>
+  </data>
+  <data name="UserDesable" xml:space="preserve">
+    <value>El Usuario se encuentra deshabilitado</value>
   </data>
   <data name="UserIsNotVip" xml:space="preserve">
     <value>Usuario no autorizado.</value>

@@ -160,11 +160,20 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El correo ya esta registrado.
+        ///   Looks up a localized string similar to El usuario ya esta registrado.
         /// </summary>
         internal static string UserAlreadyExist {
             get {
                 return ResourceManager.GetString("UserAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El Usuario se encuentra deshabilitado.
+        /// </summary>
+        internal static string UserDesable {
+            get {
+                return ResourceManager.GetString("UserDesable", resourceCulture);
             }
         }
         
