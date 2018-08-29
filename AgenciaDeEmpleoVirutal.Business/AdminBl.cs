@@ -90,6 +90,9 @@
                     Name = result.FirstOrDefault().Name,
                     LastName = result.FirstOrDefault().LastName,
                     State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    CodTypeDocument = result.FirstOrDefault().CodTypeDocument,
+                    NoDocument = result.FirstOrDefault().NoDocument,
+                    TypeDocument = result.FirstOrDefault().TypeDocument
                 }
             };
             return ResponseSuccess(funcionary);
@@ -110,7 +113,8 @@
                     Name = f.Name,
                     LastName = f.LastName,
                     TypeDocument = f.TypeDocument,
-                    NoDocument = f.NoDocument
+                    NoDocument = f.NoDocument,
+                    CodTypeDocument = f.CodTypeDocument
                 });
             });
             return ResponseSuccess(funcionariesInfo);

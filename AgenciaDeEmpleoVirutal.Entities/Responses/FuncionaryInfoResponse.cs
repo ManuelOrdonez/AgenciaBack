@@ -18,5 +18,7 @@
         public string TypeDocument { get; set; }
 
         public string NoDocument { get; set; }
+
+        public string CodTypeDocument { get; set; }
     }
 }
