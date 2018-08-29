@@ -44,7 +44,7 @@
                 DeviceId = string.Empty,
                 UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),
                 CodTypeDocument = funcionaryReq.CodTypeDocument.ToString(),
-                TypeDocument = System.Enum.GetName(typeof(TypeDocument), funcionaryReq.CodTypeDocument),
+                TypeDocument = funcionaryReq.TypeDocument,
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString()
             };
@@ -90,6 +90,9 @@
                     Name = result.FirstOrDefault().Name,
                     LastName = result.FirstOrDefault().LastName,
                     State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    CodTypeDocument = result.FirstOrDefault().CodTypeDocument,
+                    NoDocument = result.FirstOrDefault().NoDocument,
+                    TypeDocument = result.FirstOrDefault().TypeDocument
                 }
             };
             return ResponseSuccess(funcionary);
@@ -110,7 +113,8 @@
                     Name = f.Name,
                     LastName = f.LastName,
                     TypeDocument = f.TypeDocument,
-                    NoDocument = f.NoDocument
+                    NoDocument = f.NoDocument,
+                    CodTypeDocument = f.CodTypeDocument
                 });
             });
             return ResponseSuccess(funcionariesInfo);
