@@ -39,7 +39,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AgenciaDeEmpleoVirtual.Utils.Resources.ParametersApp", typeof(ParametersApp).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("AgenciaDeEmpleoVirutal.Utils.Resources.ParametersApp", typeof(ParametersApp).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -77,6 +77,33 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string BodyMail {
             get {
                 return ResourceManager.GetString("BodyMail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ColsubsidioApp.
+        /// </summary>
+        public static string KeyCrypt {
+            get {
+                return ResourceManager.GetString("KeyCrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to insight123resultxyz.
+        /// </summary>
+        public static string Salt {
+            get {
+                return ResourceManager.GetString("Salt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to e84ad660c4721ae0e84ad660c4721ae0.
+        /// </summary>
+        public static string StringArray {
+            get {
+                return ResourceManager.GetString("StringArray", resourceCulture);
             }
         }
     }
