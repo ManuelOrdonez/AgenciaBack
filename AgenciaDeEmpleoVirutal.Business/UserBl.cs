@@ -10,6 +10,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
+    using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System.Collections.Generic;
     using System.Linq;
@@ -67,6 +68,7 @@
             else
             {
                 /// pendiente definir servicio Ldap pass user?
+                //Crypto crypto = new Crypto();
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password); ///codificar pass
                 if (!result.data.FirstOrDefault().status.Equals("success"))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);

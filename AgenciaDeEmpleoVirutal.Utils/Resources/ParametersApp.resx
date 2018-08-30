@@ -147,4 +147,13 @@
    &lt;/tbody&gt;&lt;/table&gt;
 &lt;/body&gt;&lt;/html&gt;</value>
   </data>
+  <data name="KeyCrypt" xml:space="preserve">
+    <value>ColsubsidioApp</value>
+  </data>
+  <data name="Salt" xml:space="preserve">
+    <value>insight123resultxyz</value>
+  </data>
+  <data name="StringArray" xml:space="preserve">
+    <value>e84ad660c4721ae0e84ad660c4721ae0</value>
+  </data>
 </root>
