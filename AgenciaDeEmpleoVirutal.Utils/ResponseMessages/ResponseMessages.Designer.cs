@@ -160,7 +160,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El usuario ya esta registrado.
+        ///   Looks up a localized string similar to Este usuario ya existe en el sistema.
         /// </summary>
         internal static string UserAlreadyExist {
             get {

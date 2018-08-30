@@ -9,6 +9,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
+    using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,9 +18,12 @@
     {
         private IGenericRep<User> _usersRepo;
 
+        private Crypto _crypto;
+
         public AdminBl(IGenericRep<User> usersRepo)
         {
             _usersRepo = usersRepo;
+            _crypto = new Crypto();
         }
 
         public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
@@ -39,7 +43,7 @@
                 NoDocument = funcionaryReq.NoDocument,
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
-                Password = funcionaryReq.Password,
+                Password = _crypto.Encrypt(funcionaryReq.Password),
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
                 UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),

@@ -21,10 +21,16 @@
 
         private ILdapServices _LdapServices;
 
-        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices)
+        private ISendGridExternalService _sendMailService;
+
+        private Crypto _crypto;
+
+        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService)
         {
+            _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
+            _crypto = new Crypto();
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -62,14 +68,13 @@
                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 if (user.State.Equals(UserStates.Disable))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                if (!user.Password.Equals(userReq.Password))
+                if (!user.Password.Equals(_crypto.Encrypt(userReq.Password)))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword); 
             }
             else
             {
                 /// pendiente definir servicio Ldap pass user?
-                //Crypto crypto = new Crypto();
-                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password); ///codificar pass
+                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
                 if (!result.data.FirstOrDefault().status.Equals("success"))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
                 if (user == null)
@@ -79,7 +84,7 @@
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
-            user.Password = userReq.Password;
+            user.Password = _crypto.Encrypt(userReq.Password);
 
             var response = new List<AuthenticateUserResponse>()
             {
@@ -140,11 +145,12 @@
                     Position = string.Empty, 
                     DeviceId = userReq.DeviceId,
                     State = UserStates.Enable.ToString(),
-                    Password = userReq.Password,
+                    Password = _crypto.Encrypt(userReq.Password),
                     UserType = UsersTypes.Empresa.ToString(),
                     Authenticated = string.IsNullOrEmpty(userReq.DeviceId) ? false : true 
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
+                _sendMailService.SendMail(company);
                 if (!result) return ResponseFail<RegisterUserResponse>();
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = company });
             }
@@ -167,12 +173,13 @@
                     DeviceId = userReq.DeviceId,
                     Position = string.Empty,
                     State = UserStates.Enable.ToString(),
-                    Password = userReq.Password,
+                    Password = _crypto.Encrypt(userReq.Password),
                     Email = userReq.Mail,
                     UserType = UsersTypes.Cesante.ToString(),
                     Authenticated = true
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
+                _sendMailService.SendMail(cesante);
                 if (!result) return ResponseFail<RegisterUserResponse>();
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
             }
@@ -191,8 +198,8 @@
                 primerApellido = lastNames.FirstOrDefault(),
                 segundoApellido = lastNames.ToList().Count > 2 ? lastNames[1] : string.Empty,
             };
-
-            var resultLdap = _LdapServices.Register(regLdap); /// pasar password en servicio codificado
+            /// validar
+            var resultLdap = _LdapServices.Register(regLdap);
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             return ResponseSuccess(response);

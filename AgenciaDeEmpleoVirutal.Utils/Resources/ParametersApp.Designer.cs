@@ -61,18 +61,16 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;&lt;head&gt;
-        ///&lt;title&gt;Mail-Token&lt;/title&gt;
-        ///&lt;meta charset=&quot;utf-8&quot;&gt;
-        ///&lt;/head&gt;
-        ///&lt;body&gt;
-        ///   &lt;table style=&quot;width:600px;&quot;&gt;
-        ///       &lt;tbody&gt;
-        ///           &lt;tr&gt;&lt;td&gt;&lt;img src=&quot;https://filesasesorenlineaig.blob.core.windows.net/images/mail-header.jpg&quot;&gt;&lt;/td&gt;&lt;/tr&gt;
-        ///           &lt;tr&gt;
-        ///               &lt;td style=&quot;text-align: center;&quot;&gt;
-        ///                   &lt;p style=&quot; text-align: center; font-family: Helvetica; font-size: 24px; color:#605e5e&quot;&gt;Bienvenido&lt;/p&gt;
-        ///                    &lt;span style=&quot; text-align: center; font-family:  [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
+        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenc [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMail {
             get {
