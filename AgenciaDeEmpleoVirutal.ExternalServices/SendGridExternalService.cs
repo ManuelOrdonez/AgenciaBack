@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.ExternalServices
 {
+    using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using Contracts.ExternalServices;
     using Entities;
     using Entities.Referentials;
@@ -35,14 +36,11 @@
         /// <returns></returns>
         public bool SendMail(User userInfo)
         {
-            /*
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
-            _sendMailOptions.EmailAddressTo = userInfo.EmailAddress;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.BodyMail = ParametersApp.BodyMail;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, _sendMailOptions.EmailAddressTo, userInfo.TokenMail);
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             SendGridHelper.SenMailRelay(_sendMailOptions);
-            return true;
-            */
             return true;
         }
     }
