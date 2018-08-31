@@ -43,7 +43,7 @@
                 NoDocument = funcionaryReq.NoDocument,
                 LastName = funcionaryReq.LastName,
                 Name = funcionaryReq.Name,
-                Password = _crypto.Encrypt(funcionaryReq.Password),
+                Password = funcionaryReq.Password,
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
                 UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),

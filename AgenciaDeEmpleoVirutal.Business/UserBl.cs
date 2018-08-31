@@ -66,9 +66,9 @@
             {                      
                 if (user == null)
                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                if (user.State.Equals(UserStates.Disable))
+                if (user.State.Equals(UserStates.Disable.ToString()))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                if (!user.Password.Equals(_crypto.Encrypt(userReq.Password)))
+                if (!user.Password.Equals(userReq.Password))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword); 
             }
             else
@@ -79,12 +79,12 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                if (user.State.Equals(UserStates.Disable))
+                if (user.State.Equals(UserStates.Disable.ToString()))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
-            user.Password = _crypto.Encrypt(userReq.Password);
+            user.Password = userReq.Password;
 
             var response = new List<AuthenticateUserResponse>()
             {
@@ -145,7 +145,7 @@
                     Position = string.Empty, 
                     DeviceId = userReq.DeviceId,
                     State = UserStates.Enable.ToString(),
-                    Password = _crypto.Encrypt(userReq.Password),
+                    Password = userReq.Password,
                     UserType = UsersTypes.Empresa.ToString(),
                     Authenticated = string.IsNullOrEmpty(userReq.DeviceId) ? false : true 
                 };
@@ -173,7 +173,7 @@
                     DeviceId = userReq.DeviceId,
                     Position = string.Empty,
                     State = UserStates.Enable.ToString(),
-                    Password = _crypto.Encrypt(userReq.Password),
+                    Password = userReq.Password,
                     Email = userReq.Mail,
                     UserType = UsersTypes.Cesante.ToString(),
                     Authenticated = true
