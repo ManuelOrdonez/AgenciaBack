@@ -68,7 +68,7 @@
                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 if (user.State.Equals(UserStates.Disable))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                if (!user.Password.Equals(_crypto.Encrypt(userReq.Password)))
+                if (!user.Password.Equals(userReq.Password))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword); 
             }
             else
@@ -84,7 +84,8 @@
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
-            user.Password = _crypto.Encrypt(userReq.Password);
+            //user.Password = _crypto.Encrypt(userReq.Password);
+            user.Password = userReq.Password;
 
             var response = new List<AuthenticateUserResponse>()
             {

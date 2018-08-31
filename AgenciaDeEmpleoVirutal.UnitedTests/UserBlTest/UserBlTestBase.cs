@@ -22,7 +22,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.UserBlTest
         {
             UserRepMoq = new Mock<IGenericRep<User>>();
             LdapServices = new Mock<ILdapServices>();
-            UserBusiness = new UserBl(UserRepMoq.Object, LdapServices.Object);
+            //UserBusiness = new UserBl(UserRepMoq.Object, LdapServices.Object);
         }
     }
 }
