@@ -62,7 +62,7 @@
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
 
             var user = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            if (userReq.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {                      
                 if (user == null)
                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -122,12 +122,13 @@
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+
             var userExist = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
             if(userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
-                /// registro como empresa
                 var company = new User()
                 {
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
@@ -156,7 +157,6 @@
             }
             if (userReq.IsCesante)
             {
-                /// registro como cesante
                 var cesante = new User()
                 {
                     Name = userReq.Name,
@@ -198,7 +198,7 @@
                 primerApellido = lastNames.FirstOrDefault(),
                 segundoApellido = lastNames.ToList().Count > 2 ? lastNames[1] : string.Empty,
             };
-            /// validar
+            /// pendiente definir servicio Ldap
             var resultLdap = _LdapServices.Register(regLdap);
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);

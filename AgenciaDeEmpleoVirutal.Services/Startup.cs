@@ -106,7 +106,8 @@ namespace AgenciaDeEmpleoVirutal.Services
         {
             services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
             services.AddSingleton<IGenericRep<DepartamenCity>, TableStorageBase<DepartamenCity>>();
-
+            services.AddSingleton<IGenericRep<CallHistoryTrace>, TableStorageBase<CallHistoryTrace>>();
+            services.AddSingleton<IGenericRep<Agent>, TableStorageBase<Agent>>();
         }
 
         private static void DependencyExternalServices(IServiceCollection services)
@@ -121,6 +122,8 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddTransient<IAdminBl, AdminBl>();
             services.AddTransient<IUserBl, UserBl>();
             services.AddTransient<IDepartamentBl, DepartamentBl>();
+            services.AddTransient<IAgentBl, AgentBl>();
+            services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
         }
     }
 }

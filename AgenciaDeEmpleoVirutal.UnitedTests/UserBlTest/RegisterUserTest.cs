@@ -1,10 +1,13 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.UserBlTest
 {
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
-    using AgenciaDeEmpleoVirutal.Utils.Enum;
+    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using System.Collections.Generic;
     using System.Linq;
 
     [TestClass]
@@ -13,58 +16,29 @@
         [TestMethod, TestCategory("UserBl")]
         public void RegisterUserTest_WhenEmailIsNullOrEmpty_ReturnError()
         {
-            //Arrange
-            var request = new RegisterUserRequest()
-            {
-                Name = "pepe",
-                LastNames = "perez",
-                NoDocument = "123456789",
-                Mail = "",
-                Cellphon1 = "1234567",
-                Genre = "M",
-                Password = "12345678",
-                SocialReason = "kajldaskldjaslkdjaslkdjasldkj",
-                ContactName = "pepa",
-                Address = "###########",
-                City = "Bogotá",
-                ///Role = UsersTypes.Cesante.ToString()
-            };
-            var message = request.Validate().ToList();
+            ///Arrange
+            RequestRegisterUser.Mail = "";
+            var message = RequestRegisterUser.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
-            //Action
-            var result = base.UserBusiness.RegisterUser(request);
-            //Assert
+            ///Action
+            var result = base.UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.Count, result.Message.Count);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.IsFalse(result.TransactionMade);
-
         }
 
         [TestMethod, TestCategory("UserBl")]
         public void RegisterUserTest_WhenEmailIsNotValid_ReturnError()
         {
-            //Arrange
-            var request = new RegisterUserRequest()
-            {
-                Name = "pepe",
-                LastNames = "perez",
-                NoDocument = "123456789",
-                Mail = "pepegmail.com",
-                Cellphon1 = "1234567",
-                Genre = "M",
-                Password = "12345678",
-                SocialReason = "kajldaskldjaslkdjaslkdjasldkj",
-                ContactName = "pepa",
-                Address = "###########",
-                City = "Bogotá",
-                ///Role = UsersTypes.Cesante.ToString()
-            };
-            var message = request.Validate().ToList();
+            ///Arrange
+            RequestRegisterUser.Mail = "error.com";
+            var message = RequestRegisterUser.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
-            //Action
-            var result = base.UserBusiness.RegisterUser(request);
-            //Assert
+            ///Action
+            var result = base.UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.Count, result.Message.Count);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
@@ -74,27 +48,13 @@
         [TestMethod, TestCategory("UserBl")]
         public void RegisterUserTest_WhenPasswordIsLessThan8Characteres_ReturnError()
         {
-            //Arrange
-            var request = new RegisterUserRequest()
-            {
-                Name = "pepe",
-                LastNames = "perez",
-                NoDocument = "123456789",
-                Mail = "pepe@gmail.com",
-                Cellphon1 = "1234567",
-                Genre = "M",
-                Password = "1234",
-                SocialReason = "kajldaskldjaslkdjaslkdjasldkj",
-                ContactName = "pepa",
-                Address = "###########",
-                City = "Bogotá",
-                ///Role = UsersTypes.Cesante.ToString()
-            };
-            var message = request.Validate().ToList();
+            ///Arrange
+            RequestRegisterUser.Password = "123456";
+            var message = RequestRegisterUser.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
-            //Action
-            var result = base.UserBusiness.RegisterUser(request);
-            //Assert
+            ///Action
+            var result = base.UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.Count, result.Message.Count);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
@@ -102,29 +62,14 @@
         }
 
         [TestMethod, TestCategory("UserBl")]
-        public void RegisterUserTest_WhenAnyFieldIsNullOrEmpty_ReturnError()
+        public void RegisterUserTest_WhenUerAlreadyExist_ReturnError()
         {
-            //Arrange
-            var request = new RegisterUserRequest()
-            {
-                Name = "pepe",
-                LastNames = "perez",
-                NoDocument = "123456789",
-                Mail = "",
-                Cellphon1 = "1234567",
-                Genre = "M",
-                Password = "",
-                SocialReason = "",
-                ContactName = "",
-                Address = "",
-                City = "Bogotá",
-                //Role = UsersTypes.Cesante.ToString()
-            };
-            var message = request.Validate().ToList();
-            var expected = ResponseBadRequest<RegisterUserResponse>(message);
-            //Action
-            var result = base.UserBusiness.RegisterUser(request);
-            //Assert
+            ///Arrange
+            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+            ///Action
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.Count, result.Message.Count);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
@@ -132,12 +77,108 @@
         }
 
         [TestMethod, TestCategory("UserBl")]
-        public void RegisterUserTest_WhenAllFieldsAreComplete_ReturnSuccess()
+        public void RegisterUserTest_WhenTableStorageFaildAddingCesanteUser_ReturnError()
         {
-            //Arrange
-            //Action
-            //Assert
+            ///Arrange
+            UserInfoMock = null;
+            RequestRegisterUser.IsCesante = true;
+            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
+            var expected = ResponseFail<RegisterUserResponse>();
+            ///Action
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(result.TransactionMade);
         }
 
+        [TestMethod, TestCategory("UserBl")]
+        public void RegisterUserTest_WhenTableStorageFaildAddingCompanyUser_ReturnError()
+        {
+            ///Arrange
+            UserInfoMock = null;
+            RequestRegisterUser.IsCesante = false;
+            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
+            var expected = ResponseFail<RegisterUserResponse>();
+            ///Action
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(result.TransactionMade);
+        }
+
+        [TestMethod, TestCategory("UserBl")]
+        public void RegisterUserTest_WhenUserOnlyRegsiterInTableStrage_ReturnSuccess()
+        {
+            ///Arrange
+            var response = new List<RegisterUserResponse>()
+            {
+                new RegisterUserResponse() { IsRegister = true, State = true, User = UserInfoMock }
+            };
+            UserInfoMock = null;
+            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
+            RequestRegisterUser.OnlyAzureRegister = true;
+            var expected = ResponseSuccess(response);
+            ///Action
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsTrue(result.TransactionMade);
+        }
+
+        [TestMethod, TestCategory("UserBl")]
+        public void RegisterUserTest_WhenRegisterInLdapFail_ReturnError()
+        {
+            ///Arrange
+            var response = new List<RegisterUserResponse>()
+            {
+                new RegisterUserResponse() { IsRegister = true, State = true, User = UserInfoMock }
+            };
+            UserInfoMock = null;
+            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
+            RequestRegisterUser.OnlyAzureRegister = false;
+            LdapResult.data.First().status = "Error";
+            LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterInLdapRequest>())).Returns(LdapResult);
+            var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
+            ///Action
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(result.TransactionMade);
+        }
+
+        [TestMethod, TestCategory("UserBl")]
+        public void RegisterUserTest_WhenRegisterIsSuccess_ReturnSuccess()
+        {
+            ///Arrange
+            var response = new List<RegisterUserResponse>()
+            {
+                new RegisterUserResponse() { IsRegister = true, State = true, User = UserInfoMock }
+            };
+            UserInfoMock = null;
+            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
+            RequestRegisterUser.OnlyAzureRegister = false;
+            LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterInLdapRequest>())).Returns(LdapResult);
+            var expected = ResponseSuccess(response);
+            ///Action
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsTrue(result.TransactionMade);
+        }
     }
 }
