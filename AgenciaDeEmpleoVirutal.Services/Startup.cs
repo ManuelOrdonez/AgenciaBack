@@ -106,6 +106,7 @@ namespace AgenciaDeEmpleoVirutal.Services
         {
             services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
             services.AddSingleton<IGenericRep<DepartamenCity>, TableStorageBase<DepartamenCity>>();
+            services.AddSingleton<IGenericRep<Parameters>, TableStorageBase<Parameters>>();
 
         }
 
@@ -121,6 +122,7 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddTransient<IAdminBl, AdminBl>();
             services.AddTransient<IUserBl, UserBl>();
             services.AddTransient<IDepartamentBl, DepartamentBl>();
+            services.AddTransient<IParametersBI, ParameterBI>();
         }
     }
 }
