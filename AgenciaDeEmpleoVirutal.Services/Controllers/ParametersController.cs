@@ -8,7 +8,7 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     [Produces("application/json")]
-    [Route("api/Parament")]
+    [Route("api/Parameters")]
     [EnableCors("CorsPolitic")]
     public class ParametersController : Controller
     {
