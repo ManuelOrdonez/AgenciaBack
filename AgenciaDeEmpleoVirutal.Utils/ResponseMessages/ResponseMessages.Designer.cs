@@ -169,6 +169,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El usuario se bloqueo debido a que excedió la cantidad de intentos..
+        /// </summary>
+        internal static string UserBlock {
+            get {
+                return ResourceManager.GetString("UserBlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El Usuario se encuentra deshabilitado.
         /// </summary>
         internal static string UserDesable {

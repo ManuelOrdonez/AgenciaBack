@@ -153,6 +153,9 @@
   <data name="UserAlreadyExist" xml:space="preserve">
     <value>Este usuario ya existe en el sistema</value>
   </data>
+  <data name="UserBlock" xml:space="preserve">
+    <value>El usuario se bloqueo debido a que excedió la cantidad de intentos.</value>
+  </data>
   <data name="UserDesable" xml:space="preserve">
     <value>El Usuario se encuentra deshabilitado</value>
   </data>

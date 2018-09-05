@@ -65,5 +65,9 @@
         /// User is desable
         /// </summary>
         UserDesable = 122,
+        /// <summary>
+        /// User is block
+        /// </summary>
+        UserBlock = 123,
     }
 }
