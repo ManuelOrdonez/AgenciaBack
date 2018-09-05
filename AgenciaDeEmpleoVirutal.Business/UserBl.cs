@@ -85,7 +85,7 @@
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
                 if (!result.data.FirstOrDefault().status.Equals("success") && user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
-                else if (user.IntentsLogin > 4)
+                else if (user != null && user.IntentsLogin > 4)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 else if (!result.data.FirstOrDefault().status.Equals("success") && user != null)
                 {
