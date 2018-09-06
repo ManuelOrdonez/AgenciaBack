@@ -6,7 +6,9 @@
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using Microsoft.Extensions.Options;
     using Moq;
     using System.Collections.Generic;
 
@@ -34,12 +36,18 @@
 
         protected LogOutRequest RequestLogOut;
 
+        private IOptions<UserSecretSettings> options;
+
+        protected readonly UserSecretSettings _settings;
+
         public UserBlTestBase()
         {
+            options = Options.Create(new UserSecretSettings());
+            _settings = options.Value;
             UserRepMoq = new Mock<IGenericRep<User>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
-            UserBusiness = new UserBl(UserRepMoq.Object, LdapServicesMoq.Object, SendMailServiceMoq.Object);
+            UserBusiness = new UserBl(UserRepMoq.Object, LdapServicesMoq.Object, SendMailServiceMoq.Object, options);
             LoadEntitiesMock();
         }
 
