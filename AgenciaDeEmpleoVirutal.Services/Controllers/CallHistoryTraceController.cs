@@ -9,7 +9,7 @@
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    [Authorize]
+    ///[Authorize]
     public class CallHistoryTraceController : Controller
     {
         private ICallHistoryTrace _callHistoryBusiness;
