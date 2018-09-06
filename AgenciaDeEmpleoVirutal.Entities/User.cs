@@ -63,5 +63,6 @@
         public string DegreeGeted { get; set; }
 
         public string CodTypeDocument { get; set; }
+        public int IntentsLogin { get; set; }
     }
 }
