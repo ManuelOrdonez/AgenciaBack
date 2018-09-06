@@ -88,7 +88,7 @@ namespace AgenciaDeEmpleoVirutal.Services
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Services Agencia de Empleo Virtual");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Services Agencia Virtual de Empleo");
             });
             app.UseAuthentication();
             app.UseMvc();
@@ -106,6 +106,8 @@ namespace AgenciaDeEmpleoVirutal.Services
         {
             services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
             services.AddSingleton<IGenericRep<DepartamenCity>, TableStorageBase<DepartamenCity>>();
+            services.AddSingleton<IGenericRep<CallHistoryTrace>, TableStorageBase<CallHistoryTrace>>();
+            services.AddSingleton<IGenericRep<Agent>, TableStorageBase<Agent>>();
             services.AddSingleton<IGenericRep<Parameters>, TableStorageBase<Parameters>>();
 
         }
@@ -122,6 +124,8 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddTransient<IAdminBl, AdminBl>();
             services.AddTransient<IUserBl, UserBl>();
             services.AddTransient<IDepartamentBl, DepartamentBl>();
+            services.AddTransient<IAgentBl, AgentBl>();
+            services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
             services.AddTransient<IParametersBI, ParameterBI>();
         }
     }

@@ -65,5 +65,9 @@
         /// User is desable
         /// </summary>
         UserDesable = 122,
+        /// <summary>
+        /// The token and device not found
+        /// </summary>
+        TokenAndDeviceNotFound = 104,
     }
 }

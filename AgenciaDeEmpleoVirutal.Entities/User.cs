@@ -12,7 +12,7 @@
         }
 
         [IgnoreProperty]
-        public string UserName
+        public string UserName /// NoDoc_TypeDocCode
         {
             get => RowKey;
             set => RowKey = value;
@@ -56,8 +56,12 @@
 
         public string ContactName { get; set; }
 
+        public string PositionContact { get; set; }
+
+        public string EducationLevel { get; set; }
+
+        public string DegreeGeted { get; set; }
+
         public string CodTypeDocument { get; set; }
-
-
     }
 }

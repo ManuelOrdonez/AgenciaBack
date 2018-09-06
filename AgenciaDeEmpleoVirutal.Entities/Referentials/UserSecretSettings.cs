@@ -5,6 +5,5 @@
         public string TableStorage { get; set; }
         public string SendMailApiKey { get; set; }
         public string OpenTokApiKey { get; set; }
-        public string StaticTokenMail { get; set; }
     }
 }

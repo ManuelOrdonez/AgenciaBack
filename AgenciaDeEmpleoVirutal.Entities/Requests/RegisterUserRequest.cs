@@ -47,9 +47,15 @@
 
         public string ContactName { get; set; }
 
+        public string PositionContact { get; set; }
+
         public string Address { get; set; }
 
         public string DeviceId { get; set; }
+
+        public string EducationLevel { get; set; }
+
+        public string DegreeGeted { get; set; }
 
         public bool OnlyAzureRegister { get; set; }
 
