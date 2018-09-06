@@ -1,8 +1,8 @@
-﻿namespace AgenciaDeEmpleoVirutal.Utils
+﻿namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
+    using Microsoft.IdentityModel.Tokens;
     using System;
     using System.IdentityModel.Tokens.Jwt;
-    using Microsoft.IdentityModel.Tokens;
     using System.Security.Claims;
     using System.Text;
 
@@ -17,7 +17,7 @@
         {
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, username),
+                new Claim(ClaimTypes.NameIdentifier, username),
                 new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
                 new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddMinutes(5)).ToUnixTimeSeconds().ToString())
             };

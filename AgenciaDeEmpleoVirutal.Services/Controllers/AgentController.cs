@@ -4,13 +4,14 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    // [Authorize]
+    ///[Authorize]
     public class AgentController : Controller
     {
         private readonly IAgentBl _agentBusiness;

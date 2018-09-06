@@ -12,6 +12,8 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.Extensions.Options;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -25,11 +27,14 @@
 
         private Crypto _crypto;
 
-        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService)
+        private readonly UserSecretSettings _settings;
+
+        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService, IOptions<UserSecretSettings> options)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
+            _settings = options.Value;
             _crypto = new Crypto();
         }
 
@@ -85,17 +90,21 @@
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
             user.Password = userReq.Password;
+            var resultUptade = _userRep.AddOrUpdate(user).Result;
+            if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
 
+            user.Password = string.Empty;
             var response = new List<AuthenticateUserResponse>()
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = user
+                    UserInfo = user,
+                    AccessToken = ManagerToken.GenerateToken(user.UserName),
+                    Expiration = DateTime.Now.AddMinutes(15),
+                    TokenType = "Bearer",
+                    OpenTokApiKey = _settings.OpenTokApiKey,
                 }
             };
-            var resultUptade = _userRep.AddOrUpdate(user).Result;
-            if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
-
             return ResponseSuccess(response);
         }
 
@@ -130,13 +139,14 @@
             if (!userReq.IsCesante)
             {
                 var company = new User()
-                {
+                {                                       
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)), 
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = userReq.ContactName,
+                    PositionContact = userReq.PositionContact,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoDocument,
@@ -161,6 +171,8 @@
                 {
                     Name = userReq.Name,
                     LastName = userReq.LastNames,
+                    DegreeGeted = userReq.DegreeGeted,
+                    EducationLevel = userReq.EducationLevel,
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
@@ -187,6 +199,8 @@
             if (userReq.OnlyAzureRegister) return ResponseSuccess(response); 
             var names = userReq.Name.Split(new char[] { ' ' });
             var lastNames = userReq.LastNames.Split(new char[] { ' ' });
+
+            /// pendiente definir servicio Ldap
             RegisterInLdapRequest regLdap = new RegisterInLdapRequest()
             {
                 genero = userReq.Genre.Equals("Femenino") ? "1" : "0",

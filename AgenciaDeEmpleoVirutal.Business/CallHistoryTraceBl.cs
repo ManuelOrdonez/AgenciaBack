@@ -79,18 +79,18 @@
                 GetDefaultCallHistoryTrace(callRequest) : existsCall;
 
             /// ver Row Key de agentes
-            var agent = _agentRepository.GetAsync(callRequest.EmailUserAddress).Result;
+            var agent = _agentRepository.GetAsync(callRequest.UserName).Result;
 
             switch (stateInput)
             {
                 case CallStates.Begun:
                     callInfo.DateCall = DateTime.Now;
-                    callInfo.UserCall = callRequest.EmailUserAddress;
+                    callInfo.UserCall = callRequest.UserName;
                     callInfo.State = stateInput.ToString();
                     break;
                 case CallStates.Answered:
                     callInfo.DateAnswerCall = DateTime.Now;
-                    callInfo.UserAnswerCall = callRequest.EmailUserAddress;
+                    callInfo.UserAnswerCall = callRequest.UserName;
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     callInfo.State = stateInput.ToString();
                     if (agent != null)

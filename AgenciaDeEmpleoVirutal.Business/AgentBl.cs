@@ -19,19 +19,13 @@
 
         private IGenericRep<Agent> _agentRepository;
 
-        // private IGenericRep<AgentByCompany> _AgentByCompRepository;
-
-        // private IGenericRep<UserVip> _userVip;
-
         private IOpenTokExternalService _openTokExternalService;
 
-        public AgentBl(IGenericRep<Agent> AgentRepository, IGenericRep<User> userRepository,/*IGenericRep<AgentByCompany> AgentByCompRepository, IGenericRep<UserVip> userVip,*/ IOpenTokExternalService openTokService)
+        public AgentBl(IGenericRep<Agent> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
-            // _AgentByCompRepository = AgentByCompRepository;
             _openTokExternalService = openTokService;
-            // _userVip = userVip;
         }
 
         public Response<CreateAgentResponse> Create(CreateAgentRequest agentRequest)
@@ -46,23 +40,13 @@
                 // Timestamp = DateTime.UtcNow,
                 Name = agentRequest.Name,
                 LastName = agentRequest.LastName,
-                // CellPhone = agentRequest.CellPhone,
-                InternalEmail = agentRequest.InternalEMail
+                Email = agentRequest.Email,
+                Username = agentRequest.UserName
             };
             AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
 
             if (string.IsNullOrEmpty(AgentInfo.OpenTokSessionId)) return ResponseFail<CreateAgentResponse>();
             if (!_agentRepository.AddOrUpdate(AgentInfo).Result) return ResponseFail<CreateAgentResponse>();
-
-            /*
-            var companiesInfo = new AgentByCompany { IDAdvisor = agentRequest.InternalEMail };
-            foreach (var item in agentRequest.Companies)
-            {
-                companiesInfo.IDCompany = item.Key;
-                companiesInfo.CompanyEmail = item.Value;
-
-                if (!_AgentByCompRepository.AddOrUpdate(companiesInfo).Result) return ResponseFail<CreateAgentResponse>();
-            }*/
 
             return ResponseSuccess(new List<CreateAgentResponse>());
         }
@@ -76,19 +60,7 @@
             if (userInfo == null)
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
 
-            // var advisorsByCompany = _AgentByCompRepository.GetByPatitionKeyAsync(userInfo.FirstOrDefault().Company).Result;
-
-            // if (advisorsByCompany.Count.Equals(0))
-                // return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.CompanyNotFount);
-
             var advisors = _agentRepository.GetList().Result;
-            /*
-            advisorsByCompany.ForEach(i => {
-                var data = _AgentRepository.GetSomeAsync("RowKey", i.RowKey).Result;
-                if (data != null && data.Count > 0)
-                    advisors.Add(data.FirstOrDefault());
-            });
-            */
             if (advisors.Count.Equals(0))
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
             var Agent = advisors.Where(i => i.Available).OrderBy(x => x.CountCallAttended).FirstOrDefault();

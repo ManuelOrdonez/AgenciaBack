@@ -13,9 +13,9 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "OpenTokAccessToken_Required")]
         public string OpenTokAccessToken { get; set; }
 
-        // veriicar propiedad, email o username noDoc_codDoc
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "EmailAddress_Required")]
-        public string EmailUserAddress { get; set; }
+        // username noDoc_codDoc
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "User_Required")]
+        public string UserName { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "StateCall_Required")]
         [Range(1, 1000, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "StateCall_Valid")]

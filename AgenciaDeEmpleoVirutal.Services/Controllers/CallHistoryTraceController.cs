@@ -2,13 +2,14 @@
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    // [Authorize]
+    [Authorize]
     public class CallHistoryTraceController : Controller
     {
         private ICallHistoryTrace _callHistoryBusiness;

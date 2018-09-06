@@ -20,7 +20,7 @@
         /// The e mail address.
         /// </value>
         [IgnoreProperty]
-        public string InternalEmail { get => RowKey; set => RowKey = value; } // verificar propiedad
+        public string Username { get => RowKey; set => RowKey = value; } // verificar propiedad
 
         /// <summary>
         /// Gets or sets the Open Tok Session ID.
@@ -40,7 +40,7 @@
         /// <summary>
         /// Gets or sets Cell Phone.
         /// </summary>
-        // public string CellPhone { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// Gets or sets the Count Call Attended.
