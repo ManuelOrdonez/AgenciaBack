@@ -31,7 +31,6 @@
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
 
-            /// funcoinaries.Any(f => f.UserName == string.Format("{0}_{1}", funcionaryReq.NoDocument,funcionaryReq.CodTypeDocument))
             var funcoinaries =_usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
             if (funcoinaries != null)
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
@@ -75,7 +74,7 @@
             modFuncionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
 
             var result = _usersRepo.AddOrUpdate(modFuncionary).Result;
-            if (!result) ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            if (!result) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
         }       
 

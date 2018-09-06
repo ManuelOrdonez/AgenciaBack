@@ -14,11 +14,11 @@
         [TestMethod,TestCategory("DepartmentBl")]
         public void GetCitiesOfDepartment_WhenDepartmentIsNullOrEmpty_ReturnError()
         {
-            //Arrange
+            ///Arrange
             var expected = ResponseFail<DepartamenCityResponse>(ServiceResponseCode.BadRequest);
-            //Action
+            ///Action
             var result = DepBussines.GetCitiesOfDepartment(string.Empty);
-            //Assert
+            ///Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
@@ -28,12 +28,12 @@
         [TestMethod,TestCategory("DepartmentBl")]
         public void GetCitiesOfDepartment_WhenTableStoragerFaild_ReturnError()
         {
-            //Arrange
+            ///Arrange
             var expected = ResponseFail<DepartamenCityResponse>();
             _depCityRep.Setup(rep => rep.GetByPatitionKeyAsync(It.IsAny<string>())).Returns(Task.FromResult(new List<DepartamenCity>()));
-            //Action
+            ///Action
             var result = DepBussines.GetCitiesOfDepartment("Antioquia");
-            //Assert
+            ///Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
@@ -43,6 +43,7 @@
         [TestMethod,TestCategory("DepartmentBl")]
         public void GetCitiesOfDepartment_WhenDepartamentIsnNotNull_ReturnSuccess()
         {
+            ///Arrange
             var response = new List<DepartamenCityResponse>()
             {
                 new DepartamenCityResponse()
@@ -82,12 +83,11 @@
                     CodigoDepartamento = "y"
                 },
             };
-            //Arrange
             var expected = ResponseSuccess();
             _depCityRep.Setup(rep => rep.GetByPatitionKeyAsync(It.IsAny<string>())).Returns(Task.FromResult(resultTableStorage));
-            //Action
+            ///Action
             var result = DepBussines.GetCitiesOfDepartment("Antioquia");
-            //Assert
+            ///Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsTrue(result.TransactionMade);

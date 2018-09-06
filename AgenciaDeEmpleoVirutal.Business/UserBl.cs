@@ -12,6 +12,8 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.Extensions.Options;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -25,11 +27,14 @@
 
         private Crypto _crypto;
 
-        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService)
+        private readonly UserSecretSettings _settings;
+
+        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService, IOptions<UserSecretSettings> options)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
+            _settings = options.Value;
             _crypto = new Crypto();
         }
 
@@ -62,7 +67,7 @@
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
 
             var user = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            if (userReq.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {                      
                 if (user == null)
                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -105,17 +110,21 @@
             user.DeviceId = userReq.DeviceId;
             user.Password = userReq.Password;
             user.IntentsLogin = 0;
+            var resultUptade = _userRep.AddOrUpdate(user).Result;
+            if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
 
+            user.Password = string.Empty;
             var response = new List<AuthenticateUserResponse>()
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = user
+                    UserInfo = user,
+                    AccessToken = ManagerToken.GenerateToken(user.UserName),
+                    Expiration = DateTime.Now.AddMinutes(15),
+                    TokenType = "Bearer",
+                    OpenTokApiKey = _settings.OpenTokApiKey,
                 }
             };
-            var resultUptade = _userRep.AddOrUpdate(user).Result;
-            if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
-
             return ResponseSuccess(response);
         }
 
@@ -142,20 +151,22 @@
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+
             var userExist = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
             if(userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
-                /// registro como empresa
                 var company = new User()
-                {
+                {                                       
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)), 
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = userReq.ContactName,
+                    PositionContact = userReq.PositionContact,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoDocument,
@@ -177,11 +188,12 @@
             }
             if (userReq.IsCesante)
             {
-                /// registro como cesante
                 var cesante = new User()
                 {
                     Name = userReq.Name,
                     LastName = userReq.LastNames,
+                    DegreeGeted = userReq.DegreeGeted,
+                    EducationLevel = userReq.EducationLevel,
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
@@ -209,6 +221,8 @@
             if (userReq.OnlyAzureRegister) return ResponseSuccess(response); 
             var names = userReq.Name.Split(new char[] { ' ' });
             var lastNames = userReq.LastNames.Split(new char[] { ' ' });
+
+            /// pendiente definir servicio Ldap
             RegisterInLdapRequest regLdap = new RegisterInLdapRequest()
             {
                 genero = userReq.Genre.Equals("Femenino") ? "1" : "0",
@@ -220,7 +234,7 @@
                 primerApellido = lastNames.FirstOrDefault(),
                 segundoApellido = lastNames.ToList().Count > 2 ? lastNames[1] : string.Empty,
             };
-            /// validar
+            /// pendiente definir servicio Ldap
             var resultLdap = _LdapServices.Register(regLdap);
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);

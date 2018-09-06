@@ -175,12 +175,24 @@
     <value>El estado del funcionario es obligatorio</value>
   </data>
   <data name="User_Required" xml:space="preserve">
-    <value>El campo usuario es obligatorio</value>
+    <value>El usuario es obligatorio y corresponde al noDoc_CodTypeDoc</value>
   </data>
   <data name="UserType_Required" xml:space="preserve">
     <value>Debe definir el tipo de usuario a registrar</value>
   </data>
   <data name="Dept_Required" xml:space="preserve">
     <value>El campo departamento es obligatorio</value>
+  </data>
+  <data name="OpenTokSessionId_Required" xml:space="preserve">
+    <value>El Session Id es requerido</value>
+  </data>
+  <data name="StateCall_Required" xml:space="preserve">
+    <value>El estado de la llamada es requerido</value>
+  </data>
+  <data name="OpenTokAccessToken_Required" xml:space="preserve">
+    <value>El token de acceso al la llamada es obligatorio</value>
+  </data>
+  <data name="StateCall_Valid" xml:space="preserve">
+    <value>El estado de la llamada no es valido</value>
   </data>
 </root>

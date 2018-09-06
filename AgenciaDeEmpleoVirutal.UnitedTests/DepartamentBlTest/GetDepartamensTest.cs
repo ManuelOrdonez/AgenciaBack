@@ -14,12 +14,12 @@
         [TestMethod,TestCategory("DepartamentBl")]
         public void GetDepartamensTest_WhenTableStorageFaild_RetunError()
         {
-            //Arrange
+            ///Arrange
             var expected = ResponseFail<DepartamenCityResponse>();
             _depCityRep.Setup(rep => rep.GetAll()).Returns(Task.FromResult(new List<DepartamenCity>()));
-            //Action
+            ///Action
             var result = DepBussines.GetDepartamens();
-            //Assert
+            ///Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
@@ -29,6 +29,7 @@
         [TestMethod,TestCategory("DepartmentBl")]
         public void GetDepartamensTest_WhenTableStorageResponseGod_RetunSuccess()
         {
+            ///Arrange
             var response = new List<DepartamenCityResponse>()
             {
                 new DepartamenCityResponse()
@@ -76,10 +77,10 @@
                 },
             };
             var expected = ResponseSuccess(response);
-            _depCityRep.Setup(rep => rep.GetAll()).Returns(Task.FromResult(responseTableStorage));
-            //Action
+            _depCityRep.Setup(rep => rep.GetList()).Returns(Task.FromResult(responseTableStorage));
+            ///Action
             var result = DepBussines.GetDepartamens();
-            //Assert
+            ///Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsTrue(result.TransactionMade);

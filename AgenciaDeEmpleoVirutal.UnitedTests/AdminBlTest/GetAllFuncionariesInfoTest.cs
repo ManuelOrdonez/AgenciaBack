@@ -1,10 +1,59 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.AdminBlTest
 {
-    using System;
+    using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
     using System.Collections.Generic;
-    using System.Text;
 
-    public class GetAllFuncionariesInfoTest
+    [TestClass]
+    public class GetAllFuncionariesInfoTest : AdminBlTestBase
     {
+        [TestMethod, TestCategory("AdminBl")]
+        public void GetAllFuncionariesInfoTest_WhenTableStorageFaild_ReturnError()
+        {
+            ///Arrange
+            FuncionaryRepMock.Setup(f => f.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(new List<User>());
+            var expected = ResponseFail<FuncionaryInfoResponse>();
+            ///Action
+            var result = AdminBusinessLogic.GetAllFuncionaries();
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
+        }
+
+        [TestMethod, TestCategory("AdminBl")]
+        public void GetAllFuncionariesInfoTest_WhenTableStorageResponseSuccess_ReturnError()
+        {
+            ///Arrange
+            MockInfoUser.UserType = "Funcionario";
+            var responseTS = new List<User>() { MockInfoUser, MockInfoUser, MockInfoUser };
+            FuncionaryRepMock.Setup(f => f.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(responseTS);
+            var funcionariesInfo = new List<FuncionaryInfoResponse>();
+            responseTS.ForEach(f => {
+                funcionariesInfo.Add(new FuncionaryInfoResponse()
+                {
+                    Position = f.Position,
+                    Role = f.Role,
+                    Mail = f.Email,
+                    State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    Name = f.Name,
+                    LastName = f.LastName,
+                    TypeDocument = f.TypeDocument,
+                    NoDocument = f.NoDocument,
+                    CodTypeDocument = f.CodTypeDocument
+                });
+            });
+            var expected = ResponseSuccess(funcionariesInfo);
+            ///Action
+            var result = AdminBusinessLogic.GetAllFuncionaries();
+            ///Assert
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.AreEqual(expected.Data.Count, result.Data.Count);
+            Assert.IsTrue(expected.TransactionMade);
+        }
     }
 }
