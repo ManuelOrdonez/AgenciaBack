@@ -7,7 +7,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.DepartamentBlTest
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using Moq;
-    
+
     public class DepartamentBlTestBase : BusinessBase<DepartamenCityResponse>
     {
         protected Mock<IGenericRep<DepartamenCity>> _depCityRep;
