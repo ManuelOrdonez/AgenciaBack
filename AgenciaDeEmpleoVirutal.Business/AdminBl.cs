@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
@@ -18,12 +19,15 @@
     {
         private IGenericRep<User> _usersRepo;
 
+        private IOpenTokExternalService _openTokExternalService;
+
         private Crypto _crypto;
 
-        public AdminBl(IGenericRep<User> usersRepo)
+        public AdminBl(IGenericRep<User> usersRepo, IOpenTokExternalService openTokService)
         {
             _usersRepo = usersRepo;
             _crypto = new Crypto();
+            _openTokExternalService = openTokService;
         }
 
         public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
@@ -49,7 +53,10 @@
                 CodTypeDocument = funcionaryReq.CodTypeDocument.ToString(),
                 TypeDocument = funcionaryReq.TypeDocument,
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
-                UserType = UsersTypes.Funcionario.ToString()
+                UserType = UsersTypes.Funcionario.ToString(),
+                OpenTokSessionId = _openTokExternalService.CreateSession(),
+                CountCallAttended = 0,
+                Available = true
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
