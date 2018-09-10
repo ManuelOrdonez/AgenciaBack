@@ -63,5 +63,11 @@
         public string DegreeGeted { get; set; }
 
         public string CodTypeDocument { get; set; }
+
+        public string OpenTokSessionId { get; set; }
+
+        public int CountCallAttended { get; set; }
+
+        public bool Available { get; set; }
     }
 }

@@ -17,11 +17,11 @@
     {
         private IGenericRep<User> _userRepository;
 
-        private IGenericRep<Agent> _agentRepository;
+        private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
 
-        public AgentBl(IGenericRep<Agent> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService)
+        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
@@ -34,14 +34,13 @@
             if (errorMessages.Count > 0) return ResponseBadRequest<CreateAgentResponse>(errorMessages);
 
             // verificar Row Key de agente - username noDoc_coDoc
-            var AgentInfo = new Agent
+            var AgentInfo = new User
             {
-                Domain = "colsubsidio",
                 // Timestamp = DateTime.UtcNow,
                 Name = agentRequest.Name,
                 LastName = agentRequest.LastName,
                 Email = agentRequest.Email,
-                Username = agentRequest.UserName
+                UserName = agentRequest.UserName
             };
             AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
 

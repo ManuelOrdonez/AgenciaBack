@@ -25,17 +25,21 @@
 
         private ISendGridExternalService _sendMailService;
 
+        private IOpenTokExternalService _openTokService;
+
         private Crypto _crypto;
 
         private readonly UserSecretSettings _settings;
 
-        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService, IOptions<UserSecretSettings> options)
+        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService, 
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options.Value;
             _crypto = new Crypto();
+            _openTokService = _openTokExternalService;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -93,7 +97,11 @@
             var resultUptade = _userRep.AddOrUpdate(user).Result;
             if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
 
-            user.Password = string.Empty;
+            var token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
+            if (string.IsNullOrEmpty(token))
+                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+
+
             var response = new List<AuthenticateUserResponse>()
             {
                 new AuthenticateUserResponse()
@@ -103,6 +111,7 @@
                     Expiration = DateTime.Now.AddMinutes(15),
                     TokenType = "Bearer",
                     OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokAccessToken = token,
                 }
             };
             return ResponseSuccess(response);

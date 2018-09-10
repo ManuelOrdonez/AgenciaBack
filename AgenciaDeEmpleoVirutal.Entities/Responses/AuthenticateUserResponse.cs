@@ -13,6 +13,9 @@
         public string AccessToken { get; set; }
 
         public string OpenTokApiKey { get; set; }
-        
+
+        public string OpenTokAccessToken { get; set; }
+
+
     }
 }
