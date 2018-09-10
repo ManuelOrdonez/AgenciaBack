@@ -69,5 +69,9 @@
         /// The token and device not found
         /// </summary>
         TokenAndDeviceNotFound = 104,
+        /// <summary>
+        /// User is block
+        /// </summary>
+        UserBlock = 123,
     }
 }

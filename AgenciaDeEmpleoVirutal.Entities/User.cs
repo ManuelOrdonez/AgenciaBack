@@ -69,5 +69,6 @@
         public int CountCallAttended { get; set; }
 
         public bool Available { get; set; }
+        public int IntentsLogin { get; set; }
     }
 }

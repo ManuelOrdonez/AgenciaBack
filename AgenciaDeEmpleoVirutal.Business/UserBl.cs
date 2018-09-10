@@ -75,17 +75,36 @@
             {                      
                 if (user == null)
                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                if (user.State.Equals(UserStates.Disable.ToString()))
+                if (user.State.Equals(UserStates.Disable.ToString()) && user.IntentsLogin == 5)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
+                if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 if (!user.Password.Equals(userReq.Password))
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword); 
+                {
+                    user.IntentsLogin = user.IntentsLogin + 1;
+                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                    var resultUpt = _userRep.AddOrUpdate(user).Result;
+                    if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
+                }
             }
             else
             {
                 /// pendiente definir servicio Ldap pass user?
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
-                if (!result.data.FirstOrDefault().status.Equals("success"))
+                if (!result.data.FirstOrDefault().status.Equals("success") && user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+                else if (user != null && user.IntentsLogin > 4)
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
+                else if (!result.data.FirstOrDefault().status.Equals("success") && user != null)
+                {
+                    user.IntentsLogin = user.IntentsLogin + 1;
+                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                    var resultUpt = _userRep.AddOrUpdate(user).Result;
+                    if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
+                }
+
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 if (user.State.Equals(UserStates.Disable.ToString()))
@@ -94,6 +113,7 @@
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
             user.Password = userReq.Password;
+            user.IntentsLogin = 0;
             var resultUptade = _userRep.AddOrUpdate(user).Result;
             if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
 
@@ -167,7 +187,8 @@
                     State = UserStates.Enable.ToString(),
                     Password = userReq.Password,
                     UserType = UsersTypes.Empresa.ToString(),
-                    Authenticated = string.IsNullOrEmpty(userReq.DeviceId) ? false : true 
+                    Authenticated = string.IsNullOrEmpty(userReq.DeviceId) ? false : true,
+                    IntentsLogin = 0
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 _sendMailService.SendMail(company);
@@ -197,7 +218,8 @@
                     Password = userReq.Password,
                     Email = userReq.Mail,
                     UserType = UsersTypes.Cesante.ToString(),
-                    Authenticated = true
+                    Authenticated = true,
+                    IntentsLogin = 0
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 _sendMailService.SendMail(cesante);
