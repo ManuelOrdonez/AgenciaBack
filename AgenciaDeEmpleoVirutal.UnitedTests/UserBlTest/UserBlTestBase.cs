@@ -20,6 +20,8 @@
 
         protected Mock<ISendGridExternalService> SendMailServiceMoq;
 
+        protected Mock<IOpenTokExternalService> _openTokExternalService;
+
         protected UserBl UserBusiness;
 
         protected AuthenticateUserRequest RequestUserAuthenticate;
@@ -47,7 +49,8 @@
             UserRepMoq = new Mock<IGenericRep<User>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
-            UserBusiness = new UserBl(UserRepMoq.Object, LdapServicesMoq.Object, SendMailServiceMoq.Object, options);
+            UserBusiness = new UserBl(UserRepMoq.Object,
+                LdapServicesMoq.Object, SendMailServiceMoq.Object, options, _openTokExternalService.Object);
             LoadEntitiesMock();
         }
 

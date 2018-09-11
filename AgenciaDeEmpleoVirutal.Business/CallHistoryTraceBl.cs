@@ -17,10 +17,10 @@
 
         private readonly IGenericRep<CallHistoryTrace> _callHistoryRepository;
 
-        private readonly IGenericRep<Agent> _agentRepository;
+        private readonly IGenericRep<User> _agentRepository;
 
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
-            IGenericRep<Agent> agentRepository)
+            IGenericRep<User> agentRepository)
         {
             _callHistoryRepository = callHistoryRepository;
             _agentRepository = agentRepository;
@@ -87,6 +87,7 @@
                     callInfo.DateCall = DateTime.Now;
                     callInfo.UserCall = callRequest.UserName;
                     callInfo.State = stateInput.ToString();
+                    callInfo.CallType = callRequest.CallType;
                     break;
                 case CallStates.Answered:
                     callInfo.DateAnswerCall = DateTime.Now;
@@ -96,7 +97,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        agent.CountCallAttended = agent.CountCallAttended++;
+                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString())+1;
                         _agentRepository.AddOrUpdate(agent);
                     }
                     break;

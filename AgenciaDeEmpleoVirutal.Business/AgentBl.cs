@@ -9,6 +9,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System.Collections.Generic;
     using System.Linq;
@@ -59,7 +60,7 @@
             if (userInfo == null)
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
 
-            var advisors = _agentRepository.GetList().Result;
+            var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
             if (advisors.Count.Equals(0))
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
             var Agent = advisors.Where(i => i.Available).OrderBy(x => x.CountCallAttended).FirstOrDefault();

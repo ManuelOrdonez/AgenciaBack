@@ -7,7 +7,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
-    [Route("api/Agent")]
+    [Route("api/CallHistoryTrace")]
     [EnableCors("CorsPolitic")]
     ///[Authorize]
     public class CallHistoryTraceController : Controller
@@ -26,9 +26,9 @@
             return Ok(_callHistoryBusiness.SetCallTrace(call));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetCallInfo")]
-        public IActionResult GetCallInfo(GetCallRequest request)
+        public IActionResult GetCallInfo([FromBody] GetCallRequest request)
         {
             return Ok(_callHistoryBusiness.GetCallInfo(request));
         }

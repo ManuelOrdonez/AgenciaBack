@@ -24,5 +24,7 @@
         public string State { get; set; }
 
         public string Trace { get; set; }
+
+        public string CallType { get; set; }
     }
 }

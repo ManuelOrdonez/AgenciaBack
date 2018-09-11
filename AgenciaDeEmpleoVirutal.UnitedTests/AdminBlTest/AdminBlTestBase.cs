@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Business;
     using AgenciaDeEmpleoVirutal.Business.Referentials;
+    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
@@ -10,7 +11,8 @@
     public class AdminBlTestBase : BusinessBase<User>
     {
         protected Mock<IGenericRep<User>> FuncionaryRepMock;
-
+        
+        protected Mock<IOpenTokExternalService> _openTokExternalService;
         protected AdminBl AdminBusinessLogic;
 
         protected CreateFuncionaryRequest FuncionatyGodrequest;
@@ -24,7 +26,7 @@
         public AdminBlTestBase()
         {
             FuncionaryRepMock = new Mock<IGenericRep<User>>();
-            AdminBusinessLogic = new AdminBl(FuncionaryRepMock.Object);
+            AdminBusinessLogic = new AdminBl(FuncionaryRepMock.Object, _openTokExternalService.Object);
             LoadMoqs();
         }
 

@@ -9,7 +9,6 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "OpenTokSessionId_Required")]
         public string OpenTokSessionId { get; set; }
 
-
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "OpenTokAccessToken_Required")]
         public string OpenTokAccessToken { get; set; }
 
@@ -22,5 +21,6 @@
         public int State { get; set; }
 
         public string Trace { get; set; }
+        public string CallType { get; set; }
     }
 }
