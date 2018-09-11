@@ -54,11 +54,27 @@
             var userAuthenticate = result.Where(r => r.Authenticated == true);
             if (!userAuthenticate.Any())
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
+            var user = userAuthenticate.FirstOrDefault();
+
+            var token = string.Empty;
+            if (user.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            {
+                token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
+                if (string.IsNullOrEmpty(token))
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+            }
+
+
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = userAuthenticate.FirstOrDefault()
+                    UserInfo = user,
+                    AccessToken = ManagerToken.GenerateToken(user.UserName),
+                    Expiration = DateTime.Now.AddMinutes(15),
+                    TokenType = "Bearer",
+                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokAccessToken = token,
                 }
             };
             return ResponseSuccess(response);
@@ -69,7 +85,7 @@
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
-
+            var token = string.Empty;
             var user = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {                      
@@ -87,6 +103,9 @@
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
                 }
+                token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
+                if (string.IsNullOrEmpty(token))
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
             }
             else
             {
@@ -117,9 +136,7 @@
             var resultUptade = _userRep.AddOrUpdate(user).Result;
             if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
 
-            var token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
-            if (string.IsNullOrEmpty(token))
-                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+            
 
 
             var response = new List<AuthenticateUserResponse>()
