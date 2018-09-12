@@ -26,5 +26,7 @@
         public string Trace { get; set; }
 
         public string CallType { get; set; }
+
+        public int Score { get; set; }
     }
 }

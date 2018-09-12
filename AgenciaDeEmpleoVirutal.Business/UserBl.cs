@@ -277,5 +277,12 @@
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
+
+        public Response<User> GetUserInfo(string UserName)
+        {
+            if (string.IsNullOrEmpty(UserName))  return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            var user = _userRep.GetAsync(UserName).Result;
+            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+        }
     }
 }

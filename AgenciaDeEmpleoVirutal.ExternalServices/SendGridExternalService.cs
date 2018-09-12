@@ -38,10 +38,50 @@
         {
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
-            _sendMailOptions.BodyMail = ParametersApp.BodyMail;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+       
+                _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
+                _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
+                _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+
+            return SendMail();
+        }
+        public bool SendMail(User userInfo,string urlReset)
+        {
+            _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailPass;
+            _sendMailOptions.SubJect = ParametersApp.SubJectPass;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName, urlReset);
+             return SendMail();
+        }
+        private bool SendMail()
+        {
             SendGridHelper.SenMailRelay(_sendMailOptions);
             return true;
         }
+        //public bool SendMail(User userInfo, bool sendWelcome = true)
+        //{
+        //    _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+        //    _sendMailOptions.EmailAddressTo = userInfo.Email;
+        //    _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+        //    if (sendWelcome)
+        //    {
+        //        _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
+        //        _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
+        //        _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+        //    }
+        //    else
+        //    {
+        //        _sendMailOptions.SubJect = ParametersApp.SubJectPass;
+        //        _sendMailOptions.BodyMail = ParametersApp.BodyMailPass;
+        //        _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+        //    }
+
+
+        //    SendGridHelper.SenMailRelay(_sendMailOptions);
+        //    return true;
+        //}
     }
 }

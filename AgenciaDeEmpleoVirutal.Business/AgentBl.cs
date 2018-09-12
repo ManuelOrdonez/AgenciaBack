@@ -71,6 +71,8 @@
             if (string.IsNullOrEmpty(response.IDToken))
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
             response.IDSession = Agent.OpenTokSessionId;
+            response.AgentName = Agent.Name;
+            response.AgentLatName = Agent.LastName;
             return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
         }       
 

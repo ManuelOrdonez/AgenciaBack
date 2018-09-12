@@ -16,6 +16,9 @@ namespace AgenciaDeEmpleoVirutal.Entities
             get => RowKey;
             set => RowKey = value;
         }
+
         public string  Value { get; set; }
+
+        public string Description { get; set; }
     }
 }

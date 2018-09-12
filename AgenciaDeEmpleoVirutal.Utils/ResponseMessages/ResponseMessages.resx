@@ -157,7 +157,7 @@
     <value>El token y el dispositivo no corresponden.</value>
   </data>
   <data name="UserAlreadyExist" xml:space="preserve">
-    <value>Este usuario ya existe en el sistema</value>
+    <value>registro no exitoso, el usuario ya existe</value>
   </data>
   <data name="UserBlock" xml:space="preserve">
     <value>El usuario se bloqueo debido a que excedió la cantidad de intentos.</value>

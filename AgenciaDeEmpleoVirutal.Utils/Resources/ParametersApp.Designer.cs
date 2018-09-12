@@ -65,6 +65,24 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///&lt;tbody&gt;
         ///&lt;tr&gt;
         ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Pass&lt;/p&gt;
+        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenciadeem [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BodyMailPass {
+            get {
+                return ResourceManager.GetString("BodyMailPass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
         ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
         ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
         ///&lt;/tr&gt;
@@ -72,9 +90,18 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///&lt;td colspan=&quot;2&quot;&gt;
         ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenc [rest of string was truncated]&quot;;.
         /// </summary>
-        public static string BodyMail {
+        public static string BodyMailWelcome {
             get {
-                return ResourceManager.GetString("BodyMail", resourceCulture);
+                return ResourceManager.GetString("BodyMailWelcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to colsubsidioprueba@gmail.com.
+        /// </summary>
+        public static string EmailAddressFrom {
+            get {
+                return ResourceManager.GetString("EmailAddressFrom", resourceCulture);
             }
         }
         
@@ -84,6 +111,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string KeyCrypt {
             get {
                 return ResourceManager.GetString("KeyCrypt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Agencia Virtual de empleo.
+        /// </summary>
+        public static string NameEmail {
+            get {
+                return ResourceManager.GetString("NameEmail", resourceCulture);
             }
         }
         
@@ -102,6 +138,24 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string StringArray {
             get {
                 return ResourceManager.GetString("StringArray", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recordar Contraseña Usuario Agencia de Empleo Virtual Colsubsidio..
+        /// </summary>
+        public static string SubJectPass {
+            get {
+                return ResourceManager.GetString("SubJectPass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Registro Exitoso Agencia de Empleo Virtual Colsubsidio..
+        /// </summary>
+        public static string SubJectWelcome {
+            get {
+                return ResourceManager.GetString("SubJectWelcome", resourceCulture);
             }
         }
     }

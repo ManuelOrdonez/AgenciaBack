@@ -195,4 +195,13 @@
   <data name="StateCall_Valid" xml:space="preserve">
     <value>El estado de la llamada no es valido</value>
   </data>
+  <data name="Score_Required" xml:space="preserve">
+    <value>El puntaje de la llamada es requerido</value>
+  </data>
+  <data name="SessionId_Required" xml:space="preserve">
+    <value>El session id es requerido</value>
+  </data>
+  <data name="TokenId_Required" xml:space="preserve">
+    <value>El token id es requerido</value>
+  </data>
 </root>
