@@ -3,6 +3,7 @@
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
     using System.Collections.Generic;
 
     public interface ICallHistoryTrace
@@ -30,5 +31,9 @@
         /// <param name="State"></param>
         /// <returns></returns>
         Response<List<CallHistoryTrace>> GetAllCallsNotManaged(GetCallRequest request);
+
+        Response<List<CallHistoryTrace>> CallQuality(QualityCallRequest request);
+
+        Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId);
     }
 }

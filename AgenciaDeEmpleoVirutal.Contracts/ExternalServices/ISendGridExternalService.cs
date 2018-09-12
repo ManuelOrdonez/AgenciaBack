@@ -13,5 +13,6 @@
         /// <param name="userInfo">The user information.</param>
         /// <returns></returns>
         bool SendMail(User userInfo);
+        bool SendMail(User userInfo, string urlReset)
     }
 }
