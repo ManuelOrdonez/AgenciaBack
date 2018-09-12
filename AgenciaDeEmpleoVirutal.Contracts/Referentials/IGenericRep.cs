@@ -24,6 +24,13 @@
         Task<bool> AddOrUpdate(T entity);
 
         /// <summary>
+        /// ADelete.
+        /// </summary>
+        /// <param name="entity">The entity.</param>
+        /// <returns></returns>
+        Task<bool> DeleteRowAsync(T entity);
+
+        /// <summary>
         /// Gets the asynchronous.
         /// </summary>
         /// <param name="rowKey">The row key.</param>

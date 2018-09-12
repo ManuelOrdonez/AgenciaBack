@@ -109,6 +109,7 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddSingleton<IGenericRep<CallHistoryTrace>, TableStorageBase<CallHistoryTrace>>();
             services.AddSingleton<IGenericRep<Agent>, TableStorageBase<Agent>>();
             services.AddSingleton<IGenericRep<Parameters>, TableStorageBase<Parameters>>();
+            services.AddSingleton<IGenericRep<ResetPassword>, TableStorageBase<ResetPassword>>();
 
         }
 
@@ -127,6 +128,7 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddTransient<IAgentBl, AgentBl>();
             services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
             services.AddTransient<IParametersBI, ParameterBI>();
+            services.AddTransient<IResetBI, ResetBI>();
         }
     }
 }
