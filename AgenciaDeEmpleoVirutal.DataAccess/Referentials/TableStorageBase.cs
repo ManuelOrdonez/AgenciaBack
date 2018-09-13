@@ -92,7 +92,13 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             var result = Table.ExecuteAsync(operation).Result;
             return (result.HttpStatusCode / 100).Equals(2);
         }
+        public  async Task<bool> DeleteRowAsync(T entity)
+        {
+            var operation = TableOperation.Delete(entity);
 
+            var result = Table.ExecuteAsync(operation).Result;
+            return (result.HttpStatusCode / 100).Equals(2);
+        }
         /// <inheritdoc />
         /// <summary>
         /// Gets the person.

@@ -39,5 +39,19 @@
         {
             return Ok(_callHistoryBusiness.GetAllCallsNotManaged(request));
         }
+
+        [HttpPost]
+        [Route("CallQuality")]
+        public IActionResult CallQuality([FromBody] QualityCallRequest request)
+        {
+            return Ok(_callHistoryBusiness.CallQuality(request));
+        }
+
+        [HttpGet]
+        [Route("GetCallerInfo")]
+        public IActionResult GetCallerInfo(string request)
+        {
+            return Ok(_callHistoryBusiness.GetCallerInfo(request));
+        }
     }
 }

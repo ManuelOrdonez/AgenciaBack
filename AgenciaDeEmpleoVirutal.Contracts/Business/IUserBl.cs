@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.Business
 {
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -15,5 +16,7 @@
         Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq);
 
         Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq);
+
+        Response<User> GetUserInfo(string UserName);
     }
 }

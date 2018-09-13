@@ -132,11 +132,17 @@
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
   </data>
+  <data name="ExpiredtokenRPassword" xml:space="preserve">
+    <value>Token de recordación de contraseña expiro solicite uno nuevo</value>
+  </data>
   <data name="IncorrectPassword" xml:space="preserve">
     <value>Contraseña Incorrecta</value>
   </data>
   <data name="InternalError" xml:space="preserve">
     <value>Operación fallida, por favor intenta mas tarde.</value>
+  </data>
+  <data name="InvalidtokenRPassword" xml:space="preserve">
+    <value>Token de recordación de contraseña no es valido</value>
   </data>
   <data name="IsNotAuthenticate" xml:space="preserve">
     <value>El id del dispositivo no se encuentra autenticado</value>
@@ -157,7 +163,7 @@
     <value>El token y el dispositivo no corresponden.</value>
   </data>
   <data name="UserAlreadyExist" xml:space="preserve">
-    <value>Este usuario ya existe en el sistema</value>
+    <value>registro no exitoso, el usuario ya existe</value>
   </data>
   <data name="UserBlock" xml:space="preserve">
     <value>El usuario se bloqueo debido a que excedió la cantidad de intentos.</value>

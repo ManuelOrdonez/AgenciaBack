@@ -7,6 +7,8 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+
     [Produces("application/json")]
     [Route("api/Parameters")]
     [EnableCors("CorsPolitic")]
@@ -27,10 +29,18 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
 
         [HttpGet]
         [Route("GetParametersByType")]
-        [Produces(typeof(Response<DepartamenCityResponse>))]
+        [Produces(typeof(Response<ParametersResponse>))]
         public IActionResult GetParametersByType(string type)
         {
             return Ok(_ParameterBussines.GetParametersByType(type));
+        }
+
+        [HttpGet]
+        [Route("GetSomeParametersByType")]
+        [Produces(typeof(Response<ParametersResponse>))]
+        public IActionResult GetSomeParametersByType(List<string> type)
+        {
+            return Ok(_ParameterBussines.GetSomeParametersByType(type));
         }
     }
 }

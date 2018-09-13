@@ -6,8 +6,10 @@
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
+    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -17,6 +19,8 @@
 
         private readonly IGenericRep<CallHistoryTrace> _callHistoryRepository;
 
+        private readonly IGenericRep<User> _callerRepository;
+
         private readonly IGenericRep<User> _agentRepository;
 
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
@@ -24,6 +28,7 @@
         {
             _callHistoryRepository = callHistoryRepository;
             _agentRepository = agentRepository;
+            _callerRepository = agentRepository;
         }
 
         public Response<CallHistoryTrace> GetCallInfo(GetCallRequest request)
@@ -55,6 +60,16 @@
                 };
             var call = _callHistoryRepository.GetSomeAsync(parameters).Result;
             return ResponseSuccess(new List<List<CallHistoryTrace>> { call });
+        }
+
+        public Response<List<CallHistoryTrace>> CallQuality(QualityCallRequest request)
+        {
+            var errorMessages = request.Validate().ToList();
+            var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request.SessionId, request.TokenId).Result;
+            if (callTrace.Count == 0) return ResponseFail<List<CallHistoryTrace>>();
+            callTrace.First().Score = request.Score;
+            if (!_callHistoryRepository.AddOrUpdate(callTrace.First()).Result) return ResponseFail<List<CallHistoryTrace>>();
+            return ResponseSuccess(new List<List<CallHistoryTrace>>());
         }
 
         /// <summary>
@@ -167,6 +182,29 @@
         {
             return _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(OpenTokSessionId, OpenTokAccessToken).Result
                 .OrderByDescending(t => t.DateCall).FirstOrDefault();
+        }
+
+        public Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId)
+        {
+            if (string.IsNullOrEmpty(OpenTokSessionId))
+            {
+                return ResponseFail<CallerInfoResponse>(ServiceResponseCode.BadRequest);
+            }
+            else
+            {
+                GetCallRequest getCallReq = new GetCallRequest()
+                {
+                    OpenTokSessionId = OpenTokSessionId,
+                    State = CallStates.Begun.ToString(),
+                };
+                var callInfo = GetCallInfo(getCallReq).Data.First();
+                var caller = _callerRepository.GetAsync(callInfo?.UserCall).Result;
+                CallerInfoResponse response = new CallerInfoResponse();
+                response.Caller = caller;
+                response.OpenTokAccessToken = callInfo.OpenTokAccessToken;
+                response.CallInfo = callInfo;
+                return ResponseSuccess(new List<CallerInfoResponse> { response });
+            }
         }
     }
 }

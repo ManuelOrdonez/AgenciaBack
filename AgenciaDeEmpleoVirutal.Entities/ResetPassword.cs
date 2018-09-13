@@ -1,24 +1,22 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace AgenciaDeEmpleoVirutal.Entities
 {
     using Microsoft.WindowsAzure.Storage.Table;
-    public  class Parameters : TableEntity
+    public class ResetPassword : TableEntity
     {
-        public string Type
+        public string Id
         {
             set => PartitionKey = value;
             get => PartitionKey;
         }
 
-        public string Id
+        public string Token
         {
             get => RowKey;
             set => RowKey = value;
         }
-
-        public string  Value { get; set; }
-
-        public string Description { get; set; }
     }
 }

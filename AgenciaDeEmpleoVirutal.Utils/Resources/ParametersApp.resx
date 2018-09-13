@@ -117,7 +117,22 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="BodyMail" xml:space="preserve">
+  <data name="BodyMailPass" xml:space="preserve">
+    <value>&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td &gt;{0} {1}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td &gt;
+Por favor ingrese al siguiente link para completar el proceso de cambio de clave. &lt;br/&gt; {2}.
+&lt;/span&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</value>
+  </data>
+  <data name="BodyMailWelcome" xml:space="preserve">
     <value>&lt;table&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
@@ -133,13 +148,25 @@
 &lt;/tbody&gt;
 &lt;/table&gt;</value>
   </data>
+  <data name="EmailAddressFrom" xml:space="preserve">
+    <value>colsubsidioprueba@gmail.com</value>
+  </data>
   <data name="KeyCrypt" xml:space="preserve">
     <value>ColsubsidioApp</value>
+  </data>
+  <data name="NameEmail" xml:space="preserve">
+    <value>Agencia Virtual de empleo</value>
   </data>
   <data name="Salt" xml:space="preserve">
     <value>insight123resultxyz</value>
   </data>
   <data name="StringArray" xml:space="preserve">
     <value>e84ad660c4721ae0e84ad660c4721ae0</value>
+  </data>
+  <data name="SubJectPass" xml:space="preserve">
+    <value>Recordar Contraseña Usuario Agencia de Empleo Virtual Colsubsidio.</value>
+  </data>
+  <data name="SubJectWelcome" xml:space="preserve">
+    <value>Registro Exitoso Agencia de Empleo Virtual Colsubsidio.</value>
   </data>
 </root>

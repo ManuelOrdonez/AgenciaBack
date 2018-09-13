@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -57,6 +58,14 @@
         public IActionResult LogOut([FromBody] LogOutRequest logOutReq)
         {
             return Ok(_UserBussines.LogOut(logOutReq));
+        }
+
+        [HttpGet]
+        [Route("GetUserInfo")]
+        [Produces(typeof(Response<User>))]
+        public IActionResult GetUserInfo(string UserName)
+        {
+            return Ok(_UserBussines.GetUserInfo(UserName));
         }
     }
 }
