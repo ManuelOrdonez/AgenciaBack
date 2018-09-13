@@ -5,6 +5,7 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
     using AgenciaDeEmpleoVirutal.Contracts.Business;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
     [Produces("application/json")]
@@ -18,11 +19,26 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
             _ResetBussines = ResetBussines;
         }
         [HttpGet]
-        [Route("ResetPassword")]
-        [Produces(typeof(Response<ParametersResponse>))]
-        public IActionResult ResetPassword(string id)
+        [Route("RegisterResetPassword")]
+        [Produces(typeof(Response<ResetResponse>))]
+        public IActionResult RegisterResetPassword(string id)
         {
-            return Ok(_ResetBussines.ResetPassword(id));
+            return Ok(_ResetBussines.RegisterResetPassword(id));
+        }
+
+        [HttpGet]
+        [Route("ValidateResetPassword")]
+        [Produces(typeof(Response<ResetResponse>))]
+        public IActionResult ValidateResetPassword(string token)
+        {
+            return Ok(_ResetBussines.ValidateResetPassword(token));
+        }
+        [HttpPost]
+        [Route("ResetPassword")]
+        [Produces(typeof(Response<ResetResponse>))]
+        public IActionResult ResetPassword([FromBody] ResetPasswordRequest userRequest)
+        {
+            return Ok(_ResetBussines.ResetPassword(userRequest));
         }
     }
 }

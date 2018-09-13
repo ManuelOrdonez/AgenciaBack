@@ -73,5 +73,13 @@
         /// User is block
         /// </summary>
         UserBlock = 123,
+        /// <summary>
+        /// Invalid token resetPassword
+        /// </summary>
+        InvalidtokenRPassword = 124,
+        /// <summary>
+        /// Expired token resetPassword
+        /// </summary>
+        ExpiredtokenRPassword = 125
     }
 }

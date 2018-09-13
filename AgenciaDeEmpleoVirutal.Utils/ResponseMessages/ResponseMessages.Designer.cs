@@ -106,6 +106,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Token de recordación de contraseña expiro solicite uno nuevo.
+        /// </summary>
+        internal static string ExpiredtokenRPassword {
+            get {
+                return ResourceManager.GetString("ExpiredtokenRPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contraseña Incorrecta.
         /// </summary>
         internal static string IncorrectPassword {
@@ -120,6 +129,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string InternalError {
             get {
                 return ResourceManager.GetString("InternalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Token de recordación de contraseña no es valido.
+        /// </summary>
+        internal static string InvalidtokenRPassword {
+            get {
+                return ResourceManager.GetString("InvalidtokenRPassword", resourceCulture);
             }
         }
         

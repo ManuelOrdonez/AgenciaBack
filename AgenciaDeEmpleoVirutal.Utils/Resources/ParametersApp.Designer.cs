@@ -64,13 +64,16 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///   Looks up a localized string similar to &lt;table&gt;
         ///&lt;tbody&gt;
         ///&lt;tr&gt;
-        ///&lt;td style=&quot;text-align: center;&quot;&gt;
-        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Pass&lt;/p&gt;
-        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;td &gt;{0} {1}&lt;/td&gt;
         ///&lt;/tr&gt;
         ///&lt;tr&gt;
-        ///&lt;td colspan=&quot;2&quot;&gt;
-        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenciadeem [rest of string was truncated]&quot;;.
+        ///&lt;td &gt;
+        ///Por favor ingrese al siguiente link para completar el proceso de cambio de clave. &lt;br/&gt; {2}.
+        ///&lt;/span&gt;
+        ///&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;/tbody&gt;
+        ///&lt;/table&gt;.
         /// </summary>
         public static string BodyMailPass {
             get {

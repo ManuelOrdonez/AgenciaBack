@@ -7,13 +7,13 @@ namespace AgenciaDeEmpleoVirutal.Entities
     using Microsoft.WindowsAzure.Storage.Table;
     public class ResetPassword : TableEntity
     {
-        public string Token
+        public string Id
         {
             set => PartitionKey = value;
             get => PartitionKey;
         }
 
-        public string Id
+        public string Token
         {
             get => RowKey;
             set => RowKey = value;
