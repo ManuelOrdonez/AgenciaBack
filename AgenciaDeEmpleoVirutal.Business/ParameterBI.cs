@@ -27,6 +27,7 @@ namespace AgenciaDeEmpleoVirutal.Business
             if (result == null || result.Count == 0) return ResponseFail<ParametersResponse>();
             var paraments = new List<Parameters>();
             result.ForEach(r => paraments.Add(r));
+            result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var paramentsResult = new List<ParametersResponse>();
             paraments.ToList().ForEach(d => paramentsResult.Add(new ParametersResponse() { Type = d.Type, Id = d.Id, Value = d.Value, Desc = d.Description }));
             return ResponseSuccess(paramentsResult);
@@ -37,6 +38,7 @@ namespace AgenciaDeEmpleoVirutal.Business
             if (string.IsNullOrEmpty(type)) return ResponseFail<ParametersResponse>(ServiceResponseCode.BadRequest);
             var result = _paramentRep.GetByPatitionKeyAsync(type).Result;
             if (result == null || result.Count == 0) return ResponseFail<ParametersResponse>();
+            result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var parametsList = new List<ParametersResponse>();
             result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description }));
             return ResponseSuccess(parametsList);
@@ -52,6 +54,7 @@ namespace AgenciaDeEmpleoVirutal.Business
                 res.ForEach(p => result.Add(p));
             });
             if (result == null || result.Count == 0) return ResponseFail<ParametersResponse>();
+            result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var parametsList = new List<ParametersResponse>();
             result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description }));
             return ResponseSuccess(parametsList);

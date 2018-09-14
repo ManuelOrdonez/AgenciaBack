@@ -191,8 +191,8 @@
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)), 
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
-                    ContactName = userReq.ContactName,
-                    PositionContact = userReq.PositionContact,
+                    ContactName = Utils.Helpers.UString.UppercaseWords(userReq.ContactName),
+                    PositionContact = Utils.Helpers.UString.UppercaseWords(userReq.PositionContact),
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoDocument,
@@ -216,9 +216,9 @@
             {
                 var cesante = new User()
                 {
-                    Name = userReq.Name,
-                    LastName = userReq.LastNames,
-                    DegreeGeted = userReq.DegreeGeted,
+                    Name = UString.UppercaseWords(userReq.Name),
+                    LastName = UString.UppercaseWords(userReq.LastNames),
+                    DegreeGeted = UString.UppercaseWords(userReq.DegreeGeted),
                     EducationLevel = userReq.EducationLevel,
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,

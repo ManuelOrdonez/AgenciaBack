@@ -20,5 +20,7 @@ namespace AgenciaDeEmpleoVirutal.Entities
         public string  Value { get; set; }
 
         public string Description { get; set; }
+
+        public string SortBy { get; set; }
     }
 }

@@ -15,7 +15,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class AdminBl : BusinessBase<User> , IAdminBl
+    public class AdminBl : BusinessBase<User>, IAdminBl
     {
         private IGenericRep<User> _usersRepo;
 
@@ -35,7 +35,7 @@
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
 
-            var funcoinaries =_usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
+            var funcoinaries = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
             if (funcoinaries != null)
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
 
@@ -44,8 +44,8 @@
                 Position = funcionaryReq.Position,
                 State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
                 NoDocument = funcionaryReq.NoDocument,
-                LastName = funcionaryReq.LastName,
-                Name = funcionaryReq.Name,
+                LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName),
+                Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name),
                 Password = funcionaryReq.Password,
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
@@ -60,10 +60,10 @@
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
-            return result ? ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>()) : 
-                ResponseFail<CreateOrUpdateFuncionaryResponse>();            
+            return result ? ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>()) :
+                ResponseFail<CreateOrUpdateFuncionaryResponse>();
         }
-        
+
         public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
@@ -74,8 +74,8 @@
             var modFuncionary = funcionary;
 
             modFuncionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
-            modFuncionary.Name = funcionaryReq.Name;
-            modFuncionary.LastName = funcionaryReq.LastName;
+            modFuncionary.Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name);
+            modFuncionary.LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName);
             modFuncionary.Role = funcionaryReq.Role;
             modFuncionary.Position = funcionaryReq.Position;
             modFuncionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
@@ -83,12 +83,12 @@
             var result = _usersRepo.AddOrUpdate(modFuncionary).Result;
             if (!result) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
-        }       
+        }
 
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
-            var result = _usersRepo.GetSomeAsync("Email",string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
+            var result = _usersRepo.GetSomeAsync("Email", string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
             if (!result.Any()) return ResponseFail<FuncionaryInfoResponse>();
             var funcionary = new List<FuncionaryInfoResponse>()
             {
@@ -113,11 +113,12 @@
             var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
             if (funcionaries.Count == 0 || funcionaries == null) return ResponseFail<FuncionaryInfoResponse>();
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
-            funcionaries.ForEach(f => {
+            funcionaries.ForEach(f =>
+            {
                 funcionariesInfo.Add(new FuncionaryInfoResponse()
                 {
                     Position = f.Position,
-                    Role = f.Role,                    
+                    Role = f.Role,
                     Mail = f.Email,
                     State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
                     Name = f.Name,
