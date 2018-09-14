@@ -73,6 +73,11 @@
             response.IDSession = Agent.OpenTokSessionId;
             response.AgentName = Agent.Name;
             response.AgentLatName = Agent.LastName;
+
+            //Disabled Agent
+            Agent.Available = false;
+            if(!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
+
             return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
         }       
 
