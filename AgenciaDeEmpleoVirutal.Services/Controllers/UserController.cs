@@ -36,6 +36,8 @@
             return Ok(_UserBussines.RegisterUser(userRequest));
         }
 
+        
+
         [HttpPost]
         [Route("IsAuthenticated")]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
@@ -60,6 +62,7 @@
             return Ok(_UserBussines.LogOut(logOutReq));
         }
 
+
         [HttpGet]
         [Route("GetUserInfo")]
         [Produces(typeof(Response<User>))]
@@ -67,5 +70,14 @@
         {
             return Ok(_UserBussines.GetUserInfo(UserName));
         }
+
+        [HttpPost]
+        [Route("AviableUser")]
+        [Produces(typeof(Response<User>))]
+        public IActionResult AviableUser([FromBody] string UserName)
+        {
+            return Ok(_UserBussines.AviableUser(UserName));
+        }
+
     }
 }
