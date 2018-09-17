@@ -343,6 +343,16 @@
            
             return eRta;
         }
+
+        public Response<User> AviableUser(string UserName)
+        {
+            if (string.IsNullOrEmpty(UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            var user = _userRep.GetAsync(UserName).Result;
+            user.Available = true;
+            var result = _userRep.AddOrUpdate(user).Result;
+            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+        }
+
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
         {
             var errorsMessage = logOurReq.Validate().ToList();
