@@ -18,6 +18,6 @@
         Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq);
 
         Response<User> GetUserInfo(string UserName);
-        Response<User> AviableUser(string UserName);
+        Response<User> AviableUser(AviableUser RequestAviable);
     }
 }

@@ -74,9 +74,9 @@
         [HttpPost]
         [Route("AviableUser")]
         [Produces(typeof(Response<User>))]
-        public IActionResult AviableUser([FromBody] string UserName)
+        public IActionResult AviableUser([FromBody] AviableUser RequestAviable)
         {
-            return Ok(_UserBussines.AviableUser(UserName));
+            return Ok(_UserBussines.AviableUser(RequestAviable));
         }
 
     }
