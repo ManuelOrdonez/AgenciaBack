@@ -88,16 +88,14 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             entity.PartitionKey = entity.PartitionKey.ToLower();
             entity.RowKey = entity.RowKey.ToLower();
             var operation = TableOperation.InsertOrMerge(entity);
-            //await CreateTableInStorage();
-            var result = Table.ExecuteAsync(operation).Result;
-            return (result.HttpStatusCode / 100).Equals(2);
+            int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
+            return (result / 100).Equals(2);
         }
         public  async Task<bool> DeleteRowAsync(T entity)
         {
             var operation = TableOperation.Delete(entity);
-
-            var result = Table.ExecuteAsync(operation).Result;
-            return (result.HttpStatusCode / 100).Equals(2);
+            int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
+            return (result / 100).Equals(2);
         }
         /// <inheritdoc />
         /// <summary>
@@ -110,6 +108,19 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             //await CreateTableInStorage();
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower()));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results.FirstOrDefault();
+            return entity;
+        }
+        /// <inheritdoc />
+        /// <summary>
+        /// Gets the list of rows match with rowKey person.
+        /// </summary>
+        /// <returns>Lists of Rows.</returns>
+        /// <param name="rowKey">User name.</param>
+        public async Task<List<T>> GetAsyncAll(string rowKey)
+        {
+            //await CreateTableInStorage();
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower()));
+            var entity = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
             return entity;
         }
 

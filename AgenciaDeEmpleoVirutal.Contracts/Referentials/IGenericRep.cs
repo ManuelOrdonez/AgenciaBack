@@ -38,6 +38,13 @@
         Task<T> GetAsync(string rowKey);
 
         /// <summary>
+        /// Gets the asynchronous.
+        /// </summary>
+        /// <param name="rowKey">The row key.</param>
+        /// <returns></returns>
+        Task<List<T>> GetAsyncAll(string rowKey);
+
+        /// <summary>
         ///  Gets all rows from a table
         /// </summary>
         /// <returns></returns>

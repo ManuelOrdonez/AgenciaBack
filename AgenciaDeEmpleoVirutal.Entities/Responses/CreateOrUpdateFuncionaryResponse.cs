@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AgenciaDeEmpleoVirutal.Entities.Responses
+﻿namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
     public class CreateOrUpdateFuncionaryResponse
     {
+        public string Message { get; set; }
     }
 }

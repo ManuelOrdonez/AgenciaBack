@@ -35,10 +35,10 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
             return Ok(_ParameterBussines.GetParametersByType(type));
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route("GetSomeParametersByType")]
         [Produces(typeof(Response<ParametersResponse>))]
-        public IActionResult GetSomeParametersByType(List<string> type)
+        public IActionResult GetSomeParametersByType([FromBody]List<string> type)
         {
             return Ok(_ParameterBussines.GetSomeParametersByType(type));
         }

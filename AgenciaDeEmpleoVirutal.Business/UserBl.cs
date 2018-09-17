@@ -31,7 +31,7 @@
 
         private readonly UserSecretSettings _settings;
 
-        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService, 
+        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService)
         {
             _sendMailService = sendMailService;
@@ -47,7 +47,7 @@
             if (string.IsNullOrEmpty(deviceId.DeviceId))
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
 
-            var result = _userRep.GetSomeAsync("DeviceId",deviceId.DeviceId).Result;
+            var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
             if (result.Count == 0 || result == null)
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
 
@@ -79,18 +79,41 @@
             };
             return ResponseSuccess(response);
         }
-
+        /// <summary>
+        /// Función que se encarga de traer el usuario que esta activo en el sistema 
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
+        private User getUserActive(AuthenticateUserRequest userReq)
+        {
+            User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                return lUser[0];
+            }
+            return user;
+        }
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
+            {
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
-            var token = string.Empty;
-            var user = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            }
+            string token = string.Empty;
+            User user = getUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
-            {                      
+            {
                 if (user == null)
-                   return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 if (user.State.Equals(UserStates.Disable.ToString()) && user.IntentsLogin == 5)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
                 if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
@@ -134,10 +157,10 @@
             user.Password = userReq.Password;
             user.IntentsLogin = 0;
             var resultUptade = _userRep.AddOrUpdate(user).Result;
-            if (!resultUptade) return ResponseFail<AuthenticateUserResponse>();
-
-            
-
+            if (!resultUptade)
+            {
+                return ResponseFail<AuthenticateUserResponse>();
+            }
 
             var response = new List<AuthenticateUserResponse>()
             {
@@ -159,9 +182,25 @@
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
-            var result = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            if (result == null)
+            var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+
+            if (lResult.Count == 0)
+            {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+            }
+            User result = null;
+            foreach (var item in lResult)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    result = item;
+                    break;
+                }
+            }
+            if (result == null)
+            {
+                return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserDesable);
+            }
             return ResponseSuccess(new List<RegisterUserResponse>()
             {
                 new RegisterUserResponse()
@@ -175,31 +214,46 @@
 
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
+            int pos = 0;
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
 
-            var userExist = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
-            if(userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+            //var userExist = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
+            //if (userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+
+            List<User> users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
+
+            if (!ValRegistriesUser(users,out pos))
+            {
+                if (pos == 0)
+                {
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
+                }
+                else
+                {
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                }
+            }
 
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
                 var company = new User()
-                {                                       
+                {
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
-                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)), 
+                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
-                    ContactName = userReq.ContactName,
-                    PositionContact = userReq.PositionContact,
+                    ContactName = Utils.Helpers.UString.UppercaseWords(userReq.ContactName),
+                    PositionContact = Utils.Helpers.UString.UppercaseWords(userReq.PositionContact),
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoDocument,
                     City = userReq.City,
                     Departament = userReq.Departament,
                     Addrerss = userReq.Address,
-                    Position = string.Empty, 
+                    Position = string.Empty,
                     DeviceId = userReq.DeviceId,
                     State = UserStates.Enable.ToString(),
                     Password = userReq.Password,
@@ -216,9 +270,9 @@
             {
                 var cesante = new User()
                 {
-                    Name = userReq.Name,
-                    LastName = userReq.LastNames,
-                    DegreeGeted = userReq.DegreeGeted,
+                    Name = UString.UppercaseWords(userReq.Name),
+                    LastName = UString.UppercaseWords(userReq.LastNames),
+                    DegreeGeted = UString.UppercaseWords(userReq.DegreeGeted),
                     EducationLevel = userReq.EducationLevel,
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
@@ -244,7 +298,7 @@
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
             }
 
-            if (userReq.OnlyAzureRegister) return ResponseSuccess(response); 
+            if (userReq.OnlyAzureRegister) return ResponseSuccess(response);
             var names = userReq.Name.Split(new char[] { ' ' });
             var lastNames = userReq.LastNames.Split(new char[] { ' ' });
 
@@ -267,6 +321,28 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Función que determina si el usuario existen es persona para que permita crear el usuario como funcionario
+        /// </summary>
+        /// <param name="lUser">Lista de usuarios registrados</param>
+        /// <param name="position">posición que se encuentra el registro de persona</param>
+        /// <returns></returns>
+        private bool ValRegistriesUser(List<User> lUser, out int position)
+        {
+            bool eRta = true;
+            position = -1;
+            if (lUser.Count > 0)
+            {
+                eRta = false;
+                if (lUser[0].UserType == "funcionario")
+                {
+                    position = 0;
+                    eRta = false;
+                }
+            }
+           
+            return eRta;
+        }
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
         {
             var errorsMessage = logOurReq.Validate().ToList();
@@ -280,7 +356,7 @@
 
         public Response<User> GetUserInfo(string UserName)
         {
-            if (string.IsNullOrEmpty(UserName))  return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            if (string.IsNullOrEmpty(UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }

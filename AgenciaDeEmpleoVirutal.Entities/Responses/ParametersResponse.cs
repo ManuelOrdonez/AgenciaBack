@@ -2,6 +2,9 @@
 
 namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ParametersResponse
     {
         public string  Type { get; set; }

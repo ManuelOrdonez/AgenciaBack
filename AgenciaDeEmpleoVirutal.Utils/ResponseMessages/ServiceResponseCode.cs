@@ -80,6 +80,10 @@
         /// <summary>
         /// Expired token resetPassword
         /// </summary>
-        ExpiredtokenRPassword = 125
+        ExpiredtokenRPassword = 125,
+        /// <summary>
+        /// User Already Exist functionarie
+        /// </summary>
+        UserAlredyExistF = 126
     }
 }
