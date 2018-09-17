@@ -12,6 +12,7 @@ namespace AgenciaDeEmpleoVirutal.Business
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using System.Linq;
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
@@ -31,7 +32,39 @@ namespace AgenciaDeEmpleoVirutal.Business
             _passwordRep = resetPasswordRep;
             _parametersRep = parametersRep;
         }
+        private User getInfoUser(string user)
+        {
+            string state = string.Empty;
+            if (user.IndexOf("_cesante") > -1)
+            {
+                state = UsersTypes.Cesante.ToString();
+                user = user.Replace("_cesante", "");
+            }
+            else if (user.IndexOf("_empresa") > -1)
+            {
+                state = UsersTypes.Empresa.ToString();
+                user = user.Replace("_empresa", "");
+            }
+            else if (user.IndexOf("_funcionario") > -1)
+            {
+                state = UsersTypes.Funcionario.ToString();
+                user = user.Replace("_funcionario", "");
+            }
+            List<User> lUser = _userRep.GetAsyncAll(user).Result;
 
+            foreach (var item in lUser)
+            {
+                if (state.ToLower() == item.UserType.ToLower())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0 )
+            {
+                return lUser[0];
+            }
+            return null;
+        }
         /// <summary>
         /// Función que registra la solicitud de generación de recordacion de contraseña
         /// </summary>
@@ -43,8 +76,9 @@ namespace AgenciaDeEmpleoVirutal.Business
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
+
             //var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
-            User result = _userRep.GetAsync(id).Result;
+            User result = getInfoUser(id);
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
@@ -71,7 +105,7 @@ namespace AgenciaDeEmpleoVirutal.Business
                 {
                     UserId = id ,
                     Token = token,
-                    Email = aux 
+                    Email = aux
                 }
             };
             return ResponseSuccess(response);
