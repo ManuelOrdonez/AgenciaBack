@@ -32,9 +32,10 @@ namespace AgenciaDeEmpleoVirutal.Business
             _passwordRep = resetPasswordRep;
             _parametersRep = parametersRep;
         }
-        private User getInfoUser(string user)
+        private User getInfoUser(string user,out string idUser)
         {
             string state = string.Empty;
+            idUser = string.Empty;
             if (user.IndexOf("_cesante") > -1)
             {
                 state = UsersTypes.Cesante.ToString();
@@ -51,7 +52,7 @@ namespace AgenciaDeEmpleoVirutal.Business
                 user = user.Replace("_funcionario", "");
             }
             List<User> lUser = _userRep.GetAsyncAll(user).Result;
-
+            idUser = user;
             foreach (var item in lUser)
             {
                 if (state.ToLower() == item.UserType.ToLower())
@@ -76,9 +77,9 @@ namespace AgenciaDeEmpleoVirutal.Business
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
-
+            string idMod = string.Empty;
             //var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
-            User result = getInfoUser(id);
+            User result = getInfoUser(id,out idMod);
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
@@ -88,9 +89,9 @@ namespace AgenciaDeEmpleoVirutal.Business
             var len = email.IndexOf('@');
             var aux = email.Substring(0, len - 4);
             aux = aux + "****" + email.Substring(len);
-            var token = Utils.Helpers.ManagerToken.GenerateToken(id);
-            ResetPassword rpwd = new ResetPassword() { PartitionKey = id, RowKey = token };
-            ExistReset(id);
+            var token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
+            ResetPassword rpwd = new ResetPassword() { PartitionKey = idMod, RowKey = token };
+            ExistReset(idMod);
             var res = _passwordRep.AddOrUpdate(rpwd).Result;
             var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result;
             var servername = serverInfo.Find(delegate (Parameters parameter)
@@ -103,7 +104,7 @@ namespace AgenciaDeEmpleoVirutal.Business
             {
                 new ResetResponse()
                 {
-                    UserId = id ,
+                    UserId = idMod ,
                     Token = token,
                     Email = aux
                 }
