@@ -165,6 +165,9 @@
   <data name="UserAlreadyExist" xml:space="preserve">
     <value>registro no exitoso, el usuario ya existe</value>
   </data>
+  <data name="UserAlredyExistF" xml:space="preserve">
+    <value>Usuario existe como funcionario. Para poder registrarse como Persona debe solicitar que deshabiliten el usuario de funcionario.</value>
+  </data>
   <data name="UserBlock" xml:space="preserve">
     <value>El usuario se bloqueo debido a que excedió la cantidad de intentos.</value>
   </data>

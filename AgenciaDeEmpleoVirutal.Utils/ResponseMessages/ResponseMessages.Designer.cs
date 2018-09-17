@@ -205,6 +205,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Usuario existe como funcionario. Para poder registrarse como Persona debe solicitar que deshabiliten el usuario de funcionario..
+        /// </summary>
+        internal static string UserAlredyExistF {
+            get {
+                return ResourceManager.GetString("UserAlredyExistF", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El usuario se bloqueo debido a que excedió la cantidad de intentos..
         /// </summary>
         internal static string UserBlock {

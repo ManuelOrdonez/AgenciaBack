@@ -30,14 +30,33 @@
             _openTokExternalService = openTokService;
         }
 
+
         public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
         {
+            string message = string.Empty;
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
 
-            var funcoinaries = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
-            if (funcoinaries != null)
+            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
+
+            int pos = 0;
+            /// Valida cuando existe mas de un registro y 
+            if (!valRegistriesUser(funcoinaries, out pos))
+            {
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
+            }
+            if (pos == 0)
+            {
+                /// Existe un usuario tipo persona que se debe desabilitar para continuar con el proceso de creación 
+                /// del usuario
+                funcoinaries[0].State = UserStates.Disable.ToString();
+                var resultp = _usersRepo.AddOrUpdate(funcoinaries[0]).Result;
+                message = "Usuario creado exitosamente. El usuario que tenia registrado como Persona queda inactivo.";
+            }
+            else
+            {
+                message = "Usuario creado exitosamente.";
+            }
 
             var funcionaryEntity = new User()
             {
@@ -60,28 +79,88 @@
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
-            return result ? ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>()) :
-                ResponseFail<CreateOrUpdateFuncionaryResponse>();
-        }
+            if (!result)
+            {
+                return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            }
+            return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>() { new CreateOrUpdateFuncionaryResponse() { Message = message } });
 
+        }
+        /// <summary>
+        /// Función que determina si el usuario existen es persona para que permita crear el usuario como funcionario
+        /// </summary>
+        /// <param name="lUser">Lista de usuarios registrados</param>
+        /// <param name="position">posición que se encuentra el registro de persona</param>
+        /// <returns></returns>
+        private bool valRegistriesUser(List<User> lUser, out int position)
+        {
+            bool eRta = true;
+            position = -1;
+            if (lUser.Count > 0)
+            {
+                eRta = false;
+                if (lUser[0].UserType == "cesante")
+                {
+                    position = 0;
+                    eRta = true;
+                }
+            }
+            
+            return eRta;
+        }
+        private void getUserFuncionary(List<User> lUser,out User funtionary,out User people)
+        {
+            funtionary = null;
+            people = null;
+            foreach (var item in lUser)
+            {
+                switch (item.UserType)
+                {
+                    case "cesante":
+                        people = item;
+                        break;
+                    case "empresa":
+                        break;
+                    case "funcionario":
+                        funtionary = item;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            
+        }
         public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
 
-            var funcionary = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
-            if (funcionary == null) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
-            var modFuncionary = funcionary;
+            //var funcionary = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
+            List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
+            User funcionary = null;
+            User people = null;
+            getUserFuncionary(funcionaries, out funcionary, out people);
+            if (funcionary == null)
+            {
+                return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            }
+            
+            funcionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
+            funcionary.Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name);
+            funcionary.LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName);
+            funcionary.Role = funcionaryReq.Role;
+            funcionary.Position = funcionaryReq.Position;
+            funcionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
 
-            modFuncionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
-            modFuncionary.Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name);
-            modFuncionary.LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName);
-            modFuncionary.Role = funcionaryReq.Role;
-            modFuncionary.Position = funcionaryReq.Position;
-            modFuncionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
-
-            var result = _usersRepo.AddOrUpdate(modFuncionary).Result;
+            var result = _usersRepo.AddOrUpdate(funcionary).Result;
             if (!result) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+
+            if (people != null)
+            {
+                people.State = funcionaryReq.State == true ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                result = _usersRepo.AddOrUpdate(people).Result;
+                if (!result) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            }
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
         }
 
