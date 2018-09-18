@@ -142,6 +142,7 @@
                     callInfo.DateFinishCall = DateTime.Now;
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     callInfo.State = stateInput.ToString();
+                    callInfo.CallType = callInfo.CallType;
                     if (agent != null)
                     {
                         agent.Available = true;
