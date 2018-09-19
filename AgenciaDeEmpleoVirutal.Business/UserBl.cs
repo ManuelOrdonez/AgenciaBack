@@ -348,6 +348,12 @@
         {
             if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
             var user = _userRep.GetAsync(RequestAviable.UserName).Result;
+            AuthenticateUserRequest request = new AuthenticateUserRequest{
+
+                NoDocument = user.NoDocument,
+                TypeDocument =user.CodTypeDocument,
+            };
+            user= this.getUserActive(request);
             user.Available = RequestAviable.State;
             var result = _userRep.AddOrUpdate(user).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
