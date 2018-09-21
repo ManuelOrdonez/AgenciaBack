@@ -232,6 +232,24 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El campo excede la cantidad de caracteres permitida.
+        /// </summary>
+        public static string PDIField_Length {
+            get {
+                return ResourceManager.GetString("PDIField_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Todos los campos del PDI son requeridos.
+        /// </summary>
+        public static string PDIField_Required {
+            get {
+                return ResourceManager.GetString("PDIField_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El cargo del funcionario es obligatorio.
         /// </summary>
         public static string Position_Required {
