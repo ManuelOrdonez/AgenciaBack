@@ -11,11 +11,14 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
+    using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net.Mail;
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
@@ -386,12 +389,24 @@
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
-        /*
+        
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
-            var errorsMessage = PDIRequest.Validate().ToList();
-            if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+            // var errorsMessage = PDIRequest.Validate().ToList();
+            // if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+
+            var contentStringHTML = ParametersApp.ContentPDIPdf;
+            var content = PdfConvert.Generatepdf(contentStringHTML);
+            MemoryStream stream = new MemoryStream(content);
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, "PDI", "application/pdf") };
+            var user = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
+            if (user == null || user.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            
+            if(!_sendMailService.SendMailPDI(user.FirstOrDefault(), attachmentPDI))
+                return ResponseFail<User>();
+            return ResponseSuccess();
         }
-        */
+        
     }
 }

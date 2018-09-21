@@ -18,6 +18,9 @@
         Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq);
 
         Response<User> GetUserInfo(string UserName);
+
         Response<User> AviableUser(AviableUser RequestAviable);
+
+        Response<User> CreatePDI(PDIRequest PDIRequest);
     }
 }

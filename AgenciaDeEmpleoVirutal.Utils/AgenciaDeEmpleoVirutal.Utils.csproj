@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DinkToPdf" Version="1.0.8" />
     <PackageReference Include="Sendgrid" Version="9.9.0" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.4.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="5.2.1" />
@@ -12,6 +13,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AgenciaDeEmpleoVirutal.Entities\AgenciaDeEmpleoVirutal.Entities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Runtime.Loader">
+      <HintPath>C:\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.netcore.app\2.0.0\ref\netcoreapp2.0\System.Runtime.Loader.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
