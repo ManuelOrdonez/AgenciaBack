@@ -133,6 +133,8 @@
             else
             {
                 /// pendiente definir servicio Ldap pass user?
+                
+                /*
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
                 if (!result.data.FirstOrDefault().status.Equals("success") && user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
@@ -145,7 +147,7 @@
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
+                }*/
 
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
