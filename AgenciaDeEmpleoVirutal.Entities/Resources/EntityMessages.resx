@@ -204,4 +204,10 @@
   <data name="TokenId_Required" xml:space="preserve">
     <value>El token id es requerido</value>
   </data>
+  <data name="AgentUser_Required" xml:space="preserve">
+    <value>El usuario agent es requerido</value>
+  </data>
+  <data name="CallUser_Required" xml:space="preserve">
+    <value>El usuario caller es requerido</value>
+  </data>
 </root>

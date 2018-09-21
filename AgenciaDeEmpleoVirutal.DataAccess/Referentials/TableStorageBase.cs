@@ -182,7 +182,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             }
             foreach(string conditional in conditions)
             {
-                qry= TableQuery.CombineFilters(conditional, TableOperators.And,qry);
+                qry= TableQuery.CombineFilters(conditional, TableOperators.And ,qry);
             }
             query.Where(qry);
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
