@@ -1,10 +1,6 @@
 ﻿
-
 namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     public class ResetResponse
     {
         public string UserId { get; set; }

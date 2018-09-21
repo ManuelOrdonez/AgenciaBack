@@ -3,11 +3,11 @@
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using Contracts.ExternalServices;
-    using Entities.ExternalService;
     using Entities.Referentials;
     using Referentials;
     using System.Collections.Generic;
     using System.Net;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
 
     public class OpenTokExternalService : ClientWebBase<OpenTokResult>, IOpenTokExternalService
     {

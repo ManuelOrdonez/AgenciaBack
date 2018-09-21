@@ -41,7 +41,7 @@
 
             int pos = 0;
             /// Valida cuando existe mas de un registro y 
-            if (!valRegistriesUser(funcoinaries, out pos))
+            if (!ValRegistriesUser(funcoinaries, out pos))
             {
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
             }
@@ -92,7 +92,7 @@
         /// <param name="lUser">Lista de usuarios registrados</param>
         /// <param name="position">posición que se encuentra el registro de persona</param>
         /// <returns></returns>
-        private bool valRegistriesUser(List<User> lUser, out int position)
+        private bool ValRegistriesUser(List<User> lUser, out int position)
         {
             bool eRta = true;
             position = -1;
@@ -104,11 +104,11 @@
                     position = 0;
                     eRta = true;
                 }
-            }
-            
+            }            
             return eRta;
         }
-        private void getUserFuncionary(List<User> lUser,out User funtionary,out User people)
+
+        private void GetUserFuncionary(List<User> lUser,out User funtionary,out User people)
         {
             funtionary = null;
             people = null;
@@ -128,8 +128,8 @@
                         break;
                 }
             }
-            
         }
+
         public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
@@ -139,7 +139,7 @@
             List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             User funcionary = null;
             User people = null;
-            getUserFuncionary(funcionaries, out funcionary, out people);
+            GetUserFuncionary(funcionaries, out funcionary, out people);
             if (funcionary == null)
             {
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>();

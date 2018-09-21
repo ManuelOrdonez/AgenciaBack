@@ -18,6 +18,9 @@
         Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq);
 
         Response<User> GetUserInfo(string UserName);
-        Response<User> AviableUser(AviableUser RequestAviable);
+
+        Response<User> AviableUser(AviableUserRequest RequestAviable);
+
+        AuthenticationToken SetAuthenticationToken(string username);
     }
 }

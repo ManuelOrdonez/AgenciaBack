@@ -1,10 +1,7 @@
-﻿
-
-namespace AgenciaDeEmpleoVirutal.Business
+﻿namespace AgenciaDeEmpleoVirutal.Business
 {
     using System;
     using System.Collections.Generic;
-    using System.Text;
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
@@ -13,26 +10,32 @@ namespace AgenciaDeEmpleoVirutal.Business
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
-    using System.Linq;
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
 
     public class ResetBI : BusinessBase<ResetResponse>, IResetBI
     {
         private ISendGridExternalService _sendMailService;
+        private ILdapServices _ldapServices;
         private IGenericRep<User> _userRep;
         private IGenericRep<ResetPassword> _passwordRep;
         private IGenericRep<Parameters> _parametersRep;
-        public ResetBI(IGenericRep<User> userRep, IGenericRep<ResetPassword> resetPasswordRep,
-            IGenericRep<Parameters> parametersRep
-            , ISendGridExternalService sendMailService)
+
+        public ResetBI(IGenericRep<User> userRep, 
+            IGenericRep<ResetPassword> resetPasswordRep,
+            IGenericRep<Parameters> parametersRep, 
+            ISendGridExternalService sendMailService,
+            ILdapServices ldapService)
         {
+            _ldapServices = ldapService;
             _sendMailService = sendMailService;
             _userRep = userRep;
             _passwordRep = resetPasswordRep;
             _parametersRep = parametersRep;
         }
-        private User getInfoUser(string user,out string idUser)
+
+        private User GetInfoUser(string user,out string idUser)
         {
             string state = string.Empty;
             idUser = string.Empty;
@@ -66,6 +69,7 @@ namespace AgenciaDeEmpleoVirutal.Business
             }
             return null;
         }
+
         /// <summary>
         /// Función que registra la solicitud de generación de recordacion de contraseña
         /// </summary>
@@ -78,8 +82,7 @@ namespace AgenciaDeEmpleoVirutal.Business
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
             string idMod = string.Empty;
-            //var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
-            User result = getInfoUser(id,out idMod);
+            User result = GetInfoUser(id,out idMod);
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
@@ -99,7 +102,23 @@ namespace AgenciaDeEmpleoVirutal.Business
                 return parameter.RowKey == "name";
             });
             var urlResetPwd = servername.Value + "/resetpwd/" + token;
-            _sendMailService.SendMail(result, urlResetPwd);
+
+            if (result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+            {
+                _sendMailService.SendMail(result, urlResetPwd);
+            }
+            else
+            {
+                /// PasswordChangeRequest ldapService
+                var request = new PasswordChangeRequest()
+                {
+                    message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
+                    subject = "Recuperar Contraseña Colsubsidio",
+                    username = result.UserName
+                };
+                var responseService = _ldapServices.PasswordChangeRequest(request);
+            }
+
             var response = new List<ResetResponse>()
             {
                 new ResetResponse()

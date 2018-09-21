@@ -160,7 +160,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El usuario no esta registrado en colsubsidio.
+        ///   Looks up a localized string similar to Autenticación fallida.
         /// </summary>
         internal static string IsNotRegisterInLdap {
             get {

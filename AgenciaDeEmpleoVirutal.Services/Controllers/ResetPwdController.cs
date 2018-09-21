@@ -1,6 +1,4 @@
-﻿
-
-namespace AgenciaDeEmpleoVirutal.Services.Controllers
+﻿namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
@@ -8,6 +6,7 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
+
     [Produces("application/json")]
     [Route("api/Reset")]
     [EnableCors("CorsPolitic")]

@@ -34,9 +34,7 @@
         public IActionResult RegisterUser([FromBody] RegisterUserRequest userRequest)
         {
             return Ok(_UserBussines.RegisterUser(userRequest));
-        }
-
-        
+        }        
 
         [HttpPost]
         [Route("IsAuthenticated")]
@@ -74,7 +72,7 @@
         [HttpPost]
         [Route("AviableUser")]
         [Produces(typeof(Response<User>))]
-        public IActionResult AviableUser([FromBody] AviableUser RequestAviable)
+        public IActionResult AviableUser([FromBody] AviableUserRequest RequestAviable)
         {
             return Ok(_UserBussines.AviableUser(RequestAviable));
         }

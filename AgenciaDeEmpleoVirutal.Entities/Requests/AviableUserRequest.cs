@@ -1,15 +1,9 @@
-﻿using AgenciaDeEmpleoVirutal.Entities.Resources;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
-
-
-
-
-namespace AgenciaDeEmpleoVirutal.Entities.Requests
+﻿namespace AgenciaDeEmpleoVirutal.Entities.Requests
 {
-    public class AviableUser
+    using AgenciaDeEmpleoVirutal.Entities.Resources;
+    using System.ComponentModel.DataAnnotations;
+
+    public class AviableUserRequest
     {
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "UserName_Required")]
         public string UserName { get; set; }
