@@ -75,7 +75,7 @@
                 UserType = UsersTypes.Funcionario.ToString(),
                 OpenTokSessionId = _openTokExternalService.CreateSession(),
                 CountCallAttended = 0,
-                Available = true
+                Available = false
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 

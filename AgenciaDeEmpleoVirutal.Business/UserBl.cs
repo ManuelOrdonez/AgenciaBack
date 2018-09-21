@@ -12,11 +12,14 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
+    using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net.Mail;
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
@@ -122,7 +125,7 @@
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
+                }*/
 
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -356,11 +359,23 @@
 
         public Response<User> AviableUser(AviableUserRequest RequestAviable)
         {
-            if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
-            var user = _userRep.GetAsync(RequestAviable.UserName).Result;
-            user.Available = RequestAviable.State;
-            var result = _userRep.AddOrUpdate(user).Result;
-            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+            
+            String[] user = RequestAviable.UserName.Split('_');
+            AuthenticateUserRequest request = new AuthenticateUserRequest
+            {
+
+                NoDocument = user[0],
+                TypeDocument = user[1],
+            };
+            
+            var userAviable = this.getUserActive(request);
+            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+            {
+                userAviable.Available = RequestAviable.State;
+                var result = _userRep.AddOrUpdate(userAviable).Result;
+            }
+
+            return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
@@ -370,6 +385,7 @@
             var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null) return ResponseFail<AuthenticateUserResponse>();
             user.Authenticated = false;
+            user.Available = false;
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
@@ -380,5 +396,25 @@
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
+
+        
+        public Response<User> CreatePDI(PDIRequest PDIRequest)
+        {
+            // var errorsMessage = PDIRequest.Validate().ToList();
+            // if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+
+            var contentStringHTML = ParametersApp.ContentPDIPdf;
+            var content = PdfConvert.Generatepdf(contentStringHTML);
+            MemoryStream stream = new MemoryStream(content);
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, "PDI", "application/pdf") };
+            var user = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
+            if (user == null || user.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            
+            if(!_sendMailService.SendMailPDI(user.FirstOrDefault(), attachmentPDI))
+                return ResponseFail<User>();
+            return ResponseSuccess();
+        }
+        
     }
 }

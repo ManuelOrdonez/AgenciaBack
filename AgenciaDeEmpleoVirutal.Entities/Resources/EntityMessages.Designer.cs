@@ -70,6 +70,24 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El usuario agent es requerido.
+        /// </summary>
+        public static string AgentUser_Required {
+            get {
+                return ResourceManager.GetString("AgentUser_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario caller es requerido.
+        /// </summary>
+        public static string CallUser_Required {
+            get {
+                return ResourceManager.GetString("CallUser_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El telefono no es valido.
         /// </summary>
         public static string CellPhon_Number {
@@ -210,6 +228,24 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string Password_Required {
             get {
                 return ResourceManager.GetString("Password_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El campo excede la cantidad de caracteres permitida.
+        /// </summary>
+        public static string PDIField_Length {
+            get {
+                return ResourceManager.GetString("PDIField_Length", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Todos los campos del PDI son requeridos.
+        /// </summary>
+        public static string PDIField_Required {
+            get {
+                return ResourceManager.GetString("PDIField_Required", resourceCulture);
             }
         }
         

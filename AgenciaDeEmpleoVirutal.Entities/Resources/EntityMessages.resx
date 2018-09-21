@@ -204,4 +204,16 @@
   <data name="TokenId_Required" xml:space="preserve">
     <value>El token id es requerido</value>
   </data>
+  <data name="AgentUser_Required" xml:space="preserve">
+    <value>El usuario agent es requerido</value>
+  </data>
+  <data name="CallUser_Required" xml:space="preserve">
+    <value>El usuario caller es requerido</value>
+  </data>
+  <data name="PDIField_Length" xml:space="preserve">
+    <value>El campo excede la cantidad de caracteres permitida</value>
+  </data>
+  <data name="PDIField_Required" xml:space="preserve">
+    <value>Todos los campos del PDI son requeridos</value>
+  </data>
 </root>

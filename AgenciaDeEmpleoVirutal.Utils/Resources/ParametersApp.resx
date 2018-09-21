@@ -148,6 +148,38 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/tbody&gt;
 &lt;/table&gt;</value>
   </data>
+  <data name="BodyPDI" xml:space="preserve">
+    <value>&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: center;"&gt;
+&lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;PDI Correo&lt;/p&gt;
+&lt;span style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenciadeempleocolsubsidio.com.co con tu usuario y contrase&amp;ntilde;a para conocer de nuestros servicios. Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</value>
+  </data>
+  <data name="ContentPDIPdf" xml:space="preserve">
+    <value>&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: center;"&gt;
+&lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;PDI Documento&lt;/p&gt;
+&lt;span style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenciadeempleocolsubsidio.com.co con tu usuario y contrase&amp;ntilde;a para conocer de nuestros servicios. Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</value>
+  </data>
   <data name="EmailAddressFrom" xml:space="preserve">
     <value>colsubsidioprueba@gmail.com</value>
   </data>
@@ -165,6 +197,9 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   </data>
   <data name="SubJectPass" xml:space="preserve">
     <value>Recordar Contraseña Usuario Agencia de Empleo Virtual Colsubsidio.</value>
+  </data>
+  <data name="SubjectPDI" xml:space="preserve">
+    <value>Documento PDI Agencia Virtual de Empleo</value>
   </data>
   <data name="SubJectWelcome" xml:space="preserve">
     <value>Registro Exitoso Agencia de Empleo Virtual Colsubsidio.</value>

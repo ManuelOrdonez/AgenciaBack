@@ -100,6 +100,42 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;PDI Correo&lt;/p&gt;
+        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenc [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BodyPDI {
+            get {
+                return ResourceManager.GetString("BodyPDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;PDI Documento&lt;/p&gt;
+        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.ag [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string ContentPDIPdf {
+            get {
+                return ResourceManager.GetString("ContentPDIPdf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to colsubsidioprueba@gmail.com.
         /// </summary>
         public static string EmailAddressFrom {
@@ -150,6 +186,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string SubJectPass {
             get {
                 return ResourceManager.GetString("SubJectPass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documento PDI Agencia Virtual de Empleo.
+        /// </summary>
+        public static string SubjectPDI {
+            get {
+                return ResourceManager.GetString("SubjectPDI", resourceCulture);
             }
         }
         
