@@ -125,7 +125,7 @@
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }*/
+                }
 
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -368,7 +368,7 @@
                 TypeDocument = user[1],
             };
             
-            var userAviable = this.getUserActive(request);
+            var userAviable = this.GetUserActive(request);
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
                 userAviable.Available = RequestAviable.State;
