@@ -132,6 +132,9 @@
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
   </data>
+  <data name="ErrorSendMail" xml:space="preserve">
+    <value>Error enviando el correo</value>
+  </data>
   <data name="ExpiredtokenRPassword" xml:space="preserve">
     <value>Token de recordación de contraseña expiro solicite uno nuevo</value>
   </data>

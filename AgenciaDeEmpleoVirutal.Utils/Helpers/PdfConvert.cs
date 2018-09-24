@@ -1,22 +1,30 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
     using DinkToPdf;
+    using System;
 
     public static class PdfConvert
     {
         public static byte[] Generatepdf(string documentContentHtml)
         {
             var convert = new BasicConverter(new PdfTools());
-            return convert.Convert(new HtmlToPdfDocument()
+            try
             {
-                Objects =
+                return convert.Convert(new HtmlToPdfDocument()
                 {
-                    new ObjectSettings()
+                    Objects =
                     {
-                        HtmlContent = documentContentHtml
+                        new ObjectSettings()
+                        {
+                            HtmlContent = documentContentHtml
+                        }
                     }
-                }
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }        
     }
 }

@@ -21,8 +21,6 @@
 
         Response<User> AviableUser(AviableUserRequest RequestAviable);
 
-        AuthenticationToken SetAuthenticationToken(string username);
-
         Response<User> CreatePDI(PDIRequest PDIRequest);
     }
 }

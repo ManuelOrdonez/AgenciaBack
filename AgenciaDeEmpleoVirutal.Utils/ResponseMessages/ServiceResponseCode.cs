@@ -84,6 +84,10 @@
         /// <summary>
         /// User Already Exist functionarie
         /// </summary>
-        UserAlredyExistF = 126
+        UserAlredyExistF = 126,
+        /// <summary>
+        /// User Already Exist functionarie
+        /// </summary>
+        ErrorSendMail = 300
     }
 }

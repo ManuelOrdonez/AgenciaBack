@@ -67,7 +67,6 @@
                 if (string.IsNullOrEmpty(token))
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
             }
-
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
@@ -112,7 +111,7 @@
             }
             else
             {
-                /// Ldap Service
+                /// Authenticate in LDAP Service
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
                 if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
@@ -184,7 +183,7 @@
         /// <param name="username"></param>
         /// <param name="userActiveDirectory"></param>
         /// <returns></returns>
-        public AuthenticationToken SetAuthenticationToken(string username)
+        private AuthenticationToken SetAuthenticationToken(string username)
         {
             return new AuthenticationToken()
             {
@@ -231,22 +230,15 @@
 
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
-            int pos = 0;
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
 
-            List<User> users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
+            var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
 
-            if (!ValRegistriesUser(users,out pos))
+            if (!ValRegistriesUser(users,out int pos))
             {
-                if (pos == 0)
-                {
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                }
-                else
-                {
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
-                }
+                if (pos == 0) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
+                else  return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
@@ -311,7 +303,6 @@
                 if (!result) return ResponseFail<RegisterUserResponse>();
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
             }
-
             if (userReq.OnlyAzureRegister) return ResponseSuccess(response);
 
             /// Ldap Register        
@@ -331,7 +322,8 @@
             var resultLdap = _LdapServices.Register(regLdap);
             if (resultLdap == null || !resultLdap.estado.Equals("0000"))
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
-            // if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
+            /// No se evaua si el usuario se encuentra registrad en LDAP, Se contuinua con el registro en TbleStorage 
+            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
             return ResponseSuccess(response);
         }
 
@@ -358,23 +350,19 @@
         }
 
         public Response<User> AviableUser(AviableUserRequest RequestAviable)
-        {
-            
+        {            
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
-
                 NoDocument = user[0],
                 TypeDocument = user[1],
-            };
-            
+            };            
             var userAviable = this.GetUserActive(request);
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
             }
-
             return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
 
@@ -400,19 +388,33 @@
         
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
-            // var errorsMessage = PDIRequest.Validate().ToList();
-            // if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+            var errorsMessage = PDIRequest.Validate().ToList();
+            if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
 
-            var contentStringHTML = ParametersApp.ContentPDIPdf;
+            var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
+            if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            var user = userStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+            var agentStorage = _userRep.GetAsyncAll(PDIRequest.AgentUserName).Result;
+            if (agentStorage == null || agentStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+
+            var contentStringHTML = string.Format(ParametersApp.ContentPDIPdf,
+                user.Name, user.LastName, DateTime.Now.ToString("dd/MM/yyyy"), agent.Name, agent.LastName, PDIRequest.MyStrengths,
+                PDIRequest.MyWeaknesses, PDIRequest.MustPotentiate, PDIRequest.WhatAbilities, PDIRequest.WhenAbilities,
+                PDIRequest.WhatJob, PDIRequest.WhenJob, 
+                string.IsNullOrEmpty(PDIRequest.Observations) ? "Ninguna" : PDIRequest.Observations);
+
             var content = PdfConvert.Generatepdf(contentStringHTML);
             MemoryStream stream = new MemoryStream(content);
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, "PDI", "application/pdf") };
-            var user = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
-            if (user == null || user.All(u => u.State.Equals(UserStates.Disable.ToString())))
-                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
             
-            if(!_sendMailService.SendMailPDI(user.FirstOrDefault(), attachmentPDI))
-                return ResponseFail<User>();
+            if(!_sendMailService.SendMailPDI(user, attachmentPDI))
+                return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
+
+            /// guardar PDI BlobStorage
+            
             return ResponseSuccess();
         }
         

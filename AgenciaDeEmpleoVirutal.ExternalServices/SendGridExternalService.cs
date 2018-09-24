@@ -65,7 +65,7 @@
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
-            _sendMailOptions.BodyMail = ParametersApp.BodyPDI;
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailPDI;
             _sendMailOptions.SubJect = ParametersApp.SubjectPDI;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             return SendGridHelper.SenMailRelay(_sendMailOptions, attachments);

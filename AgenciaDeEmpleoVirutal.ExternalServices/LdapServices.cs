@@ -23,7 +23,7 @@
         public LdapServicesResult<AuthenticateLdapResult> Authenticate(string userName, string pass)
         {
             var webClient = new WebClient();
-            SetHeaders(webClient);
+            SetHeadersLdapService(webClient);
             webClient.Headers.Add("x-password", userName);
             webClient.Headers.Add("x-username", pass);
 
@@ -59,7 +59,7 @@
         public LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request)
         {
             var webClient = new WebClient();
-            SetHeaders(webClient);
+            SetHeadersLdapService(webClient);
 
             string parameters = JsonConvert.SerializeObject(request);
             var result = new LdapServicesResult<AuthenticateLdapResult>();
@@ -94,7 +94,7 @@
         public LdapServicesResult<AuthenticateLdapResult> PasswordChangeRequest(PasswordChangeRequest request)
         {
             var webClient = new WebClient();
-            SetHeaders(webClient);
+            SetHeadersLdapService(webClient);
 
             string parameters = JsonConvert.SerializeObject(request);
             LdapServicesResult<AuthenticateLdapResult> result;
@@ -104,14 +104,13 @@
                 var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
                 result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
             }
-
             return result;
         }
 
         public LdapServicesResult<AuthenticateLdapResult> PasswordChangeConfirm(PasswordChangeConfirmRequests request)
         {
             var webClient = new WebClient();
-            SetHeaders(webClient);
+            SetHeadersLdapService(webClient);
 
             string parameters = JsonConvert.SerializeObject(request);
             LdapServicesResult<AuthenticateLdapResult> result;
@@ -120,11 +119,10 @@
             {
                 result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/ForgotPasswordReset", "PUT", parameters));
             }
-
             return result;
         }
 
-        private void SetHeaders(WebClient webClient)
+        private void SetHeadersLdapService(WebClient webClient)
         {
             webClient.Headers.Add("Content-Type", "application/json");
             webClient.Headers.Add("x-api-key", _ldapAíKey);
