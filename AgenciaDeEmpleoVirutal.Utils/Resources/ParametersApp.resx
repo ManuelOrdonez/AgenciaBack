@@ -163,32 +163,32 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   <data name="ContentPDIPdf" xml:space="preserve">
     <value>&lt;div&gt;
 &lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
-&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/h2&gt;
+&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0}&lt;/h2&gt;
 
 &lt;/div&gt;
 &lt;div style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
- &lt;p&gt;Fecha: {2} &lt;br /&gt; Ortientado Por: {3} {4}&lt;/p&gt;
+ &lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Mis Competencias
 &lt;ul&gt;
-&lt;li&gt;Mis Fortalezas: &lt;br /&gt; {5}&lt;/li&gt;
-&lt;li&gt;Mis debilidades: &lt;br /&gt; {6}&lt;/li&gt;
-&lt;li&gt;Debo potencializar: &lt;br /&gt; {7}&lt;/li&gt;
+&lt;li&gt;Mis Fortalezas: &lt;br /&gt; {3}&lt;/li&gt;
+&lt;li&gt;Mis debilidades: &lt;br /&gt; {4}&lt;/li&gt;
+&lt;li&gt;Debo potencializar: &lt;br /&gt; {5}&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;Fortaleciendo mis competencias
+&lt;ul&gt;
+&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {6}&lt;/li&gt;
+&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {7}&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Mi plan de b&amp;uacute;squeda de empleo
 &lt;ul&gt;
 &lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {8}&lt;/li&gt;
 &lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {9}&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;Mi plan de b&amp;uacute;squeda de empleo
-&lt;ul&gt;
-&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {10}&lt;/li&gt;
-&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {11}&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Observaciones: &lt;br /&gt; {12}&lt;/li&gt;
+&lt;li&gt;Observaciones: &lt;br /&gt; {10}&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;</value>
   </data>

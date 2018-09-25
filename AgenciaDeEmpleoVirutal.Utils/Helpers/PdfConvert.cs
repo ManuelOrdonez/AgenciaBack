@@ -5,7 +5,7 @@
 
     public static class PdfConvert
     {
-        public static byte[] Generatepdf(string documentContentHtml)
+        public static byte[] GeneratePDF(string documentContentHtml)
         {
             var convert = new BasicConverter(new PdfTools());
             try

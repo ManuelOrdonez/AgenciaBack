@@ -24,8 +24,8 @@
         {
             var webClient = new WebClient();
             SetHeadersLdapService(webClient);
-            webClient.Headers.Add("x-password", userName);
-            webClient.Headers.Add("x-username", pass);
+            webClient.Headers.Add("x-password", pass);
+            webClient.Headers.Add("x-username", userName); 
 
             LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
 

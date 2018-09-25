@@ -45,4 +45,9 @@
     </EmbeddedResource>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="bin\Debug\netstandard2.0\" />
+    <Folder Include="bin\Release\netstandard2.0\" />
+  </ItemGroup>
+
 </Project>

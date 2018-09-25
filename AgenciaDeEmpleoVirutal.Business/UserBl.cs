@@ -25,6 +25,8 @@
     {
         private IGenericRep<User> _userRep;
 
+        private IGenericRep<PDI> _pdiRep;
+
         private ILdapServices _LdapServices;
 
         private ISendGridExternalService _sendMailService;
@@ -36,14 +38,16 @@
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService)
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService openTokExternalService,
+                        IGenericRep<PDI> pdiRep)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options.Value;
             _crypto = new Crypto();
-            _openTokService = _openTokExternalService;
+            _openTokService = openTokExternalService;
+            _pdiRep = pdiRep;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -152,45 +156,6 @@
                 }
             };
             return ResponseSuccess(response);
-        }
-
-        /// <summary>
-        /// Función que se encarga de traer el usuario que esta activo en el sistema 
-        /// </summary>
-        /// <param name="userReq"></param>
-        /// <returns></returns>
-        private User GetUserActive(AuthenticateUserRequest userReq)
-        {
-            User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            foreach (var item in lUser)
-            {
-                if (item.State == UserStates.Enable.ToString())
-                {
-                    return item;
-                }
-            }
-            if (lUser.Count > 0)
-            {
-                return lUser[0];
-            }
-            return user;
-        }
-
-        /// <summary>
-        /// Set Data return Autentication
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="userActiveDirectory"></param>
-        /// <returns></returns>
-        private AuthenticationToken SetAuthenticationToken(string username)
-        {
-            return new AuthenticationToken()
-            {
-                TokenType = "Bearer",
-                Expiration = DateTime.Now.AddMinutes(15),
-                AccessToken = ManagerToken.GenerateToken(username),
-            };
         }
 
         public Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq)
@@ -327,28 +292,6 @@
             return ResponseSuccess(response);
         }
 
-        /// <summary>
-        /// Función que determina si el usuario existen es persona para que permita crear el usuario como funcionario
-        /// </summary>
-        /// <param name="lUser">Lista de usuarios registrados</param>
-        /// <param name="position">posición que se encuentra el registro de persona</param>
-        /// <returns></returns>
-        private bool ValRegistriesUser(List<User> lUser, out int position)
-        {
-            bool result = true;
-            position = -1;
-            if (lUser.Count > 0)
-            {
-                result = false;
-                if (lUser[0].UserType == "funcionario")
-                {
-                    position = 0;
-                    result = false;
-                }
-            }           
-            return result;
-        }
-
         public Response<User> AviableUser(AviableUserRequest RequestAviable)
         {            
             String[] user = RequestAviable.UserName.Split('_');
@@ -400,23 +343,100 @@
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
-            var contentStringHTML = string.Format(ParametersApp.ContentPDIPdf,
-                user.Name, user.LastName, DateTime.Now.ToString("dd/MM/yyyy"), agent.Name, agent.LastName, PDIRequest.MyStrengths,
-                PDIRequest.MyWeaknesses, PDIRequest.MustPotentiate, PDIRequest.WhatAbilities, PDIRequest.WhenAbilities,
-                PDIRequest.WhatJob, PDIRequest.WhenJob, 
-                string.IsNullOrEmpty(PDIRequest.Observations) ? "Ninguna" : PDIRequest.Observations);
+            var pdiName = string.Format("PDI-{0}-{1}", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
+            var pdi = new PDI()
+            {
+                CallerUserName = user.UserName,
+                PDIName = pdiName,
+                MyStrengths = PDIRequest.MyStrengths,
+                MustPotentiate = PDIRequest.MustPotentiate,
+                MyWeaknesses = PDIRequest.MyWeaknesses,
+                CallerName = string.Format("{0} {1}", user.Name, user.LastName),
+                AgentName = string.Format("{0} {1}", agent.Name, agent.LastName),
+                WhatAbilities = PDIRequest.WhatAbilities,
+                WhatJob = PDIRequest.WhatJob,
+                WhenAbilities = PDIRequest.WhenAbilities,
+                WhenJob = PDIRequest.WhenJob,
+                PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
+                Observations = PDIRequest.Observations,
+            };
+            GenarateContentPDI(new List<PDI>() { pdi });
 
-            var content = PdfConvert.Generatepdf(contentStringHTML);
-            MemoryStream stream = new MemoryStream(content);
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, "PDI", "application/pdf") };
+            MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
             
             if(!_sendMailService.SendMailPDI(user, attachmentPDI))
                 return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
-
-            /// guardar PDI BlobStorage
-            
+            _pdiRep.AddOrUpdate(pdi);
             return ResponseSuccess();
         }
-        
+
+        public Response<User> GetPDIsFromUser(string userName)
+        {
+            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
+            if (PDIs.Count <= 0 || PDIs == null) return ResponseFail<User>();
+            var contetnt = GenarateContentPDI(PDIs);
+            return null;
+        }
+
+        private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)
+        {
+            var contentStringHTMLPDI = new List<string>();
+            requestPDI.ForEach(pdi =>
+            {
+                contentStringHTMLPDI.Add(string.Format(ParametersApp.ContentPDIPdf,
+                    pdi.CallerName, pdi.PDIDate , pdi.AgentName, pdi.MyStrengths,
+                    pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
+                    pdi.WhatJob, pdi.WhenJob,
+                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
+            });
+            var result = new List<byte[]>();
+            contentStringHTMLPDI.ForEach(cont => result.Add(PdfConvert.GeneratePDF(cont)));
+            return result;
+        }
+
+        private bool ValRegistriesUser(List<User> lUser, out int position)
+        {
+            bool result = true;
+            position = -1;
+            if (lUser.Count > 0)
+            {
+                result = false;
+                if (lUser[0].UserType == "funcionario")
+                {
+                    position = 0;
+                    result = false;
+                }
+            }
+            return result;
+        }
+
+        private User GetUserActive(AuthenticateUserRequest userReq)
+        {
+            User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                return lUser[0];
+            }
+            return user;
+        }
+
+        private AuthenticationToken SetAuthenticationToken(string username)
+        {
+            return new AuthenticationToken()
+            {
+                TokenType = "Bearer",
+                Expiration = DateTime.Now.AddMinutes(15),
+                AccessToken = ManagerToken.GenerateToken(username),
+            };
+        }
     }
 }

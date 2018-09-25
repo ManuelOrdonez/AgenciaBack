@@ -6,6 +6,7 @@
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using Microsoft.Extensions.Options;
@@ -28,7 +29,7 @@
 
         protected User UserInfoMock;
 
-        protected LdapServicesResult LdapResult;
+        protected LdapServicesResult<AuthenticateLdapResult> LdapResult;
 
         protected RegisterUserRequest RequestRegisterUser;
 
@@ -76,11 +77,11 @@
                 UserType = "Cesante"
             };
 
-            LdapResult = new LdapServicesResult()
+            LdapResult = new LdapServicesResult<AuthenticateLdapResult>()
             {
                 data = new List<AuthenticateLdapResult>()
                 {
-                    new AuthenticateLdapResult() { status = "success"}
+                    new AuthenticateLdapResult() { Successurl = "success"}
                 }
             };
 
