@@ -137,6 +137,11 @@
                         callInfo.State = callInfo.State == CallStates.Begun.ToString() ?
                             CallStates.Lost.ToString() : stateInput.ToString();
                     }
+                    if (agent != null)
+                    {
+                        agent.Available = false;
+                        if (!_agentRepository.AddOrUpdate(agent).Result) return ResponseFail();
+                    }
                     break;
                 case CallStates.Managed:
                     callInfo.DateFinishCall = DateTime.Now;
