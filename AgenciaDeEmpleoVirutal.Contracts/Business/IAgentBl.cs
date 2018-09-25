@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.Business
 {
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -19,5 +20,13 @@
         /// <param name="AgentAvailableRequest"></param>
         /// <returns></returns>
         Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest AgentAvailableRequest);
+
+
+        /// <summary>
+        /// Agent Aviable to call
+        /// </summary>
+        /// <param name="RequestAviable"></param>
+        /// <returns></returns>
+        Response<User> ImAviable(AviableUser RequestAviable);
     }
 }

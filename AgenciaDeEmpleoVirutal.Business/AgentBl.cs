@@ -60,12 +60,21 @@
             if (userInfo == null)
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
 
-            var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
-            if (advisors.Count.Equals(0))
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
-            var Agent = advisors.Where(i => i.Available).OrderBy(x => x.CountCallAttended).FirstOrDefault();
-            if (Agent == null)
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
+            lock (this)
+            {
+                var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
+                if (advisors.Count.Equals(0))
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
+                var Agent = advisors.Where(i => i.Available ).OrderBy(x => x.CountCallAttended).FirstOrDefault();
+                if (Agent == null)
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
+
+                //Disabled Agent
+                Agent.Available = false;
+
+                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>(); 
+            
+
             var response = new GetAgentAvailableResponse();
             response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
             if (string.IsNullOrEmpty(response.IDToken))
@@ -73,13 +82,18 @@
             response.IDSession = Agent.OpenTokSessionId;
             response.AgentName = Agent.Name;
             response.AgentLatName = Agent.LastName;
+            response.AgentUserName = Agent.UserName;
+                return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
+            }           
+        }
 
-            //Disabled Agent
-            Agent.Available = false;
-            if(!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
 
-            return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
-        }       
+        public Response<User> ImAviable(AviableUser RequestAviable)
+        {
+            if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
+            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+        }
 
     }
 }

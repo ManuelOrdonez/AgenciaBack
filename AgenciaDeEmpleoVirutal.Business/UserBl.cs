@@ -90,7 +90,7 @@
             List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString())
+                if (item.State.ToLower() == UserStates.Enable.ToString().ToLower())
                 {
                     return item;
                 }
@@ -133,6 +133,8 @@
             else
             {
                 /// pendiente definir servicio Ldap pass user?
+                
+                /*
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
                 if (!result.data.FirstOrDefault().status.Equals("success") && user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
@@ -145,7 +147,7 @@
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
+                }*/
 
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -346,17 +348,23 @@
 
         public Response<User> AviableUser(AviableUser RequestAviable)
         {
-            if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
-            var user = _userRep.GetAsync(RequestAviable.UserName).Result;
-            AuthenticateUserRequest request = new AuthenticateUserRequest{
+            
+            String[] user = RequestAviable.UserName.Split('_');
+            AuthenticateUserRequest request = new AuthenticateUserRequest
+            {
 
-                NoDocument = user.NoDocument,
-                TypeDocument =user.CodTypeDocument,
+                NoDocument = user[0],
+                TypeDocument = user[1],
             };
-            user= this.getUserActive(request);
-            user.Available = RequestAviable.State;
-            var result = _userRep.AddOrUpdate(user).Result;
-            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+            
+            var userAviable = this.getUserActive(request);
+            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+            {
+                userAviable.Available = RequestAviable.State;
+                var result = _userRep.AddOrUpdate(userAviable).Result;
+            }
+
+            return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
@@ -366,6 +374,7 @@
             var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null) return ResponseFail<AuthenticateUserResponse>();
             user.Authenticated = false;
+            user.Available = false;
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
@@ -376,5 +385,6 @@
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
+
     }
 }
