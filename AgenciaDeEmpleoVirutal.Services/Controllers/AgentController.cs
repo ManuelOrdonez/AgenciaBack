@@ -36,5 +36,13 @@
         {
             return Ok(_agentBusiness.GetAgentAvailable(request));
         }
+
+        [HttpPost]
+        [Route("ImAviable")]
+        [Produces(typeof(Response<GetAgentAvailableResponse>))]
+        public IActionResult ImAviable([FromBody] AviableUser request)
+        {
+            return Ok(_agentBusiness.ImAviable(request));
+        }
     }
 }

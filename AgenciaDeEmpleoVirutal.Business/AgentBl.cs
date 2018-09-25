@@ -65,7 +65,7 @@
                 var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
                 if (advisors.Count.Equals(0))
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
-                var Agent = advisors.Where(i => i.Available).OrderBy(x => x.CountCallAttended).FirstOrDefault();
+                var Agent = advisors.Where(i => i.Available ).OrderBy(x => x.CountCallAttended).FirstOrDefault();
                 if (Agent == null)
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
 
@@ -82,9 +82,18 @@
             response.IDSession = Agent.OpenTokSessionId;
             response.AgentName = Agent.Name;
             response.AgentLatName = Agent.LastName;
+            response.AgentUserName = Agent.UserName;
                 return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
             }           
-        }       
+        }
+
+
+        public Response<User> ImAviable(AviableUser RequestAviable)
+        {
+            if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
+            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+        }
 
     }
 }

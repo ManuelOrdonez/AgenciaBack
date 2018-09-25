@@ -386,9 +386,5 @@
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
-       /* public Response<User> CreatePDI(PDIRequest PDI)
-        {
-            //return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
-        }*/
     }
 }
