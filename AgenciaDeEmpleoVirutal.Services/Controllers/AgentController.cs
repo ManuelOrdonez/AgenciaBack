@@ -40,7 +40,7 @@
         [HttpPost]
         [Route("ImAviable")]
         [Produces(typeof(Response<GetAgentAvailableResponse>))]
-        public IActionResult ImAviable([FromBody] AviableUser request)
+        public IActionResult ImAviable([FromBody] AviableUserRequest request)
         {
             return Ok(_agentBusiness.ImAviable(request));
         }

@@ -88,7 +88,7 @@
         }
 
 
-        public Response<User> ImAviable(AviableUser RequestAviable)
+        public Response<User> ImAviable(AviableUserRequest RequestAviable)
         {
             if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
             var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
