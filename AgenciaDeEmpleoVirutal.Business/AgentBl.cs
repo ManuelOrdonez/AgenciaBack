@@ -16,6 +16,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading;
+    using System.Web;
 
     public class AgentBl : BusinessBase<Agent>, IAgentBl
     {
@@ -58,15 +59,16 @@
 
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
-            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1,5));
-            var errorMessages = agentAvailableRequest.Validate().ToList();
-            if (errorMessages.Count > 0) return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
-            var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
-            if (userInfo == null)
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
-
             lock (obj)
             {
+                var errorMessages = agentAvailableRequest.Validate().ToList();
+                if (errorMessages.Count > 0) return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
+                var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
+                if (userInfo == null)
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
+
+
+                Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1, 5));
                 var query = new List<ConditionParameter>()
                 {
                     new ConditionParameter()
@@ -78,6 +80,12 @@
                     new ConditionParameter()
                     {
                         ColumnName = "Available",
+                        Condition = QueryComparisons.Equal,
+                        ValueBool = true
+                    },
+                    new ConditionParameter()
+                    {
+                        ColumnName = "Authenticated",
                         Condition = QueryComparisons.Equal,
                         ValueBool = true
                     }
@@ -95,20 +103,31 @@
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
 
                 //Disabled Agent
-                Agent.Available = false;
-                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>(); 
-            
+                var agentAviable = this.ImAviable(new AviableUser()
+                {
+                    State = true,
+                    UserName = Agent.UserName
+                });
 
-            var response = new GetAgentAvailableResponse();
-            response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
-            if (string.IsNullOrEmpty(response.IDToken))
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
-            response.IDSession = Agent.OpenTokSessionId;
-            response.AgentName = Agent.Name;
-            response.AgentLatName = Agent.LastName;
-            response.AgentUserName = Agent.UserName;
+
+                if (!agentAviable.Data.FirstOrDefault().Available)
+                {
+                    return ResponseFail<GetAgentAvailableResponse>();
+                }
+                Agent.Available = false;
+                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
+
+
+                var response = new GetAgentAvailableResponse();
+                response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
+                if (string.IsNullOrEmpty(response.IDToken))
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+                response.IDSession = Agent.OpenTokSessionId;
+                response.AgentName = Agent.Name;
+                response.AgentLatName = Agent.LastName;
+                response.AgentUserName = Agent.UserName;
                 return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
-            }           
+            }
         }
 
 

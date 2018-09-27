@@ -352,26 +352,28 @@
            
             return eRta;
         }
-
+        private static readonly Object obj = new Object();
         public Response<User> AviableUser(AviableUser RequestAviable)
         {
-            
-            String[] user = RequestAviable.UserName.Split('_');
-            AuthenticateUserRequest request = new AuthenticateUserRequest
+            lock (obj)
             {
+                String[] user = RequestAviable.UserName.Split('_');
+                AuthenticateUserRequest request = new AuthenticateUserRequest
+                {
 
-                NoDocument = user[0],
-                TypeDocument = user[1],
-            };
-            
-            var userAviable = this.getUserActive(request);
-            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
-            {
-                userAviable.Available = RequestAviable.State;
-                var result = _userRep.AddOrUpdate(userAviable).Result;
+                    NoDocument = user[0],
+                    TypeDocument = user[1],
+                };
+
+                var userAviable = this.getUserActive(request);
+                if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+                {
+                    userAviable.Available = RequestAviable.State;
+                    var result = _userRep.AddOrUpdate(userAviable).Result;
+                }
+
+                return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
             }
-
-            return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
