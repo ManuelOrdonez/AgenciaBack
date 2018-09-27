@@ -11,6 +11,7 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -51,7 +52,8 @@
             return ResponseSuccess(new List<CreateAgentResponse>());
         }
 
-        
+        private static readonly Object obj = new Object();
+
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
             var errorMessages = agentAvailableRequest.Validate().ToList();
@@ -60,7 +62,7 @@
             if (userInfo == null)
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
 
-            lock (this)
+            lock (obj)
             {
                 var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
                 if (advisors.Count.Equals(0))
