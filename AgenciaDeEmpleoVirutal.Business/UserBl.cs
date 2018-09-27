@@ -11,14 +11,19 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
+    using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net.Mail;
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
+        private IGenericRep<PDI> _pdiRep;
+
         private IGenericRep<User> _userRep;
 
         private ILdapServices _LdapServices;
@@ -32,8 +37,10 @@
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService)
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
+                        IGenericRep<PDI> pdiRep)
         {
+            _pdiRep = pdiRep;
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
@@ -384,6 +391,72 @@
             if (string.IsNullOrEmpty(UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+        }
+
+        public Response<User> CreatePDI(PDIRequest PDIRequest)
+        {
+            var errorsMessage = PDIRequest.Validate().ToList();
+            if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+
+            var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
+            if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            var user = userStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+            var agentStorage = _userRep.GetAsyncAll(PDIRequest.AgentUserName).Result;
+            if (agentStorage == null || agentStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+
+            var pdiName = string.Format("PDI-{0}-{1}", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
+            var pdi = new PDI()
+            {
+                CallerUserName = user.UserName,
+                PDIName = pdiName,
+                MyStrengths = PDIRequest.MyStrengths,
+                MustPotentiate = PDIRequest.MustPotentiate,
+                MyWeaknesses = PDIRequest.MyWeaknesses,
+                CallerName = string.Format("{0} {1}", user.Name, user.LastName),
+                AgentName = string.Format("{0} {1}", agent.Name, agent.LastName),
+                WhatAbilities = PDIRequest.WhatAbilities,
+                WhatJob = PDIRequest.WhatJob,
+                WhenAbilities = PDIRequest.WhenAbilities,
+                WhenJob = PDIRequest.WhenJob,
+                PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
+                Observations = PDIRequest.Observations,
+            };
+            GenarateContentPDI(new List<PDI>() { pdi });
+
+            MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
+
+            if (!_sendMailService.SendMailPDI(user, attachmentPDI))
+                return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
+            _pdiRep.AddOrUpdate(pdi);
+            return ResponseSuccess();
+        }
+
+        public Response<User> GetPDIsFromUser(string userName)
+        {
+            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
+            if (PDIs.Count <= 0 || PDIs == null) return ResponseFail<User>();
+            var contetnt = GenarateContentPDI(PDIs);
+            return null;
+        }
+
+        private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)
+        {
+            var contentStringHTMLPDI = new List<string>();
+            requestPDI.ForEach(pdi =>
+            {
+                contentStringHTMLPDI.Add(string.Format(ParametersApp.ContentPDIPdf,
+                    pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
+                    pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
+                    pdi.WhatJob, pdi.WhenJob,
+                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
+            });
+            var result = new List<byte[]>();
+            contentStringHTMLPDI.ForEach(cont => result.Add(PdfConvert.GeneratePDF(cont)));
+            return result;
         }
 
     }

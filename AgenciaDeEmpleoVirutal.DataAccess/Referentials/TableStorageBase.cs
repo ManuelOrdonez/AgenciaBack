@@ -91,6 +91,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
+
         public  async Task<bool> DeleteRowAsync(T entity)
         {
             var operation = TableOperation.Delete(entity);
@@ -178,11 +179,18 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             string qry = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.NotEqual, string.Empty);
             foreach (var item in conditionParameters)
             {
-                conditions.Add(TableQuery.GenerateFilterCondition(item.ColumnName, item.Condition, item.Value));
+                if (string.IsNullOrEmpty(item.Value))
+                {
+                    conditions.Add(TableQuery.GenerateFilterConditionForBool(item.ColumnName, item.Condition, item.ValueBool));               
+                }
+                else
+                {
+                    conditions.Add(TableQuery.GenerateFilterCondition(item.ColumnName, item.Condition, item.Value));
+                }
             }
             foreach(string conditional in conditions)
             {
-                qry= TableQuery.CombineFilters(conditional, TableOperators.And ,qry);
+                qry = TableQuery.CombineFilters(conditional, TableOperators.And ,qry);
             }
             query.Where(qry);
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
