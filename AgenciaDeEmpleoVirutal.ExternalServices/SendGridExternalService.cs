@@ -5,6 +5,8 @@
     using Entities;
     using Entities.Referentials;
     using Microsoft.Extensions.Options;
+    using System.Collections.Generic;
+    using System.Net.Mail;
     using Utils;
     using Utils.Resources;
 
@@ -83,5 +85,16 @@
         //    SendGridHelper.SenMailRelay(_sendMailOptions);
         //    return true;
         //}
+
+        public bool SendMailPDI(User userInfo, List<Attachment> attachments)
+        {
+            _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailPDI;
+            _sendMailOptions.SubJect = ParametersApp.SubjectPDI;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+            return SendGridHelper.SenMailRelay(_sendMailOptions, attachments);
+        }
     }
 }
