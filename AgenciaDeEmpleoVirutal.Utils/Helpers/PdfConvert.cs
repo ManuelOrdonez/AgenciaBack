@@ -15,7 +15,6 @@
 
         public byte[] GeneratePDF(string documentContentHtml)
         {
-            /// var convert = new SynchronizedConverter(new PdfTools());
             try
             {
                 return _converter.Convert(new HtmlToPdfDocument
