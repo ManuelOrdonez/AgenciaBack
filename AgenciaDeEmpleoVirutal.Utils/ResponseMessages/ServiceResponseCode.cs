@@ -86,7 +86,7 @@
         /// </summary>
         UserAlredyExistF = 126,
         /// <summary>
-        /// User Already Exist functionarie
+        /// Error Send Mail
         /// </summary>
         ErrorSendMail = 300
     }
