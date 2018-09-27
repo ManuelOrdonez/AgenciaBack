@@ -13,6 +13,7 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
@@ -22,6 +23,8 @@
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
+        private IConverter _converter;
+
         private IGenericRep<PDI> _pdiRep;
 
         private IGenericRep<User> _userRep;
@@ -38,8 +41,9 @@
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep)
+                        IGenericRep<PDI> pdiRep, IConverter converter)
         {
+            _converter = converter;
             _pdiRep = pdiRep;
             _sendMailService = sendMailService;
             _userRep = userRep;
@@ -427,10 +431,10 @@
             GenarateContentPDI(new List<PDI>() { pdi });
 
             MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
-
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };            
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
                 return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
+            stream.Close();
             _pdiRep.AddOrUpdate(pdi);
             return ResponseSuccess();
         }
@@ -455,7 +459,8 @@
                     string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
             });
             var result = new List<byte[]>();
-            contentStringHTMLPDI.ForEach(cont => result.Add(PdfConvert.GeneratePDF(cont)));
+            var conv = new PdfConvert(_converter);
+            contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
             return result;
         }
 
