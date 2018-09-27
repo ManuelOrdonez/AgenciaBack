@@ -4,7 +4,6 @@
     using System;
     using System.Collections.Generic;
     using System.Net.Mail;
-    using System.Text;
 
     public static class SendGridHelper
     {
@@ -13,7 +12,7 @@
         /// </summary>
         /// <param name="sendMailData">The send mail data.</param>
         /// <returns></returns>
-        public static void SenMailRelay(SendMailData sendMailData)
+        public static bool SenMailRelay(SendMailData sendMailData, List<Attachment> attachments = null)
         {
             var client = new SmtpClient
             {
@@ -26,12 +25,21 @@
                 Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
             };
             var mail = new MailMessage();
+            if (attachments != null) attachments.ForEach(at => mail.Attachments.Add(at));
             mail.To.Add(new MailAddress(sendMailData.EmailAddressTo));
             mail.From = new MailAddress(sendMailData.EmailAddressFrom, sendMailData.NameEmail);
             mail.Subject = sendMailData.SubJect;
             mail.Body = sendMailData.BodyMail;
             mail.IsBodyHtml = true;
-            client.Send(mail);
+            try
+            {
+                client.Send(mail);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }
