@@ -21,6 +21,8 @@ namespace AgenciaDeEmpleoVirutal.Services
     using System.Runtime.Loader;
     using System.Reflection;
     using System.IO;
+    using DinkToPdf.Contracts;
+    using DinkToPdf;
 
     public class Startup
     {
@@ -74,6 +76,8 @@ namespace AgenciaDeEmpleoVirutal.Services
             {
                 c.SwaggerDoc("v1", new Info { Title = "Services Agencia de Empleo Virtual", Version = "v1" });
             });
+
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
             services.AddMvc();
 
