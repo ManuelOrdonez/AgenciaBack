@@ -11,9 +11,11 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
 
     public class AgentBl : BusinessBase<Agent>, IAgentBl
     {
@@ -56,6 +58,7 @@
 
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
+            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1,5));
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0) return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
             var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
@@ -64,16 +67,35 @@
 
             lock (obj)
             {
-                var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
+                var query = new List<ConditionParameter>()
+                {
+                    new ConditionParameter()
+                    {
+                        ColumnName = "PartitionKey",
+                        Condition = QueryComparisons.Equal,
+                        Value = UsersTypes.Funcionario.ToString().ToLower()
+                    },
+                    new ConditionParameter()
+                    {
+                        ColumnName = "Available",
+                        Condition = QueryComparisons.Equal,
+                        ValueBool = true
+                    }
+                };
+
+                var advisors = _agentRepository.GetSomeAsync(query).Result;
+
+                /// var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
                 if (advisors.Count.Equals(0))
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
-                var Agent = advisors.Where(i => i.Available ).OrderBy(x => x.CountCallAttended).FirstOrDefault();
+                ///var Agent = advisors.Where(i => i.Available ).OrderBy(x => x.CountCallAttended).FirstOrDefault();
+                var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
+
                 if (Agent == null)
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
 
                 //Disabled Agent
                 Agent.Available = false;
-
                 if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>(); 
             
 

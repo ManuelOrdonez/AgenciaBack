@@ -7,5 +7,7 @@
         public string Condition { get; set; }
 
         public string Value { get; set; }
+
+        public bool ValueBool { get; set; }
     }
 }
