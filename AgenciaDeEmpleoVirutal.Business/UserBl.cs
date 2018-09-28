@@ -30,8 +30,6 @@
 
         private IGenericRep<User> _userRep;
 
-        private IGenericRep<PDI> _pdiRep;
-
         private ILdapServices _LdapServices;
 
         private ISendGridExternalService _sendMailService;
@@ -43,7 +41,7 @@
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService openTokExternalService,
                         IGenericRep<PDI> pdiRep, IConverter converter)
         {
             _converter = converter;
@@ -409,6 +407,40 @@
                 Expiration = DateTime.Now.AddMinutes(15),
                 AccessToken = ManagerToken.GenerateToken(username),
             };
+        }
+
+        private bool ValRegistriesUser(List<User> lUser, out int position)
+        {
+            bool result = true;
+            position = -1;
+            if (lUser.Count > 0)
+            {
+                result = false;
+                if (lUser[0].UserType == "funcionario")
+                {
+                    position = 0;
+                    result = false;
+                }
+            }
+            return result;
+        }
+
+        private User GetUserActive(AuthenticateUserRequest userReq)
+        {
+            User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                return lUser[0];
+            }
+            return user;
         }
     }
 }
