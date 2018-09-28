@@ -89,5 +89,6 @@
         /// Error Send Mail
         /// </summary>
         ErrorSendMail = 300
+
     }
 }

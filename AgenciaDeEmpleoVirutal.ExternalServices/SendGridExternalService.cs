@@ -29,6 +29,11 @@
             _sendMailOptions = sendMailOptions.Value;
             _userSecretOptions = userSecretOptions.Value;
         }
+        private bool SendMail()
+        {
+            SendGridHelper.SenMailRelay(_sendMailOptions);
+            return true;
+        }
 
         /// <inheritdoc />
         /// <summary>
@@ -41,11 +46,9 @@
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
-       
-                _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
-                _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
-                _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
-
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
+            _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             return SendMail();
         }
 
@@ -69,11 +72,6 @@
             _sendMailOptions.SubJect = ParametersApp.SubjectPDI;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             return SendGridHelper.SenMailRelay(_sendMailOptions, attachments);
-        }
-
-        private bool SendMail()
-        {
-            return SendGridHelper.SenMailRelay(_sendMailOptions);
         }
     }
 }

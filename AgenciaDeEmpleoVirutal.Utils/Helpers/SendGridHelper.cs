@@ -25,7 +25,7 @@
                 Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
             };
             var mail = new MailMessage();
-            if (attachments != null) attachments.ForEach( at => mail.Attachments.Add(at));
+            if (attachments != null) attachments.ForEach(at => mail.Attachments.Add(at));
             mail.To.Add(new MailAddress(sendMailData.EmailAddressTo));
             mail.From = new MailAddress(sendMailData.EmailAddressFrom, sendMailData.NameEmail);
             mail.Subject = sendMailData.SubJect;

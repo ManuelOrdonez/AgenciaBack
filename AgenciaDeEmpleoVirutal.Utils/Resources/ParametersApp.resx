@@ -132,6 +132,18 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/tbody&gt;
 &lt;/table&gt;</value>
   </data>
+  <data name="BodyMailPDI" xml:space="preserve">
+    <value>&lt;div&gt;
+	&lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Correo PDI&lt;/h1&gt;
+	&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/h2&gt;
+&lt;/div&gt;
+
+&lt;div&gt;
+  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+    Buen d&amp;iacute;a: En el precente correo se adjunta el documento PDI diligenciado.
+  &lt;/p&gt;
+&lt;/div&gt;</value>
+  </data>
   <data name="BodyMailWelcome" xml:space="preserve">
     <value>&lt;table&gt;
 &lt;tbody&gt;
@@ -147,18 +159,6 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</value>
-  </data>
-  <data name="BodyMailPDI" xml:space="preserve">
-    <value>&lt;div&gt;
-	&lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Correo PDI&lt;/h1&gt;
-	&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/h2&gt;
-&lt;/div&gt;
-
-&lt;div&gt;
-  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
-    Buen d&amp;iacute;a: En el precente correo se adjunta el documento PDI diligenciado.
-  &lt;/p&gt;
-&lt;/div&gt;</value>
   </data>
   <data name="ContentPDIPdf" xml:space="preserve">
     <value>&lt;div&gt;

@@ -13,23 +13,23 @@
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(200, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
-        public string MyStrengths     { get; set; }
+        public string MyStrengths { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(200, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
-        public string MyWeaknesses    { get; set; }
+        public string MyWeaknesses { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(200, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
-        public string MustPotentiate  { get; set; }
+        public string MustPotentiate { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(400, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
-        public string WhatAbilities   { get; set; }
+        public string WhatAbilities { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(400, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
-        public string WhenAbilities   { get; set; }
+        public string WhenAbilities { get; set; }
 
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(400, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
@@ -38,7 +38,7 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(400, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
         public string WhenJob { get; set; }
-        
+
         public string Observations { get; set; }
     }
 }

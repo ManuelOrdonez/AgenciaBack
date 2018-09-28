@@ -14,6 +14,7 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
@@ -23,6 +24,10 @@
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
+        private IConverter _converter;
+
+        private IGenericRep<PDI> _pdiRep;
+
         private IGenericRep<User> _userRep;
 
         private IGenericRep<PDI> _pdiRep;
@@ -38,16 +43,17 @@
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService openTokExternalService,
-                        IGenericRep<PDI> pdiRep)
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
+                        IGenericRep<PDI> pdiRep, IConverter converter)
         {
+            _converter = converter;
+            _pdiRep = pdiRep;
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options.Value;
             _crypto = new Crypto();
             _openTokService = openTokExternalService;
-            _pdiRep = pdiRep;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -328,7 +334,6 @@
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
-        
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
             var errorsMessage = PDIRequest.Validate().ToList();
@@ -363,10 +368,10 @@
             GenarateContentPDI(new List<PDI>() { pdi });
 
             MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
-            
-            if(!_sendMailService.SendMailPDI(user, attachmentPDI))
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };            
+            if (!_sendMailService.SendMailPDI(user, attachmentPDI))
                 return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
+            stream.Close();
             _pdiRep.AddOrUpdate(pdi);
             return ResponseSuccess();
         }
@@ -385,48 +390,15 @@
             requestPDI.ForEach(pdi =>
             {
                 contentStringHTMLPDI.Add(string.Format(ParametersApp.ContentPDIPdf,
-                    pdi.CallerName, pdi.PDIDate , pdi.AgentName, pdi.MyStrengths,
+                    pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
                     string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
             });
             var result = new List<byte[]>();
-            contentStringHTMLPDI.ForEach(cont => result.Add(PdfConvert.GeneratePDF(cont)));
+            var conv = new PdfConvert(_converter);
+            contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
             return result;
-        }
-
-        private bool ValRegistriesUser(List<User> lUser, out int position)
-        {
-            bool result = true;
-            position = -1;
-            if (lUser.Count > 0)
-            {
-                result = false;
-                if (lUser[0].UserType == "funcionario")
-                {
-                    position = 0;
-                    result = false;
-                }
-            }
-            return result;
-        }
-
-        private User GetUserActive(AuthenticateUserRequest userReq)
-        {
-            User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            foreach (var item in lUser)
-            {
-                if (item.State == UserStates.Enable.ToString())
-                {
-                    return item;
-                }
-            }
-            if (lUser.Count > 0)
-            {
-                return lUser[0];
-            }
-            return user;
         }
 
         private AuthenticationToken SetAuthenticationToken(string username)
