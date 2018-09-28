@@ -88,7 +88,15 @@
         /// <summary>
         /// Error Send Mail
         /// </summary>
-        ErrorSendMail = 300
+        ErrorSendMail = 300,
+        /// <summary>
+        /// Send And Save PDI
+        /// </summary>
+        SendAndSavePDI = 205,
+        /// <summary>
+        /// Send And Save PDI
+        /// </summary>
+        SavePDI = 207
 
     }
 }

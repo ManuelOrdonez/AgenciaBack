@@ -156,6 +156,12 @@
   <data name="IsNotRegisterInLdap" xml:space="preserve">
     <value>El usuario no esta registrado en colsubsidio</value>
   </data>
+  <data name="SavePDI" xml:space="preserve">
+    <value>Guardado exitoso.</value>
+  </data>
+  <data name="SendAndSavePDI" xml:space="preserve">
+    <value>Envío y guardado exitoso.</value>
+  </data>
   <data name="ServiceExternalError" xml:space="preserve">
     <value>Error inesperado en un servicio externo, por favor intentar mas tarde.</value>
   </data>
