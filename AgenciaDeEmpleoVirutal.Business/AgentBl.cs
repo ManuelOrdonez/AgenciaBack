@@ -85,7 +85,7 @@
 
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
                 if (advisors.Count.Equals(0))
-                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
 
                 //Disabled Agent
