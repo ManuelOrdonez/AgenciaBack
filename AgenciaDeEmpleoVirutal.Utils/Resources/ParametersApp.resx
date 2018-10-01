@@ -161,36 +161,43 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/table&gt;</value>
   </data>
   <data name="ContentPDIPdf" xml:space="preserve">
-    <value>&lt;div&gt;
-&lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
-&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0}&lt;/h2&gt;
-
-&lt;/div&gt;
-&lt;div style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
- &lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;Mis Competencias
-&lt;ul&gt;
-&lt;li&gt;Mis Fortalezas: &lt;br /&gt; {3}&lt;/li&gt;
-&lt;li&gt;Mis debilidades: &lt;br /&gt; {4}&lt;/li&gt;
-&lt;li&gt;Debo potencializar: &lt;br /&gt; {5}&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Fortaleciendo mis competencias
-&lt;ul&gt;
-&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {6}&lt;/li&gt;
-&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {7}&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Mi plan de b&amp;uacute;squeda de empleo
-&lt;ul&gt;
-&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {8}&lt;/li&gt;
-&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {9}&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Observaciones: &lt;br /&gt; {10}&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;</value>
+    <value>&lt;html lang="es"&gt;
+	&lt;head&gt;
+		&lt;title&gt;Mail-Token&lt;/title&gt;
+		&lt;meta charset="utf-8"&gt;
+	&lt;/head&gt;	
+	&lt;body&gt;
+		&lt;div&gt;
+			&lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
+			&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0}&lt;/h2&gt;
+		&lt;/div&gt;
+		&lt;div style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+			&lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
+			&lt;ol&gt;
+				&lt;li&gt;Mis Competencias
+					&lt;ul&gt;
+					&lt;li&gt;Mis Fortalezas: &lt;br /&gt; {3}&lt;/li&gt;
+					&lt;li&gt;Mis debilidades: &lt;br /&gt; {4}&lt;/li&gt;
+					&lt;li&gt;Debo potencializar: &lt;br /&gt; {5}&lt;/li&gt;
+					&lt;/ul&gt;
+				&lt;/li&gt;
+				&lt;li&gt;Fortaleciendo mis competencias
+					&lt;ul&gt;
+					&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {6}&lt;/li&gt;
+					&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {7}&lt;/li&gt;
+					&lt;/ul&gt;
+				&lt;/li&gt;
+				&lt;li&gt;Mi plan de b&amp;uacute;squeda de empleo
+					&lt;ul&gt;
+					&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; {8}&lt;/li&gt;
+					&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; {9}&lt;/li&gt;
+					&lt;/ul&gt;
+				&lt;/li&gt;
+				&lt;li&gt;Observaciones: &lt;br /&gt; {10}&lt;/li&gt;
+			&lt;/ol&gt;
+		&lt;/div&gt;
+	&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="EmailAddressFrom" xml:space="preserve">
     <value>colsubsidioprueba@gmail.com</value>

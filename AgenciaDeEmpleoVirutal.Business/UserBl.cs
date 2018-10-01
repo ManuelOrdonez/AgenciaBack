@@ -411,7 +411,7 @@
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
-            var pdiName = string.Format("PDI-{0}-{1}", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
+            var pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
             var pdi = new PDI()
             {
                 CallerUserName = user.UserName,
@@ -428,6 +428,7 @@
                 PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
                 Observations = SetFieldOfPDI(PDIRequest.Observations),
             };
+
             if (PDIRequest.OnlySave)
             {
                 if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
