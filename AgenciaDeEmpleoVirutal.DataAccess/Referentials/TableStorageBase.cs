@@ -11,6 +11,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
     using Entities.Referentials;
     using System.Collections.Generic;
     using Entities;
+    using Microsoft.WindowsAzure.Storage.Queue;
 
     public class TableStorageBase<T> : IGenericRep<T> where T : TableEntity, new()
     {
@@ -227,5 +228,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
 
             return results;
         }
+
+       
     }
 }

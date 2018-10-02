@@ -35,13 +35,15 @@
 
         private IOpenTokExternalService _openTokService;
 
+        private IGenericQueue _queue;
+
         private Crypto _crypto;
 
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IConverter converter)
+                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue)
         {
             _converter = converter;
             _pdiRep = pdiRep;
@@ -51,6 +53,7 @@
             _settings = options.Value;
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
+            _queue = queue;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -373,8 +376,15 @@
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
+                if(RequestAviable.State)
+                {
+                     _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                }
+                else
+                {
+                     _queue.DeleteQueue("aviableagent", userAviable.UserName);
+                }
             }
-
             return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
 

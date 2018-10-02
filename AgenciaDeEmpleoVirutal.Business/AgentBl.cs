@@ -24,12 +24,15 @@
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
+        private IGenericQueue _queue;
 
-        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService)
+        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
+            IGenericQueue queue)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
+            _queue = queue;
         }
 
         public Response<CreateAgentResponse> Create(CreateAgentRequest agentRequest)
@@ -58,7 +61,7 @@
 
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
-            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1,5));
+            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1, 5));
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0) return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
             var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
@@ -67,48 +70,31 @@
 
             lock (obj)
             {
-                var query = new List<ConditionParameter>()
-                {
-                    new ConditionParameter()
-                    {
-                        ColumnName = "PartitionKey",
-                        Condition = QueryComparisons.Equal,
-                        Value = UsersTypes.Funcionario.ToString().ToLower()
-                    },
-                    new ConditionParameter()
-                    {
-                        ColumnName = "Available",
-                        Condition = QueryComparisons.Equal,
-                        ValueBool = true
-                    }
-                };
+                var getNextAgent = _queue.PeekNextQueue("aviableagent");
 
-                var advisors = _agentRepository.GetSomeAsync(query).Result;
-
-                /// var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
-                if (advisors.Count.Equals(0))
+                if (string.IsNullOrEmpty(getNextAgent))
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
-                ///var Agent = advisors.Where(i => i.Available ).OrderBy(x => x.CountCallAttended).FirstOrDefault();
-                var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
+
+
+                var Agent = _agentRepository.GetAsync(getNextAgent).Result;
 
                 if (Agent == null)
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
 
                 //Disabled Agent
                 Agent.Available = false;
-                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>(); 
-            
+                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
 
-            var response = new GetAgentAvailableResponse();
-            response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
-            if (string.IsNullOrEmpty(response.IDToken))
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
-            response.IDSession = Agent.OpenTokSessionId;
-            response.AgentName = Agent.Name;
-            response.AgentLatName = Agent.LastName;
-            response.AgentUserName = Agent.UserName;
+                var response = new GetAgentAvailableResponse();
+                response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
+                if (string.IsNullOrEmpty(response.IDToken))
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+                response.IDSession = Agent.OpenTokSessionId;
+                response.AgentName = Agent.Name;
+                response.AgentLatName = Agent.LastName;
+                response.AgentUserName = Agent.UserName;
                 return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
-            }           
+            }
         }
 
 
