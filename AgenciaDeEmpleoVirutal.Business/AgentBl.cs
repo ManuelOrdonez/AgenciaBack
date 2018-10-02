@@ -84,16 +84,9 @@
                 };
 
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
-
-                /// var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
                 if (advisors.Count.Equals(0))
-                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
-                ///var Agent = advisors.Where(i => i.Available ).OrderBy(x => x.CountCallAttended).FirstOrDefault();
-                var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
-
-                if (Agent == null)
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
-
+                var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
                 //Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>(); 
