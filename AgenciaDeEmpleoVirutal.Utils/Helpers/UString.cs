@@ -1,10 +1,5 @@
-﻿
-
-namespace AgenciaDeEmpleoVirutal.Utils.Helpers
+﻿namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
     public class UString
     {
         public static string UppercaseWords(string value)
@@ -40,8 +35,9 @@ namespace AgenciaDeEmpleoVirutal.Utils.Helpers
             return new string(array);
         }
 
-        public static string capitalizeFirstLetter(string value)
+        public static string CapitalizeFirstLetter(string value)
         {
+            value = value.ToLower();
             char[] array = value.ToCharArray();
             // Handle the first letter in the string.
             if (array.Length >= 1)
@@ -51,7 +47,6 @@ namespace AgenciaDeEmpleoVirutal.Utils.Helpers
                     array[0] = char.ToUpper(array[0]);
                 }
             }
-
             return new string(array);
         }
 

@@ -38,7 +38,9 @@
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Required")]
         [StringLength(400, MinimumLength = 1, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "PDIField_Length")]
         public string WhenJob { get; set; }
-
+        
         public string Observations { get; set; }
+
+        public bool OnlySave { get; set; }
     }
 }
