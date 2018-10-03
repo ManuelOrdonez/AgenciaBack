@@ -82,6 +82,24 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;div&gt;
+        ///	&lt;h1 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Correo PDI&lt;/h1&gt;
+        ///	&lt;h2 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/h2&gt;
+        ///&lt;/div&gt;
+        ///
+        ///&lt;div&gt;
+        ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
+        ///    Buen d&amp;iacute;a: En el presente correo se adjunta el documento PDI en formato PDF.
+        ///  &lt;/p&gt;
+        ///&lt;/div&gt;.
+        /// </summary>
+        public static string BodyMailPDI {
+            get {
+                return ResourceManager.GetString("BodyMailPDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;table&gt;
         ///&lt;tbody&gt;
         ///&lt;tr&gt;
@@ -96,6 +114,28 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string BodyMailWelcome {
             get {
                 return ResourceManager.GetString("BodyMailWelcome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
+        ///	&lt;head&gt;
+        ///		&lt;title&gt;Mail-Token&lt;/title&gt;
+        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///	&lt;/head&gt;	
+        ///	&lt;body&gt;
+        ///		&lt;div&gt;
+        ///			&lt;h1 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
+        ///			&lt;h2 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0}&lt;/h2&gt;
+        ///		&lt;/div&gt;
+        ///		&lt;div style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
+        ///			&lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
+        ///			&lt;ol&gt;
+        ///				&lt;li [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string ContentPDIPdf {
+            get {
+                return ResourceManager.GetString("ContentPDIPdf", resourceCulture);
             }
         }
         
@@ -150,6 +190,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string SubJectPass {
             get {
                 return ResourceManager.GetString("SubJectPass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documento PDI Agencia Virtual de Empleo.
+        /// </summary>
+        public static string SubjectPDI {
+            get {
+                return ResourceManager.GetString("SubjectPDI", resourceCulture);
             }
         }
         

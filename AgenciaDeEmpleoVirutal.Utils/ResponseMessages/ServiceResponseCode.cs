@@ -84,6 +84,19 @@
         /// <summary>
         /// User Already Exist functionarie
         /// </summary>
-        UserAlredyExistF = 126
+        UserAlredyExistF = 126,
+        /// <summary>
+        /// Error Send Mail
+        /// </summary>
+        ErrorSendMail = 300,
+        /// <summary>
+        /// Send And Save PDI
+        /// </summary>
+        SendAndSavePDI = 205,
+        /// <summary>
+        /// Send And Save PDI
+        /// </summary>
+        SavePDI = 207
+
     }
 }

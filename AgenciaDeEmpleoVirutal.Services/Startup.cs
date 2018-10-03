@@ -18,6 +18,11 @@ namespace AgenciaDeEmpleoVirutal.Services
     using DataAccess.Referentials;
     using Swashbuckle.AspNetCore.Swagger;
     using System.Collections.Generic;
+    using System.Runtime.Loader;
+    using System.Reflection;
+    using System.IO;
+    using DinkToPdf.Contracts;
+    using DinkToPdf;
 
     public class Startup
     {
@@ -72,7 +77,14 @@ namespace AgenciaDeEmpleoVirutal.Services
                 c.SwaggerDoc("v1", new Info { Title = "Services Agencia de Empleo Virtual", Version = "v1" });
             });
 
+            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+
             services.AddMvc();
+
+            var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
+            CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
+            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,6 +122,8 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddSingleton<IGenericRep<Agent>, TableStorageBase<Agent>>();
             services.AddSingleton<IGenericRep<Parameters>, TableStorageBase<Parameters>>();
             services.AddSingleton<IGenericRep<ResetPassword>, TableStorageBase<ResetPassword>>();
+            services.AddSingleton<IGenericRep<PDI>, TableStorageBase<PDI>>();
+            services.AddSingleton<IGenericQueue,QueueStorageBase > ();
 
         }
 
@@ -129,6 +143,23 @@ namespace AgenciaDeEmpleoVirutal.Services
             services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
             services.AddTransient<IParametersBI, ParameterBI>();
             services.AddTransient<IResetBI, ResetBI>();
+        }
+    }
+    internal class CustomAssemblyLoadContext : AssemblyLoadContext
+    {
+        public IntPtr LoadUnmanagedLibrary(string absolutePath)
+        {
+            return LoadUnmanagedDll(absolutePath);
+        }
+
+        protected override IntPtr LoadUnmanagedDll(String unmanagedDllName)
+        {
+            return LoadUnmanagedDllFromPath(unmanagedDllName);
+        }
+
+        protected override Assembly Load(AssemblyName assemblyName)
+        {
+            throw new NotImplementedException();
         }
     }
 }

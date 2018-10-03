@@ -11,8 +11,11 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.WindowsAzure.Storage.Table;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Threading;
 
     public class AgentBl : BusinessBase<Agent>, IAgentBl
     {
@@ -21,12 +24,15 @@
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
+        private IGenericQueue _queue;
 
-        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService)
+        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
+            IGenericQueue queue)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
+            _queue = queue;
         }
 
         public Response<CreateAgentResponse> Create(CreateAgentRequest agentRequest)
@@ -51,35 +57,53 @@
             return ResponseSuccess(new List<CreateAgentResponse>());
         }
 
-        
+        private static readonly Object obj = new Object();
+
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
+            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1, 5));
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0) return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
             var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
             if (userInfo == null)
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
 
-            var advisors = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
-            if (advisors.Count.Equals(0))
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
-            var Agent = advisors.Where(i => i.Available).OrderBy(x => x.CountCallAttended).FirstOrDefault();
-            if (Agent == null)
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
-            var response = new GetAgentAvailableResponse();
-            response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
-            if (string.IsNullOrEmpty(response.IDToken))
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
-            response.IDSession = Agent.OpenTokSessionId;
-            response.AgentName = Agent.Name;
-            response.AgentLatName = Agent.LastName;
+            lock (obj)
+            {
+                var getNextAgent = _queue.PeekNextQueue("aviableagent");
 
-            //Disabled Agent
-            Agent.Available = false;
-            if(!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
+                if (string.IsNullOrEmpty(getNextAgent))
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
 
-            return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
-        }       
+
+                var Agent = _agentRepository.GetAsync(getNextAgent).Result;
+
+                if (Agent == null)
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
+
+                //Disabled Agent
+                Agent.Available = false;
+                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
+
+                var response = new GetAgentAvailableResponse();
+                response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
+                if (string.IsNullOrEmpty(response.IDToken))
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+                response.IDSession = Agent.OpenTokSessionId;
+                response.AgentName = Agent.Name;
+                response.AgentLatName = Agent.LastName;
+                response.AgentUserName = Agent.UserName;
+                return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
+            }
+        }
+
+
+        public Response<User> ImAviable(AviableUser RequestAviable)
+        {
+            if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
+            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+        }
 
     }
 }

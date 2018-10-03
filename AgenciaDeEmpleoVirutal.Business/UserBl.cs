@@ -11,14 +11,22 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
+    using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Net.Mail;
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
+        private IConverter _converter;
+
+        private IGenericRep<PDI> _pdiRep;
+
         private IGenericRep<User> _userRep;
 
         private ILdapServices _LdapServices;
@@ -27,19 +35,25 @@
 
         private IOpenTokExternalService _openTokService;
 
+        private IGenericQueue _queue;
+
         private Crypto _crypto;
 
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService)
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
+                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue)
         {
+            _converter = converter;
+            _pdiRep = pdiRep;
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options.Value;
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
+            _queue = queue;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -90,7 +104,7 @@
             List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString())
+                if (item.State.ToLower() == UserStates.Enable.ToString().ToLower())
                 {
                     return item;
                 }
@@ -133,6 +147,8 @@
             else
             {
                 /// pendiente definir servicio Ldap pass user?
+                
+                /*
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
                 if (!result.data.FirstOrDefault().status.Equals("success") && user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
@@ -145,7 +161,7 @@
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
+                }*/
 
                 if (user == null)
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -346,17 +362,30 @@
 
         public Response<User> AviableUser(AviableUser RequestAviable)
         {
-            if (string.IsNullOrEmpty(RequestAviable.UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
-            var user = _userRep.GetAsync(RequestAviable.UserName).Result;
-            AuthenticateUserRequest request = new AuthenticateUserRequest{
+            
+            String[] user = RequestAviable.UserName.Split('_');
+            AuthenticateUserRequest request = new AuthenticateUserRequest
+            {
 
-                NoDocument = user.NoDocument,
-                TypeDocument =user.CodTypeDocument,
+                NoDocument = user[0],
+                TypeDocument = user[1],
             };
-            user= this.getUserActive(request);
-            user.Available = RequestAviable.State;
-            var result = _userRep.AddOrUpdate(user).Result;
-            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
+            
+            var userAviable = this.getUserActive(request);
+            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+            {
+                userAviable.Available = RequestAviable.State;
+                var result = _userRep.AddOrUpdate(userAviable).Result;
+                if(RequestAviable.State)
+                {
+                     _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                }
+                else
+                {
+                     _queue.DeleteQueue("aviableagent", userAviable.UserName);
+                }
+            }
+            return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
@@ -366,6 +395,7 @@
             var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null) return ResponseFail<AuthenticateUserResponse>();
             user.Authenticated = false;
+            user.Available = false;
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
@@ -376,5 +406,87 @@
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
+
+        public Response<User> CreatePDI(PDIRequest PDIRequest)
+        {
+            var errorsMessage = PDIRequest.Validate().ToList();
+            if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+
+            var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
+            if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            var user = userStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+            var agentStorage = _userRep.GetAsyncAll(PDIRequest.AgentUserName).Result;
+            if (agentStorage == null || agentStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+                return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+
+            var pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
+            var pdi = new PDI()
+            {
+                CallerUserName = user.UserName,
+                PDIName = pdiName,
+                MyStrengths = SetFieldOfPDI(PDIRequest.MyStrengths),
+                MustPotentiate = SetFieldOfPDI(PDIRequest.MustPotentiate),
+                MyWeaknesses = SetFieldOfPDI(PDIRequest.MyWeaknesses),
+                CallerName = UString.UppercaseWords(string.Format("{0} {1}", user.Name, user.LastName)),
+                AgentName = UString.UppercaseWords(string.Format("{0} {1}", agent.Name, agent.LastName)),
+                WhatAbilities = SetFieldOfPDI(PDIRequest.WhatAbilities),
+                WhatJob = SetFieldOfPDI(PDIRequest.WhatJob),
+                WhenAbilities = SetFieldOfPDI(PDIRequest.WhenAbilities),
+                WhenJob = SetFieldOfPDI(PDIRequest.WhenJob),
+                PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
+                Observations = SetFieldOfPDI(PDIRequest.Observations),
+            };
+
+            if (PDIRequest.OnlySave)
+            {
+                if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
+                return ResponseSuccess(ServiceResponseCode.SavePDI);
+            }
+
+            GenarateContentPDI(new List<PDI>() { pdi });
+            MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };            
+            if (!_sendMailService.SendMailPDI(user, attachmentPDI))
+                return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
+            stream.Close();
+            if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
+            return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
+        }
+
+        private string SetFieldOfPDI(string field)
+        {
+            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
+            field = field.ToLower();
+            if (naOptiond.Any(op => op.Equals(field))) return "No aplica";
+            return UString.CapitalizeFirstLetter(field);
+        }
+
+        public Response<User> GetPDIsFromUser(string userName)
+        {
+            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
+            if (PDIs.Count <= 0 || PDIs == null) return ResponseFail<User>();
+            var contetnt = GenarateContentPDI(PDIs);
+            return null;
+        }
+
+        private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)
+        {
+            var contentStringHTMLPDI = new List<string>();
+            requestPDI.ForEach(pdi =>
+            {
+                contentStringHTMLPDI.Add(string.Format(ParametersApp.ContentPDIPdf,
+                    pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
+                    pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
+                    pdi.WhatJob, pdi.WhenJob,
+                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
+            });
+            var result = new List<byte[]>();
+            var conv = new PdfConvert(_converter);
+            contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
+            return result;
+        }
+
     }
 }

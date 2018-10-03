@@ -106,6 +106,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error enviando el correo.
+        /// </summary>
+        internal static string ErrorSendMail {
+            get {
+                return ResourceManager.GetString("ErrorSendMail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Token de recordación de contraseña expiro solicite uno nuevo.
         /// </summary>
         internal static string ExpiredtokenRPassword {
@@ -165,6 +174,24 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string IsNotRegisterInLdap {
             get {
                 return ResourceManager.GetString("IsNotRegisterInLdap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guardado exitoso..
+        /// </summary>
+        internal static string SavePDI {
+            get {
+                return ResourceManager.GetString("SavePDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Envío y guardado exitoso..
+        /// </summary>
+        internal static string SendAndSavePDI {
+            get {
+                return ResourceManager.GetString("SendAndSavePDI", resourceCulture);
             }
         }
         

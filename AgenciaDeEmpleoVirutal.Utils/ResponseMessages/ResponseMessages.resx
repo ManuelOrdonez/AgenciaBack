@@ -132,6 +132,9 @@
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
   </data>
+  <data name="ErrorSendMail" xml:space="preserve">
+    <value>Error enviando el correo</value>
+  </data>
   <data name="ExpiredtokenRPassword" xml:space="preserve">
     <value>Token de recordación de contraseña expiro solicite uno nuevo</value>
   </data>
@@ -152,6 +155,12 @@
   </data>
   <data name="IsNotRegisterInLdap" xml:space="preserve">
     <value>El usuario no esta registrado en colsubsidio</value>
+  </data>
+  <data name="SavePDI" xml:space="preserve">
+    <value>Guardado exitoso.</value>
+  </data>
+  <data name="SendAndSavePDI" xml:space="preserve">
+    <value>Envío y guardado exitoso.</value>
   </data>
   <data name="ServiceExternalError" xml:space="preserve">
     <value>Error inesperado en un servicio externo, por favor intentar mas tarde.</value>
