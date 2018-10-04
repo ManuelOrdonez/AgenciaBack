@@ -70,20 +70,39 @@
 
             lock (obj)
             {
-                var getNextAgent = _queue.PeekNextQueue("aviableagent");
+                var query = new List<ConditionParameter>()
+                {
+                    new ConditionParameter()
+                    {
+                        ColumnName = "PartitionKey",
+                        Condition = QueryComparisons.Equal,
+                        Value = UsersTypes.Funcionario.ToString().ToLower()
+                    },
+                    new ConditionParameter()
+                    {
+                        ColumnName = "Available",
+                        Condition = QueryComparisons.Equal,
+                        ValueBool = true
+                    },
 
-                if (string.IsNullOrEmpty(getNextAgent))
-                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotFound);
+                     new ConditionParameter()
+                    {
+                        ColumnName = "Authenticated",
+                        Condition = QueryComparisons.Equal,
+                        ValueBool = true
+                    }
+                };
 
-
-                var Agent = _agentRepository.GetAsync(getNextAgent).Result;
-
-                if (Agent == null)
+                var advisors = _agentRepository.GetSomeAsync(query).Result;                
+                if (advisors.Count.Equals(0) || advisors == null)
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable); 
+                var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
+                if (!_agentRepository.GetAsync(Agent.UserName).Result.Available)
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
-
                 //Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
+
 
                 var response = new GetAgentAvailableResponse();
                 response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);

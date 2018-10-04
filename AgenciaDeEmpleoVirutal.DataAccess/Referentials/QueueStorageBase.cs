@@ -53,7 +53,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
 
         public void InsertQueue(string queueName, string messageQueue)
         {
-
+            bool exist = false;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(
                  _queueStorageSettings.TableStorage);
 
@@ -68,7 +68,18 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
 
             // Create a message and add it to the queue.
             CloudQueueMessage message = new CloudQueueMessage(messageQueue);
-            queue.AddMessageAsync(message);
+
+            foreach (CloudQueueMessage messagex in queue.GetMessagesAsync(1).Result)
+            {
+                if (messagex.AsString.Equals(message.AsString))
+                {
+                    exist = true;
+                };
+            }
+            if (!exist)
+            {
+                queue.AddMessageAsync(message);
+            }
         }
 
         public string PeekNextQueue(string queueName)
