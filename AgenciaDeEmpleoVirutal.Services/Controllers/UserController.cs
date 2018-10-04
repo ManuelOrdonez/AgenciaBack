@@ -5,6 +5,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
@@ -54,6 +55,7 @@
 
         [HttpPost]
         [Route("LogOut")]
+        [Authorize]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
         public IActionResult LogOut([FromBody] LogOutRequest logOutReq)
         {
@@ -63,6 +65,7 @@
 
         [HttpGet]
         [Route("GetUserInfo")]
+        [Authorize]
         [Produces(typeof(Response<User>))]
         public IActionResult GetUserInfo(string UserName)
         {
@@ -71,6 +74,7 @@
 
         [HttpPost]
         [Route("AviableUser")]
+        [Authorize]
         [Produces(typeof(Response<User>))]
         public IActionResult AviableUser([FromBody] AviableUserRequest RequestAviable)
         {
@@ -79,6 +83,7 @@
 
         [HttpPost]
         [Route("CreatePDI")]
+        [Authorize]
         [Produces(typeof(Response<User>))]
         public IActionResult CreatePDI([FromBody] PDIRequest pdiRequest)
         {

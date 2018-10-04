@@ -391,20 +391,20 @@
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
-        private string SetFieldOfPDI(string field)
-        {
-            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
-            field = field.ToLower();
-            if (naOptiond.Any(op => op.Equals(field))) return "No aplica";
-            return UString.CapitalizeFirstLetter(field);
-        }
-
         public Response<User> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
             if (PDIs.Count <= 0 || PDIs == null) return ResponseFail<User>();
             var contetnt = GenarateContentPDI(PDIs);
             return null;
+        }
+
+        private string SetFieldOfPDI(string field)
+        {
+            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
+            field = field.ToLower();
+            if (naOptiond.Any(op => op.Equals(field))) return "No aplica";
+            return UString.CapitalizeFirstLetter(field);
         }
 
         private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)

@@ -24,6 +24,7 @@
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
+
         private IGenericQueue _queue;
 
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
