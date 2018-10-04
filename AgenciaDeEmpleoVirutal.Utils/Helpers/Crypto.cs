@@ -7,7 +7,7 @@ using System.Text;
 
 namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
-    public class Crypto
+    public class Crypto : IDisposable
     {
         private RijndaelManaged myRijndael = new RijndaelManaged();
         private int iterations;
@@ -59,6 +59,11 @@ namespace AgenciaDeEmpleoVirutal.Utils.Helpers
             Rfc2898DeriveBytes rfc2898 = new Rfc2898DeriveBytes(System.Text.Encoding.UTF8.GetBytes(strPassword), salt, iterations);
 
             return rfc2898.GetBytes(128 / 8);
+        }
+
+        public void Dispose()
+        {
+            myRijndael.Dispose();
         }
     }
 }
