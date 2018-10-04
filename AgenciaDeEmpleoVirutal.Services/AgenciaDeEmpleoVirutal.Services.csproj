@@ -4,19 +4,44 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <Configurations>Debug;Release;Test</Configurations>
     <UserSecretsId>ca09b251-ade1-4796-aab0-51d03d56a305</UserSecretsId>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="libwkhtmltox.dll" />
+    <None Remove="libwkhtmltox.so" />
     <None Remove="libwkhtmltox\32bits\libwkhtmltox.dll" />
+    <None Remove="libwkhtmltox\32bits\libwkhtmltox.dylib" />
+    <None Remove="libwkhtmltox\32bits\libwkhtmltox.so" />
     <None Remove="libwkhtmltox\64bits\libwkhtmltox.dll" />
+    <None Remove="libwkhtmltox\64bits\libwkhtmltox.dylib" />
+    <None Remove="libwkhtmltox\64bits\libwkhtmltox.so" />
     <None Remove="Properties\PublishProfiles\PremiumHelpServicesDev - Web Deploy.pubxml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libwkhtmltox.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="libwkhtmltox\32bits\libwkhtmltox.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="libwkhtmltox\32bits\libwkhtmltox.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libwkhtmltox\32bits\libwkhtmltox.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="libwkhtmltox\64bits\libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libwkhtmltox\64bits\libwkhtmltox.dylib">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="libwkhtmltox\64bits\libwkhtmltox.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

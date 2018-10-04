@@ -23,14 +23,14 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <summary>
         /// The table storage settings
         /// </summary>
-        private readonly UserSecretSettings _tableStorageSettings;
+        private readonly AppSettings _tableStorageSettings;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TableStorageBase{T}"/> class.
         /// </summary>
-        public TableStorageBase(IOptions<UserSecretSettings> options)
+        public TableStorageBase(IOptions<List<AppSettings>> options)
         {
-            _tableStorageSettings = options.Value;
+            _tableStorageSettings = options.Value.FindAll(a => a.Key.Equals("TableStorage", StringComparison.OrdinalIgnoreCase)).FirstOrDefault(); 
             CreateTableReference();
             CreateTableInStorage().GetAwaiter();
         }
@@ -63,7 +63,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// </summary>
         private void CreateTableReference()
         {
-            var connectionString = _tableStorageSettings.TableStorage;
+            var connectionString = _tableStorageSettings.Value;
             var account = CloudStorageAccount.Parse(connectionString);
             var client = account.CreateCloudTableClient();
             _table = client.GetTableReference(_tableName);

@@ -81,9 +81,9 @@ namespace AgenciaDeEmpleoVirutal.Services
 
             services.AddMvc();
 
-            var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
-            CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
-            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
+            //var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
+            //CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
+            //context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
 
         }
 
@@ -108,7 +108,7 @@ namespace AgenciaDeEmpleoVirutal.Services
 
         private void DependencySettings(IServiceCollection services)
         {
-            services.Configure<AppSettings>(opt => Configuration.GetSection("AppSettings").Bind(opt));
+            services.Configure<List<AppSettings>>(opt => Configuration.GetSection("AppSettings").Bind(opt));
             services.Configure<SendMailData>(opt => Configuration.GetSection("SendMailData").Bind(opt));
             services.Configure<List<ServiceSettings>>(opt => Configuration.GetSection("ServiceSettings").Bind(opt));
             services.Configure<UserSecretSettings>(Configuration);

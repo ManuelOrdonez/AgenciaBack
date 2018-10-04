@@ -39,10 +39,10 @@
 
         private Crypto _crypto;
 
-        private readonly UserSecretSettings _settings;
+        private readonly AppSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
+                        IOptions<List<AppSettings>> options, IOpenTokExternalService _openTokExternalService,
                         IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue)
         {
             _converter = converter;
@@ -50,7 +50,7 @@
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
-            _settings = options.Value;
+            _settings = options.Value.FindAll(a => a.Key.Equals("OpenTokApiKey", StringComparison.OrdinalIgnoreCase)).FirstOrDefault(); 
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
             _queue = queue;
@@ -87,7 +87,7 @@
                     AccessToken = ManagerToken.GenerateToken(user.UserName),
                     Expiration = DateTime.Now.AddMinutes(15),
                     TokenType = "Bearer",
-                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokApiKey = _settings.Value,
                     OpenTokAccessToken = token,
                 }
             };
@@ -186,7 +186,7 @@
                     AccessToken = ManagerToken.GenerateToken(user.UserName),
                     Expiration = DateTime.Now.AddMinutes(15),
                     TokenType = "Bearer",
-                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokApiKey = _settings.Value,
                     OpenTokAccessToken = token,
                 }
             };

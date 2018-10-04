@@ -8,12 +8,21 @@
     using AgenciaDeEmpleoVirutal.Entities.ExternalService;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using Moq;
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class UserBlTestBase : BusinessBase<User>
     {
+        protected Mock<IGenericQueue> QueueRep;
+
+        protected Mock<IConverter> ConvertMoq;
+
+        protected Mock<IGenericRep<PDI>> PDIRepMoq;
+
         protected Mock<IGenericRep<User>> UserRepMoq;
 
         protected Mock<ILdapServices> LdapServicesMoq;
@@ -38,19 +47,21 @@
 
         protected LogOutRequest RequestLogOut;
 
-        private IOptions<UserSecretSettings> options;
+        private IOptions<List<AppSettings>> options;
 
-        protected readonly UserSecretSettings _settings;
+        protected readonly AppSettings _settings;
 
         public UserBlTestBase()
         {
-            options = Options.Create(new UserSecretSettings());
-            _settings = options.Value;
+            options = Options.Create(new List<AppSettings>());
+            _settings = options.Value.FindAll(a => a.Key.Equals("TableStorage", StringComparison.OrdinalIgnoreCase)).FirstOrDefault() ;
             UserRepMoq = new Mock<IGenericRep<User>>();
+            PDIRepMoq = new Mock<IGenericRep<PDI>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
             UserBusiness = new UserBl(UserRepMoq.Object,
-                LdapServicesMoq.Object, SendMailServiceMoq.Object, options, _openTokExternalService.Object);
+                LdapServicesMoq.Object, SendMailServiceMoq.Object, options, _openTokExternalService.Object, PDIRepMoq.Object,
+                ConvertMoq.Object, QueueRep.Object);
             LoadEntitiesMock();
         }
 

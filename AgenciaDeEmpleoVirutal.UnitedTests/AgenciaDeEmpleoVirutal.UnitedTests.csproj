@@ -5,6 +5,7 @@
 
     <IsPackable>false</IsPackable>
     <DebugType>Full</DebugType>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
