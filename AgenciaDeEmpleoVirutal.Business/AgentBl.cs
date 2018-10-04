@@ -24,12 +24,15 @@
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
+        private IGenericQueue _queue;
 
-        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService)
+        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
+            IGenericQueue queue)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
+            _queue = queue;
         }
 
         public Response<CreateAgentResponse> Create(CreateAgentRequest agentRequest)
@@ -58,7 +61,7 @@
 
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
-            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1,5));
+            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1, 5));
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0) return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
             var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
@@ -80,29 +83,37 @@
                         ColumnName = "Available",
                         Condition = QueryComparisons.Equal,
                         ValueBool = true
+                    },
+
+                     new ConditionParameter()
+                    {
+                        ColumnName = "Authenticated",
+                        Condition = QueryComparisons.Equal,
+                        ValueBool = true
                     }
                 };
 
-                var advisors = _agentRepository.GetSomeAsync(query).Result;
-                if (advisors.Count.Equals(0))
-                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
+                var advisors = _agentRepository.GetSomeAsync(query).Result;                
+                if (advisors.Count.Equals(0) || advisors == null)
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable); 
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
-
+                if (!_agentRepository.GetAsync(Agent.UserName).Result.Available)
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 //Disabled Agent
                 Agent.Available = false;
-                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>(); 
-            
+                if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
 
-            var response = new GetAgentAvailableResponse();
-            response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
-            if (string.IsNullOrEmpty(response.IDToken))
-                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
-            response.IDSession = Agent.OpenTokSessionId;
-            response.AgentName = Agent.Name;
-            response.AgentLatName = Agent.LastName;
-            response.AgentUserName = Agent.UserName;
+
+                var response = new GetAgentAvailableResponse();
+                response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
+                if (string.IsNullOrEmpty(response.IDToken))
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+                response.IDSession = Agent.OpenTokSessionId;
+                response.AgentName = Agent.Name;
+                response.AgentLatName = Agent.LastName;
+                response.AgentUserName = Agent.UserName;
                 return ResponseSuccess(new List<GetAgentAvailableResponse> { response });
-            }           
+            }
         }
 
 

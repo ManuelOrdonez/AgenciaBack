@@ -36,13 +36,15 @@
 
         private IOpenTokExternalService _openTokService;
 
+        private IGenericQueue _queue;
+
         private Crypto _crypto;
 
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
-                        IOptions<UserSecretSettings> options, IOpenTokExternalService openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IConverter converter)
+                        IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
+                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue)
         {
             _converter = converter;
             _pdiRep = pdiRep;
@@ -51,7 +53,8 @@
             _LdapServices = LdapServices;
             _settings = options.Value;
             _crypto = new Crypto();
-            _openTokService = openTokExternalService;
+            _openTokService = _openTokExternalService;
+            _queue = queue;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -309,6 +312,14 @@
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
+               /* if(RequestAviable.State)
+                {
+                     _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                }
+                else
+                {
+                     _queue.DeleteQueue("aviableagent", userAviable.UserName);
+                }*/
             }
             return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
@@ -346,32 +357,46 @@
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
-            var pdiName = string.Format("PDI-{0}-{1}", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
+            var pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
             var pdi = new PDI()
             {
                 CallerUserName = user.UserName,
                 PDIName = pdiName,
-                MyStrengths = PDIRequest.MyStrengths,
-                MustPotentiate = PDIRequest.MustPotentiate,
-                MyWeaknesses = PDIRequest.MyWeaknesses,
-                CallerName = string.Format("{0} {1}", user.Name, user.LastName),
-                AgentName = string.Format("{0} {1}", agent.Name, agent.LastName),
-                WhatAbilities = PDIRequest.WhatAbilities,
-                WhatJob = PDIRequest.WhatJob,
-                WhenAbilities = PDIRequest.WhenAbilities,
-                WhenJob = PDIRequest.WhenJob,
+                MyStrengths = SetFieldOfPDI(PDIRequest.MyStrengths),
+                MustPotentiate = SetFieldOfPDI(PDIRequest.MustPotentiate),
+                MyWeaknesses = SetFieldOfPDI(PDIRequest.MyWeaknesses),
+                CallerName = UString.UppercaseWords(string.Format("{0} {1}", user.Name, user.LastName)),
+                AgentName = UString.UppercaseWords(string.Format("{0} {1}", agent.Name, agent.LastName)),
+                WhatAbilities = SetFieldOfPDI(PDIRequest.WhatAbilities),
+                WhatJob = SetFieldOfPDI(PDIRequest.WhatJob),
+                WhenAbilities = SetFieldOfPDI(PDIRequest.WhenAbilities),
+                WhenJob = SetFieldOfPDI(PDIRequest.WhenJob),
                 PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
-                Observations = PDIRequest.Observations,
+                Observations = SetFieldOfPDI(PDIRequest.Observations),
             };
-            GenarateContentPDI(new List<PDI>() { pdi });
 
+            if (PDIRequest.OnlySave)
+            {
+                if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
+                return ResponseSuccess(ServiceResponseCode.SavePDI);
+            }
+
+            GenarateContentPDI(new List<PDI>() { pdi });
             MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };            
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
                 return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
             stream.Close();
-            _pdiRep.AddOrUpdate(pdi);
-            return ResponseSuccess();
+            if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
+            return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
+        }
+
+        private string SetFieldOfPDI(string field)
+        {
+            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
+            field = field.ToLower();
+            if (naOptiond.Any(op => op.Equals(field))) return "No aplica";
+            return UString.CapitalizeFirstLetter(field);
         }
 
         public Response<User> GetPDIsFromUser(string userName)
