@@ -376,14 +376,14 @@
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
-                if(RequestAviable.State)
+               /* if(RequestAviable.State)
                 {
                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
                 }
                 else
                 {
                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
-                }
+                }*/
             }
             return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
