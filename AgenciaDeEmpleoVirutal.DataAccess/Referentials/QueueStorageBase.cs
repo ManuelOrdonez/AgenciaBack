@@ -28,7 +28,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <summary>
         /// The table
         /// </summary>
-        private CloudQueue _queue;
+        //private CloudQueue _queue;
 
 
         public QueueStorageBase(IOptions<UserSecretSettings> options)

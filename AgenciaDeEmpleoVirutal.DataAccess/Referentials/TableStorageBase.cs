@@ -75,7 +75,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <returns></returns>
         public async Task CreateTableInStorage()
         {
-            await Table.CreateIfNotExistsAsync();
+            await Table.CreateIfNotExistsAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />
@@ -109,7 +109,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         {
             //await CreateTableInStorage();
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower()));
-            var entity = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results.FirstOrDefault();
+            var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results.FirstOrDefault();
             return entity;
         }
         /// <inheritdoc />
@@ -122,7 +122,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         {
             //await CreateTableInStorage();
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower()));
-            var entity = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
+            var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entity;
         }
 
@@ -136,7 +136,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         {
             //await CreateTableInStorage();
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey /*.ToLower()*/));
-            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
+            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
 
@@ -153,7 +153,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             var filterOne = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower());
             var filterTwo = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower());
             var query = new TableQuery<T>().Where(TableQuery.CombineFilters(filterOne, TableOperators.And, filterTwo));
-            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
+            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
 
@@ -168,7 +168,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         {
             //await CreateTableInStorage();
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition(column, QueryComparisons.Equal, value));
-            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
+            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
 
@@ -194,7 +194,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
                 qry = TableQuery.CombineFilters(conditional, TableOperators.And ,qry);
             }
             query.Where(qry);
-            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null)).Results;
+            var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
 
@@ -204,7 +204,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <returns></returns>
         public async Task<List<T>> GetAll()
         {
-            var entities = (await Table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), null)).Results;
+            var entities = (await Table.ExecuteQuerySegmentedAsync(new TableQuery<T>(), null).ConfigureAwait(false)).Results;
             return entities;
         }
 
@@ -219,7 +219,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             do
             {
                 TableQuerySegment<T> queryResults =
-                    await Table.ExecuteQuerySegmentedAsync(query, continuationToken);
+                    await Table.ExecuteQuerySegmentedAsync(query, continuationToken).ConfigureAwait(false);
 
                 continuationToken = queryResults.ContinuationToken;
                 results.AddRange(queryResults.Results);
