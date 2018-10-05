@@ -332,7 +332,7 @@
                 userpassword = userReq.Password
             };
             var resultLdap = _LdapServices.Register(regLdap);
-            if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
+            if (resultLdap is null || !resultLdap.estado.Equals("0000"))
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             }
@@ -455,14 +455,6 @@
                 return ResponseFail<User>();
             }
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
-        }
-
-        public Response<User> GetPDIsFromUser(string userName)
-        {
-            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
-            if (PDIs.Count <= 0 || PDIs == null) return ResponseFail<User>();
-            var contetnt = GenarateContentPDI(PDIs);
-            return null;
         }
 
         private string SetFieldOfPDI(string field)

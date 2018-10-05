@@ -15,6 +15,8 @@
 
     public class UserBlTestBase : BusinessBase<User>
     {
+        protected Mock<IGenericQueue> QueueMock;
+
         protected Mock<IConverter> ConverterInterface;
 
         protected Mock<IGenericRep<PDI>> PDIRepMoq;
@@ -49,6 +51,7 @@
 
         public UserBlTestBase()
         {
+            QueueMock = new Mock<IGenericQueue>();
             ConverterInterface = new Mock<IConverter>();
             PDIRepMoq = new Mock<IGenericRep<PDI>>();
             options = Options.Create(new UserSecretSettings());
@@ -57,7 +60,13 @@
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
             UserBusiness = new UserBl(UserRepMoq.Object,
-                LdapServicesMoq.Object, SendMailServiceMoq.Object, options, _openTokExternalService.Object, PDIRepMoq.Object, ConverterInterface.Object);
+                LdapServicesMoq.Object, 
+                SendMailServiceMoq.Object, 
+                options, 
+                _openTokExternalService.Object,
+                PDIRepMoq.Object, 
+                ConverterInterface.Object,
+                QueueMock.Object);
             LoadEntitiesMock();
         }
 

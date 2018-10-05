@@ -47,10 +47,10 @@
             // verificar Row Key de agente - username noDoc_coDoc
             var AgentInfo = new User
             {
-                Name = agentRequest.Name,
-                LastName = agentRequest.LastName,
-                Email = agentRequest.Email,
-                UserName = agentRequest.UserName
+                Name = request.Name,
+                LastName = request.LastName,
+                Email = request.Email,
+                UserName = request.UserName
             };
             AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
 
