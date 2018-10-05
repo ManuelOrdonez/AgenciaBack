@@ -21,8 +21,11 @@
         
         public Response<DepartamenCityResponse> GetDepartamens()
         {
-            var result = _departamentCityRep.GetList().Result; 
-            if (result == null || result.Count == 0) return ResponseFail<DepartamenCityResponse>();
+            var result = _departamentCityRep.GetList().Result;
+            if (result == null || result.Count == 0)
+            {
+                return ResponseFail<DepartamenCityResponse>();
+            }
             var departaments = new List<string>(); 
             result.ForEach(r => departaments.Add(r.Departament));
             var departamentsResult = new List<DepartamenCityResponse>();
@@ -32,9 +35,15 @@
 
         public Response<DepartamenCityResponse> GetCitiesOfDepartment(string department)
         {
-            if (string.IsNullOrEmpty(department)) return ResponseFail<DepartamenCityResponse>(ServiceResponseCode.BadRequest);
+            if (string.IsNullOrEmpty(department))
+            {
+                return ResponseFail<DepartamenCityResponse>(ServiceResponseCode.BadRequest);
+            }
             var result = _departamentCityRep.GetByPatitionKeyAsync(department.ToUpper()).Result;
-            if (result == null || result.Count == 0) return ResponseFail<DepartamenCityResponse>();
+            if (result == null || result.Count == 0)
+            {
+                return ResponseFail<DepartamenCityResponse>();
+            }
             var citiesDepartamen = new List<DepartamenCityResponse>();
             result.ForEach(r => citiesDepartamen.Add(new DepartamenCityResponse() { City = r.City }));
             return ResponseSuccess(citiesDepartamen);

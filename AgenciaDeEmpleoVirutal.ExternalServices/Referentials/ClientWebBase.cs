@@ -40,7 +40,10 @@
         /// <param name="controllerName">Name of the controller.</param>
         public ClientWebBase(IOptions<List<ServiceSettings>> serviceOptions, string serviceName, string controllerName)
         {
-            if (serviceOptions == null) return;
+            if (serviceOptions == null)
+            {
+                return;
+            }
             var service = serviceOptions.Value.FindAll(a => a.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             Url = new Uri($"{service.Url}/{controllerName}");
         }
@@ -54,7 +57,10 @@
         /// <param name="token">The token.</param>
         public ClientWebBase(IOptions<List<ServiceSettings>> serviceOptions, string serviceName, string controllerName, string token)
         {
-            if (serviceOptions == null) return;
+            if (serviceOptions == null)
+            {
+                return;
+            }
             var service = serviceOptions.Value.FindAll(a => a.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
             Url = new Uri($"{service.Url}/{controllerName}");
             _accessToken = token;

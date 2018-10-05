@@ -34,7 +34,10 @@
         public Response<CallHistoryTrace> GetCallInfo(GetCallRequest request)
         {
             var errorMessages = request.Validate().ToList();
-            if (errorMessages.Count > 0) return ResponseBadRequest<CallHistoryTrace>(errorMessages);
+            if (errorMessages.Count > 0)
+            {
+                return ResponseBadRequest<CallHistoryTrace>(errorMessages);
+            }
 
             var parameters = new List<ConditionParameter>
             {
@@ -52,7 +55,10 @@
         public Response<List<CallHistoryTrace>> GetAllCallsNotManaged(GetCallRequest request)
         {
             var errorMessages = request.Validate().ToList();
-            if (errorMessages.Count > 0) return ResponseBadRequest<List<CallHistoryTrace>>(errorMessages);
+            if (errorMessages.Count > 0)
+            {
+                return ResponseBadRequest<List<CallHistoryTrace>>(errorMessages);
+            }
 
             var parameters = new List<ConditionParameter> {
                     new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower() },
@@ -66,9 +72,15 @@
         {
             var errorMessages = request.Validate().ToList();
             var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request.SessionId, request.TokenId).Result;
-            if (callTrace.Count == 0) return ResponseFail<List<CallHistoryTrace>>();
+            if (callTrace.Count == 0)
+            {
+                return ResponseFail<List<CallHistoryTrace>>();
+            }
             callTrace.First().Score = request.Score;
-            if (!_callHistoryRepository.AddOrUpdate(callTrace.First()).Result) return ResponseFail<List<CallHistoryTrace>>();
+            if (!_callHistoryRepository.AddOrUpdate(callTrace.First()).Result)
+            {
+                return ResponseFail<List<CallHistoryTrace>>();
+            }
             return ResponseSuccess(new List<List<CallHistoryTrace>>());
         }
 
@@ -82,7 +94,10 @@
             var messagesValidationEntity = callRequest.Validate().ToList();
             var stateInput = (CallStates)callRequest.State;
 
-            if (messagesValidationEntity.Count > 0) return ResponseBadRequest<CallHistoryTrace>(messagesValidationEntity);
+            if (messagesValidationEntity.Count > 0)
+            {
+                return ResponseBadRequest<CallHistoryTrace>(messagesValidationEntity);
+            }
             
             var existsCall = GetCallInfo(new GetCallRequest()
             {
@@ -126,7 +141,10 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        if (!_agentRepository.AddOrUpdate(agent).Result) return ResponseFail();
+                        if (!_agentRepository.AddOrUpdate(agent).Result)
+                        {
+                            return ResponseFail();
+                        }
                     }
                     break;
                 case CallStates.EndByMobile:
@@ -140,7 +158,10 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        if (!_agentRepository.AddOrUpdate(agent).Result) return ResponseFail();
+                        if (!_agentRepository.AddOrUpdate(agent).Result)
+                        {
+                            return ResponseFail();
+                        }
                     }
                     break;
                 case CallStates.Managed:
@@ -151,7 +172,10 @@
                     if (agent != null)
                     {
                         agent.Available = true;
-                        if (!_agentRepository.AddOrUpdate(agent).Result) return ResponseFail();
+                        if (!_agentRepository.AddOrUpdate(agent).Result)
+                        {
+                            return ResponseFail();
+                        }
                     }
                     break;
                 default:
@@ -160,7 +184,12 @@
                     break;
             }
             if (callInfo.Trace != "Logout")
-                if (!_callHistoryRepository.AddOrUpdate(callInfo).Result) return ResponseFail();
+            {
+                if (!_callHistoryRepository.AddOrUpdate(callInfo).Result)
+                {
+                    return ResponseFail();
+                }
+            }
             return ResponseSuccess();
         }
 
@@ -168,7 +197,10 @@
         {
             var call = GetCallForAnyManage(callRequest.OpenTokSessionId,
                     callRequest.OpenTokAccessToken);
-            if (call != null) return call;
+            if (call != null)
+            {
+                return call;
+            }
             var stateInput = (CallStates)callRequest.State;
             return new CallHistoryTrace
             {

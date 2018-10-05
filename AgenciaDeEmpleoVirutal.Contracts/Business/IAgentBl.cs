@@ -17,9 +17,9 @@
         /// <summary>
         /// Get Agent Available.
         /// </summary>
-        /// <param name="AgentAvailableRequest"></param>
+        /// <param name="agentAvailableRequest"></param>
         /// <returns></returns>
-        Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest AgentAvailableRequest);
+        Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest);
 
 
         /// <summary>

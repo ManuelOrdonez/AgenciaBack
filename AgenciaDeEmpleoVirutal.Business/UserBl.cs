@@ -60,15 +60,21 @@
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
         {
             if (string.IsNullOrEmpty(deviceId.DeviceId))
+            {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
+            }
 
             var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
-            if (result.Count == 0 || result == null)
+            if (result.Count == 0 || result is null)
+            {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
+            }
 
             var userAuthenticate = result.Where(r => r.Authenticated == true);
             if (!userAuthenticate.Any())
+            {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
+            }
             var user = userAuthenticate.FirstOrDefault();
 
             var token = string.Empty;
@@ -76,8 +82,12 @@
             {
                 token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
                 if (string.IsNullOrEmpty(token))
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+                }
             }
+
+
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
@@ -103,22 +113,34 @@
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 if (user == null)
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                }
                 if (user.State.Equals(UserStates.Disable.ToString()) && user.IntentsLogin == 5)
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
+                }
                 if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
+                }
                 if (!user.Password.Equals(userReq.Password))
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
+                    if (!resultUpt)
+                    {
+                        return ResponseFail<AuthenticateUserResponse>();
+                    }
+
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
                 }
                 token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
                 if (string.IsNullOrEmpty(token))
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
+                }
             }
             else
             {
@@ -138,9 +160,13 @@
                 }
 
                 if (user == null)
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                }
                 if (user.State.Equals(UserStates.Disable.ToString()))
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
+                }
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
@@ -169,7 +195,9 @@
         {
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
+            {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+            }
             var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
 
             if (lResult.Count == 0)
@@ -241,7 +269,10 @@
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 _sendMailService.SendMail(company);
-                if (!result) return ResponseFail<RegisterUserResponse>();
+                if (!result)
+                {
+                    return ResponseFail<RegisterUserResponse>();
+                }
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = company });
             }
             if (userReq.IsCesante)
@@ -272,10 +303,19 @@
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 _sendMailService.SendMail(cesante);
-                if (!result) return ResponseFail<RegisterUserResponse>();
+                if (!result)
+                {
+                    return ResponseFail<RegisterUserResponse>();
+                }
                 response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
             }
-            if (userReq.OnlyAzureRegister) return ResponseSuccess(response);
+
+            if (userReq.OnlyAzureRegister)
+            {
+                return ResponseSuccess(response);
+            }
+            var names = userReq.Name.Split(new char[] { ' ' });
+            var lastNames = userReq.LastNames.Split(new char[] { ' ' });
 
             /// Ldap Register        
             var regLdap = new RegisterLdapRequest()
@@ -292,8 +332,10 @@
                 userpassword = userReq.Password
             };
             var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap == null || !resultLdap.estado.Equals("0000"))
+            if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
+            {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
+            }
             /// No se evaua si el usuario se encuentra registrad en LDAP, Se contuinua con el registro en TbleStorage 
             /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
             return ResponseSuccess(response);
@@ -312,14 +354,14 @@
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
-               /* if(RequestAviable.State)
-                {
-                     _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
-                }
-                else
-                {
-                     _queue.DeleteQueue("aviableagent", userAviable.UserName);
-                }*/
+                /* if(RequestAviable.State)
+                 {
+                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                 }
+                 else
+                 {
+                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
+                 }*/
             }
             return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }
@@ -327,9 +369,15 @@
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
         {
             var errorsMessage = logOurReq.Validate().ToList();
-            if (errorsMessage.Count > 0) return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
+            }
             var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
-            if (user == null) return ResponseFail<AuthenticateUserResponse>();
+            if (user == null)
+            {
+                return ResponseFail<AuthenticateUserResponse>();
+            }
             user.Authenticated = false;
             user.Available = false;
             var result = _userRep.AddOrUpdate(user).Result;
@@ -338,7 +386,10 @@
 
         public Response<User> GetUserInfo(string UserName)
         {
-            if (string.IsNullOrEmpty(UserName)) return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            if (string.IsNullOrEmpty(UserName))
+            {
+                return ResponseFail<User>(ServiceResponseCode.BadRequest);
+            }
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
@@ -346,15 +397,22 @@
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
             var errorsMessage = PDIRequest.Validate().ToList();
-            if (errorsMessage.Count > 0) return ResponseBadRequest<User>(errorsMessage);
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<User>(errorsMessage);
+            }
 
             var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
             if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+            {
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            }
             var user = userStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
             var agentStorage = _userRep.GetAsyncAll(PDIRequest.AgentUserName).Result;
             if (agentStorage == null || agentStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+            {
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
+            }
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
             var pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
@@ -377,17 +435,25 @@
 
             if (PDIRequest.OnlySave)
             {
-                if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
+                if (!_pdiRep.AddOrUpdate(pdi).Result)
+                {
+                    return ResponseFail<User>();
+                }
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
 
             GenarateContentPDI(new List<PDI>() { pdi });
             MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };            
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
+            {
                 return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);
+            }
             stream.Close();
-            if (!_pdiRep.AddOrUpdate(pdi).Result) return ResponseFail<User>();
+            if (!_pdiRep.AddOrUpdate(pdi).Result)
+            {
+                return ResponseFail<User>();
+            }
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
@@ -403,8 +469,22 @@
         {
             var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
             field = field.ToLower();
-            if (naOptiond.Any(op => op.Equals(field))) return "No aplica";
+            if (naOptiond.Any(op => op.Equals(field)))
+            {
+                return "No aplica";
+            }
             return UString.CapitalizeFirstLetter(field);
+        }
+
+        public Response<User> GetPDIsFromUser(string userName)
+        {
+            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
+            if (PDIs.Count <= 0 || PDIs == null)
+            {
+                return ResponseFail<User>();
+            }
+            var contetnt = GenarateContentPDI(PDIs);
+            return null;
         }
 
         private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)

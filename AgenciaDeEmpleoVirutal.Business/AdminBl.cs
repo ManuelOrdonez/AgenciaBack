@@ -35,8 +35,10 @@
         {
             string message = string.Empty;
             var errorsMesage = funcionaryReq.Validate().ToList();
-            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
-
+            if (errorsMesage.Count > 0)
+            {
+                return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
+            }
             var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
 
             int pos = 0;
@@ -104,11 +106,11 @@
                     position = 0;
                     eRta = true;
                 }
-            }            
+            }
+
             return eRta;
         }
-
-        private void GetUserFuncionary(List<User> lUser,out User funtionary,out User people)
+        private void GetUserFuncionary(List<User> lUser, out User funtionary, out User people)
         {
             funtionary = null;
             people = null;
@@ -128,12 +130,15 @@
                         break;
                 }
             }
-        }
 
+        }
         public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
             var errorsMesage = funcionaryReq.Validate().ToList();
-            if (errorsMesage.Count > 0) return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
+            if (errorsMesage.Count > 0)
+            {
+                return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
+            }
 
             //var funcionary = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
@@ -144,7 +149,7 @@
             {
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             }
-            
+
             funcionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
             funcionary.Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name);
             funcionary.LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName);
@@ -153,22 +158,34 @@
             funcionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
 
             var result = _usersRepo.AddOrUpdate(funcionary).Result;
-            if (!result) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            if (!result)
+            {
+                return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+            }
 
             if (people != null)
             {
                 people.State = funcionaryReq.State == true ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                 result = _usersRepo.AddOrUpdate(people).Result;
-                if (!result) return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+                if (!result)
+                {
+                    return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+                }
             }
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
         }
 
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
-            if (string.IsNullOrEmpty(funcionaryMail)) return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
+            if (string.IsNullOrEmpty(funcionaryMail))
+            {
+                return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
+            }
             var result = _usersRepo.GetSomeAsync("Email", string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
-            if (!result.Any()) return ResponseFail<FuncionaryInfoResponse>();
+            if (!result.Any())
+            {
+                return ResponseFail<FuncionaryInfoResponse>();
+            }
             var funcionary = new List<FuncionaryInfoResponse>()
             {
                 new FuncionaryInfoResponse()
@@ -190,7 +207,10 @@
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
             var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
-            if (funcionaries.Count == 0 || funcionaries == null) return ResponseFail<FuncionaryInfoResponse>();
+            if (funcionaries.Count == 0 || funcionaries is null)
+            {
+                return ResponseFail<FuncionaryInfoResponse>();
+            }
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             funcionaries.ForEach(f =>
             {
