@@ -1,54 +1,131 @@
 ﻿namespace AgenciaDeEmpleoVirutal.ExternalServices
 {
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
-    using AgenciaDeEmpleoVirutal.Entities.ExternalService;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
-    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.ExternalServices.Referentials;
+    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using System.Collections.Generic;
     using System.Net;
 
-    public class LdapServices : ClientWebBase<LdapServicesResult>, ILdapServices
+    public class LdapServices : ClientWebBase<LdapServicesResult<AuthenticateLdapResult>>, ILdapServices
     {
-        public LdapServices(IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "LdapServices", "autenticacion")
+        private readonly string _ldapAíKey;
+
+        public LdapServices(IOptions<UserSecretSettings> options, IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "LdapServices", "autenticacion/usuarios")
         {
+            _ldapAíKey = options.Value.LdapServiceApiKey;
         }
 
-        public LdapServicesResult Authenticate(string userName, string pass)
+        public LdapServicesResult<AuthenticateLdapResult> Authenticate(string userName, string pass)
         {
             var webClient = new WebClient();
-            webClient.Headers.Add("Content-Type", "application/json");
-            webClient.Headers.Add("x-token-id", "1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik+9ol0po1234567890");
-            webClient.Headers.Add("x-success-url", "/api/response/client");
-            webClient.Headers.Add("x-api-key", "CpzbLOkIKKw0PKoIDiSrAtGo8Yc1x9yY");
+            SetHeadersLdapService(webClient);
             webClient.Headers.Add("x-password", pass);
-            webClient.Headers.Add("x-username", userName);
+            webClient.Headers.Add("x-username", userName); 
 
-            LdapServicesResult result;
+            LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
 
             using (WebClient context = webClient)
             {
-                result = JsonConvert.DeserializeObject<LdapServicesResult>(context.DownloadString(Url));
+                try
+                {
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.DownloadString(Url));
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        var response = ex.Response as HttpWebResponse;
+                        if (response != null && (int)response.StatusCode == 401)
+                        {
+                            result.code = (int)ServiceResponseCode.IsNotRegisterInLdap;
+                            return result;
+                        }
+                        else throw ex;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }
             }
-
             return result;
         }
 
-        public LdapServicesResult Register(RegisterInLdapRequest userReq)
+        public LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request)
         {
             var webClient = new WebClient();
-            webClient.Headers.Add("x-api-key", "CpzbLOkIKKw0PKoIDiSrAtGo8Yc1x9yY");
-            string parameters = JsonConvert.SerializeObject(userReq);
-            LdapServicesResult result;
+            SetHeadersLdapService(webClient);
+
+            string parameters = JsonConvert.SerializeObject(request);
+            var result = new LdapServicesResult<AuthenticateLdapResult>();
+            var content = string.Empty;
+            using (WebClient context = webClient)
+            {
+                try
+                {
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url, "POST", parameters));
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        var response = ex.Response as HttpWebResponse;
+                        if (response != null && (int)response.StatusCode == 409)
+                        {
+                            result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                            return result;
+                        }                            
+                        else throw ex;
+                    }
+                    else
+                    {
+                        throw ex;
+                    }
+                }                
+            }
+            return result;
+        }
+
+        public LdapServicesResult<AuthenticateLdapResult> PasswordChangeRequest(PasswordChangeRequest request)
+        {
+            var webClient = new WebClient();
+            SetHeadersLdapService(webClient);
+
+            string parameters = JsonConvert.SerializeObject(request);
+            LdapServicesResult<AuthenticateLdapResult> result;
+            
+            using (WebClient context = webClient)
+            {
+                var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
+                result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
+            }
+            return result;
+        }
+
+        public LdapServicesResult<AuthenticateLdapResult> PasswordChangeConfirm(PasswordChangeConfirmRequests request)
+        {
+            var webClient = new WebClient();
+            SetHeadersLdapService(webClient);
+
+            string parameters = JsonConvert.SerializeObject(request);
+            LdapServicesResult<AuthenticateLdapResult> result;
 
             using (WebClient context = webClient)
             {
-                result = JsonConvert.DeserializeObject<LdapServicesResult>(context.UploadString(Url, "POST", parameters));
+                result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/ForgotPasswordReset", "PUT", parameters));
             }
-
             return result;
+        }
+
+        private void SetHeadersLdapService(WebClient webClient)
+        {
+            webClient.Headers.Add("Content-Type", "application/json");
+            webClient.Headers.Add("x-api-key", _ldapAíKey);
         }
     }
 }

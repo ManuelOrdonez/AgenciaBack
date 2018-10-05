@@ -129,13 +129,6 @@
             var webClient = new WebClient();
             webClient.Headers.Add("Content-Type", MediaTypeJson);
             webClient.Headers.Add("Accept-Type", MediaTypeJson);
-            /*webClient.Headers.Add("content-encoding", "gzip");
-            webClient.Encoding = System.Text.Encoding.UTF8;
-            if (_accessToken != null)
-            {
-                webClient.Headers.Add("Authorization", string.Concat("bearer ", _accessToken));
-            }*/
-
             return webClient;
         }
 

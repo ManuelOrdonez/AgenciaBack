@@ -24,6 +24,7 @@
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
+
         private IGenericQueue _queue;
 
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
@@ -46,11 +47,10 @@
             // verificar Row Key de agente - username noDoc_coDoc
             var AgentInfo = new User
             {
-                // Timestamp = DateTime.UtcNow,
-                Name = request.Name,
-                LastName = request.LastName,
-                Email = request.Email,
-                UserName = request.UserName
+                Name = agentRequest.Name,
+                LastName = agentRequest.LastName,
+                Email = agentRequest.Email,
+                UserName = agentRequest.UserName
             };
             AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
 
@@ -116,7 +116,7 @@
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
-                //Disabled Agent
+                ///Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result)
                 {
@@ -139,7 +139,7 @@
         }
 
 
-        public Response<User> ImAviable(AviableUser RequestAviable)
+        public Response<User> ImAviable(AviableUserRequest RequestAviable)
         {
             if (string.IsNullOrEmpty(RequestAviable.UserName))
             {

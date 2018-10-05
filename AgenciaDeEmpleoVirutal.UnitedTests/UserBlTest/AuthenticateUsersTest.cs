@@ -155,7 +155,7 @@
         [TestMethod, TestCategory("UserBl")]
         public void AuthenticateUsersTest_WhenUserIsNotRegisterInLdap_ReturnError()
         {
-            LdapResult.data.First().status = "Error";
+            LdapResult.data.First().Successurl = "Error";
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);

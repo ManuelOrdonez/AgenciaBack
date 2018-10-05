@@ -1,10 +1,4 @@
-﻿using System;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
-using AgenciaDeEmpleoVirutal.ExternalServices;
-
-namespace AgenciaDeEmpleoVirutal.Services
+﻿namespace AgenciaDeEmpleoVirutal.Services
 {
     using Business;
     using Contracts.Business;
@@ -18,6 +12,16 @@ namespace AgenciaDeEmpleoVirutal.Services
     using DataAccess.Referentials;
     using Swashbuckle.AspNetCore.Swagger;
     using System.Collections.Generic;
+    using DinkToPdf.Contracts;
+    using DinkToPdf;
+    using System.Runtime.Loader;
+    using System.Reflection;
+    using System.IO;
+    using System;
+    using System.Text;
+    using Microsoft.IdentityModel.Tokens;
+    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
+    using AgenciaDeEmpleoVirutal.ExternalServices;
     using System.Runtime.Loader;
     using System.Reflection;
     using System.IO;

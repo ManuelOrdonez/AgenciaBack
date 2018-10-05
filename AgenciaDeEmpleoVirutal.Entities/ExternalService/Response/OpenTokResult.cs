@@ -1,4 +1,4 @@
-﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService
+﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Response
 {
     public class OpenTokResult
     {

@@ -5,6 +5,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
@@ -34,9 +35,7 @@
         public IActionResult RegisterUser([FromBody] RegisterUserRequest userRequest)
         {
             return Ok(_UserBussines.RegisterUser(userRequest));
-        }
-
-        
+        }        
 
         [HttpPost]
         [Route("IsAuthenticated")]
@@ -56,6 +55,7 @@
 
         [HttpPost]
         [Route("LogOut")]
+        [Authorize]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
         public IActionResult LogOut([FromBody] LogOutRequest logOutReq)
         {
@@ -65,6 +65,7 @@
 
         [HttpGet]
         [Route("GetUserInfo")]
+        [Authorize]
         [Produces(typeof(Response<User>))]
         public IActionResult GetUserInfo(string UserName)
         {
@@ -73,14 +74,16 @@
 
         [HttpPost]
         [Route("AviableUser")]
+        [Authorize]
         [Produces(typeof(Response<User>))]
-        public IActionResult AviableUser([FromBody] AviableUser RequestAviable)
+        public IActionResult AviableUser([FromBody] AviableUserRequest RequestAviable)
         {
             return Ok(_UserBussines.AviableUser(RequestAviable));
         }
 
         [HttpPost]
         [Route("CreatePDI")]
+        [Authorize]
         [Produces(typeof(Response<User>))]
         public IActionResult CreatePDI([FromBody] PDIRequest pdiRequest)
         {

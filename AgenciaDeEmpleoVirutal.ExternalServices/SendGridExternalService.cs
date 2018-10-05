@@ -7,6 +7,7 @@
     using Microsoft.Extensions.Options;
     using System.Collections.Generic;
     using System.Net.Mail;
+    using Utils;
     using Utils.Resources;
 
     public class SendGridExternalService : ISendGridExternalService
@@ -50,6 +51,7 @@
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             return SendMail();
         }
+
         public bool SendMail(User userInfo,string urlReset)
         {
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;

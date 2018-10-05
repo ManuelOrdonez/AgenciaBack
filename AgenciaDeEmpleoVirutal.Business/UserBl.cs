@@ -5,6 +5,7 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -91,38 +92,15 @@
             {
                 new AuthenticateUserResponse()
                 {
+                    AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
-                    AccessToken = ManagerToken.GenerateToken(user.UserName),
-                    Expiration = DateTime.Now.AddMinutes(15),
-                    TokenType = "Bearer",
                     OpenTokApiKey = _settings.OpenTokApiKey,
                     OpenTokAccessToken = token,
                 }
             };
             return ResponseSuccess(response);
         }
-        /// <summary>
-        /// Función que se encarga de traer el usuario que esta activo en el sistema 
-        /// </summary>
-        /// <param name="userReq"></param>
-        /// <returns></returns>
-        private User getUserActive(AuthenticateUserRequest userReq)
-        {
-            User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            foreach (var item in lUser)
-            {
-                if (item.State.ToLower() == UserStates.Enable.ToString().ToLower())
-                {
-                    return item;
-                }
-            }
-            if (lUser.Count > 0)
-            {
-                return lUser[0];
-            }
-            return user;
-        }
+
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -131,7 +109,7 @@
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
             string token = string.Empty;
-            User user = getUserActive(userReq);
+            User user = GetUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 if (user == null)
@@ -166,22 +144,20 @@
             }
             else
             {
-                /// pendiente definir servicio Ldap pass user?
-
-                /*
+                /// Authenticate in LDAP Service
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
-                if (!result.data.FirstOrDefault().status.Equals("success") && user == null)
+                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
-                else if (user != null && user.IntentsLogin > 4)
+                if (user != null && user.IntentsLogin > 4) /// intentos maximos
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
-                else if (!result.data.FirstOrDefault().status.Equals("success") && user != null)
+                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }*/
+                }
 
                 if (user == null)
                 {
@@ -206,10 +182,8 @@
             {
                 new AuthenticateUserResponse()
                 {
+                    AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
-                    AccessToken = ManagerToken.GenerateToken(user.UserName),
-                    Expiration = DateTime.Now.AddMinutes(15),
-                    TokenType = "Bearer",
                     OpenTokApiKey = _settings.OpenTokApiKey,
                     OpenTokAccessToken = token,
                 }
@@ -256,25 +230,15 @@
 
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
-            int pos = 0;
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
 
-            //var userExist = _userRep.GetAsync(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
-            //if (userExist != null) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+            var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
 
-            List<User> users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
-
-            if (!ValRegistriesUser(users, out pos))
+            if (!ValRegistriesUser(users,out int pos))
             {
-                if (pos == 0)
-                {
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                }
-                else
-                {
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
-                }
+                if (pos == 0) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
+                else  return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
@@ -287,8 +251,8 @@
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
-                    ContactName = Utils.Helpers.UString.UppercaseWords(userReq.ContactName),
-                    PositionContact = Utils.Helpers.UString.UppercaseWords(userReq.PositionContact),
+                    ContactName = UString.UppercaseWords(userReq.ContactName),
+                    PositionContact = UString.UppercaseWords(userReq.PositionContact),
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
                     NoDocument = userReq.NoDocument,
@@ -300,7 +264,7 @@
                     State = UserStates.Enable.ToString(),
                     Password = userReq.Password,
                     UserType = UsersTypes.Empresa.ToString(),
-                    Authenticated = string.IsNullOrEmpty(userReq.DeviceId) ? false : true,
+                    Authenticated = false,
                     IntentsLogin = 0
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
@@ -334,7 +298,7 @@
                     Password = userReq.Password,
                     Email = userReq.Mail,
                     UserType = UsersTypes.Cesante.ToString(),
-                    Authenticated = true,
+                    Authenticated = false,
                     IntentsLogin = 0
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
@@ -353,62 +317,39 @@
             var names = userReq.Name.Split(new char[] { ' ' });
             var lastNames = userReq.LastNames.Split(new char[] { ' ' });
 
-            /// pendiente definir servicio Ldap
-            RegisterInLdapRequest regLdap = new RegisterInLdapRequest()
+            /// Ldap Register        
+            var regLdap = new RegisterLdapRequest()
             {
-                genero = userReq.Genre.Equals("Femenino") ? "1" : "0",
-                numeroDocumento = userReq.NoDocument,
-                tipoDocumento = userReq.CodTypeDocument.ToString(),
-                telefono = userReq.Cellphon1,
-                primerNombre = names.FirstOrDefault(),
-                segundoNombre = names.ToList().Count > 2 ? names[1] : string.Empty,
-                primerApellido = lastNames.FirstOrDefault(),
-                segundoApellido = lastNames.ToList().Count > 2 ? lastNames[1] : string.Empty,
+                question = "Agencia virtual de empleo question",
+                answer = "Agencia virtual de empleo answer",
+                birtdate = "01-01-1999",
+                givenName = UString.UppercaseWords(userReq.Name),
+                surname = UString.UppercaseWords(userReq.LastNames),
+                mail = userReq.Mail,
+                userId = userReq.NoDocument,
+                userIdType = userReq.CodTypeDocument.ToString(),
+                username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                userpassword = userReq.Password
             };
-            /// pendiente definir servicio Ldap
             var resultLdap = _LdapServices.Register(regLdap);
             if (!resultLdap.data.FirstOrDefault().status.Equals("success"))
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             }
+            /// No se evaua si el usuario se encuentra registrad en LDAP, Se contuinua con el registro en TbleStorage 
+            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
             return ResponseSuccess(response);
         }
 
-        /// <summary>
-        /// Función que determina si el usuario existen es persona para que permita crear el usuario como funcionario
-        /// </summary>
-        /// <param name="lUser">Lista de usuarios registrados</param>
-        /// <param name="position">posición que se encuentra el registro de persona</param>
-        /// <returns></returns>
-        private bool ValRegistriesUser(List<User> lUser, out int position)
-        {
-            bool eRta = true;
-            position = -1;
-            if (lUser.Count > 0)
-            {
-                eRta = false;
-                if (lUser[0].UserType == "funcionario")
-                {
-                    position = 0;
-                    eRta = false;
-                }
-            }
-
-            return eRta;
-        }
-
-        public Response<User> AviableUser(AviableUser RequestAviable)
-        {
-
+        public Response<User> AviableUser(AviableUserRequest RequestAviable)
+        {            
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
-
                 NoDocument = user[0],
                 TypeDocument = user[1],
-            };
-
-            var userAviable = this.getUserActive(request);
+            };            
+            var userAviable = this.GetUserActive(request);
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
                 userAviable.Available = RequestAviable.State;
@@ -516,6 +457,14 @@
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
+        public Response<User> GetPDIsFromUser(string userName)
+        {
+            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
+            if (PDIs.Count <= 0 || PDIs == null) return ResponseFail<User>();
+            var contetnt = GenarateContentPDI(PDIs);
+            return null;
+        }
+
         private string SetFieldOfPDI(string field)
         {
             var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
@@ -555,5 +504,48 @@
             return result;
         }
 
+        private AuthenticationToken SetAuthenticationToken(string username)
+        {
+            return new AuthenticationToken()
+            {
+                TokenType = "Bearer",
+                Expiration = DateTime.Now.AddMinutes(60), /// cuanto?
+                AccessToken = ManagerToken.GenerateToken(username),
+            };
+        }
+
+        private bool ValRegistriesUser(List<User> lUser, out int position)
+        {
+            bool result = true;
+            position = -1;
+            if (lUser.Count > 0)
+            {
+                result = false;
+                if (lUser[0].UserType == "funcionario")
+                {
+                    position = 0;
+                    result = false;
+                }
+            }
+            return result;
+        }
+
+        private User GetUserActive(AuthenticateUserRequest userReq)
+        {
+            User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                return lUser[0];
+            }
+            return user;
+        }
     }
 }

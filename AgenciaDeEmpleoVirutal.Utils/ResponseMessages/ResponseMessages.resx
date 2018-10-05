@@ -154,7 +154,7 @@
     <value>El usuario no esta registrado en nuestra base de datos</value>
   </data>
   <data name="IsNotRegisterInLdap" xml:space="preserve">
-    <value>El usuario no esta registrado en colsubsidio</value>
+    <value>Autenticación fallida</value>
   </data>
   <data name="SavePDI" xml:space="preserve">
     <value>Guardado exitoso.</value>

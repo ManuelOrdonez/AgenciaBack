@@ -11,7 +11,7 @@
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    ///[Authorize]
+    [Authorize]
     public class AgentController : Controller
     {
         private readonly IAgentBl _agentBusiness;
@@ -40,7 +40,7 @@
         [HttpPost]
         [Route("ImAviable")]
         [Produces(typeof(Response<GetAgentAvailableResponse>))]
-        public IActionResult ImAviable([FromBody] AviableUser request)
+        public IActionResult ImAviable([FromBody] AviableUserRequest request)
         {
             return Ok(_agentBusiness.ImAviable(request));
         }

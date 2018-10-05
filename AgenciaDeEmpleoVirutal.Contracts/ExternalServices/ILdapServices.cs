@@ -1,11 +1,16 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.ExternalServices
 {
-    using AgenciaDeEmpleoVirutal.Entities.ExternalService;
-    using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
 
     public interface ILdapServices
     {
-        LdapServicesResult Authenticate(string userName, string pass);
-        LdapServicesResult Register(RegisterInLdapRequest userReq);
+        LdapServicesResult<AuthenticateLdapResult> Authenticate(string userName, string pass);
+
+        LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request);
+
+        LdapServicesResult<AuthenticateLdapResult> PasswordChangeRequest(PasswordChangeRequest request);
+
+        LdapServicesResult<AuthenticateLdapResult> PasswordChangeConfirm(PasswordChangeConfirmRequests request);
     }
 }

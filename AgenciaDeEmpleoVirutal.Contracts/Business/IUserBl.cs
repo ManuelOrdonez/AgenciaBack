@@ -19,7 +19,7 @@
 
         Response<User> GetUserInfo(string UserName);
 
-        Response<User> AviableUser(AviableUser RequestAviable);
+        Response<User> AviableUser(AviableUserRequest RequestAviable);
 
         Response<User> CreatePDI(PDIRequest PDIRequest);
 

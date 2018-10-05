@@ -5,15 +5,20 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
-    using AgenciaDeEmpleoVirutal.Entities.ExternalService;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using Moq;
     using System.Collections.Generic;
 
     public class UserBlTestBase : BusinessBase<User>
     {
+        protected Mock<IConverter> ConverterInterface;
+
+        protected Mock<IGenericRep<PDI>> PDIRepMoq;
+
         protected Mock<IGenericRep<User>> UserRepMoq;
 
         protected Mock<ILdapServices> LdapServicesMoq;
@@ -28,7 +33,7 @@
 
         protected User UserInfoMock;
 
-        protected LdapServicesResult LdapResult;
+        protected LdapServicesResult<AuthenticateLdapResult> LdapResult;
 
         protected RegisterUserRequest RequestRegisterUser;
 
@@ -44,13 +49,15 @@
 
         public UserBlTestBase()
         {
+            ConverterInterface = new Mock<IConverter>();
+            PDIRepMoq = new Mock<IGenericRep<PDI>>();
             options = Options.Create(new UserSecretSettings());
             _settings = options.Value;
             UserRepMoq = new Mock<IGenericRep<User>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
             UserBusiness = new UserBl(UserRepMoq.Object,
-                LdapServicesMoq.Object, SendMailServiceMoq.Object, options, _openTokExternalService.Object);
+                LdapServicesMoq.Object, SendMailServiceMoq.Object, options, _openTokExternalService.Object, PDIRepMoq.Object, ConverterInterface.Object);
             LoadEntitiesMock();
         }
 
@@ -76,11 +83,11 @@
                 UserType = "Cesante"
             };
 
-            LdapResult = new LdapServicesResult()
+            LdapResult = new LdapServicesResult<AuthenticateLdapResult>()
             {
                 data = new List<AuthenticateLdapResult>()
                 {
-                    new AuthenticateLdapResult() { status = "success"}
+                    new AuthenticateLdapResult() { Successurl = "success"}
                 }
             };
 

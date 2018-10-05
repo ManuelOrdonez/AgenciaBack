@@ -27,6 +27,6 @@
         /// </summary>
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
-        Response<User> ImAviable(AviableUser RequestAviable);
+        Response<User> ImAviable(AviableUserRequest RequestAviable);
     }
 }

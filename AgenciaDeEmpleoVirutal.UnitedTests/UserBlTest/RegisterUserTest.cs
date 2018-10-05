@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.UserBlTest
 {
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
@@ -146,8 +147,8 @@
             UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
             RequestRegisterUser.OnlyAzureRegister = false;
-            LdapResult.data.First().status = "Error";
-            LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterInLdapRequest>())).Returns(LdapResult);
+            LdapResult.data.First().Successurl = "Error";
+            LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterLdapRequest>())).Returns(LdapResult);
             var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             ///Action
             var result = UserBusiness.RegisterUser(RequestRegisterUser);
@@ -170,7 +171,7 @@
             UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
             RequestRegisterUser.OnlyAzureRegister = false;
-            LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterInLdapRequest>())).Returns(LdapResult);
+            LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterLdapRequest>())).Returns(LdapResult);
             var expected = ResponseSuccess(response);
             ///Action
             var result = UserBusiness.RegisterUser(RequestRegisterUser);

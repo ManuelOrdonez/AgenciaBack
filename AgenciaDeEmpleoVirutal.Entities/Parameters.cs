@@ -1,6 +1,4 @@
-﻿
-
-namespace AgenciaDeEmpleoVirutal.Entities
+﻿namespace AgenciaDeEmpleoVirutal.Entities
 {
     using Microsoft.WindowsAzure.Storage.Table;
     public  class Parameters : TableEntity
