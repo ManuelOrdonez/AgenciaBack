@@ -40,11 +40,9 @@
         {
             var errorMessages = agentRequest.Validate().ToList();
             if (errorMessages.Count > 0) return ResponseBadRequest<CreateAgentResponse>(errorMessages);
-
-            // verificar Row Key de agente - username noDoc_coDoc
+            
             var AgentInfo = new User
             {
-                // Timestamp = DateTime.UtcNow,
                 Name = agentRequest.Name,
                 LastName = agentRequest.LastName,
                 Email = agentRequest.Email,
@@ -100,7 +98,7 @@
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
                 if (!_agentRepository.GetAsync(Agent.UserName).Result.Available)
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
-                //Disabled Agent
+                /// Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result) return ResponseFail<GetAgentAvailableResponse>();
 

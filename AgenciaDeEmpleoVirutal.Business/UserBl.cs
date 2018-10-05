@@ -429,7 +429,7 @@
             return new AuthenticationToken()
             {
                 TokenType = "Bearer",
-                Expiration = DateTime.Now.AddMinutes(15),
+                Expiration = DateTime.Now.AddMinutes(60), /// cuanto?
                 AccessToken = ManagerToken.GenerateToken(username),
             };
         }
