@@ -22,11 +22,6 @@
     using Microsoft.IdentityModel.Tokens;
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.ExternalServices;
-    using System.Runtime.Loader;
-    using System.Reflection;
-    using System.IO;
-    using DinkToPdf.Contracts;
-    using DinkToPdf;
 
     public class Startup
     {
