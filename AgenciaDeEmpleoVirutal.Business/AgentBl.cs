@@ -18,6 +18,7 @@
     using System.Threading;
 
     public class AgentBl : BusinessBase<Agent>, IAgentBl
+
     {
         private IGenericRep<User> _userRepository;
 
@@ -149,5 +150,6 @@
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
+      
     }
 }

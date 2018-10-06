@@ -22,7 +22,8 @@
     using System.Linq;
     using System.Net.Mail;
 
-    public class UserBl : BusinessBase<User>, IUserBl
+    public class UserBl : BusinessBase<User>, IUserBl, IDisposable
+
     {
         private IConverter _converter;
 
@@ -146,16 +147,23 @@
             {
                 /// Authenticate in LDAP Service
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null)/// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+                }
                 if (user != null && user.IntentsLogin > 4) /// intentos maximos
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
+                }
                 if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
+                    if (!resultUpt)
+                    {
+                        return ResponseFail<AuthenticateUserResponse>();
+                    }
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
                 }
 
@@ -231,14 +239,17 @@
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
-            if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+            }
 
             var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
 
-            if (!ValRegistriesUser(users,out int pos))
+            if (!ValRegistriesUser(users, out int pos))
             {
                 if (pos == 0) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                else  return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
@@ -342,13 +353,13 @@
         }
 
         public Response<User> AviableUser(AviableUserRequest RequestAviable)
-        {            
+        {
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
                 NoDocument = user[0],
                 TypeDocument = user[1],
-            };            
+            };
             var userAviable = this.GetUserActive(request);
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
@@ -538,6 +549,14 @@
                 return lUser[0];
             }
             return user;
+        }
+
+        public void Dispose()
+        {
+            if (this._crypto != null)
+            {
+                this._crypto.Dispose();
+            }
         }
     }
 }
