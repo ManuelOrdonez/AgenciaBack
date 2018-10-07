@@ -361,20 +361,17 @@
                 TypeDocument = user[1],
             };
             var userAviable = this.GetUserActive(request);
-            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+
+            if (userAviable != null)
             {
-                userAviable.Available = RequestAviable.State;
-                var result = _userRep.AddOrUpdate(userAviable).Result;
-                /* if(RequestAviable.State)
-                 {
-                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
-                 }
-                 else
-                 {
-                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
-                 }*/
+                if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+                {
+                    userAviable.Available = RequestAviable.State;
+                    var result = _userRep.AddOrUpdate(userAviable).Result;
+                }
+                return ResponseSuccess(new List<User> { string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
             }
-            return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
+            return ResponseSuccess(new List<User> { null });
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
@@ -470,19 +467,21 @@
 
         private string SetFieldOfPDI(string field)
         {
+            string fieldAux = string.Empty;
+            fieldAux = field;
             var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
-            field = field.ToLower();
-            if (naOptiond.Any(op => op.Equals(field)))
+            fieldAux = fieldAux.ToLower();
+            if (naOptiond.Any(op => op.Equals(fieldAux)))
             {
                 return "No aplica";
             }
-            return UString.CapitalizeFirstLetter(field);
+            return UString.CapitalizeFirstLetter(fieldAux);
         }
 
         public Response<User> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
-            if (PDIs.Count <= 0 || PDIs == null)
+            if (PDIs.Count <= 0 )
             {
                 return ResponseFail<User>();
             }

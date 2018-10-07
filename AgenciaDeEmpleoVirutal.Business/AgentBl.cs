@@ -108,7 +108,7 @@
                 };
 
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
-                if (advisors.Count.Equals(0) || advisors == null)
+                if (advisors.Count.Equals(0))
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
