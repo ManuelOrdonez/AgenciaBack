@@ -86,6 +86,10 @@
         /// </summary>
         UserAlredyExistF = 126,
         /// <summary>
+        /// Parameter not found
+        /// </summary>
+        ParameterNotFound = 127,
+        /// <summary>
         /// Error Send Mail
         /// </summary>
         ErrorSendMail = 300,
