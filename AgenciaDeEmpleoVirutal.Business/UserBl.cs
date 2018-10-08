@@ -288,6 +288,8 @@
             {
                 var company = new User()
                 {
+                    Name = userReq.Name,
+                    LastName = "Empresa",
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
@@ -356,8 +358,6 @@
             {
                 return ResponseSuccess(response);
             }
-            var names = userReq.Name.Split(new char[] { ' ' });
-            var lastNames = userReq.LastNames.Split(new char[] { ' ' });
 
             /// Ldap Register        
             var regLdap = new RegisterLdapRequest()
@@ -366,7 +366,7 @@
                 answer = "Agencia virtual de empleo answer",
                 birtdate = "01-01-1999",
                 givenName = UString.UppercaseWords(userReq.Name),
-                surname = UString.UppercaseWords(userReq.LastNames),
+                surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
                 mail = userReq.Mail,
                 userId = userReq.NoDocument,
                 userIdType = userReq.CodTypeDocument.ToString(),
