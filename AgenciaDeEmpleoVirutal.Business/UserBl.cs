@@ -247,6 +247,7 @@
                 var company = new User()
                 {
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
+                    LastName = "Empresa",
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     Email = userReq.Mail,
@@ -314,8 +315,6 @@
             {
                 return ResponseSuccess(response);
             }
-            var names = userReq.Name.Split(new char[] { ' ' });
-            var lastNames = userReq.LastNames.Split(new char[] { ' ' });
 
             /// Ldap Register        
             var regLdap = new RegisterLdapRequest()
@@ -336,8 +335,8 @@
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             }
-            /// No se evaua si el usuario se encuentra registrad en LDAP, Se contuinua con el registro en TbleStorage 
-            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
+            /// Ya existe en LDAP
+            if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
             return ResponseSuccess(response);
         }
 
