@@ -53,6 +53,9 @@
 
         public string DeviceId { get; set; }
 
+
+        public string DeviceType { get; set; }
+
         public string EducationLevel { get; set; }
 
         public string DegreeGeted { get; set; }
