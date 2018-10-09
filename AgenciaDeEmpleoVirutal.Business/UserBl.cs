@@ -291,7 +291,6 @@
                     Name = userReq.Name,
                     LastName = "Empresa",
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
-                    LastName = "Empresa",
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     Email = userReq.Mail,
