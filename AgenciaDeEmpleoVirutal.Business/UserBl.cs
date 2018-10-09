@@ -21,6 +21,8 @@
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
+    using System.Security.Cryptography;
+    using System.Text;
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
@@ -101,6 +103,38 @@
             return ResponseSuccess(response);
         }
 
+
+        public string Decrypt(string cipherText, string password)
+        {
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
+            {
+                // extract salt (first 16 bytes)
+                var salt = cipherBytes.Take(16).ToArray();
+                // extract iv (next 16 bytes)
+                var iv = cipherBytes.Skip(16).Take(16).ToArray();
+                // the rest is encrypted data
+                var encrypted = cipherBytes.Skip(32).ToArray();
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.Padding = PaddingMode.PKCS7;
+                encryptor.Mode = CipherMode.CBC;
+                encryptor.IV = iv;
+                // you need to decrypt this way, not the way in your question
+                using (MemoryStream ms = new MemoryStream(encrypted))
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                    {
+                        using (var reader = new StreamReader(cs, Encoding.UTF8))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+        }
+
+
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -109,6 +143,11 @@
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
             string token = string.Empty;
+
+            string passwordDecrypt = this.Decrypt(userReq.Password,"ColsubsidioAPP");
+            string passwordUserDecrypt ;
+
+
             User user = GetUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
@@ -124,7 +163,9 @@
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 }
-                if (!user.Password.Equals(userReq.Password))
+
+                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP");
+                if (!passwordUserDecrypt.Equals(passwordDecrypt))
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
@@ -145,7 +186,7 @@
             else
             {
                 /// Authenticate in LDAP Service
-                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
+                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), passwordDecrypt);
                 if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
                 if (user != null && user.IntentsLogin > 4) /// intentos maximos
@@ -241,11 +282,14 @@
                 else  return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
+            string passwordDecrypt = this.Decrypt(userReq.Password, "ColsubsidioAPP");
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
                 var company = new User()
                 {
+                    Name = userReq.Name,
+                    LastName = "Empresa",
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     LastName = "Empresa",
                     TypeDocument = userReq.TypeDocument,
@@ -323,12 +367,12 @@
                 answer = "Agencia virtual de empleo answer",
                 birtdate = "01-01-1999",
                 givenName = UString.UppercaseWords(userReq.Name),
-                surname = UString.UppercaseWords(userReq.LastNames),
+                surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
                 mail = userReq.Mail,
                 userId = userReq.NoDocument,
                 userIdType = userReq.CodTypeDocument.ToString(),
                 username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                userpassword = userReq.Password
+                userpassword = passwordDecrypt
             };
             var resultLdap = _LdapServices.Register(regLdap);
             if (resultLdap is null || string.IsNullOrEmpty(resultLdap.estado))
