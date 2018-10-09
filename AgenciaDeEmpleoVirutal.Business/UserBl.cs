@@ -135,11 +135,11 @@
                     }
                 }
             }
-            if (type == "MOVIL")
+            else
             {
-
+                /// desarrollar para XAMARIN
+                return cipherText;
             }
-            return null;
         }
 
 
