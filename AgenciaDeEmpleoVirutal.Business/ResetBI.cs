@@ -37,25 +37,27 @@
 
         private User GetInfoUser(string user,out string idUser)
         {
+            string userAux = string.Empty;
             string state = string.Empty;
+            userAux = user;
             idUser = string.Empty;
-            if (user.IndexOf("_cesante") > -1)
+            if (userAux.IndexOf("_cesante") > -1)
             {
                 state = UsersTypes.Cesante.ToString();
-                user = user.Replace("_cesante", "");
+                userAux = userAux.Replace("_cesante", "");
             }
-            else if (user.IndexOf("_empresa") > -1)
+            else if (userAux.IndexOf("_empresa") > -1)
             {
                 state = UsersTypes.Empresa.ToString();
-                user = user.Replace("_empresa", "");
+                userAux = userAux.Replace("_empresa", "");
             }
-            else if (user.IndexOf("_funcionario") > -1)
+            else if (userAux.IndexOf("_funcionario") > -1)
             {
                 state = UsersTypes.Funcionario.ToString();
-                user = user.Replace("_funcionario", "");
+                userAux = userAux.Replace("_funcionario", "");
             }
-            List<User> lUser = _userRep.GetAsyncAll(user).Result;
-            idUser = user;
+            List<User> lUser = _userRep.GetAsyncAll(userAux).Result;
+            idUser = userAux;
             foreach (var item in lUser)
             {
                 if (state.ToLower() == item.UserType.ToLower())

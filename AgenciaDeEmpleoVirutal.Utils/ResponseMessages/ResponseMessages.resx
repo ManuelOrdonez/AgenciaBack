@@ -156,6 +156,9 @@
   <data name="IsNotRegisterInLdap" xml:space="preserve">
     <value>Autenticación fallida</value>
   </data>
+  <data name="ParameterNotFound" xml:space="preserve">
+    <value>Parametro no registrado.</value>
+  </data>
   <data name="SavePDI" xml:space="preserve">
     <value>Guardado exitoso.</value>
   </data>
