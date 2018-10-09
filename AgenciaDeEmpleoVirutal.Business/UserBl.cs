@@ -104,35 +104,44 @@
         }
 
 
-        public string Decrypt(string cipherText, string password)
+        public string Decrypt(string cipherText, string password, string type)
         {
-            byte[] cipherBytes = Convert.FromBase64String(cipherText);
-            using (Aes encryptor = Aes.Create())
+            if (type == "WEB")
             {
-                // extract salt (first 16 bytes)
-                var salt = cipherBytes.Take(16).ToArray();
-                // extract iv (next 16 bytes)
-                var iv = cipherBytes.Skip(16).Take(16).ToArray();
-                // the rest is encrypted data
-                var encrypted = cipherBytes.Skip(32).ToArray();
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.Padding = PaddingMode.PKCS7;
-                encryptor.Mode = CipherMode.CBC;
-                encryptor.IV = iv;
-                // you need to decrypt this way, not the way in your question
-                using (MemoryStream ms = new MemoryStream(encrypted))
+                byte[] cipherBytes = Convert.FromBase64String(cipherText);
+                using (Aes encryptor = Aes.Create())
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                    // extract salt (first 16 bytes)
+                    var salt = cipherBytes.Take(16).ToArray();
+                    // extract iv (next 16 bytes)
+                    var iv = cipherBytes.Skip(16).Take(16).ToArray();
+                    // the rest is encrypted data
+                    var encrypted = cipherBytes.Skip(32).ToArray();
+                    Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
+                    encryptor.Key = pdb.GetBytes(32);
+                    encryptor.Padding = PaddingMode.PKCS7;
+                    encryptor.Mode = CipherMode.CBC;
+                    encryptor.IV = iv;
+                    // you need to decrypt this way, not the way in your question
+                    using (MemoryStream ms = new MemoryStream(encrypted))
                     {
-                        using (var reader = new StreamReader(cs, Encoding.UTF8))
+                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
                         {
-                            return reader.ReadToEnd();
+                            using (var reader = new StreamReader(cs, Encoding.UTF8))
+                            {
+                                return reader.ReadToEnd();
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                /// desarrollar para XAMARIN
+                return cipherText;
+            }
         }
+
 
 
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
@@ -144,8 +153,12 @@
             }
             string token = string.Empty;
 
-            string passwordDecrypt = this.Decrypt(userReq.Password,"ColsubsidioAPP");
-            string passwordUserDecrypt ;
+            string passwordDecrypt = string.Empty;
+
+
+            passwordDecrypt = this.Decrypt(userReq.Password, "ColsubsidioAPP",userReq.DeviceType);
+
+            string passwordUserDecrypt;
 
 
             User user = GetUserActive(userReq);
@@ -164,7 +177,7 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 }
 
-                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP");
+                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP", userReq.DeviceType);
                 if (!passwordUserDecrypt.Equals(passwordDecrypt))
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
@@ -276,13 +289,13 @@
 
             var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
 
-            if (!ValRegistriesUser(users,out int pos))
+            if (!ValRegistriesUser(users, out int pos))
             {
                 if (pos == 0) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                else  return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
-            string passwordDecrypt = this.Decrypt(userReq.Password, "ColsubsidioAPP");
+            string passwordDecrypt = this.Decrypt(userReq.Password, "ColsubsidioAPP", userReq.DeviceType);
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
@@ -384,13 +397,13 @@
         }
 
         public Response<User> AviableUser(AviableUserRequest RequestAviable)
-        {            
+        {
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
                 NoDocument = user[0],
                 TypeDocument = user[1],
-            };            
+            };
             var userAviable = this.GetUserActive(request);
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
