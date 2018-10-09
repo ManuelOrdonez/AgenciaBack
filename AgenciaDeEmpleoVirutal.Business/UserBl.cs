@@ -159,7 +159,7 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
                 }
 
-                if (user == null)
+                if (user == null && result.estado.Equals("0000"))
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 }
@@ -331,12 +331,12 @@
                 userpassword = userReq.Password
             };
             var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap is null || !resultLdap.estado.Equals("0000"))
+            if (resultLdap is null || string.IsNullOrEmpty(resultLdap.estado))
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             }
             /// Ya existe en LDAP
-            if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
+            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
             return ResponseSuccess(response);
         }
 
@@ -500,7 +500,7 @@
             return new AuthenticationToken()
             {
                 TokenType = "Bearer",
-                Expiration = DateTime.Now.AddMinutes(60), /// cuanto?
+                Expiration = DateTime.Now.AddMinutes(60),
                 AccessToken = ManagerToken.GenerateToken(username),
             };
         }
