@@ -156,7 +156,7 @@
             string passwordDecrypt = string.Empty;
 
 
-            passwordDecrypt = this.Decrypt(userReq.Password, "ColsubsidioAPP",userReq.DeviceType);
+            passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
 
             string passwordUserDecrypt;
 
@@ -177,7 +177,7 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 }
 
-                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP", userReq.DeviceType);
+                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
                 if (!passwordUserDecrypt.Equals(passwordDecrypt))
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
@@ -295,7 +295,7 @@
                 else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
-            string passwordDecrypt = this.Decrypt(userReq.Password, "ColsubsidioAPP", userReq.DeviceType);
+            string passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL": userReq.DeviceType);
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
@@ -387,7 +387,7 @@
                 userpassword = passwordDecrypt
             };
             var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap is null || string.IsNullOrEmpty(resultLdap.estado))
+            if (resultLdap is null)
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             }
