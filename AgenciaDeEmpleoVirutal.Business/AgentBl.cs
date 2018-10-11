@@ -21,6 +21,8 @@
     {
         private IGenericRep<User> _userRepository;
 
+        private IGenericRep<BusyAgent> _busyAgentRepository;
+
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
@@ -28,12 +30,13 @@
         private IGenericQueue _queue;
 
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
-            IGenericQueue queue)
+            IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
             _queue = queue;
+            _busyAgentRepository = busyAgentRepository;
         }
 
         public Response<CreateAgentResponse> Create(CreateAgentRequest request)
@@ -116,6 +119,19 @@
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
+
+                try
+                {
+                    if(!_busyAgentRepository.Add(new BusyAgent() { PartitionKey = Agent.OpenTokSessionId.ToLower(), RowKey = Agent.UserName }).Result)
+                    {
+                        return ResponseFail<GetAgentAvailableResponse>();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
+                }
+
                 ///Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result)

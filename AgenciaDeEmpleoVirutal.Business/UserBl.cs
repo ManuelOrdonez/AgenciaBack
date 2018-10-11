@@ -26,6 +26,8 @@
 
     public class UserBl : BusinessBase<User>, IUserBl
     {
+        private IGenericRep<BusyAgent> _busyAgentRepository;
+
         private IConverter _converter;
 
         private IGenericRep<PDI> _pdiRep;
@@ -46,7 +48,7 @@
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue)
+                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _converter = converter;
             _pdiRep = pdiRep;
@@ -57,6 +59,7 @@
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
             _queue = queue;
+            _busyAgentRepository = busyAgentRepository;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -152,15 +155,9 @@
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
             string token = string.Empty;
-
             string passwordDecrypt = string.Empty;
-
-
             passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
-
             string passwordUserDecrypt;
-
-
             User user = GetUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
@@ -409,14 +406,15 @@
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
-                /* if(RequestAviable.State)
-                 {
-                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
-                 }
-                 else
-                 {
-                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
-                 }*/
+                if(RequestAviable.State)
+                {
+                    var bAgent = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
+                    if (bAgent.Any() && !_busyAgentRepository.DeleteRowAsync(bAgent?.FirstOrDefault()).Result)
+                    {
+                        return ResponseFail();
+                    }
+                    // _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                }
             }
             return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
         }

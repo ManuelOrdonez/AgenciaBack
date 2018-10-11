@@ -23,6 +23,8 @@
 
         protected Mock<IGenericRep<User>> UserRepMoq;
 
+        protected Mock<IGenericRep<BusyAgent>> BusyRepMoq;
+
         protected Mock<ILdapServices> LdapServicesMoq;
 
         protected Mock<ISendGridExternalService> SendMailServiceMoq;
@@ -57,6 +59,7 @@
             options = Options.Create(new UserSecretSettings());
             _settings = options.Value;
             UserRepMoq = new Mock<IGenericRep<User>>();
+            BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
             UserBusiness = new UserBl(UserRepMoq.Object,
@@ -66,7 +69,8 @@
                 _openTokExternalService.Object,
                 PDIRepMoq.Object, 
                 ConverterInterface.Object,
-                QueueMock.Object);
+                QueueMock.Object,
+                BusyRepMoq.Object);
             LoadEntitiesMock();
         }
 

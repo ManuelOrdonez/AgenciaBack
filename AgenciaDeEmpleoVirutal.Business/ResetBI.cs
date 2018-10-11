@@ -105,9 +105,10 @@
             {
                 return parameter.RowKey == "name";
             });
-            var urlResetPwd = servername.Value + "/resetpwd/" + token;
+            var urlResetPwd = servername.Value + "/resetpwd?tokenAZ=" + token;
 
-            if (result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+
+            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 _sendMailService.SendMail(result, urlResetPwd);
             }
@@ -133,8 +134,8 @@
                 }
             };
             return ResponseSuccess(response);
-
         }
+
         /// <summary>
         /// Función que se encarga de validar la información del token de cambio de
         /// contraseña para permitir el proceso de cambio de la misma
@@ -172,11 +173,11 @@
                  }
             };
             return ResponseSuccess(response);
-
         }
+
         public Response<ResetResponse> ResetPassword(ResetPasswordRequest userRequest)
         {
-            if (string.IsNullOrEmpty(userRequest.Id))
+            if (string.IsNullOrEmpty(userRequest.UserName))
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
@@ -184,18 +185,34 @@
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
-            if (string.IsNullOrEmpty(userRequest.TokenId))
-            {
-                return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
-            }
 
             string passwordUserDecrypt = this.Decrypt(userRequest.Password, "ColsubsidioAPP");
-
-            User result = _userRep.GetAsync(userRequest.Id).Result;
+            User result = _userRep.GetAsync(userRequest.UserName).Result;
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
+
+            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+            {
+                var passswordChangeLdap = new PasswordChangeConfirmRequests()
+                {
+                    ConfirmationId = userRequest.ConfirmationLdapId,
+                    TokenId = userRequest.TokenId,
+                    Username = userRequest.UserName,
+                    UserNewPassword = userRequest.Password
+                };
+                var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
+                if(resultt is null || !string.IsNullOrEmpty(resultt.code.ToString()))
+                {
+                    return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
+                }
+                else
+                {
+                    return ResponseSuccess();
+                }
+            }
+
             result.Password = userRequest.Password;
             result.State = "Enable";
             result.IntentsLogin = 0;
@@ -203,17 +220,9 @@
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
             }
-            var response = new List<ResetResponse>()
-            {
-                new ResetResponse()
-                {
-                    UserId = "",
-                    Token = "",
-                    Email = ""
-                 }
-            };
-            return ResponseSuccess(response);
+            return ResponseSuccess();
         }
+
         /// <summary>
         /// Metodo que elimina todas las entrada de tokens en la tabla
         /// </summary>
@@ -226,7 +235,6 @@
                 _passwordRep.DeleteRowAsync(item);
             }
         }
-
 
         public string Decrypt(string cipherText, string password)
         {
