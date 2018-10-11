@@ -118,19 +118,20 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;div&gt;
-        ///&lt;h1 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
-        ///&lt;h2 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0}&lt;/h2&gt;
-        ///
-        ///&lt;/div&gt;
-        ///&lt;div style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
-        /// &lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
-        ///&lt;ol&gt;
-        ///&lt;li&gt;Mis Competencias
-        ///&lt;ul&gt;
-        ///&lt;li&gt;Mis Fortalezas: &lt;br /&gt; {3}&lt;/li&gt;
-        ///&lt;li&gt;Mis debilidades: &lt;br /&gt; {4}&lt;/li&gt;
-        ///&lt;li&gt;Debo potencializa [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
+        ///	&lt;head&gt;
+        ///		&lt;title&gt;Mail-Token&lt;/title&gt;
+        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///	&lt;/head&gt;	
+        ///	&lt;body&gt;
+        ///		&lt;div&gt;
+        ///			&lt;h1 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
+        ///			&lt;h2 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0}&lt;/h2&gt;
+        ///		&lt;/div&gt;
+        ///		&lt;div style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
+        ///			&lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
+        ///			&lt;ol&gt;
+        ///				&lt;li [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ContentPDIPdf {
             get {

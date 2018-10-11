@@ -73,7 +73,6 @@
 
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
-            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1, 5));
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0)
             {
@@ -109,18 +108,12 @@
                         ValueBool = true
                     }
                 };
-
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
                 if (advisors.Count.Equals(0))
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
-                if (!_agentRepository.GetAsync(Agent.UserName).Result.Available)
-                {
-                    return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
-                }
-
                 try
                 {
                     if(!_busyAgentRepository.Add(new BusyAgent() { PartitionKey = Agent.OpenTokSessionId.ToLower(), RowKey = Agent.UserName }).Result)
@@ -128,19 +121,16 @@
                         return ResponseFail<GetAgentAvailableResponse>();
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
-
-                ///Disabled Agent
+                /// Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result)
                 {
                     return ResponseFail<GetAgentAvailableResponse>();
                 }
-
-
                 var response = new GetAgentAvailableResponse();
                 response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
                 if (string.IsNullOrEmpty(response.IDToken))
