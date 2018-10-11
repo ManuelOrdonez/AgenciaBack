@@ -18,6 +18,7 @@
     using System.Threading;
 
     public class AgentBl : BusinessBase<Agent>, IAgentBl
+
     {
         private IGenericRep<User> _userRepository;
 
@@ -107,7 +108,7 @@
                 };
 
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
-                if (advisors.Count.Equals(0) || advisors == null)
+                if (advisors.Count.Equals(0))
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
@@ -149,5 +150,6 @@
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
+      
     }
 }

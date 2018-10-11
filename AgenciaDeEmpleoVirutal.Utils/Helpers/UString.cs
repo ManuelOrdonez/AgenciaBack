@@ -37,8 +37,10 @@
 
         public static string CapitalizeFirstLetter(string value)
         {
-            value = value.ToLower();
-            char[] array = value.ToCharArray();
+            string auxValue = string.Empty;
+            auxValue = value;
+            auxValue = auxValue.ToLower();
+            char[] array = auxValue.ToCharArray();
             // Handle the first letter in the string.
             if (array.Length >= 1)
             {
