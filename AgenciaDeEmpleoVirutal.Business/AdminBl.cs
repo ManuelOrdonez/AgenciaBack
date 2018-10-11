@@ -12,10 +12,11 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
-    public class AdminBl : BusinessBase<User>, IAdminBl
+    public class AdminBl : BusinessBase<User>, IAdminBl , IDisposable
     {
         private IGenericRep<User> _usersRepo;
 
@@ -229,6 +230,13 @@
                 });
             });
             return ResponseSuccess(funcionariesInfo);
+        }
+        public void Dispose()
+        {
+            if (this._crypto != null)
+            {
+                this._crypto.Dispose(); 
+            }
         }
     }
 }

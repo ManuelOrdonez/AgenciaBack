@@ -110,7 +110,20 @@
             services.Configure<AppSettings>(opt => Configuration.GetSection("AppSettings").Bind(opt));
             services.Configure<SendMailData>(opt => Configuration.GetSection("SendMailData").Bind(opt));
             services.Configure<List<ServiceSettings>>(opt => Configuration.GetSection("ServiceSettings").Bind(opt));
-            services.Configure<UserSecretSettings>(Configuration);
+            if (!string.IsNullOrEmpty(Configuration["SECRET_TABLESTORAGE"]))
+            {
+                UserSecretSettings su = new UserSecretSettings
+                {
+                    TableStorage = Configuration["SECRET_TABLESTORAGE"],
+                    SendMailApiKey = Configuration["SECRET_SENDMAILAPIKEY"],
+                    OpenTokApiKey = Configuration["SECRET_OPENTOKAPIKEY"],
+                    LdapServiceApiKey = Configuration["SECRET_LDAPSERVICEAPIKEY"]
+                };
+            }
+            else
+            {
+                services.Configure<UserSecretSettings>(Configuration);
+            }
         }
 
         private static void DependencyRepositories(IServiceCollection services)

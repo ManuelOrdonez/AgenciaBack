@@ -24,7 +24,8 @@
     using System.Security.Cryptography;
     using System.Text;
 
-    public class UserBl : BusinessBase<User>, IUserBl
+    public class UserBl : BusinessBase<User>, IUserBl, IDisposable
+
     {
         private IGenericRep<BusyAgent> _busyAgentRepository;
 
@@ -199,14 +200,20 @@
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), passwordDecrypt);
                 if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+                }
                 if (user != null && user.IntentsLogin > 4) /// intentos maximos
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
+                }
                 if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt) return ResponseFail<AuthenticateUserResponse>();
+                    if (!resultUpt)
+                    {
+                        return ResponseFail<AuthenticateUserResponse>();
+                    }
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
                 }
 
@@ -282,7 +289,10 @@
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
-            if (errorsMessage.Count > 0) return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
+            }
 
             var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
 
@@ -406,17 +416,16 @@
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
-                if(RequestAviable.State)
-                {
-                    var bAgent = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
-                    if (bAgent.Any() && !_busyAgentRepository.DeleteRowAsync(bAgent?.FirstOrDefault()).Result)
-                    {
-                        return ResponseFail();
-                    }
-                    // _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
-                }
+                /* if(RequestAviable.State)
+                 {
+                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                 }
+                 else
+                 {
+                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
+                 }*/
             }
-            return ResponseSuccess(new List<User> { userAviable == null || string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
+            return ResponseSuccess(new List<User> { null });
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
@@ -512,19 +521,21 @@
 
         private string SetFieldOfPDI(string field)
         {
+            string fieldAux = string.Empty;
+            fieldAux = field;
             var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
-            field = field.ToLower();
-            if (naOptiond.Any(op => op.Equals(field)))
+            fieldAux = fieldAux.ToLower();
+            if (naOptiond.Any(op => op.Equals(fieldAux)))
             {
                 return "No aplica";
             }
-            return UString.CapitalizeFirstLetter(field);
+            return UString.CapitalizeFirstLetter(fieldAux);
         }
 
         public Response<User> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
-            if (PDIs.Count <= 0 || PDIs == null)
+            if (PDIs.Count <= 0 )
             {
                 return ResponseFail<User>();
             }
@@ -591,6 +602,14 @@
                 return lUser[0];
             }
             return user;
+        }
+
+        public void Dispose()
+        {
+            if (this._crypto != null)
+            {
+                this._crypto.Dispose();
+            }
         }
     }
 }
