@@ -40,7 +40,7 @@
 
         public string Genre { get; set; }
 
-        [StringLength(60, MinimumLength = 8, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
+        [StringLength(120, MinimumLength = 8, ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Password_LengthPassword")]
         public string Password { get; set; }
 
         public string SocialReason { get; set; }
@@ -52,6 +52,8 @@
         public string Address { get; set; }
 
         public string DeviceId { get; set; }
+
+        public string DeviceType { get; set; }
 
         public string EducationLevel { get; set; }
 

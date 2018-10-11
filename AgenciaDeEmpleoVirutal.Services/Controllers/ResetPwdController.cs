@@ -12,11 +12,14 @@
     [EnableCors("CorsPolitic")]
     public class ResetPwdController : Controller
     {
+
         private readonly IResetBI _ResetBussines;
+
         public ResetPwdController(IResetBI ResetBussines)
         {
             _ResetBussines = ResetBussines;
         }
+
         [HttpGet]
         [Route("RegisterResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]
@@ -32,6 +35,7 @@
         {
             return Ok(_ResetBussines.ValidateResetPassword(token));
         }
+
         [HttpPost]
         [Route("ResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]

@@ -89,6 +89,7 @@
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>() { new CreateOrUpdateFuncionaryResponse() { Message = message } });
 
         }
+
         /// <summary>
         /// Función que determina si el usuario existen es persona para que permita crear el usuario como funcionario
         /// </summary>

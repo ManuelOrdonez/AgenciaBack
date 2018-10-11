@@ -5,6 +5,6 @@
         public string Username { get; set; }
         public string TokenId { get; set; }
         public string ConfirmationId { get; set; }
-        public string Userpassword { get; set; }
+        public string UserNewPassword { get; set; }
     }
 }

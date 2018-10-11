@@ -23,6 +23,8 @@
         /// <returns></returns>
         Task<bool> AddOrUpdate(T entity);
 
+        Task<bool> Add(T entity);
+
         /// <summary>
         /// ADelete.
         /// </summary>

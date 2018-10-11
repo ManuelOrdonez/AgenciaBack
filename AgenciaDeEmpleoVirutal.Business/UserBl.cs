@@ -21,10 +21,14 @@
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
+    using System.Security.Cryptography;
+    using System.Text;
 
     public class UserBl : BusinessBase<User>, IUserBl, IDisposable
 
     {
+        private IGenericRep<BusyAgent> _busyAgentRepository;
+
         private IConverter _converter;
 
         private IGenericRep<PDI> _pdiRep;
@@ -45,7 +49,7 @@
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue)
+                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _converter = converter;
             _pdiRep = pdiRep;
@@ -56,6 +60,7 @@
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
             _queue = queue;
+            _busyAgentRepository = busyAgentRepository;
         }
 
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
@@ -102,6 +107,47 @@
             return ResponseSuccess(response);
         }
 
+
+        public string Decrypt(string cipherText, string password, string type)
+        {
+            if (type == "WEB")
+            {
+                byte[] cipherBytes = Convert.FromBase64String(cipherText);
+                using (Aes encryptor = Aes.Create())
+                {
+                    // extract salt (first 16 bytes)
+                    var salt = cipherBytes.Take(16).ToArray();
+                    // extract iv (next 16 bytes)
+                    var iv = cipherBytes.Skip(16).Take(16).ToArray();
+                    // the rest is encrypted data
+                    var encrypted = cipherBytes.Skip(32).ToArray();
+                    Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
+                    encryptor.Key = pdb.GetBytes(32);
+                    encryptor.Padding = PaddingMode.PKCS7;
+                    encryptor.Mode = CipherMode.CBC;
+                    encryptor.IV = iv;
+                    // you need to decrypt this way, not the way in your question
+                    using (MemoryStream ms = new MemoryStream(encrypted))
+                    {
+                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                        {
+                            using (var reader = new StreamReader(cs, Encoding.UTF8))
+                            {
+                                return reader.ReadToEnd();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                /// desarrollar para XAMARIN
+                return cipherText;
+            }
+        }
+
+
+
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -110,6 +156,9 @@
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
             string token = string.Empty;
+            string passwordDecrypt = string.Empty;
+            passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
+            string passwordUserDecrypt;
             User user = GetUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
@@ -125,7 +174,9 @@
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 }
-                if (!user.Password.Equals(userReq.Password))
+
+                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
+                if (!passwordUserDecrypt.Equals(passwordDecrypt))
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
@@ -146,9 +197,8 @@
             else
             {
                 /// Authenticate in LDAP Service
-                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), userReq.Password);
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null)/// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
-                {
+                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), passwordDecrypt);
+                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
                 }
                 if (user != null && user.IntentsLogin > 4) /// intentos maximos
@@ -167,7 +217,7 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
                 }
 
-                if (user == null)
+                if (user == null && result.estado.Equals("0000"))
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 }
@@ -252,11 +302,14 @@
                 else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
+            string passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL": userReq.DeviceType);
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {
                 var company = new User()
                 {
+                    Name = userReq.Name,
+                    LastName = "Empresa",
                     CodTypeDocument = userReq.CodTypeDocument.ToString(),
                     TypeDocument = userReq.TypeDocument,
                     UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
@@ -325,8 +378,6 @@
             {
                 return ResponseSuccess(response);
             }
-            var names = userReq.Name.Split(new char[] { ' ' });
-            var lastNames = userReq.LastNames.Split(new char[] { ' ' });
 
             /// Ldap Register        
             var regLdap = new RegisterLdapRequest()
@@ -335,19 +386,19 @@
                 answer = "Agencia virtual de empleo answer",
                 birtdate = "01-01-1999",
                 givenName = UString.UppercaseWords(userReq.Name),
-                surname = UString.UppercaseWords(userReq.LastNames),
+                surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
                 mail = userReq.Mail,
                 userId = userReq.NoDocument,
                 userIdType = userReq.CodTypeDocument.ToString(),
                 username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                userpassword = userReq.Password
+                userpassword = passwordDecrypt
             };
             var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap is null || !resultLdap.estado.Equals("0000"))
+            if (resultLdap is null)
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             }
-            /// No se evaua si el usuario se encuentra registrad en LDAP, Se contuinua con el registro en TbleStorage 
+            /// Ya existe en LDAP
             /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
             return ResponseSuccess(response);
         }
@@ -361,15 +412,18 @@
                 TypeDocument = user[1],
             };
             var userAviable = this.GetUserActive(request);
-
-            if (userAviable != null)
+            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
-                if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
-                {
-                    userAviable.Available = RequestAviable.State;
-                    var result = _userRep.AddOrUpdate(userAviable).Result;
-                }
-                return ResponseSuccess(new List<User> { string.IsNullOrWhiteSpace(userAviable.UserName) ? null : userAviable });
+                userAviable.Available = RequestAviable.State;
+                var result = _userRep.AddOrUpdate(userAviable).Result;
+                /* if(RequestAviable.State)
+                 {
+                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
+                 }
+                 else
+                 {
+                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
+                 }*/
             }
             return ResponseSuccess(new List<User> { null });
         }
@@ -511,7 +565,7 @@
             return new AuthenticationToken()
             {
                 TokenType = "Bearer",
-                Expiration = DateTime.Now.AddMinutes(60), /// cuanto?
+                Expiration = DateTime.Now.AddMinutes(60),
                 AccessToken = ManagerToken.GenerateToken(username),
             };
         }

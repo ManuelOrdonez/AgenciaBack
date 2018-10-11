@@ -135,8 +135,8 @@
             services.AddSingleton<IGenericRep<Parameters>, TableStorageBase<Parameters>>();
             services.AddSingleton<IGenericRep<ResetPassword>, TableStorageBase<ResetPassword>>();
             services.AddSingleton<IGenericRep<PDI>, TableStorageBase<PDI>>();
-            services.AddSingleton<IGenericQueue,QueueStorageBase > ();
-
+            services.AddSingleton<IGenericRep<BusyAgent>, TableStorageBase<BusyAgent>>();
+            services.AddSingleton<IGenericQueue,QueueStorageBase> ();
         }
 
         private static void DependencyExternalServices(IServiceCollection services)

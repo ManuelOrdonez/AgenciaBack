@@ -16,6 +16,7 @@
 
     public class CallHistoryTraceBl : BusinessBase<CallHistoryTrace>, ICallHistoryTrace
     {
+        private readonly IGenericRep<BusyAgent> _busyAgentRepository;
 
         private readonly IGenericRep<CallHistoryTrace> _callHistoryRepository;
 
@@ -24,11 +25,12 @@
         private readonly IGenericRep<User> _agentRepository;
 
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
-            IGenericRep<User> agentRepository)
+            IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _callHistoryRepository = callHistoryRepository;
             _agentRepository = agentRepository;
             _callerRepository = agentRepository;
+            _busyAgentRepository = busyAgentRepository;
         }
 
         public Response<CallHistoryTrace> GetCallInfo(GetCallRequest request)
@@ -169,14 +171,19 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     callInfo.State = stateInput.ToString();
                     callInfo.CallType = callRequest.CallType;
-                    if (agent != null)
-                    {
-                        agent.Available = true;
-                        if (!_agentRepository.AddOrUpdate(agent).Result)
-                        {
-                            return ResponseFail();
-                        }
-                    }
+                    //if (agent != null)
+                    //{
+                    //    agent.Available = true;
+                    //    var bAgent = _busyAgentRepository.GetByPatitionKeyAsync(agent.OpenTokSessionId.ToLower()).Result;
+                    //    if (!_busyAgentRepository.DeleteRowAsync(bAgent.FirstOrDefault()).Result)
+                    //    {
+                    //        return ResponseFail();
+                    //    }
+                    //    if (!_agentRepository.AddOrUpdate(agent).Result)
+                    //    {
+                    //        return ResponseFail();
+                    //    }
+                    //}
                     break;
                 default:
                     callInfo.State = CallStates.Unknown.ToString();
