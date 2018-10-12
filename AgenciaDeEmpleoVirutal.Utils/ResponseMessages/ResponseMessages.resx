@@ -183,6 +183,9 @@
   <data name="UserBlock" xml:space="preserve">
     <value>El usuario se bloqueo debido a que excedió la cantidad de intentos.</value>
   </data>
+  <data name="UserCalling" xml:space="preserve">
+    <value>No se puede autenticar, El usuario está en llamada.</value>
+  </data>
   <data name="UserDesable" xml:space="preserve">
     <value>El Usuario se encuentra deshabilitado</value>
   </data>
