@@ -90,6 +90,7 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
                 }
             }
+            
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
@@ -118,6 +119,8 @@
 
             string passwordUserDecrypt;
             User user = GetUserActive(userReq);
+
+
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 if (user == null)
@@ -131,6 +134,11 @@
                 if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
+                }
+                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
+                if (!(userCalling.Count == 0 || userCalling is null))
+                {
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
                 }
 
                 passwordUserDecrypt = userReq.DeviceType.Equals("WEB") ?
@@ -185,6 +193,13 @@
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
                 }
+
+                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
+                if (!(userCalling.Count == 0 || userCalling is null))
+                {
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
+                }
+
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
