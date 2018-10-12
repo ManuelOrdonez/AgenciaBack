@@ -92,8 +92,7 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
                 }
             }
-
-
+            
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
@@ -146,8 +145,6 @@
             }
         }
 
-
-
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -160,6 +157,8 @@
             passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
             string passwordUserDecrypt;
             User user = GetUserActive(userReq);
+
+
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 if (user == null)
@@ -174,6 +173,12 @@
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 }
+                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
+                if (!(userCalling.Count == 0 || userCalling is null))
+                {
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
+                }
+
 
                 passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
                 if (!passwordUserDecrypt.Equals(passwordDecrypt))
@@ -226,6 +231,13 @@
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
                 }
+
+                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
+                if (!(userCalling.Count == 0 || userCalling is null))
+                {
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
+                }
+
             }
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;

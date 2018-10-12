@@ -58,6 +58,10 @@
         /// </summary>
         UserAlreadyExist = 208,
         /// <summary>
+        /// User Already calling
+        /// </summary>
+        UserCalling = 209,
+        /// <summary>
         /// Incorrect Password in Login
         /// </summary>
         IncorrectPassword = 110,

@@ -116,7 +116,11 @@
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
                 try
                 {
-                    if(!_busyAgentRepository.Add(new BusyAgent() { PartitionKey = Agent.OpenTokSessionId.ToLower(), RowKey = Agent.UserName }).Result)
+                    if(!_busyAgentRepository.Add(new BusyAgent() {
+                        PartitionKey = Agent.OpenTokSessionId.ToLower(),
+                        RowKey = Agent.UserName,
+                        UserNameAgent = Agent.UserName,
+                        UserNameCaller =agentAvailableRequest.UserName}).Result)
                     {
                         return ResponseFail<GetAgentAvailableResponse>();
                     }

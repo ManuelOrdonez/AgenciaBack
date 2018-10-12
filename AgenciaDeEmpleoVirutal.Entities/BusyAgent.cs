@@ -15,5 +15,11 @@
             get => RowKey;
             set => RowKey = value;
         }
+
+        public string UserNameCaller
+        {
+            get;
+            set;
+        }
     }
 }
