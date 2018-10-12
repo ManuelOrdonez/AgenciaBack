@@ -199,6 +199,7 @@
                 /// Authenticate in LDAP Service
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), passwordDecrypt);
                 if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
                 }
                 if (user != null && user.IntentsLogin > 4) /// intentos maximos
@@ -415,15 +416,16 @@
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
                 userAviable.Available = RequestAviable.State;
-                var result = _userRep.AddOrUpdate(userAviable).Result;
-                /* if(RequestAviable.State)
-                 {
-                      _queue.InsertQueue("aviableagent", userAviable.UserName);                                  
-                 }
-                 else
-                 {
-                      _queue.DeleteQueue("aviableagent", userAviable.UserName);
-                 }*/
+                var result = _userRep.AddOrUpdate(userAviable).Result;                
+                 
+                if(RequestAviable.State)
+                {
+                    var busy = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
+                    if (busy.Any() && !_busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result)
+                    {
+                        return ResponseFail();
+                    }
+                }                
             }
             return ResponseSuccess(new List<User> { null });
         }
@@ -463,7 +465,6 @@
             {
                 return ResponseBadRequest<User>(errorsMessage);
             }
-
             var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
             if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
             {
