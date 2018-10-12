@@ -21,8 +21,6 @@
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
-    using System.Security.Cryptography;
-    using System.Text;
 
     public class UserBl : BusinessBase<User>, IUserBl, IDisposable
 
@@ -92,8 +90,6 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
                 }
             }
-
-
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
@@ -106,48 +102,7 @@
             };
             return ResponseSuccess(response);
         }
-
-
-        public string Decrypt(string cipherText, string password, string type)
-        {
-            if (type == "WEB")
-            {
-                byte[] cipherBytes = Convert.FromBase64String(cipherText);
-                using (Aes encryptor = Aes.Create())
-                {
-                    // extract salt (first 16 bytes)
-                    var salt = cipherBytes.Take(16).ToArray();
-                    // extract iv (next 16 bytes)
-                    var iv = cipherBytes.Skip(16).Take(16).ToArray();
-                    // the rest is encrypted data
-                    var encrypted = cipherBytes.Skip(32).ToArray();
-                    Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
-                    encryptor.Key = pdb.GetBytes(32);
-                    encryptor.Padding = PaddingMode.PKCS7;
-                    encryptor.Mode = CipherMode.CBC;
-                    encryptor.IV = iv;
-                    // you need to decrypt this way, not the way in your question
-                    using (MemoryStream ms = new MemoryStream(encrypted))
-                    {
-                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
-                        {
-                            using (var reader = new StreamReader(cs, Encoding.UTF8))
-                            {
-                                return reader.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                /// desarrollar para XAMARIN
-                return cipherText;
-            }
-        }
-
-
-
+        
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -157,7 +112,10 @@
             }
             string token = string.Empty;
             string passwordDecrypt = string.Empty;
-            passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
+
+            passwordDecrypt = userReq.DeviceType.Equals("WEB") ? 
+                Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
+
             string passwordUserDecrypt;
             User user = GetUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
@@ -175,7 +133,8 @@
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
                 }
 
-                passwordUserDecrypt = this.Decrypt(user.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL" : userReq.DeviceType);
+                passwordUserDecrypt = userReq.DeviceType.Equals("WEB") ?
+                    Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
                 if (!passwordUserDecrypt.Equals(passwordDecrypt))
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
@@ -303,7 +262,9 @@
                 else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
-            string passwordDecrypt = Decrypt(userReq.Password, "ColsubsidioAPP", string.IsNullOrEmpty(userReq.DeviceType) ? "MOBIL": userReq.DeviceType);
+            string passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
+                Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
+
             List<RegisterUserResponse> response = new List<RegisterUserResponse>();
             if (!userReq.IsCesante)
             {

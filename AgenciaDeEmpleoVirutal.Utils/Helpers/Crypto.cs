@@ -1,64 +1,92 @@
-﻿using AgenciaDeEmpleoVirutal.Entities.Referentials;
-using AgenciaDeEmpleoVirutal.Utils.Resources;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace AgenciaDeEmpleoVirutal.Utils.Helpers
+﻿namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
+    using System;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
+
     public class Crypto : IDisposable
     {
+        
         private RijndaelManaged myRijndael = new RijndaelManaged();
-        private int iterations;
-        private byte[] salt;
+
+        /// This size of the IV (in bytes) must = (keysize / 8).  Default keysize is 256, so the IV must be
+        /// 32 bytes long.  Using a 16 character string here gives us 32 bytes when converted to a byte array.
+        private const string initVector = "colsubsidiovecto";
+        /// This constant is used to determine the keysize of the encryption algorithm
+        private const int Keysize = 256;
 
         public Crypto()
         {
-            myRijndael.BlockSize = 128;
-            myRijndael.KeySize = 128;
-            myRijndael.IV = HexStringToByteArray(ParametersApp.StringArray);
-
-            myRijndael.Padding = PaddingMode.PKCS7;
-            myRijndael.Mode = CipherMode.CBC;
-            iterations = 1000;
-            salt = Encoding.UTF8.GetBytes(ParametersApp.Salt);
-            myRijndael.Key = GenerateKey(ParametersApp.KeyCrypt);
         }
 
-        public string Encrypt(string strPlainText)
+        /// Encrypt
+        public static string Encrypt(string plainText, string passPhrase)
         {
-            byte[] strText = new System.Text.UTF8Encoding().GetBytes(strPlainText);
-            ICryptoTransform transform = myRijndael.CreateEncryptor();
-            byte[] cipherText = transform.TransformFinalBlock(strText, 0, strText.Length);
-
-            return Convert.ToBase64String(cipherText);
+            byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, null);
+            byte[] keyBytes = password.GetBytes(Keysize / 8);
+            RijndaelManaged symmetricKey = new RijndaelManaged();
+            symmetricKey.Mode = CipherMode.CBC;
+            ICryptoTransform encryptor = symmetricKey.CreateEncryptor(keyBytes, initVectorBytes);
+            MemoryStream memoryStream = new MemoryStream();
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write);
+            cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
+            cryptoStream.FlushFinalBlock();
+            byte[] cipherTextBytes = memoryStream.ToArray();
+            memoryStream.Close();
+            cryptoStream.Close();
+            return Convert.ToBase64String(cipherTextBytes);
         }
 
-        public string Decrypt(string encryptedText)
+        public static string DecryptPhone(string cipherText, string passPhrase)
         {
-            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
-            var decryptor = myRijndael.CreateDecryptor(myRijndael.Key, myRijndael.IV);
-            byte[] originalBytes = decryptor.TransformFinalBlock(encryptedBytes, 0, encryptedBytes.Length);
-
-            return Encoding.UTF8.GetString(originalBytes);
+            byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
+            byte[] cipherTextBytes = Convert.FromBase64String(cipherText);
+            PasswordDeriveBytes password = new PasswordDeriveBytes(passPhrase, null);
+            byte[] keyBytes = password.GetBytes(Keysize / 8);
+            RijndaelManaged symmetricKey = new RijndaelManaged();
+            symmetricKey.Mode = CipherMode.CBC;
+            ICryptoTransform decryptor = symmetricKey.CreateDecryptor(keyBytes, initVectorBytes);
+            MemoryStream memoryStream = new MemoryStream(cipherTextBytes);
+            CryptoStream cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read);
+            byte[] plainTextBytes = new byte[cipherTextBytes.Length];
+            int decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+            memoryStream.Close();
+            cryptoStream.Close();
+            return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
         }
 
-        public static byte[] HexStringToByteArray(string strHex)
+        public static string DecryptWeb(string cipherText, string password)
         {
-            var r = new byte[strHex.Length / 2];
-            for (int i = 0; i <= strHex.Length - 1; i += 2)
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
             {
-                r[i / 2] = Convert.ToByte(Convert.ToInt32(strHex.Substring(i, 2), 16));
+                /// extract salt (first 16 bytes)
+                var salt = cipherBytes.Take(16).ToArray();
+                /// extract iv (next 16 bytes)
+                var iv = cipherBytes.Skip(16).Take(16).ToArray();
+                /// the rest is encrypted data
+                var encrypted = cipherBytes.Skip(32).ToArray();
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.Padding = PaddingMode.PKCS7;
+                encryptor.Mode = CipherMode.CBC;
+                encryptor.IV = iv;
+                /// you need to decrypt this way, not the way in your question
+                using (MemoryStream ms = new MemoryStream(encrypted))
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                    {
+                        using (var reader = new StreamReader(cs, Encoding.UTF8))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                }
             }
-            return r;
-        }
-
-        private byte[] GenerateKey(string strPassword)
-        {
-            Rfc2898DeriveBytes rfc2898 = new Rfc2898DeriveBytes(System.Text.Encoding.UTF8.GetBytes(strPassword), salt, iterations);
-
-            return rfc2898.GetBytes(128 / 8);
         }
 
         public void Dispose()
