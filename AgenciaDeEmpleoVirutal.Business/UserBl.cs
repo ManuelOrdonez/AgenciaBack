@@ -392,16 +392,13 @@
             if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
             {
                 userAviable.Available = RequestAviable.State;
-                var result = _userRep.AddOrUpdate(userAviable).Result;                
-                 
-                if(RequestAviable.State)
+                var result = _userRep.AddOrUpdate(userAviable).Result;
+
+                var busy = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
+                if (busy.Any())
                 {
-                    var busy = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
-                    if (busy.Any() && !_busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result)
-                    {
-                        return ResponseFail();
-                    }
-                }                
+                    var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                }
             }
             return ResponseSuccess(new List<User> { null });
         }
@@ -420,6 +417,11 @@
             }
             user.Authenticated = false;
             user.Available = false;
+            var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower()).Result;
+            if (busy.Any())
+            {
+               var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+            }
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
