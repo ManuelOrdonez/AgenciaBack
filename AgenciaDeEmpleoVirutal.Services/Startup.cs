@@ -79,10 +79,17 @@
             services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
 
             services.AddMvc();
+            try
+            {
+                var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
+                CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
 
-            var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
-            CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
-            context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
+                context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
+            }
+            catch (Exception)
+            {
+
+            }
 
         }
 
@@ -112,17 +119,22 @@
             services.Configure<List<ServiceSettings>>(opt => Configuration.GetSection("ServiceSettings").Bind(opt));
             if (!string.IsNullOrEmpty(Configuration["SECRET_TABLESTORAGE"]))
             {
+
                 UserSecretSettings su = new UserSecretSettings
                 {
                     TableStorage = Configuration["SECRET_TABLESTORAGE"],
                     SendMailApiKey = Configuration["SECRET_SENDMAILAPIKEY"],
                     OpenTokApiKey = Configuration["SECRET_OPENTOKAPIKEY"],
                     LdapServiceApiKey = Configuration["SECRET_LDAPSERVICEAPIKEY"]
+                    
                 };
+                
+                services.Configure<UserSecretSettings>(su);
             }
             else
             {
                 services.Configure<UserSecretSettings>(Configuration);
+                
             }
         }
 
@@ -135,7 +147,7 @@
             services.AddSingleton<IGenericRep<Parameters>, TableStorageBase<Parameters>>();
             services.AddSingleton<IGenericRep<ResetPassword>, TableStorageBase<ResetPassword>>();
             services.AddSingleton<IGenericRep<PDI>, TableStorageBase<PDI>>();
-            services.AddSingleton<IGenericQueue,QueueStorageBase > ();
+            services.AddSingleton<IGenericQueue, QueueStorageBase>();
 
         }
 
