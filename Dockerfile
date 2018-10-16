@@ -1,6 +1,11 @@
 FROM microsoft/dotnet:2.1-sdk AS dotnet-builder
-RUN apt-get update
-WORKDIR /opt/AgenciadeEmpleoVirtualapi
+
+RUN apt-get update \ 
+	&& apt-get -y install libgdiplus \ 
+	&& apt-get clean \ 
+	&& rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/agenciadeempleovirtualservices
 # copy csproj and restore as distinct layers
 COPY . .
 RUN dotnet restore
