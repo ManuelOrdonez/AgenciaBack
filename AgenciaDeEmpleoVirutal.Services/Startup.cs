@@ -129,7 +129,7 @@
                     
                 };
                 
-                services.Configure<UserSecretSettings>(su);
+                //services.Configure<UserSecretSettings>(su);
             }
             else
             {
