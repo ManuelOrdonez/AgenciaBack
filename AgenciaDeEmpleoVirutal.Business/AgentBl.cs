@@ -22,6 +22,8 @@
     {
         private IGenericRep<User> _userRepository;
 
+        private IGenericRep<BusyAgent> _busyAgentRepository;
+
         private IGenericRep<User> _agentRepository;
 
         private IOpenTokExternalService _openTokExternalService;
@@ -29,12 +31,13 @@
         private IGenericQueue _queue;
 
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
-            IGenericQueue queue)
+            IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
             _queue = queue;
+            _busyAgentRepository = busyAgentRepository;
         }
 
         public Response<CreateAgentResponse> Create(CreateAgentRequest request)
@@ -70,7 +73,6 @@
 
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
-            Thread.Sleep(new Random(DateTime.Now.Millisecond).Next(1, 5));
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0)
             {
@@ -106,25 +108,33 @@
                         ValueBool = true
                     }
                 };
-
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
                 if (advisors.Count.Equals(0))
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
-                if (!_agentRepository.GetAsync(Agent.UserName).Result.Available)
+                try
+                {
+                    if(!_busyAgentRepository.Add(new BusyAgent() {
+                        PartitionKey = Agent.OpenTokSessionId.ToLower(),
+                        RowKey = Agent.UserName,
+                        UserNameAgent = Agent.UserName,
+                        UserNameCaller =agentAvailableRequest.UserName}).Result)
+                    {
+                        return ResponseFail<GetAgentAvailableResponse>();
+                    }
+                }
+                catch (Exception)
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
-                ///Disabled Agent
+                /// Disabled Agent
                 Agent.Available = false;
                 if (!_agentRepository.AddOrUpdate(Agent).Result)
                 {
                     return ResponseFail<GetAgentAvailableResponse>();
                 }
-
-
                 var response = new GetAgentAvailableResponse();
                 response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
                 if (string.IsNullOrEmpty(response.IDToken))

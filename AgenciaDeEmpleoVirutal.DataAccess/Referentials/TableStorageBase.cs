@@ -93,7 +93,16 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             return (result / 100).Equals(2);
         }
 
-        public  async Task<bool> DeleteRowAsync(T entity)
+        public virtual async Task<bool> Add(T entity)
+        {
+            entity.PartitionKey = entity.PartitionKey.ToLower();
+            entity.RowKey = entity.RowKey.ToLower();
+            var operation = TableOperation.Insert(entity);
+            int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
+            return (result / 100).Equals(2);
+        }
+
+        public async Task<bool> DeleteRowAsync(T entity)
         {
             var operation = TableOperation.Delete(entity);
             int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;

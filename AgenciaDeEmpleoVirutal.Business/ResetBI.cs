@@ -13,6 +13,10 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Cryptography;
+    using System.Text;
 
     public class ResetBI : BusinessBase<ResetResponse>, IResetBI
     {
@@ -103,9 +107,10 @@
             {
                 return parameter.RowKey == "name";
             });
-            var urlResetPwd = servername.Value + "/resetpwd/" + token;
+            var urlResetPwd = servername.Value + "/resetpwd?tokenAZ=" + token;
 
-            if (result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+
+            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 _sendMailService.SendMail(result, urlResetPwd);
             }
@@ -131,8 +136,8 @@
                 }
             };
             return ResponseSuccess(response);
-
         }
+
         /// <summary>
         /// Función que se encarga de validar la información del token de cambio de
         /// contraseña para permitir el proceso de cambio de la misma
@@ -170,11 +175,11 @@
                  }
             };
             return ResponseSuccess(response);
-
         }
+
         public Response<ResetResponse> ResetPassword(ResetPasswordRequest userRequest)
         {
-            if (string.IsNullOrEmpty(userRequest.Id))
+            if (string.IsNullOrEmpty(userRequest.UserName))
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
@@ -182,16 +187,34 @@
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
-            if (string.IsNullOrEmpty(userRequest.TokenId))
-            {
-                return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
-            }
-            //var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
-            User result = _userRep.GetAsync(userRequest.Id).Result;
+
+            string passwordUserDecrypt = this.Decrypt(userRequest.Password, "ColsubsidioAPP");
+            User result = _userRep.GetAsync(userRequest.UserName).Result;
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
+
+            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+            {
+                var passswordChangeLdap = new PasswordChangeConfirmRequests()
+                {
+                    ConfirmationId = userRequest.ConfirmationLdapId,
+                    TokenId = userRequest.TokenId,
+                    Username = userRequest.UserName,
+                    UserNewPassword = userRequest.Password
+                };
+                var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
+                if(resultt is null || !string.IsNullOrEmpty(resultt.code.ToString()))
+                {
+                    return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
+                }
+                else
+                {
+                    return ResponseSuccess();
+                }
+            }
+
             result.Password = userRequest.Password;
             result.State = "Enable";
             result.IntentsLogin = 0;
@@ -199,17 +222,9 @@
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
             }
-            var response = new List<ResetResponse>()
-            {
-                new ResetResponse()
-                {
-                    UserId = "",
-                    Token = "",
-                    Email = ""
-                 }
-            };
-            return ResponseSuccess(response);
+            return ResponseSuccess();
         }
+
         /// <summary>
         /// Metodo que elimina todas las entrada de tokens en la tabla
         /// </summary>
@@ -220,6 +235,36 @@
             foreach (var item in result)
             {
                 _passwordRep.DeleteRowAsync(item);
+            }
+        }
+
+        public string Decrypt(string cipherText, string password)
+        {
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
+            {
+                // extract salt (first 16 bytes)
+                var salt = cipherBytes.Take(16).ToArray();
+                // extract iv (next 16 bytes)
+                var iv = cipherBytes.Skip(16).Take(16).ToArray();
+                // the rest is encrypted data
+                var encrypted = cipherBytes.Skip(32).ToArray();
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.Padding = PaddingMode.PKCS7;
+                encryptor.Mode = CipherMode.CBC;
+                encryptor.IV = iv;
+                // you need to decrypt this way, not the way in your question
+                using (MemoryStream ms = new MemoryStream(encrypted))
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Read))
+                    {
+                        using (var reader = new StreamReader(cs, Encoding.UTF8))
+                        {
+                            return reader.ReadToEnd();
+                        }
+                    }
+                }
             }
         }
     }

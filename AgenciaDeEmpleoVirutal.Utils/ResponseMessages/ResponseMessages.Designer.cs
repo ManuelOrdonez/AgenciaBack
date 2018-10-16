@@ -259,6 +259,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No se puede autenticar, El usuario está en llamada..
+        /// </summary>
+        internal static string UserCalling {
+            get {
+                return ResourceManager.GetString("UserCalling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El Usuario se encuentra deshabilitado.
         /// </summary>
         internal static string UserDesable {
