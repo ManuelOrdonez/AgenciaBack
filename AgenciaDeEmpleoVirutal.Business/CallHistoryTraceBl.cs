@@ -168,22 +168,9 @@
                     break;
                 case CallStates.Managed:
                     callInfo.DateFinishCall = DateTime.Now;
-                    callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
+                    callInfo.Observations = callRequest.Trace;
                     callInfo.State = stateInput.ToString();
                     callInfo.CallType = callRequest.CallType;
-                    //if (agent != null)
-                    //{
-                    //    agent.Available = true;
-                    //    var bAgent = _busyAgentRepository.GetByPatitionKeyAsync(agent.OpenTokSessionId.ToLower()).Result;
-                    //    if (!_busyAgentRepository.DeleteRowAsync(bAgent.FirstOrDefault()).Result)
-                    //    {
-                    //        return ResponseFail();
-                    //    }
-                    //    if (!_agentRepository.AddOrUpdate(agent).Result)
-                    //    {
-                    //        return ResponseFail();
-                    //    }
-                    //}
                     break;
                 default:
                     callInfo.State = CallStates.Unknown.ToString();
@@ -221,6 +208,28 @@
                 UserAnswerCall = string.Empty,
                 DateFinishCall = DateTime.Now
             };
+        }
+
+        public Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest)
+        {
+            GetAllUserCallResponse response = new GetAllUserCallResponse();
+            string type = string.Empty;
+            if (getAllUserCallRequest.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            {
+                type = "UserAnswerCall";
+            }
+            else
+            {
+                type = "UserCall";                
+            }
+
+            var calls = _callHistoryRepository.GetSomeAsync(type, getAllUserCallRequest.UserName).Result;
+            if (calls.Count == 0 || calls is null)
+            {
+                return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
+            }
+            response.Calls = calls;
+            return  ResponseSuccess(new List<GetAllUserCallResponse> { response }); ;
         }
 
         private CallHistoryTrace GetCallForAnyManage(string OpenTokSessionId, string OpenTokAccessToken)

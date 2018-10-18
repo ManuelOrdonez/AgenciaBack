@@ -18,5 +18,20 @@
         /// <param name="user"></param>
         /// <returns></returns>
         string CreateToken(string sessionId, string user);
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        string StartRecord(string sessionId, string user);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="recordId"></param>
+        /// <returns></returns>
+        string StopRecord(string RecordId);
     }
 }

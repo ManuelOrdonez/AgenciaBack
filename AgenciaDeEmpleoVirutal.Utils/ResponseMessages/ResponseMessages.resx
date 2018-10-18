@@ -189,6 +189,9 @@
   <data name="UserDesable" xml:space="preserve">
     <value>El Usuario se encuentra deshabilitado</value>
   </data>
+  <data name="UserDoNotHaveCalls" xml:space="preserve">
+    <value>El Usuario No tiene Llamadas Registradas</value>
+  </data>
   <data name="UserIsNotVip" xml:space="preserve">
     <value>Usuario no autorizado.</value>
   </data>

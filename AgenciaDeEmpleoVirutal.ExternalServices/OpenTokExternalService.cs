@@ -67,5 +67,20 @@
             data.Add(nameof(user), user);
             return Get(data).Data;
         }
+
+        public string StartRecord(string sessionId, string user)
+        {
+            var data = new Dictionary<string, string>();
+            data.Add(nameof(sessionId), sessionId);
+            data.Add(nameof(user), user);
+            return Get(data).Data;
+        }
+
+        public string StopRecord(string RecordId)
+        {
+            var data = new Dictionary<string,string>();
+            data.Add(nameof(RecordId), RecordId);            
+            return Get(data).Data;
+        }
     }
 }
