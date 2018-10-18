@@ -81,6 +81,7 @@
             return Ok(_UserBussines.AviableUser(RequestAviable));
         }
 
+        /*
         [HttpPost]
         [Route("CreatePDI")]
         [Authorize]
@@ -89,6 +90,6 @@
         {
             return Ok(_UserBussines.CreatePDI(pdiRequest));
         }
-
+        */
     }
 }

@@ -129,6 +129,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
+                        this.Aviable(agent.OpenTokSessionId);
                         agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString())+1;
                         _agentRepository.AddOrUpdate(agent);
                     }
@@ -138,11 +139,13 @@
                     {
                         callInfo.DateFinishCall = DateTime.Now;
                         callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
-                        callInfo.State = stateInput.ToString();
+                        callInfo.State = callInfo.State == CallStates.Begun.ToString() ?
+                            CallStates.Lost.ToString() : stateInput.ToString();
                     }
                     if (agent != null)
                     {
                         agent.Available = false;
+                        this.Aviable(agent.OpenTokSessionId);
                         if (!_agentRepository.AddOrUpdate(agent).Result)
                         {
                             return ResponseFail();
@@ -160,6 +163,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
+                        this.Aviable(agent.OpenTokSessionId);
                         if (!_agentRepository.AddOrUpdate(agent).Result)
                         {
                             return ResponseFail();
@@ -185,6 +189,15 @@
                 }
             }
             return ResponseSuccess();
+        }
+
+        private void Aviable(string openTokSessionId)
+        {
+            var busy = _busyAgentRepository.GetByPatitionKeyAsync(openTokSessionId.ToLower()).Result;
+            if (busy.Any())
+            {
+                var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+            }
         }
 
         private CallHistoryTrace GetDefaultCallHistoryTrace(SetCallTraceRequest callRequest)

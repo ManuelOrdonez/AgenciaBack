@@ -12,24 +12,20 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
-    using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
-    using System.IO;
     using System.Linq;
-    using System.Net.Mail;
 
     public class UserBl : BusinessBase<User>, IUserBl, IDisposable
-
     {
         private IGenericRep<BusyAgent> _busyAgentRepository;
 
-        private IConverter _converter;
+        /// private IConverter _converter;
 
-        private IGenericRep<PDI> _pdiRep;
+        /// private IGenericRep<PDI> _pdiRep;
 
         private IGenericRep<User> _userRep;
 
@@ -39,7 +35,7 @@
 
         private IOpenTokExternalService _openTokService;
 
-        private IGenericQueue _queue;
+        /// private IGenericQueue _queue;
 
         private Crypto _crypto;
 
@@ -49,15 +45,15 @@
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
                         IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
         {
-            _converter = converter;
-            _pdiRep = pdiRep;
+            /// _converter = converter;
+            /// _pdiRep = pdiRep;
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options.Value;
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
-            _queue = queue;
+            /// _queue = queue;
             _busyAgentRepository = busyAgentRepository;
         }
 
@@ -439,7 +435,8 @@
             var user = _userRep.GetAsync(UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
-
+        
+        /*
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
             var errorsMessage = PDIRequest.Validate().ToList();
@@ -553,6 +550,7 @@
             }
             return result;
         }
+        */
 
         private AuthenticationToken SetAuthenticationToken(string username)
         {
