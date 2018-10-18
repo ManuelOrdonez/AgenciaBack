@@ -19,8 +19,7 @@ namespace AgenciaDeEmpleoVirutal.Services
                         .SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettingsMail.json", true, true)
                         .Build()
-                )
-                .UseStartup<Startup>()
+                ).UseStartup<Startup>()
                 .Build();
     }
 }

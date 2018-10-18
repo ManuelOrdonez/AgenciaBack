@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="libwkhtmltox\32bits\libwkhtmltox.dll" />
     <None Remove="libwkhtmltox\64bits\libwkhtmltox.dll" />
     <None Remove="Properties\PublishProfiles\PremiumHelpServicesDev - Web Deploy.pubxml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="libwkhtmltox\32bits\libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="libwkhtmltox\64bits\libwkhtmltox.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

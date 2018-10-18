@@ -83,12 +83,11 @@
             {
                 var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
                 CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
-
                 context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                throw ex;
             }
 
         }

@@ -83,6 +83,11 @@
             {
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
             }
+            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", userInfo.UserName).Result;
+            if (!(userCalling.Count == 0 || userCalling is null))
+            {
+                return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserCalling);
+            }
 
             lock (obj)
             {
