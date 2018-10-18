@@ -104,7 +104,12 @@
         /// <summary>
         /// Send And Save PDI
         /// </summary>
-        SavePDI = 207
+        SavePDI = 207,
+
+        /// <summary>
+        /// User Do Not Have Calls
+        /// </summary>
+        UserDoNotHaveCalls = 210
 
     }
 }

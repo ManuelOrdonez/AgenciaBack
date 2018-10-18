@@ -53,5 +53,12 @@
         {
             return Ok(_callHistoryBusiness.GetCallerInfo(request));
         }
+
+        [HttpPost]
+        [Route("GetAllUserCall")]
+        public IActionResult GetAllUserCall([FromBody] GetAllUserCallRequest request)
+        {
+            return Ok(_callHistoryBusiness.GetAllUserCall(request));
+        }
     }
 }

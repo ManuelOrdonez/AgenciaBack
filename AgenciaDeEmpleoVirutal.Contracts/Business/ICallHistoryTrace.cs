@@ -35,5 +35,7 @@
         Response<List<CallHistoryTrace>> CallQuality(QualityCallRequest request);
 
         Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId);
+
+        Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest);
     }
 }

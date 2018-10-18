@@ -277,6 +277,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El Usuario No tiene Llamadas Registradas.
+        /// </summary>
+        internal static string UserDoNotHaveCalls {
+            get {
+                return ResourceManager.GetString("UserDoNotHaveCalls", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Usuario no autorizado..
         /// </summary>
         internal static string UserIsNotVip {
