@@ -388,8 +388,8 @@
                 NoDocument = user[0],
                 TypeDocument = user[1],
             };
-            var userAviable = this.GetUserActive(request);
-            if (userAviable.UserType.ToLower() == UsersTypes.Funcionario.ToString().ToLower())
+            var userAviable = this.GetAgentActive(request);
+            if (userAviable != null)
             {
                 userAviable.Available = RequestAviable.State;
                 var result = _userRep.AddOrUpdate(userAviable).Result;
@@ -400,7 +400,11 @@
                     var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
                 }
             }
-            return ResponseSuccess(new List<User> { null });
+            else
+            {
+                return ResponseFail(ServiceResponseCode.AgentNotFound);
+            }
+            return ResponseSuccess();
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
@@ -483,8 +487,12 @@
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
 
-            GenarateContentPDI(new List<PDI>() { pdi });
-            MemoryStream stream = new MemoryStream(GenarateContentPDI(new List<PDI>() { pdi }).FirstOrDefault());
+            var ContentPDI = GenarateContentPDI(new List<PDI>() { pdi });
+            if (ContentPDI is null)
+            {
+                return ResponseFail<User>(ServiceResponseCode.ServiceExternalError);
+            }
+            MemoryStream stream = new MemoryStream(ContentPDI.FirstOrDefault());
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
             {
@@ -535,7 +543,14 @@
             });
             var result = new List<byte[]>();
             var conv = new PdfConvert(_converter);
-            contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
+            try
+            {
+                contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
             return result;
         }
 
@@ -579,6 +594,20 @@
             if (lUser.Count > 0)
             {
                 return lUser[0];
+            }
+            return user;
+        }
+
+        private User GetAgentActive(AuthenticateUserRequest userReq)
+        {
+            User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+                {
+                    return item;
+                }
             }
             return user;
         }

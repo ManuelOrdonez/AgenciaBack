@@ -15,23 +15,16 @@
 
         public byte[] GeneratePDF(string documentContentHtml)
         {
-            try
+            return _converter.Convert(new HtmlToPdfDocument
             {
-                return _converter.Convert(new HtmlToPdfDocument
+                Objects =
                 {
-                    Objects =
+                    new ObjectSettings
                     {
-                        new ObjectSettings
-                        {
-                            HtmlContent = documentContentHtml
-                        }
+                        HtmlContent = documentContentHtml
                     }
-                });
-            }
-            catch (Exception )
-            {
-                throw;
-            }
+                }
+            });
         }
     }
 }
