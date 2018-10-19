@@ -56,6 +56,8 @@
                 Email = request.Email,
                 UserName = request.UserName
             };
+
+
             //AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
 
             //if (string.IsNullOrEmpty(AgentInfo.OpenTokSessionId))
