@@ -380,7 +380,7 @@
             return ResponseSuccess(response);
         }
 
-        public Response<User> AviableUser(AviableUserRequest RequestAviable)
+        public Response<AuthenticateUserResponse> AviableUser(AviableUserRequest RequestAviable)
         {
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
@@ -389,12 +389,19 @@
                 TypeDocument = user[1],
             };
             var userAviable = this.GetAgentActive(request);
+            string token = string.Empty;
+            
             if (userAviable != null)
             {
                 userAviable.Available = RequestAviable.State;
+                if(RequestAviable.State)
+                {
+                    userAviable.OpenTokSessionId = _openTokService.CreateSession();
+                    token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
+                }
                 var result = _userRep.AddOrUpdate(userAviable).Result;
 
-                var busy = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
+                var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
                 if (busy.Any())
                 {
                     var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
@@ -402,9 +409,20 @@
             }
             else
             {
-                return ResponseFail(ServiceResponseCode.AgentNotFound);
+                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
             }
-            return ResponseSuccess();
+
+            var response = new List<AuthenticateUserResponse>()
+            {
+                new AuthenticateUserResponse()
+                {
+                    AuthInfo = SetAuthenticationToken(userAviable.UserName),
+                    UserInfo = userAviable,
+                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokAccessToken = token,
+                }
+            };
+            return ResponseSuccess(response);
         }
 
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
