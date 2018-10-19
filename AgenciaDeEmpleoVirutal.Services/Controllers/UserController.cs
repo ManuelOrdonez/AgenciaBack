@@ -80,16 +80,5 @@
         {
             return Ok(_UserBussines.AviableUser(RequestAviable));
         }
-
-        /*
-        [HttpPost]
-        [Route("CreatePDI")]
-        [Authorize]
-        [Produces(typeof(Response<User>))]
-        public IActionResult CreatePDI([FromBody] PDIRequest pdiRequest)
-        {
-            return Ok(_UserBussines.CreatePDI(pdiRequest));
-        }
-        */
     }
 }

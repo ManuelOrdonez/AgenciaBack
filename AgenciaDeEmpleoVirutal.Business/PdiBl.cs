@@ -60,7 +60,17 @@
             }
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
-            var pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
+            string pdiName; 
+            var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
+            if(userPDI.Any())
+            {     
+                pdiName = string.Format("PDI-{0}-{1}", user.NoDocument, userPDI.Count);
+            }
+            else
+            {
+                pdiName = string.Format("PDI-{0}", user.NoDocument);
+            }
+
             var pdi = new PDI()
             {
                 CallerUserName = user.UserName,
@@ -76,6 +86,7 @@
                 WhenJob = SetFieldOfPDI(PDIRequest.WhenJob),
                 PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
                 Observations = SetFieldOfPDI(PDIRequest.Observations),
+                OnlySave = PDIRequest.OnlySave
             };
 
             if (PDIRequest.OnlySave)
@@ -109,11 +120,16 @@
         public Response<PDI> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
-            if (PDIs.Count <= 0 || PDIs is null)
+            if (PDIs is null)
             {
                 return ResponseFail();
             }
-            return ResponseSuccess(PDIs);
+            if (PDIs.Count == 0)
+            {
+                return ResponseSuccess(ServiceResponseCode.UserWithoutPDI);
+            }
+            var result = PDIs.OrderByDescending(p => p.Timestamp).ToList();
+            return ResponseSuccess(result);
         }
 
         private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)

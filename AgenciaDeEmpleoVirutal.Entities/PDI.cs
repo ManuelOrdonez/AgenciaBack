@@ -37,5 +37,7 @@
         public string Observations { get; set; }
 
         public string PDIDate { get; set; }
+
+        public bool OnlySave { get; set; }
     }
 }

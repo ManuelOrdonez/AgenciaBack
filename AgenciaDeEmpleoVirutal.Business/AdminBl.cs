@@ -75,7 +75,6 @@
                 TypeDocument = funcionaryReq.TypeDocument,
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
-                /// OpenTokSessionId = _openTokExternalService.CreateSession(),
                 CountCallAttended = 0,
                 Available = false
             };
@@ -152,8 +151,8 @@
             }
 
             funcionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
-            funcionary.Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name);
-            funcionary.LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName);
+            funcionary.Name = UString.UppercaseWords(funcionaryReq.Name);
+            funcionary.LastName = UString.UppercaseWords(funcionaryReq.LastName);
             funcionary.Role = funcionaryReq.Role;
             funcionary.Position = funcionaryReq.Position;
             funcionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();

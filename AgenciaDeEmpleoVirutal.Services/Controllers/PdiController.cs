@@ -9,7 +9,7 @@
     using Microsoft.AspNetCore.Mvc;
 
     [Produces("application/json")]
-    [Route("api/User")]
+    [Route("api/PDI")]
     /// [Authorize]
     [EnableCors("CorsPolitic")]
     public class PdiController : Controller

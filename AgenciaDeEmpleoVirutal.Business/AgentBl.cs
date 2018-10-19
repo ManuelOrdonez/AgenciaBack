@@ -28,51 +28,14 @@
 
         private IOpenTokExternalService _openTokExternalService;
 
-        private IGenericQueue _queue;
-
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
-            IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
+            IGenericRep<BusyAgent> busyAgentRepository)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
-            _queue = queue;
             _busyAgentRepository = busyAgentRepository;
         }
-
-        /*
-        public Response<CreateAgentResponse> Create(CreateAgentRequest request)
-        {
-            var errorMessages = request.Validate().ToList();
-            if (errorMessages.Count > 0)
-            {
-                return ResponseBadRequest<CreateAgentResponse>(errorMessages);
-            }
-
-            // verificar Row Key de agente - username noDoc_coDoc
-            var AgentInfo = new User
-            {
-                Name = request.Name,
-                LastName = request.LastName,
-                Email = request.Email,
-                UserName = request.UserName
-            };
-
-
-            //AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
-
-            //if (string.IsNullOrEmpty(AgentInfo.OpenTokSessionId))
-            //{
-            //    return ResponseFail<CreateAgentResponse>();
-            //}
-
-            if (!_agentRepository.AddOrUpdate(AgentInfo).Result)
-            {
-                return ResponseFail<CreateAgentResponse>();
-            }
-            return ResponseSuccess(new List<CreateAgentResponse>());
-        }
-        */
 
         private static readonly Object obj = new Object();
 
@@ -159,7 +122,6 @@
             }
         }
 
-
         public Response<User> ImAviable(AviableUserRequest RequestAviable)
         {
             if (string.IsNullOrEmpty(RequestAviable.UserName))
@@ -168,8 +130,6 @@
             }
             var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
-        }
-
-      
+        }      
     }
 }

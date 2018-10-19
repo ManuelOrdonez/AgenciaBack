@@ -109,7 +109,12 @@
         /// <summary>
         /// User Do Not Have Calls
         /// </summary>
-        UserDoNotHaveCalls = 210
+        UserDoNotHaveCalls = 210,
+
+        /// <summary>
+        /// User dont have PDI
+        /// </summary>
+        UserWithoutPDI = 220
 
     }
 }

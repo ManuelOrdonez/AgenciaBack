@@ -11,7 +11,7 @@
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    /// [Authorize]
+    [Authorize]
     public class AgentController : Controller
     {
         private readonly IAgentBl _agentBusiness;
@@ -20,16 +20,6 @@
         {
             _agentBusiness = AgentBusiness;
         }
-
-        /*
-        [HttpPost]
-        [Route("Create")]
-        [Produces(typeof(Response<CreateAgentResponse>))]
-        public IActionResult Create([FromBody] CreateAgentRequest Agent)
-        {
-            return Ok(_agentBusiness.Create(Agent));
-        }
-        */
 
         [HttpPost]
         [Route("GetAgentAvailable")]

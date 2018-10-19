@@ -302,5 +302,14 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario no tiene PDI asociado.
+        /// </summary>
+        internal static string UserWithoutPDI {
+            get {
+                return ResourceManager.GetString("UserWithoutPDI", resourceCulture);
+            }
+        }
     }
 }
