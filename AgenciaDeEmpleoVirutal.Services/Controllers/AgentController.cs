@@ -11,7 +11,7 @@
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    [Authorize]
+    /// [Authorize]
     public class AgentController : Controller
     {
         private readonly IAgentBl _agentBusiness;

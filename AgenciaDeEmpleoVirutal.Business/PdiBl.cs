@@ -18,7 +18,6 @@
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
-    using System.Text;
 
     public class PdiBl : BusinessBase<PDI>, IPdiBl
     {
@@ -107,19 +106,6 @@
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
-        private string SetFieldOfPDI(string field)
-        {
-            string fieldAux = string.Empty;
-            fieldAux = field;
-            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
-            fieldAux = fieldAux.ToLower();
-            if (naOptiond.Any(op => op.Equals(fieldAux)))
-            {
-                return "No aplica";
-            }
-            return UString.CapitalizeFirstLetter(fieldAux);
-        }
-
         public Response<PDI> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
@@ -152,6 +138,19 @@
                 return null;
             }
             return result;
+        }
+
+        private string SetFieldOfPDI(string field)
+        {
+            string fieldAux = string.Empty;
+            fieldAux = field;
+            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
+            fieldAux = fieldAux.ToLower();
+            if (naOptiond.Any(op => op.Equals(fieldAux)))
+            {
+                return "No aplica";
+            }
+            return UString.CapitalizeFirstLetter(fieldAux);
         }
     }
 }

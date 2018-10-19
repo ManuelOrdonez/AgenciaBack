@@ -10,7 +10,7 @@
 
     [Produces("application/json")]
     [Route("api/User")]
-    [Authorize]
+    /// [Authorize]
     [EnableCors("CorsPolitic")]
     public class PdiController : Controller
     {
