@@ -385,12 +385,17 @@
                 TypeDocument = user[1],
             };
             var userAviable = this.GetAgentActive(request);
+            
             if (userAviable != null)
             {
                 userAviable.Available = RequestAviable.State;
+                if(RequestAviable.State)
+                {
+                    userAviable.OpenTokSessionId = _openTokService.CreateSession();
+                }
                 var result = _userRep.AddOrUpdate(userAviable).Result;
 
-                var busy = _busyAgentRepository.GetByPatitionKeyAsync(userAviable.OpenTokSessionId.ToLower()).Result;
+                var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
                 if (busy.Any())
                 {
                     var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
