@@ -31,7 +31,6 @@
             _openTokExternalService = openTokService;
         }
 
-
         public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
         {
             string message = string.Empty;
@@ -66,8 +65,8 @@
                 Position = funcionaryReq.Position,
                 State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
                 NoDocument = funcionaryReq.NoDocument,
-                LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName),
-                Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name),
+                LastName = UString.UppercaseWords(funcionaryReq.LastName),
+                Name = UString.UppercaseWords(funcionaryReq.Name),
                 Password = funcionaryReq.Password,
                 Role = funcionaryReq.Role,
                 DeviceId = string.Empty,
@@ -76,7 +75,7 @@
                 TypeDocument = funcionaryReq.TypeDocument,
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
-                OpenTokSessionId = _openTokExternalService.CreateSession(),
+                /// OpenTokSessionId = _openTokExternalService.CreateSession(),
                 CountCallAttended = 0,
                 Available = false
             };
