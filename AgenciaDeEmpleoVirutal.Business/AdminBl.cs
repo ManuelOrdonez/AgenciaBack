@@ -31,7 +31,6 @@
             _openTokExternalService = openTokService;
         }
 
-
         public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
         {
             string message = string.Empty;
@@ -76,7 +75,7 @@
                 TypeDocument = funcionaryReq.TypeDocument,
                 Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
-                OpenTokSessionId = _openTokExternalService.CreateSession(),
+                /// OpenTokSessionId = _openTokExternalService.CreateSession(),
                 CountCallAttended = 0,
                 Available = false
             };
