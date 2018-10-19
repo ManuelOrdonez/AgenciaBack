@@ -100,18 +100,24 @@
             {
                 return ResponseBadRequest<CallHistoryTrace>(messagesValidationEntity);
             }
-            
+
             var existsCall = GetCallInfo(new GetCallRequest()
             {
                 OpenTokSessionId = callRequest.OpenTokSessionId,
                 State = CallStates.Begun.ToString()
             }).Data.FirstOrDefault();
 
-            var callInfo = existsCall == null || string.IsNullOrWhiteSpace(existsCall.UserCall) ? 
+            var callInfo = existsCall == null || string.IsNullOrWhiteSpace(existsCall.UserCall) ?
                 GetDefaultCallHistoryTrace(callRequest) : existsCall;
 
             /// ver Row Key de agentes
             var agent = _agentRepository.GetAsync(callRequest.UserName).Result;
+
+            if (agent?.OpenTokSessionId == null)
+            {
+                agent = null;
+            }
+
 
             switch (stateInput)
             {
@@ -129,8 +135,8 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        this.Aviable(agent.OpenTokSessionId);
-                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString())+1;
+                        this.Aviable(agent.UserName);
+                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString()) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
                     break;
@@ -144,12 +150,15 @@
                     }
                     if (agent != null)
                     {
-                        agent.Available = false;
-                        this.Aviable(agent.OpenTokSessionId);
+                        agent.Available = false;                        
                         if (!_agentRepository.AddOrUpdate(agent).Result)
                         {
                             return ResponseFail();
                         }
+                    }
+                    if (callInfo.State == CallStates.Lost.ToString())
+                    {
+                        this.Aviable(callRequest.UserName);
                     }
                     break;
                 case CallStates.EndByMobile:
@@ -163,7 +172,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        this.Aviable(agent.OpenTokSessionId);
+                        this.Aviable(agent.UserName);
                         if (!_agentRepository.AddOrUpdate(agent).Result)
                         {
                             return ResponseFail();
@@ -191,9 +200,20 @@
             return ResponseSuccess();
         }
 
-        private void Aviable(string openTokSessionId)
+        private void Aviable(string UserName)
         {
-            var busy = _busyAgentRepository.GetByPatitionKeyAsync(openTokSessionId.ToLower()).Result;
+            string type = string.Empty;
+            var user = _agentRepository.GetAsync(UserName).Result;
+            if (user.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            {
+                type = "UserNameAgent";
+            }
+            else
+            {
+                type = "UserNameCaller";
+            }
+
+            var busy = _busyAgentRepository.GetSomeAsync(type,UserName).Result;
             if (busy.Any())
             {
                 var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
@@ -233,7 +253,7 @@
             }
             else
             {
-                type = "UserCall";                
+                type = "UserCall";
             }
 
             var calls = _callHistoryRepository.GetSomeAsync(type, getAllUserCallRequest.UserName).Result;
@@ -242,7 +262,7 @@
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
             response.Calls = calls;
-            return  ResponseSuccess(new List<GetAllUserCallResponse> { response }); ;
+            return ResponseSuccess(new List<GetAllUserCallResponse> { response }); ;
         }
 
         private CallHistoryTrace GetCallForAnyManage(string OpenTokSessionId, string OpenTokAccessToken)
