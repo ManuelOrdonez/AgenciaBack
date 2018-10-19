@@ -135,7 +135,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        this.Aviable(agent.UserName);
+                        //this.Aviable(agent.UserName);
                         agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString()) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
@@ -144,10 +144,10 @@
                     if (callInfo.State != CallStates.EndByWeb.ToString())
                     {
                         callInfo.DateFinishCall = DateTime.Now;
-                        callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
-                        callInfo.State = callInfo.State == CallStates.Begun.ToString() ?
-                            CallStates.Lost.ToString() : stateInput.ToString();
+                        callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;                       
                     }
+                    callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
+                           CallStates.Lost.ToString() : stateInput.ToString();
                     if (agent != null)
                     {
                         agent.Available = false;                        
@@ -159,6 +159,7 @@
                     if (callInfo.State == CallStates.Lost.ToString())
                     {
                         this.Aviable(callRequest.UserName);
+                        callInfo.UserCall = callRequest.UserName;
                     }
                     break;
                 case CallStates.EndByMobile:
@@ -166,9 +167,10 @@
                     {
                         callInfo.DateFinishCall = DateTime.Now;
                         callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
-                        callInfo.State = callInfo.State == CallStates.Begun.ToString() ?
-                            CallStates.Lost.ToString() : stateInput.ToString();
+ 
                     }
+                    callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
+                           CallStates.Lost.ToString() : stateInput.ToString();
                     if (agent != null)
                     {
                         agent.Available = false;
