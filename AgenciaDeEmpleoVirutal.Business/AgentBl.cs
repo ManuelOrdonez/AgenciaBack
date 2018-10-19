@@ -40,7 +40,6 @@
             _busyAgentRepository = busyAgentRepository;
         }
 
-        /*
         public Response<CreateAgentResponse> Create(CreateAgentRequest request)
         {
             var errorMessages = request.Validate().ToList();
@@ -70,7 +69,6 @@
             }
             return ResponseSuccess(new List<CreateAgentResponse>());
         }
-        */
 
         private static readonly Object obj = new Object();
 

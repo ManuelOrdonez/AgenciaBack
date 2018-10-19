@@ -21,7 +21,6 @@
             _agentBusiness = AgentBusiness;
         }
 
-        /*
         [HttpPost]
         [Route("Create")]
         [Produces(typeof(Response<CreateAgentResponse>))]
@@ -29,7 +28,6 @@
         {
             return Ok(_agentBusiness.Create(Agent));
         }
-        */
 
         [HttpPost]
         [Route("GetAgentAvailable")]

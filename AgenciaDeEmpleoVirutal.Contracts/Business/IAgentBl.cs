@@ -12,7 +12,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        /// Response<CreateAgentResponse> Create(CreateAgentRequest request);
+        Response<CreateAgentResponse> Create(CreateAgentRequest request);
 
         /// <summary>
         /// Get Agent Available.
