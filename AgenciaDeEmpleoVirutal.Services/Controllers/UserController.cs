@@ -75,7 +75,7 @@
         [HttpPost]
         [Route("AviableUser")]
         [Authorize]
-        [Produces(typeof(Response<User>))]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
         public IActionResult AviableUser([FromBody] AviableUserRequest RequestAviable)
         {
             return Ok(_UserBussines.AviableUser(RequestAviable));
