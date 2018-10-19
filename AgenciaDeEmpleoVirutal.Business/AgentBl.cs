@@ -58,10 +58,11 @@
             };
             //AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
 
-            if (string.IsNullOrEmpty(AgentInfo.OpenTokSessionId))
-            {
-                return ResponseFail<CreateAgentResponse>();
-            }
+            //if (string.IsNullOrEmpty(AgentInfo.OpenTokSessionId))
+            //{
+            //    return ResponseFail<CreateAgentResponse>();
+            //}
+
             if (!_agentRepository.AddOrUpdate(AgentInfo).Result)
             {
                 return ResponseFail<CreateAgentResponse>();
