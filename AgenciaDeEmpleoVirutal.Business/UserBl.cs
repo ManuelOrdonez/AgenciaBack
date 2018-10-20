@@ -82,14 +82,6 @@
             var user = userAuthenticate.FirstOrDefault();
 
             var token = string.Empty;
-            if (user.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
-            {
-                token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
-                if (string.IsNullOrEmpty(token))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
-                }
-            }
             
             var response = new List<AuthenticateUserResponse>
             {
@@ -154,11 +146,6 @@
                     }
 
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
-                token = _openTokService.CreateToken(user.OpenTokSessionId, user.UserName);
-                if (string.IsNullOrEmpty(token))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.TokenAndDeviceNotFound);
                 }
             }
             else
