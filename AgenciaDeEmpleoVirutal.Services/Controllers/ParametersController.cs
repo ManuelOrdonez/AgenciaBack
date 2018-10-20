@@ -42,5 +42,13 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
         {
             return Ok(_ParameterBussines.GetSomeParametersByType(type));
         }
+
+        [HttpGet]
+        [Route("GetCategories")]
+        [Produces(typeof(List<string>))]
+        public IActionResult GetCategories()
+        {
+            return Ok(_ParameterBussines.GetCategories());
+        }
     }
 }

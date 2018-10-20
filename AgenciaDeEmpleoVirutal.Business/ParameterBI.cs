@@ -74,5 +74,20 @@ namespace AgenciaDeEmpleoVirutal.Business
             result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description }));
             return ResponseSuccess(parametsList);
         }
+
+        public List<string> GetCategories()
+        {
+            //var result = _paramentRep.GetList().Result;
+
+
+            var DistinctItems = _paramentRep.GetList().Result.GroupBy(x => x.PartitionKey).Select(y => y.First());
+            List<string> result = new List<string>();
+            foreach (var item in DistinctItems)
+            {
+                result.Add(item.Type);               
+            }
+
+            return result;
+        }
     }
 }

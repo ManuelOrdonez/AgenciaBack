@@ -12,5 +12,7 @@ namespace AgenciaDeEmpleoVirutal.Contracts.Business
         Response<ParametersResponse> GetParametersByType(string type);
 
         Response<ParametersResponse> GetSomeParametersByType(List<string> type);
+
+        List<string> GetCategories();
     }
 }
