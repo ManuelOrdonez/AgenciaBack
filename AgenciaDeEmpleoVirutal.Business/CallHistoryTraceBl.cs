@@ -262,7 +262,7 @@
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
-            foreach (var cll in calls)
+            foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
             {                
                 if (string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
