@@ -23,8 +23,9 @@
     using System.Net.Mail;
 
     public class UserBl : BusinessBase<User>, IUserBl, IDisposable
-
     {
+        private IPDFConvertExternalService _pdfConvertService;
+
         private IGenericRep<BusyAgent> _busyAgentRepository;
 
         private IConverter _converter;
@@ -47,8 +48,10 @@
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
+                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository,
+                        IPDFConvertExternalService pdfConvertService)
         {
+            _pdfConvertService = pdfConvertService;
             _converter = converter;
             _pdiRep = pdiRep;
             _sendMailService = sendMailService;
@@ -513,12 +516,12 @@
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
 
-            var ContentPDI = GenarateContentPDI(new List<PDI>() { pdi });
+            var ContentPDI = GenarateContentPDI(pdi);
             if (ContentPDI is null)
             {
                 return ResponseFail<User>(ServiceResponseCode.ServiceExternalError);
             }
-            MemoryStream stream = new MemoryStream(ContentPDI.FirstOrDefault());
+            MemoryStream stream = new MemoryStream(ContentPDI);
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
             {
@@ -545,6 +548,7 @@
             return UString.CapitalizeFirstLetter(fieldAux);
         }
 
+        /*
         public Response<User> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
@@ -555,23 +559,27 @@
             var contetnt = GenarateContentPDI(PDIs);
             return null;
         }
+        */
 
-        private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)
+        private byte[] GenarateContentPDI(PDI pdi)
         {
-            var contentStringHTMLPDI = new List<string>();
-            requestPDI.ForEach(pdi =>
+            var RequestPDF = new RequestPdfConvert
             {
-                contentStringHTMLPDI.Add(string.Format(ParametersApp.ContentPDIPdf,
+                ContentHtml = string.Format(ParametersApp.ContentPDIPdf,
                     pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
-                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
-            });
-            var result = new List<byte[]>();
-            var conv = new PdfConvert(_converter);
+                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations)
+            };
+            byte[] result;
             try
             {
-                contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
+                var content = _pdfConvertService.GenaratePdfContent(RequestPDF).ContentPDF;
+                if (content is null)
+                {
+                    return null;
+                }
+                result = content;
             }
             catch (Exception)
             {

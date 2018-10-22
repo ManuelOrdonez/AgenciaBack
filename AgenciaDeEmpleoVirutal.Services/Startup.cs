@@ -126,8 +126,7 @@
                     OpenTokApiKey = Configuration["SECRET_OPENTOKAPIKEY"],
                     LdapServiceApiKey = Configuration["SECRET_LDAPSERVICEAPIKEY"]
                     
-                };
-                
+                };                
                 //services.Configure<UserSecretSettings>(su);
             }
             else
@@ -155,6 +154,7 @@
             services.AddTransient<ISendGridExternalService, SendGridExternalService>();
             services.AddTransient<IOpenTokExternalService, OpenTokExternalService>();
             services.AddTransient<ILdapServices, LdapServices>();
+            services.AddTransient<IPDFConvertExternalService, PDFConvertExternalService>();
         }
 
         private static void DependencyBusiness(IServiceCollection services)

@@ -83,7 +83,7 @@
 
         [HttpPost]
         [Route("CreatePDI")]
-        [Authorize]
+        /// [Authorize]
         [Produces(typeof(Response<User>))]
         public IActionResult CreatePDI([FromBody] PDIRequest pdiRequest)
         {

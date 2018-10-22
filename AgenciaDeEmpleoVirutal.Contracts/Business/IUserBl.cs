@@ -23,6 +23,8 @@
 
         Response<User> CreatePDI(PDIRequest PDIRequest);
 
-        Response<User> GetPDIsFromUser(string userName);
+        /// esponse<User> GetPDIsFromUser(string userName);
+
+        /// byte[] GenarateContentPDI(PDI pdi);
     }
 }
