@@ -415,8 +415,6 @@
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
             }
-
-
             return ResponseSuccess(response);
         }
 
@@ -443,16 +441,57 @@
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
 
+        public Response<User> UpdateUserInfo(UserUdateRequest userRequest)
+        {
+            var errorsMessage = userRequest.Validate().ToList();
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<User>(errorsMessage);
+            }
+            var userUpdate = new User()
+            {
+                CellPhone1 = userRequest.Cellphon1,
+                CellPhone2 = userRequest.Cellphon2,
+                City = userRequest.City,
+                Departament = userRequest.Departament,
+                Email = userRequest.Mail,
+                Name = userRequest.Name,
+                UserName = userRequest.UserName,
+            };
+            if (userRequest.IsCesante)
+            {
+                userUpdate.UserType = UsersTypes.Cesante.ToString();
+                userUpdate.DegreeGeted = userRequest.DegreeGeted;
+                userUpdate.EducationLevel = userRequest.EducationLevel;
+                userUpdate.Genre = userRequest.Genre;
+            }
+            else
+            {
+                userUpdate.UserType = UsersTypes.Empresa.ToString();
+                userUpdate.Addrerss = userRequest.Address;
+                userUpdate.ContactName = userRequest.ContactName;
+                userUpdate.PositionContact = userRequest.PositionContact;
+                userUpdate.SocialReason = userRequest.SocialReason;
+            }
+            var result = _userRep.AddOrUpdate(userUpdate).Result;
+            return result ? ResponseSuccess() : ResponseFail();
+        }
+
         public Response<User> GetUserInfo(string UserName)
         {
             if (string.IsNullOrEmpty(UserName))
             {
                 return ResponseFail<User>(ServiceResponseCode.BadRequest);
             }
-            var user = _userRep.GetAsync(UserName).Result;
+            var result = _userRep.GetAsyncAll(UserName).Result;
+            if (!result.Any())
+            {
+                return ResponseFail();
+            }
+            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString()));
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
-
+        
         private AuthenticationToken SetAuthenticationToken(string username)
         {
             return new AuthenticationToken()

@@ -80,5 +80,14 @@
         {
             return Ok(_UserBussines.AviableUser(RequestAviable));
         }
+
+        [HttpPost]
+        [Route("UpdateUser")]
+        [Authorize]
+        [Produces(typeof(Response<User>))]
+        public IActionResult UpdateUser([FromBody] UserUdateRequest RequestUser)
+        {
+            return Ok(_UserBussines.UpdateUserInfo(RequestUser));
+        }
     }
 }
