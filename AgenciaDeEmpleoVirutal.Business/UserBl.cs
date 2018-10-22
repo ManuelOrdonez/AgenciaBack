@@ -548,19 +548,6 @@
             return UString.CapitalizeFirstLetter(fieldAux);
         }
 
-        /*
-        public Response<User> GetPDIsFromUser(string userName)
-        {
-            var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
-            if (PDIs.Count <= 0)
-            {
-                return ResponseFail<User>();
-            }
-            var contetnt = GenarateContentPDI(PDIs);
-            return null;
-        }
-        */
-
         private byte[] GenarateContentPDI(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert
