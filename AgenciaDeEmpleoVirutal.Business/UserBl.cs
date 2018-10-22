@@ -14,7 +14,6 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
-    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
@@ -27,8 +26,6 @@
         private IPDFConvertExternalService _pdfConvertService;
 
         private IGenericRep<BusyAgent> _busyAgentRepository;
-
-        private IConverter _converter;
 
         private IGenericRep<PDI> _pdiRep;
 
@@ -48,11 +45,10 @@
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IConverter converter, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository,
+                        IGenericRep<PDI> pdiRep, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository,
                         IPDFConvertExternalService pdfConvertService)
         {
             _pdfConvertService = pdfConvertService;
-            _converter = converter;
             _pdiRep = pdiRep;
             _sendMailService = sendMailService;
             _userRep = userRep;

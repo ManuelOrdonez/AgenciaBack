@@ -12,11 +12,6 @@
     using DataAccess.Referentials;
     using Swashbuckle.AspNetCore.Swagger;
     using System.Collections.Generic;
-    using DinkToPdf.Contracts;
-    using DinkToPdf;
-    using System.Runtime.Loader;
-    using System.Reflection;
-    using System.IO;
     using System;
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
