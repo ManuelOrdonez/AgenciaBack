@@ -69,7 +69,7 @@
             var user = userAuthenticate.FirstOrDefault();
 
             var token = string.Empty;
-            
+
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
@@ -82,7 +82,7 @@
             };
             return ResponseSuccess(response);
         }
-        
+
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -93,7 +93,7 @@
             string token = string.Empty;
             string passwordDecrypt = string.Empty;
 
-            passwordDecrypt = userReq.DeviceType.Equals("WEB") ? 
+            passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
 
             string passwordUserDecrypt;
@@ -364,11 +364,11 @@
             };
             var userAviable = this.GetAgentActive(request);
             string token = string.Empty;
-            
+            var response = new List<AuthenticateUserResponse>();
             if (userAviable != null)
             {
                 userAviable.Available = RequestAviable.State;
-                if(RequestAviable.State)
+                if (RequestAviable.State)
                 {
                     userAviable.OpenTokSessionId = _openTokService.CreateSession();
                     token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
@@ -380,22 +380,43 @@
                 {
                     var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
                 }
+                response = new List<AuthenticateUserResponse>()
+                {
+                    new AuthenticateUserResponse()
+                    {
+                        AuthInfo = SetAuthenticationToken(userAviable.UserName),
+                        UserInfo = userAviable,
+                        OpenTokApiKey = _settings.OpenTokApiKey,
+                        OpenTokAccessToken = token,
+                    }
+                };
             }
-            else
+            var usercall = this.GetUserActive(request);
+
+            if (usercall != null)
+            {
+                var busy = _busyAgentRepository.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
+                if (busy.Any())
+                {
+                    var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                }
+                response = new List<AuthenticateUserResponse>()
+                {
+                    new AuthenticateUserResponse()
+                    {
+                        AuthInfo = SetAuthenticationToken(usercall.UserName),
+                        UserInfo = usercall,
+                        OpenTokApiKey = _settings.OpenTokApiKey,
+                        OpenTokAccessToken = token,
+                    }
+                };
+            }
+            if (usercall == null && userAviable == null)
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
             }
 
-            var response = new List<AuthenticateUserResponse>()
-            {
-                new AuthenticateUserResponse()
-                {
-                    AuthInfo = SetAuthenticationToken(userAviable.UserName),
-                    UserInfo = userAviable,
-                    OpenTokApiKey = _settings.OpenTokApiKey,
-                    OpenTokAccessToken = token,
-                }
-            };
+
             return ResponseSuccess(response);
         }
 
@@ -416,7 +437,7 @@
             var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower()).Result;
             if (busy.Any())
             {
-               var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
             }
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
