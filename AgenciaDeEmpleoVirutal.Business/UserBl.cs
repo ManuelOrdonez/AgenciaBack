@@ -417,7 +417,7 @@
                 {
                     new AuthenticateUserResponse()
                     {
-                        AuthInfo = SetAuthenticationToken(userAviable.UserName),
+                        AuthInfo = SetAuthenticationToken(usercall.UserName),
                         UserInfo = usercall,
                         OpenTokApiKey = _settings.OpenTokApiKey,
                         OpenTokAccessToken = token,
