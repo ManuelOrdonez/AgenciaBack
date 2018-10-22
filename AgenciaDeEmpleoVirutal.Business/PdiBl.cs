@@ -5,6 +5,7 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Utils;
@@ -12,7 +13,6 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
-    using DinkToPdf.Contracts;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -21,7 +21,7 @@
 
     public class PdiBl : BusinessBase<PDI>, IPdiBl
     {
-        private IConverter _converter;
+        private IPDFConvertExternalService _pdfConvertService;
 
         private IGenericRep<PDI> _pdiRep;
 
@@ -29,12 +29,13 @@
 
         private ISendGridExternalService _sendMailService;
 
-        public PdiBl(IConverter converter, 
+        public PdiBl(
+            IPDFConvertExternalService pdfConvertService,
             IGenericRep<PDI> pdiRep, 
             IGenericRep<User> userRep,
             ISendGridExternalService sendMailService)
         {
-            _converter = converter;
+            _pdfConvertService = pdfConvertService;
             _pdiRep = pdiRep;
             _userRep = userRep;
             _sendMailService = sendMailService;
@@ -64,11 +65,11 @@
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
             if(userPDI.Any())
             {     
-                pdiName = string.Format("PDI-{0}-{1}", user.NoDocument, userPDI.Count);
+                pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count);
             }
             else
             {
-                pdiName = string.Format("PDI-{0}", user.NoDocument);
+                pdiName = string.Format("PDI-{0}.pdf", user.NoDocument);
             }
 
             var pdi = new PDI()
@@ -98,12 +99,12 @@
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
 
-            var ContentPDI = GenarateContentPDI(new List<PDI>() { pdi });
+            var ContentPDI = GenarateContentPDI(pdi);
             if (ContentPDI is null)
             {
                 return ResponseFail<PDI>(ServiceResponseCode.ServiceExternalError);
             }
-            MemoryStream stream = new MemoryStream(ContentPDI.FirstOrDefault());
+            MemoryStream stream = new MemoryStream(ContentPDI);
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
             {
@@ -132,22 +133,23 @@
             return ResponseSuccess(result);
         }
 
-        private List<byte[]> GenarateContentPDI(List<PDI> requestPDI)
+        private byte[] GenarateContentPDI(PDI pdi)
         {
-            var contentStringHTMLPDI = new List<string>();
-            requestPDI.ForEach(pdi =>
-            {
-                contentStringHTMLPDI.Add(string.Format(ParametersApp.ContentPDIPdf,
+            var RequestPDF = new RequestPdfConvert();
+            RequestPDF.ContentHtml = string.Format(ParametersApp.ContentPDIPdf,
                     pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
-                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations));
-            });
-            var result = new List<byte[]>();
-            var conv = new PdfConvert(_converter);
+                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations);
+            byte[] result;                        
             try
             {
-                contentStringHTMLPDI.ForEach(cont => result.Add(conv.GeneratePDF(cont)));
+                var content = _pdfConvertService.GenaratePdfContent(RequestPDF).ContentPDF;
+                if(content is null)
+                {
+                    return null;
+                }
+                result = content;
             }
             catch (Exception)
             {
