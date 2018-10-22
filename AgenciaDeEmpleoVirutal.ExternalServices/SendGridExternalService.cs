@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.ExternalServices
 {
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using Contracts.ExternalServices;
     using Entities;
@@ -7,7 +8,6 @@
     using Microsoft.Extensions.Options;
     using System.Collections.Generic;
     using System.Net.Mail;
-    using Utils;
     using Utils.Resources;
 
     public class SendGridExternalService : ISendGridExternalService
@@ -48,7 +48,9 @@
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
             _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, 
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ? 
+                                                        string.Empty : userInfo.LastName);
             return SendMail();
         }
 
@@ -59,8 +61,10 @@
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPass;
             _sendMailOptions.SubJect = ParametersApp.SubJectPass;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName, urlReset);
-             return SendMail();
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ? 
+                                                        string.Empty : userInfo.LastName);
+            return SendMail();
         }
 
         public bool SendMailPDI(User userInfo, List<Attachment> attachments)

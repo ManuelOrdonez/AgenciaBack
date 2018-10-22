@@ -6,7 +6,11 @@ namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
     public class GetAllUserCallResponse
     {
-         public List<CallHistoryTrace> Calls { get; set; }
+        public string AgentName { get; set; }
+
+        public string DateCall { get; set; }
+
+        public CallHistoryTrace CallInfo { get; set; }
 
     }
 }

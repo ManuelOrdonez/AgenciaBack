@@ -1,7 +1,9 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
@@ -56,6 +58,7 @@
 
         [HttpPost]
         [Route("GetAllUserCall")]
+        [Produces(typeof(Response<GetAllUserCallResponse>))]
         public IActionResult GetAllUserCall([FromBody] GetAllUserCallRequest request)
         {
             return Ok(_callHistoryBusiness.GetAllUserCall(request));

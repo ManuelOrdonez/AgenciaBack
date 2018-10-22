@@ -21,16 +21,6 @@
             _agentBusiness = AgentBusiness;
         }
 
-        /*
-        [HttpPost]
-        [Route("Create")]
-        [Produces(typeof(Response<CreateAgentResponse>))]
-        public IActionResult Create([FromBody] CreateAgentRequest Agent)
-        {
-            return Ok(_agentBusiness.Create(Agent));
-        }
-        */
-
         [HttpPost]
         [Route("GetAgentAvailable")]
         [Produces(typeof(Response<GetAgentAvailableResponse>))]

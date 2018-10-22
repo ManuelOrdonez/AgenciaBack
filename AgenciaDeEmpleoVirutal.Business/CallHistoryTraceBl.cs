@@ -135,7 +135,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        //this.Aviable(agent.UserName);
+                        /// this.Aviable(agent.UserName);
                         agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString()) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
@@ -247,7 +247,7 @@
 
         public Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest)
         {
-            GetAllUserCallResponse response = new GetAllUserCallResponse();
+            var response = new List<GetAllUserCallResponse>();
             string type = string.Empty;
             if (getAllUserCallRequest.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
@@ -257,14 +257,30 @@
             {
                 type = "UserCall";
             }
-
             var calls = _callHistoryRepository.GetSomeAsync(type, getAllUserCallRequest.UserName).Result;
             if (calls.Count == 0 || calls is null)
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
-            response.Calls = calls;
-            return ResponseSuccess(new List<GetAllUserCallResponse> { response }); ;
+            foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
+            {                
+                if (string.IsNullOrEmpty(cll.UserAnswerCall))
+                {
+                    continue;
+                }
+                var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(), cll.UserAnswerCall).Result.First();
+                if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
+                {
+                    continue;
+                }
+                response.Add(new GetAllUserCallResponse()
+                {
+                    AgentName = agentInfo.Name + " " + agentInfo.LastName,
+                    CallInfo = cll,
+                    DateCall = cll.DateCall.ToString("dd/MM/yyyy")
+                });
+            }
+            return ResponseSuccess(response);
         }
 
         private CallHistoryTrace GetCallForAnyManage(string OpenTokSessionId, string OpenTokAccessToken)

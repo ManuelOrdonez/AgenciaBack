@@ -166,6 +166,7 @@
             services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
             services.AddTransient<IParametersBI, ParameterBI>();
             services.AddTransient<IResetBI, ResetBI>();
+            services.AddTransient<IPdiBl, PdiBl>();
         }
     }
     internal class CustomAssemblyLoadContext : AssemblyLoadContext
