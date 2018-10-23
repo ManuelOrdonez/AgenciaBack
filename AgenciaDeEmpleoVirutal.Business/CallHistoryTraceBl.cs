@@ -117,8 +117,6 @@
             {
                 agent = null;
             }
-
-
             switch (stateInput)
             {
                 case CallStates.Begun:
@@ -140,13 +138,17 @@
                     }
                     break;
                 case CallStates.EndByWeb:
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
+                    /*
                     if (callInfo.State != CallStates.EndByWeb.ToString())
                     {
                         callInfo.DateFinishCall = DateTime.Now;
                         callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;                       
                     }
+                    *//*
                     callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
+                    */
                     if (agent != null)
                     {
                         agent.Available = false;                        
@@ -159,14 +161,19 @@
                     callInfo.UserCall = callRequest.UserName;
                     break;
                 case CallStates.EndByMobile:
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
+                    /*
                     if (callInfo.State != CallStates.EndByMobile.ToString())
                     {
                         callInfo.DateFinishCall = DateTime.Now;
                         callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
  
                     }
+                    */
+                    /*
                     callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
+                    */
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -196,6 +203,18 @@
                 }
             }
             return ResponseSuccess();
+        }
+
+        private CallHistoryTrace CallEnded(CallStates TypeCall, CallHistoryTrace callInfo, SetCallTraceRequest callRequest, CallStates stateInput)
+        {
+            if (callInfo.State != TypeCall.ToString())
+            {
+                callInfo.DateFinishCall = DateTime.Now;
+                callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
+            }
+            callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
+                           CallStates.Lost.ToString() : stateInput.ToString();
+            return callInfo;
         }
 
         private void Aviable(string UserName)

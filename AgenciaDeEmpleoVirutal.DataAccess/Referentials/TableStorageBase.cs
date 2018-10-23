@@ -89,7 +89,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             entity.PartitionKey = entity.PartitionKey.ToLower();
             entity.RowKey = entity.RowKey.ToLower();
             var operation = TableOperation.InsertOrMerge(entity);
-            int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
+            int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
 
@@ -98,14 +98,14 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             entity.PartitionKey = entity.PartitionKey.ToLower();
             entity.RowKey = entity.RowKey.ToLower();
             var operation = TableOperation.Insert(entity);
-            int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
+            int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
 
         public async Task<bool> DeleteRowAsync(T entity)
         {
             var operation = TableOperation.Delete(entity);
-            int result = (await Table.ExecuteAsync(operation)).HttpStatusCode;
+            int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
         /// <inheritdoc />

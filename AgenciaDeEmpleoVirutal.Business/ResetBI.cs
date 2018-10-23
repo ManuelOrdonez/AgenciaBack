@@ -56,7 +56,7 @@
                 state = UsersTypes.Empresa.ToString();
                 userAux = userAux.Replace("_empresa", "");
             }
-            else if (userAux.IndexOf("_funcionario") > -1)
+            else /* if (userAux.IndexOf("_funcionario") > -1) */
             {
                 state = UsersTypes.Funcionario.ToString();
                 userAux = userAux.Replace("_funcionario", "");

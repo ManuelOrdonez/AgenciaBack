@@ -31,7 +31,7 @@
         }
         private bool SendMail()
         {
-            SendGridHelper.SenMailRelay(_sendMailOptions);
+            SendGridHelper.SenMailRelay(_sendMailOptions, new List<Attachment>());
             return true;
         }
 

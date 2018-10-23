@@ -31,15 +31,15 @@
             _openTokExternalService = openTokService;
         }
 
-        public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
+        public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionary)
         {
             string message = string.Empty;
-            var errorsMesage = funcionaryReq.Validate().ToList();
+            var errorsMesage = funcionary.Validate().ToList();
             if (errorsMesage.Count > 0)
             {
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
-            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
+            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument)).Result;
 
             int pos = 0;
             /// Valida cuando existe mas de un registro y 
@@ -62,18 +62,18 @@
 
             var funcionaryEntity = new User()
             {
-                Position = funcionaryReq.Position,
-                State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
-                NoDocument = funcionaryReq.NoDocument,
-                LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName),
-                Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name),
-                Password = funcionaryReq.Password,
-                Role = funcionaryReq.Role,
+                Position = funcionary.Position,
+                State = funcionary.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
+                NoDocument = funcionary.NoDocument,
+                LastName = Utils.Helpers.UString.UppercaseWords(funcionary.LastName),
+                Name = Utils.Helpers.UString.UppercaseWords(funcionary.Name),
+                Password = funcionary.Password,
+                Role = funcionary.Role,
                 DeviceId = string.Empty,
-                UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),
-                CodTypeDocument = funcionaryReq.CodTypeDocument.ToString(),
-                TypeDocument = funcionaryReq.TypeDocument,
-                Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
+                UserName = string.Format("{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument),
+                CodTypeDocument = funcionary.CodTypeDocument.ToString(),
+                TypeDocument = funcionary.TypeDocument,
+                Email = string.Format("{0}@colsubsidio.com", funcionary.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
                 /// OpenTokSessionId = _openTokExternalService.CreateSession(),
                 CountCallAttended = 0,

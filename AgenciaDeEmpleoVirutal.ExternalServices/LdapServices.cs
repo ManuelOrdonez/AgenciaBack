@@ -44,7 +44,10 @@
                             result.code = (int)ServiceResponseCode.IsNotRegisterInLdap;
                             return result;
                         }
-                        else throw ex;
+                        else
+                        {
+                            throw ex;
+                        }
                     }
                     else
                     {
@@ -78,8 +81,11 @@
                         {
                             result.code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;
-                        }                            
-                        else throw ex;
+                        }
+                        else
+                        {
+                            throw ex;
+                        }
                     }
                     else
                     {

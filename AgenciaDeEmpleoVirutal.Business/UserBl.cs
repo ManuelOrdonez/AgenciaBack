@@ -107,86 +107,22 @@
 
             passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
-
-            string passwordUserDecrypt;
             User user = GetUserActive(userReq);
-
-
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
-                if (user == null)
+                if(AuthenticateFuncionary(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                }
-                if (user.State.Equals(UserStates.Disable.ToString()) && user.IntentsLogin == 5)
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                }
-                if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
-                }
-                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
-                if (!(userCalling.Count == 0 || userCalling is null))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
-                }
-
-                passwordUserDecrypt = userReq.DeviceType.Equals("WEB") ?
-                    Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
-                if (!passwordUserDecrypt.Equals(passwordDecrypt))
-                {
-                    user.IntentsLogin = user.IntentsLogin + 1;
-                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                    var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt)
-                    {
-                        return ResponseFail<AuthenticateUserResponse>();
-                    }
-
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
+                    return ResponseFail<AuthenticateUserResponse>(AuthenticateFuncionary(user, userReq, passwordDecrypt));
                 }
             }
             else
             {
-                /// Authenticate in LDAP Service
-                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), passwordDecrypt);
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                if(AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+                    return ResponseFail<AuthenticateUserResponse>(AuthenticateFuncionary(user, userReq, passwordDecrypt));
                 }
-                if (user != null && user.IntentsLogin > 4) /// intentos maximos
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
-                }
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
-                {
-                    user.IntentsLogin = user.IntentsLogin + 1;
-                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                    var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt)
-                    {
-                        return ResponseFail<AuthenticateUserResponse>();
-                    }
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
-
-                if (user == null && result.estado.Equals("0000"))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                }
-                if (user.State.Equals(UserStates.Disable.ToString()))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                }
-
-                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
-                if (!(userCalling.Count == 0 || userCalling is null))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
-                }
-
             }
+
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
             user.Password = userReq.Password;
@@ -196,7 +132,6 @@
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
-
             var response = new List<AuthenticateUserResponse>()
             {
                 new AuthenticateUserResponse()
@@ -208,6 +143,83 @@
                 }
             };
             return ResponseSuccess(response);
+        }
+
+        private ServiceResponseCode AuthenticateFuncionary(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
+        {
+            if (user == null)
+            {
+                return ServiceResponseCode.IsNotRegisterInAz;
+            }
+            if (user.State.Equals(UserStates.Disable.ToString()) && user.IntentsLogin == 5)
+            {
+                return ServiceResponseCode.UserDesable;
+            }
+            if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
+            {
+                return ServiceResponseCode.UserBlock;
+            }
+            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
+            if (!(userCalling.Count == 0 || userCalling is null))
+            {
+                return ServiceResponseCode.UserCalling;
+            }
+
+            var passwordUserDecrypt = userRequest.DeviceType.Equals("WEB") ?
+                Crypto.DecryptWeb(user.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(user.Password, "ColsubsidioAPP");
+            if (!passwordUserDecrypt.Equals(passwordDecrypt))
+            {
+                user.IntentsLogin = user.IntentsLogin + 1;
+                user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                var resultUpt = _userRep.AddOrUpdate(user).Result;
+                if (!resultUpt)
+                {
+                    return ServiceResponseCode.InternalError;
+                }
+                return ServiceResponseCode.IncorrectPassword;
+            }
+            return ServiceResponseCode.Success;
+        }
+
+        private ServiceResponseCode AuthenticateCompanyOrPerson(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
+        {
+            /// Authenticate in LDAP Service
+            var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+            if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+            {
+                return ServiceResponseCode.IsNotRegisterInLdap;
+            }
+            if (user != null && user.IntentsLogin > 4) /// intentos maximos
+            {
+                return ServiceResponseCode.UserBlock;
+            }
+            if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
+            {
+                user.IntentsLogin = user.IntentsLogin + 1;
+                user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                var resultUpt = _userRep.AddOrUpdate(user).Result;
+                if (!resultUpt)
+                {
+                    return ServiceResponseCode.InternalError;
+                }
+                return ServiceResponseCode.IncorrectPassword;
+            }
+
+            if (user == null && result.estado.Equals("0000"))
+            {
+                return ServiceResponseCode.IsNotRegisterInAz;
+            }
+            if (user.State.Equals(UserStates.Disable.ToString()))
+            {
+                return ServiceResponseCode.UserDesable;
+            }
+
+            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
+            if (!(userCalling.Count == 0 || userCalling is null))
+            {
+                return ServiceResponseCode.UserCalling;
+            }
+            return ServiceResponseCode.Success;
         }
 
         public Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq)
@@ -259,8 +271,14 @@
 
             if (!ValRegistriesUser(users, out int pos))
             {
-                if (pos == 0) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                if (pos == 0)
+                {
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
+                }
+                else
+                {
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                } 
             }
 
             string passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
@@ -484,7 +502,6 @@
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
             }
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
-
             var pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, DateTime.Now.ToString("dd-MM-yyyy"));
             var pdi = new PDI()
             {
@@ -511,14 +528,18 @@
                 }
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
+            return SendPDI(pdi, user);
+        }
 
+        private Response<User> SendPDI(PDI pdi, User user)
+        {
             var ContentPDI = GenarateContentPDI(pdi);
             if (ContentPDI is null)
             {
                 return ResponseFail<User>(ServiceResponseCode.ServiceExternalError);
             }
             MemoryStream stream = new MemoryStream(ContentPDI);
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdi.PDIName, "application/pdf") };
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
             {
                 return ResponseFail<User>(ServiceResponseCode.ErrorSendMail);

@@ -15,9 +15,9 @@
         {
         }
 
-        public ResultPdfConvert GenaratePdfContent(RequestPdfConvert conctentHTML)
+        public ResultPdfConvert GenaratePdfContent(RequestPdfConvert contentHTML)
         {
-            string parameters = JsonConvert.SerializeObject(conctentHTML);
+            string parameters = JsonConvert.SerializeObject(contentHTML);
             ResultPdfConvert entidadResultado;
 
             using (WebClient context = GetWebClient())
