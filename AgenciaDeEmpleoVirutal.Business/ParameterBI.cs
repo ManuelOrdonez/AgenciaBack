@@ -9,6 +9,7 @@ namespace AgenciaDeEmpleoVirutal.Business
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace AgenciaDeEmpleoVirutal.Business
             }
             result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var parametsList = new List<ParametersResponse>();
-            result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description }));
+            result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description, State = r.State }));
             return ResponseSuccess(parametsList);
         }
 
@@ -60,7 +61,7 @@ namespace AgenciaDeEmpleoVirutal.Business
                 return ResponseFail<ParametersResponse>(ServiceResponseCode.BadRequest);
             }
             var result = new List<Parameters>();
-            type.ForEach(t => 
+            type.ForEach(t =>
             {
                 var res = _paramentRep.GetByPatitionKeyAsync(t).Result;
                 res.ForEach(p => result.Add(p));
@@ -71,11 +72,11 @@ namespace AgenciaDeEmpleoVirutal.Business
             }
             result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var parametsList = new List<ParametersResponse>();
-            result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description }));
+            result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description , State = r.State }));
             return ResponseSuccess(parametsList);
         }
 
-        public List<string> GetCategories()
+        public Response<List<string>> GetCategories()
         {
             //var result = _paramentRep.GetList().Result;
 
@@ -84,10 +85,38 @@ namespace AgenciaDeEmpleoVirutal.Business
             List<string> result = new List<string>();
             foreach (var item in DistinctItems)
             {
-                result.Add(item.Type);               
+                result.Add(item.Type);
             }
 
-            return result;
+            var listList = new List<List<string>>();
+
+            listList.Add(result);
+
+            return ResponseSuccessList(listList);
+        }
+
+        public Response<ParametersResponse> SetParameterValue(SetParameterValueRequest request)
+        {
+            var result = _paramentRep.GetByPartitionKeyAndRowKeyAsync(request.Category, request.ParameterId).Result;
+
+            if (result == null || result.Count == 0)
+            {
+                return ResponseFail<ParametersResponse>();
+            }
+            var parameter = result.FirstOrDefault();
+            parameter.Value = request.ParameterValue;
+            parameter.Description = request.ParameterDesc;
+            parameter.State = request.ParameterState;
+            var resultUpdate = _paramentRep.AddOrUpdate(parameter);
+
+            ParametersResponse response = new ParametersResponse()
+            {
+                Desc = parameter.Description,
+                Id = parameter.Id,
+                Type = parameter.Type,
+                Value = parameter.Value
+            };
+            return ResponseSuccess(new List<ParametersResponse>() { response });
         }
     }
 }

@@ -216,4 +216,13 @@
   <data name="PDIField_Required" xml:space="preserve">
     <value>Todos los campos del PDI son requeridos</value>
   </data>
+  <data name="Category_Required" xml:space="preserve">
+    <value>Categoria Requerida</value>
+  </data>
+  <data name="IdParameter__Required" xml:space="preserve">
+    <value>Id Parametro Requerido</value>
+  </data>
+  <data name="ValueParameter_Required" xml:space="preserve">
+    <value>Valor parametro rerquerido</value>
+  </data>
 </root>

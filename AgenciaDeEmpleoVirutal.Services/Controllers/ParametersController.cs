@@ -4,6 +4,7 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
@@ -45,10 +46,18 @@ namespace AgenciaDeEmpleoVirutal.Services.Controllers
 
         [HttpGet]
         [Route("GetCategories")]
-        [Produces(typeof(List<string>))]
+        [Produces(typeof(Response<List<string>>))]
         public IActionResult GetCategories()
         {
             return Ok(_ParameterBussines.GetCategories());
+        }
+
+        [HttpPost]
+        [Route("SetParameterValue")]
+        [Produces(typeof(Response<ParametersResponse>))]
+        public IActionResult SetParameterValue([FromBody] SetParameterValueRequest request)
+        {
+            return Ok(_ParameterBussines.SetParameterValue(request));
         }
     }
 }
