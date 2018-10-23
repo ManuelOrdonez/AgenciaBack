@@ -135,7 +135,6 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        //this.Aviable(agent.UserName);
                         agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString()) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
