@@ -8,14 +8,13 @@
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
-    using System.Collections.Generic;
     using System.Net;
 
     public class LdapServices : ClientWebBase<LdapServicesResult<AuthenticateLdapResult>>, ILdapServices
     {
         private readonly string _ldapAíKey;
 
-        public LdapServices(IOptions<UserSecretSettings> options, IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "LdapServices", "autenticacion/usuarios")
+        public LdapServices(IOptions<UserSecretSettings> options) : base(options, "LdapServices", "autenticacion/usuarios")
         {
             _ldapAíKey = options.Value.LdapServiceApiKey;
         }

@@ -11,7 +11,7 @@
 
     public class OpenTokExternalService : ClientWebBase<OpenTokResult>, IOpenTokExternalService
     {
-        public OpenTokExternalService(IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "OpenTokServiceIG", "OpenTok")
+        public OpenTokExternalService(IOptions<UserSecretSettings> options) : base(options, "OpenTokServiceIG", "OpenTok")
         {
         }
 

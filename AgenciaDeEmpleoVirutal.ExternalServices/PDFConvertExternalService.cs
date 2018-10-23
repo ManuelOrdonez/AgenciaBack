@@ -7,12 +7,11 @@
     using AgenciaDeEmpleoVirutal.ExternalServices.Referentials;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
-    using System.Collections.Generic;
     using System.Net;
 
     public class PDFConvertExternalService : ClientWebBase<ResultPdfConvert>, IPDFConvertExternalService
     {
-        public PDFConvertExternalService(IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "PdfConvert", "PdfConvert/GetPdfContent")
+        public PDFConvertExternalService(IOptions<UserSecretSettings> options) : base(options, "PdfConvertService", "PdfConvert/GetPdfContent")
         {
         }
 
