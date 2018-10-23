@@ -156,11 +156,11 @@
                             return ResponseFail();
                         }
                     }
-                    if (callInfo.State == CallStates.Lost.ToString())
-                    {
+                    /// if (callInfo.State == CallStates.Lost.ToString())
+                    /// {
                         this.Aviable(callRequest.UserName);
                         callInfo.UserCall = callRequest.UserName;
-                    }
+                    /// }
                     break;
                 case CallStates.EndByMobile:
                     if (callInfo.State != CallStates.EndByMobile.ToString())
