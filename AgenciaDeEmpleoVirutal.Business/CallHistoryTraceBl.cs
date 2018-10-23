@@ -138,17 +138,14 @@
                     }
                     break;
                 case CallStates.EndByWeb:
-                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
-                    /*
+                    /// callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);                    
                     if (callInfo.State != CallStates.EndByWeb.ToString())
                     {
                         callInfo.DateFinishCall = DateTime.Now;
                         callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;                       
                     }
-                    *//*
                     callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
-                           CallStates.Lost.ToString() : stateInput.ToString();
-                    */
+                           CallStates.Lost.ToString() : stateInput.ToString();                    
                     if (agent != null)
                     {
                         agent.Available = false;                        
@@ -161,19 +158,15 @@
                     callInfo.UserCall = callRequest.UserName;
                     break;
                 case CallStates.EndByMobile:
-                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
-                    /*
+                    /// callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
                     if (callInfo.State != CallStates.EndByMobile.ToString())
                     {
                         callInfo.DateFinishCall = DateTime.Now;
                         callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
  
-                    }
-                    */
-                    /*
+                    }                    
                     callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
-                    */
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -303,10 +296,12 @@
                 };
                 var callInfo = GetCallInfo(getCallReq).Data.First();
                 var caller = _callerRepository.GetAsync(callInfo?.UserCall).Result;
-                CallerInfoResponse response = new CallerInfoResponse();
-                response.Caller = caller;
-                response.OpenTokAccessToken = callInfo.OpenTokAccessToken;
-                response.CallInfo = callInfo;
+                CallerInfoResponse response = new CallerInfoResponse
+                {
+                    Caller = caller,
+                    OpenTokAccessToken = callInfo?.OpenTokAccessToken,
+                    CallInfo = callInfo
+                };
                 return ResponseSuccess(new List<CallerInfoResponse> { response });
             }
         }
