@@ -112,6 +112,21 @@
             };
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="list String"></typeparam>
+        /// <returns></returns>
+        public static Response<List<string>> ResponseSuccessList(List<List<string>> any)
+        {
+            return new Response<List<string>>
+            {
+                CodeResponse = (int)ServiceResponseCode.Success,
+                TransactionMade = true,
+                Message = new List<string> { ResponseMessageHelper.GetParameter(ServiceResponseCode.Success) },
+                Data = any
+            };
+        }
 
         /// <summary>
         /// 

@@ -2,6 +2,7 @@
 namespace AgenciaDeEmpleoVirutal.Contracts.Business
 {
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using System.Collections.Generic;
 
@@ -12,5 +13,9 @@ namespace AgenciaDeEmpleoVirutal.Contracts.Business
         Response<ParametersResponse> GetParametersByType(string type);
 
         Response<ParametersResponse> GetSomeParametersByType(List<string> type);
+
+        Response<List<string>> GetCategories();
+
+        Response<ParametersResponse> SetParameterValue(SetParameterValueRequest request);
     }
 }
