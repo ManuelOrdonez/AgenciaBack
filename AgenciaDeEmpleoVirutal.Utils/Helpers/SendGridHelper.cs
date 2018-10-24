@@ -6,6 +6,9 @@
     using System.Linq;
     using System.Net.Mail;
 
+    /// <summary>
+    /// Send Grid Helper Class
+    /// </summary>
     public static class SendGridHelper
     {
         /// <summary>
@@ -13,7 +16,7 @@
         /// </summary>
         /// <param name="sendMailData">The send mail data.</param>
         /// <returns></returns>
-        public static bool SenMailRelay(SendMailData sendMailData, List<Attachment> attachments)
+        public static bool SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
         {
             var client = new SmtpClient
             {
@@ -23,12 +26,15 @@
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
-            };
+                Credentials = new System.Net.NetworkCredential(sendMailData?.EmailAddressFrom, sendMailData.SendMailApiKey)
+            };  
             var mail = new MailMessage();
             if (attachments.Any())
             {
-                attachments.ForEach(at => mail.Attachments.Add(at));
+                foreach (var item in attachments)
+                {
+                    mail.Attachments.Add(item);
+                }
             }
             mail.To.Add(new MailAddress(sendMailData.EmailAddressTo));
             mail.From = new MailAddress(sendMailData.EmailAddressFrom, sendMailData.NameEmail);

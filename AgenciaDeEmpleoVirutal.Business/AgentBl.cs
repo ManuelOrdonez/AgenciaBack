@@ -15,65 +15,55 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading;
 
+    /// <summary>
+    /// Agent Business Logic
+    /// </summary>
     public class AgentBl : BusinessBase<Agent>, IAgentBl
-
     {
-        private IGenericRep<User> _userRepository;
+        /// <summary>
+        /// Users repository
+        /// </summary>
+        private readonly IGenericRep<User> _userRepository;
 
-        private IGenericRep<BusyAgent> _busyAgentRepository;
+        /// <summary>
+        /// Busy Agents repository
+        /// </summary>
+        private readonly IGenericRep<BusyAgent> _busyAgentRepository;
 
-        private IGenericRep<User> _agentRepository;
+        /// <summary>
+        /// Agents Repository
+        /// </summary>
+        private readonly IGenericRep<User> _agentRepository;
 
-        private IOpenTokExternalService _openTokExternalService;
+        /// <summary>
+        /// Interface of OpenTok External Service
+        /// </summary>
+        private readonly IOpenTokExternalService _openTokExternalService;
 
-        private IGenericQueue _queue;
-
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="AgentRepository"></param>
+        /// <param name="userRepository"></param>
+        /// <param name="openTokService"></param>
+        /// <param name="busyAgentRepository"></param>
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
-            IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
+            IGenericRep<BusyAgent> busyAgentRepository)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
-            _queue = queue;
             _busyAgentRepository = busyAgentRepository;
         }
 
-        /*
-        public Response<CreateAgentResponse> Create(CreateAgentRequest request)
-        {
-            var errorMessages = request.Validate().ToList();
-            if (errorMessages.Count > 0)
-            {
-                return ResponseBadRequest<CreateAgentResponse>(errorMessages);
-            }
-
-            // verificar Row Key de agente - username noDoc_coDoc
-            var AgentInfo = new User
-            {
-                Name = request.Name,
-                LastName = request.LastName,
-                Email = request.Email,
-                UserName = request.UserName
-            };
-            //AgentInfo.OpenTokSessionId = _openTokExternalService.CreateSession();
-
-            //if (string.IsNullOrEmpty(AgentInfo.OpenTokSessionId))
-            //{
-            //    return ResponseFail<CreateAgentResponse>();
-            //}
-
-            if (!_agentRepository.AddOrUpdate(AgentInfo).Result)
-            {
-                return ResponseFail<CreateAgentResponse>();
-            }
-            return ResponseSuccess(new List<CreateAgentResponse>());
-        }
-        */
-
         private static readonly Object obj = new Object();
 
+        /// <summary>
+        /// Method to Get any Agent Available
+        /// </summary>
+        /// <param name="agentAvailableRequest"></param>
+        /// <returns></returns>
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
             var errorMessages = agentAvailableRequest.Validate().ToList();
@@ -157,14 +147,18 @@
             }
         }
 
-
+        /// <summary>
+        /// Method to identify if an agent is aviable
+        /// </summary>
+        /// <param name="RequestAviable"></param>
+        /// <returns></returns>
         public Response<User> ImAviable(AviableUserRequest RequestAviable)
         {
             if (string.IsNullOrEmpty(RequestAviable.UserName))
             {
                 return ResponseFail<User>(ServiceResponseCode.BadRequest);
             }
-            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
+            var user = _agentRepository.GetAsync(RequestAviable?.UserName).Result;
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 

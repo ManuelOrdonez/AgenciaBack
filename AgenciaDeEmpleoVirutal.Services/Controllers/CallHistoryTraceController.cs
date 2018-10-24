@@ -6,19 +6,34 @@
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Call History Trace Controller
+    /// </summary>
     [Produces("application/json")]
     [Route("api/CallHistoryTrace")]
     [EnableCors("CorsPolitic")]
     [Authorize]
     public class CallHistoryTraceController : Controller
     {
-        private ICallHistoryTrace _callHistoryBusiness;
+        /// <summary>
+        /// Interface of CallHistoryTrace business
+        /// </summary>
+        private readonly ICallHistoryTrace _callHistoryBusiness;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="callHistoryBusiness"></param>
         public CallHistoryTraceController(ICallHistoryTrace callHistoryBusiness)
         {
             _callHistoryBusiness = callHistoryBusiness;
         }
 
+        /// <summary>
+        /// Oparation to Trace Call in Table Storage
+        /// </summary>
+        /// <param name="call"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("TraceCall")]
         public IActionResult TraceCall([FromBody] SetCallTraceRequest call)
@@ -26,6 +41,11 @@
             return Ok(_callHistoryBusiness.SetCallTrace(call));
         }
 
+        /// <summary>
+        /// Operation to Get Call Info
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("GetCallInfo")]
         public IActionResult GetCallInfo([FromBody] GetCallRequest request)
@@ -33,6 +53,11 @@
             return Ok(_callHistoryBusiness.GetCallInfo(request));
         }
 
+        /// <summary>
+        /// Operation to Get All Calls Not Managed
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GetAllCallsNotManaged")]
         public IActionResult GetAllCallsNotManaged(GetCallRequest request)
@@ -40,6 +65,11 @@
             return Ok(_callHistoryBusiness.GetAllCallsNotManaged(request));
         }
 
+        /// <summary>
+        /// Operation to Call Quality
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("CallQuality")]
         public IActionResult CallQuality([FromBody] QualityCallRequest request)
@@ -47,6 +77,11 @@
             return Ok(_callHistoryBusiness.CallQuality(request));
         }
 
+        /// <summary>
+        /// Operation to Get Caller Info
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("GetCallerInfo")]
         public IActionResult GetCallerInfo(string request)
@@ -54,6 +89,11 @@
             return Ok(_callHistoryBusiness.GetCallerInfo(request));
         }
 
+        /// <summary>
+        /// Operation to Get All User Call
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("GetAllUserCall")]
         public IActionResult GetAllUserCall([FromBody] GetAllUserCallRequest request)

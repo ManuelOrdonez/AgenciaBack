@@ -21,31 +21,59 @@
     using System.Linq;
     using System.Net.Mail;
 
-    public class UserBl : BusinessBase<User>, IUserBl, IDisposable
+    /// <summary>
+    /// User Business Logic
+    /// </summary>
+    public class UserBl : BusinessBase<User>, IUserBl
     {
-        private IPDFConvertExternalService _pdfConvertService;
+        /// <summary>
+        /// Interface to pdf convert service
+        /// </summary>
+        private readonly IPDFConvertExternalService _pdfConvertService;
 
-        private IGenericRep<BusyAgent> _busyAgentRepository;
+        /// <summary>
+        /// Busy Agent repository
+        /// </summary>
+        private readonly IGenericRep<BusyAgent> _busyAgentRepository;
 
-        private IGenericRep<PDI> _pdiRep;
+        /// <summary>
+        /// PDI repository
+        /// </summary>
+        private readonly IGenericRep<PDI> _pdiRep;
 
-        private IGenericRep<User> _userRep;
+        /// <summary>
+        /// User repository
+        /// </summary>
+        private readonly IGenericRep<User> _userRep;
 
-        private ILdapServices _LdapServices;
+        /// <summary>
+        /// Interface of ldap services
+        /// </summary>
+        private readonly ILdapServices _LdapServices;
 
-        private ISendGridExternalService _sendMailService;
+        /// <summary>
+        /// interface to send mails
+        /// </summary>
+        private readonly ISendGridExternalService _sendMailService;
 
-        private IOpenTokExternalService _openTokService;
+        /// <summary>
+        /// interface of opentok services
+        /// </summary>
+        private readonly IOpenTokExternalService _openTokService;
 
-        private IGenericQueue _queue;
+        /// <summary>
+        /// Class to enctryp and decript
+        /// </summary>
+        private readonly Crypto _crypto;
 
-        private Crypto _crypto;
-
+        /// <summary>
+        /// User Secret Settings 
+        /// </summary>
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository,
+                        IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository,
                         IPDFConvertExternalService pdfConvertService)
         {
             _pdfConvertService = pdfConvertService;
@@ -53,16 +81,20 @@
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
-            _settings = options.Value;
+            _settings = options?.Value;
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
-            _queue = queue;
             _busyAgentRepository = busyAgentRepository;
         }
 
+        /// <summary>
+        /// Method to identify is an user is authenticate
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
         {
-            if (string.IsNullOrEmpty(deviceId.DeviceId))
+            if (string.IsNullOrEmpty(deviceId?.DeviceId))
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
             }
@@ -95,6 +127,11 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Authenticate User
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -110,16 +147,16 @@
             User user = GetUserActive(userReq);
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
-                if(AuthenticateFuncionary(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
+                if(AuthenticateFuncionary(user, passwordDecrypt) != ServiceResponseCode.Success)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(AuthenticateFuncionary(user, userReq, passwordDecrypt));
+                    return ResponseFail<AuthenticateUserResponse>(AuthenticateFuncionary(user, passwordDecrypt));
                 }
             }
             else
             {
                 if(AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(AuthenticateFuncionary(user, userReq, passwordDecrypt));
+                    return ResponseFail<AuthenticateUserResponse>(AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt));
                 }
             }
 
@@ -145,7 +182,13 @@
             return ResponseSuccess(response);
         }
 
-        private ServiceResponseCode AuthenticateFuncionary(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
+        /// <summary>
+        /// Method to Authenticate Funcionary
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
+        private ServiceResponseCode AuthenticateFuncionary(User user, string passwordDecrypt)
         {
             if (user == null)
             {
@@ -165,8 +208,8 @@
                 return ServiceResponseCode.UserCalling;
             }
 
-            var passwordUserDecrypt = userRequest.DeviceType.Equals("WEB") ?
-                Crypto.DecryptWeb(user.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(user.Password, "ColsubsidioAPP");
+            var passwordUserDecrypt = /* userRequest.DeviceType.Equals("WEB") ?*/
+                Crypto.DecryptWeb(user.Password, "ColsubsidioAPP"); /// : Crypto.DecryptPhone(user.Password, "ColsubsidioAPP");
             if (!passwordUserDecrypt.Equals(passwordDecrypt))
             {
                 user.IntentsLogin = user.IntentsLogin + 1;
@@ -181,10 +224,17 @@
             return ServiceResponseCode.Success;
         }
 
+        /// <summary>
+        /// Method to Authenticate Company Or Person
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userRequest"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
         private ServiceResponseCode AuthenticateCompanyOrPerson(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
         {
             /// Authenticate in LDAP Service
-            var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+            var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest?.NoDocument, userRequest.TypeDocument), passwordDecrypt);
             if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
             {
                 return ServiceResponseCode.IsNotRegisterInLdap;
@@ -222,6 +272,11 @@
             return ServiceResponseCode.Success;
         }
 
+        /// <summary>
+        /// Method to identify if an user is register
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         public Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -229,7 +284,7 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq?.NoDocument, userReq.TypeDocument)).Result;
 
             if (lResult.Count == 0)
             {
@@ -259,6 +314,11 @@
             });
         }
 
+        /// <summary>
+        /// Methos to register user
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -267,7 +327,7 @@
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
 
-            var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
+            var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq?.NoDocument, userReq.CodTypeDocument)).Result;
 
             if (!ValRegistriesUser(users, out int pos))
             {
@@ -384,9 +444,14 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Aviable User
+        /// </summary>
+        /// <param name="RequestAviable"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> AviableUser(AviableUserRequest RequestAviable)
         {
-            String[] user = RequestAviable.UserName.Split('_');
+            String[] user = RequestAviable?.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
                 NoDocument = user[0],
@@ -450,6 +515,11 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Log Out
+        /// </summary>
+        /// <param name="logOurReq"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
         {
             var errorsMessage = logOurReq.Validate().ToList();
@@ -457,7 +527,7 @@
             {
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
-            var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
+            var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq?.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null)
             {
                 return ResponseFail<AuthenticateUserResponse>();
@@ -473,6 +543,11 @@
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
 
+        /// <summary>
+        /// Method to Get User Info
+        /// </summary>
+        /// <param name="UserName"></param>
+        /// <returns></returns>
         public Response<User> GetUserInfo(string UserName)
         {
             if (string.IsNullOrEmpty(UserName))
@@ -483,6 +558,11 @@
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
+        /// <summary>
+        /// Method to Create PDI
+        /// </summary>
+        /// <param name="PDIRequest"></param>
+        /// <returns></returns>
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
             var errorsMessage = PDIRequest.Validate().ToList();
@@ -490,7 +570,7 @@
             {
                 return ResponseBadRequest<User>(errorsMessage);
             }
-            var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
+            var userStorage = _userRep.GetAsyncAll(PDIRequest?.CallerUserName).Result;
             if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
             {
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);
@@ -531,10 +611,16 @@
             return SendPDI(pdi, user);
         }
 
+        /// <summary>
+        /// Method to send PDI
+        /// </summary>
+        /// <param name="pdi"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         private Response<User> SendPDI(PDI pdi, User user)
         {
             var ContentPDI = GenarateContentPDI(pdi);
-            if (ContentPDI is null)
+            if (ContentPDI.Count() == 1)
             {
                 return ResponseFail<User>(ServiceResponseCode.ServiceExternalError);
             }
@@ -552,6 +638,11 @@
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
+        /// <summary>
+        /// Method to Set Field Of PDI
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         private string SetFieldOfPDI(string field)
         {
             string fieldAux = string.Empty;
@@ -565,6 +656,11 @@
             return UString.CapitalizeFirstLetter(fieldAux);
         }
 
+        /// <summary>
+        /// Method to Genarate Content of PDI
+        /// </summary>
+        /// <param name="pdi"></param>
+        /// <returns></returns>
         private byte[] GenarateContentPDI(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert
@@ -581,7 +677,7 @@
                 var content = _pdfConvertService.GenaratePdfContent(RequestPDF).ContentPDF;
                 if (content is null)
                 {
-                    return null;
+                    return new byte[0];
                 }
                 result = content;
             }
@@ -592,6 +688,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Method to Set Authentication Token
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         private AuthenticationToken SetAuthenticationToken(string username)
         {
             return new AuthenticationToken()
@@ -602,6 +703,12 @@
             };
         }
 
+        /// <summary>
+        /// Method to Validate Register User
+        /// </summary>
+        /// <param name="lUser"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         private bool ValRegistriesUser(List<User> lUser, out int position)
         {
             bool result = true;
@@ -618,6 +725,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Method to Get User Active
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         private User GetUserActive(AuthenticateUserRequest userReq)
         {
             User user = null;
@@ -636,6 +748,11 @@
             return user;
         }
 
+        /// <summary>
+        /// Method to Get Agent Active
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         private User GetAgentActive(AuthenticateUserRequest userReq)
         {
             User user = null;
@@ -648,14 +765,6 @@
                 }
             }
             return user;
-        }
-
-        public void Dispose()
-        {
-            if (this._crypto != null)
-            {
-                this._crypto.Dispose();
-            }
         }
     }
 }

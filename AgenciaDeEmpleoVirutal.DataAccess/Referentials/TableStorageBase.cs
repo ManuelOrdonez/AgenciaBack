@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-
-namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
+﻿namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
 {
-    using System;
+    using Microsoft.Extensions.Options;
     using System.Linq;
     using System.Threading.Tasks;
     using Microsoft.WindowsAzure.Storage;
@@ -11,8 +9,11 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
     using Entities.Referentials;
     using System.Collections.Generic;
     using Entities;
-    using Microsoft.WindowsAzure.Storage.Queue;
 
+    /// <summary>
+    /// Table Storage Base
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class TableStorageBase<T> : IGenericRep<T> where T : TableEntity, new()
     {
         /// <summary>
@@ -30,7 +31,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// </summary>
         public TableStorageBase(IOptions<UserSecretSettings> options)
         {
-            _tableStorageSettings = options.Value;
+            _tableStorageSettings = options?.Value;
             CreateTableReference();
             CreateTableInStorage().GetAwaiter();
         }
@@ -86,28 +87,39 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <param name="entity">Device.</param>
         public virtual async Task<bool> AddOrUpdate(T entity)
         {
-            entity.PartitionKey = entity.PartitionKey.ToLower();
+            entity.PartitionKey = entity?.PartitionKey.ToLower();
             entity.RowKey = entity.RowKey.ToLower();
             var operation = TableOperation.InsertOrMerge(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
 
+        /// <summary>
+        /// Add row to table T
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public virtual async Task<bool> Add(T entity)
         {
-            entity.PartitionKey = entity.PartitionKey.ToLower();
+            entity.PartitionKey = entity?.PartitionKey.ToLower();
             entity.RowKey = entity.RowKey.ToLower();
             var operation = TableOperation.Insert(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
 
+        /// <summary>
+        /// Delete row of table T
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteRowAsync(T entity)
         {
             var operation = TableOperation.Delete(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
         }
+
         /// <inheritdoc />
         /// <summary>
         /// Gets the person.
@@ -116,8 +128,8 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <param name="rowKey">User name.</param>
         public async Task<T> GetAsync(string rowKey)
         {
-            //await CreateTableInStorage();
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower()));
+            await CreateTableInStorage();
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower()));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results.FirstOrDefault();
             return entity;
         }
@@ -129,8 +141,8 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <param name="rowKey">User name.</param>
         public async Task<List<T>> GetAsyncAll(string rowKey)
         {
-            //await CreateTableInStorage();
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower()));
+            await CreateTableInStorage();
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower()));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entity;
         }
@@ -143,8 +155,8 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <returns></returns>
         public async Task<List<T>> GetByPatitionKeyAsync(string partitionKey)
         {
-            //await CreateTableInStorage();
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey /*.ToLower()*/));
+            await CreateTableInStorage();
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey?.ToLower()));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
@@ -158,7 +170,7 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <returns></returns>
         public async Task<List<T>> GetByPartitionKeyAndRowKeyAsync(string partitionKey, string rowKey)
         {
-            //await CreateTableInStorage();
+            await CreateTableInStorage();
             var filterOne = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower());
             var filterTwo = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower());
             var query = new TableQuery<T>().Where(TableQuery.CombineFilters(filterOne, TableOperators.And, filterTwo));
@@ -175,15 +187,20 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
         /// <returns></returns>
         public async Task<List<T>> GetSomeAsync(string column, string value)
         {
-            //await CreateTableInStorage();
+            await CreateTableInStorage();
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition(column, QueryComparisons.Equal, value));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
 
-        public async Task<List<T>> GetSomeAsync(List<ConditionParameter> conditionParameters)        
+        /// <summary>
+        /// Get Some Rows of table T
+        /// </summary>
+        /// <param name="conditionParameters"></param>
+        /// <returns></returns>
+        public async Task<List<T>> GetSomeAsync(IList<ConditionParameter> conditionParameters)        
         {
-            //await CreateTableInStorage();
+            await CreateTableInStorage();
             var query = new TableQuery<T>();
             List<string> conditions = new List<string>();
             string qry = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.NotEqual, string.Empty);
@@ -217,10 +234,12 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             return entities;
         }
 
+        /// <summary>
+        /// Get List of Table T
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<T>> GetList()
-        {
-            
-            //Query
+        {            
             TableQuery<T> query = new TableQuery<T>();
 
             List<T> results = new List<T>();
@@ -236,8 +255,6 @@ namespace AgenciaDeEmpleoVirutal.DataAccess.Referentials
             } while (continuationToken != null);
 
             return results;
-        }
-
-       
+        }       
     }
 }

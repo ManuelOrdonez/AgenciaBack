@@ -7,12 +7,17 @@
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
 
+    /// <summary>
+    /// Reset Password Controller
+    /// </summary>
     [Produces("application/json")]
     [Route("api/Reset")]
     [EnableCors("CorsPolitic")]
     public class ResetPwdController : Controller
     {
-
+        /// <summary>
+        /// Interface of Reset password business logic
+        /// </summary>
         private readonly IResetBI _ResetBussines;
 
         public ResetPwdController(IResetBI ResetBussines)
@@ -20,6 +25,11 @@
             _ResetBussines = ResetBussines;
         }
 
+        /// <summary>
+        /// Operation to Register Reset Password
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("RegisterResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]
@@ -28,6 +38,11 @@
             return Ok(_ResetBussines.RegisterResetPassword(id));
         }
 
+        /// <summary>
+        /// Operation to Validate Reset Password
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("ValidateResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]
@@ -36,6 +51,11 @@
             return Ok(_ResetBussines.ValidateResetPassword(token));
         }
 
+        /// <summary>
+        /// Operation to Reset Password
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("ResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]

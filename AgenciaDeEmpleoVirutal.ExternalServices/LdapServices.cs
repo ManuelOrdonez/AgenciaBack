@@ -10,15 +10,31 @@
     using Newtonsoft.Json;
     using System.Net;
 
+    /// <summary>
+    /// Ldap Services Class
+    /// </summary>
     public class LdapServices : ClientWebBase<LdapServicesResult<AuthenticateLdapResult>>, ILdapServices
     {
+        /// <summary>
+        /// Api key of Ldap Services
+        /// </summary>
         private readonly string _ldapAíKey;
 
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="options"></param>
         public LdapServices(IOptions<UserSecretSettings> options) : base(options, "LdapServices", "autenticacion/usuarios")
         {
-            _ldapAíKey = options.Value.LdapServiceApiKey;
+            _ldapAíKey = options?.Value.LdapServiceApiKey;
         }
 
+        /// <summary>
+        /// Operation to Authenticate Users in LDAP
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
         public LdapServicesResult<AuthenticateLdapResult> Authenticate(string userName, string pass)
         {
             var webClient = new WebClient();
@@ -58,6 +74,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Operation to Register users in LDAP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request)
         {
             var webClient = new WebClient();
@@ -96,6 +117,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Operation to Password Change Request in LDAP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public LdapServicesResult<AuthenticateLdapResult> PasswordChangeRequest(PasswordChangeRequest request)
         {
             var webClient = new WebClient();
@@ -112,6 +138,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Operation to Password Change Confirm in LDAP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public LdapServicesResult<AuthenticateLdapResult> PasswordChangeConfirm(PasswordChangeConfirmRequests request)
         {
             var webClient = new WebClient();
@@ -127,6 +158,10 @@
             return result;
         }
 
+        /// <summary>
+        /// Method to Set Headers of Ldap Services
+        /// </summary>
+        /// <param name="webClient"></param>
         private void SetHeadersLdapService(WebClient webClient)
         {
             webClient.Headers.Add("Content-Type", "application/json");

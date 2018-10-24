@@ -14,16 +14,37 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Call History Trace Business logic
+    /// </summary>
     public class CallHistoryTraceBl : BusinessBase<CallHistoryTrace>, ICallHistoryTrace
     {
+        /// <summary>
+        /// Busy Agents Reposotory
+        /// </summary>
         private readonly IGenericRep<BusyAgent> _busyAgentRepository;
 
+        /// <summary>
+        /// Call History Trace Repository
+        /// </summary>
         private readonly IGenericRep<CallHistoryTrace> _callHistoryRepository;
 
+        /// <summary>
+        /// Users Repository
+        /// </summary>
         private readonly IGenericRep<User> _callerRepository;
 
+        /// <summary>
+        /// Agents Repository
+        /// </summary>
         private readonly IGenericRep<User> _agentRepository;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="callHistoryRepository"></param>
+        /// <param name="agentRepository"></param>
+        /// <param name="busyAgentRepository"></param>
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository)
         {
@@ -33,6 +54,11 @@
             _busyAgentRepository = busyAgentRepository;
         }
 
+        /// <summary>
+        /// Method to Get Call Info
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<CallHistoryTrace> GetCallInfo(GetCallRequest request)
         {
             var errorMessages = request.Validate().ToList();
@@ -43,7 +69,7 @@
 
             var parameters = new List<ConditionParameter>
             {
-                new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower() },
+                new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request?.OpenTokSessionId.ToLower() },
                 new ConditionParameter{ColumnName="State", Condition = "eq" ,Value= request.State }
             };
             var call = _callHistoryRepository.GetSomeAsync(parameters).Result?
@@ -54,6 +80,11 @@
             });
         }
 
+        /// <summary>
+        /// Method to Get All Calls Not Managed
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<CallHistoryTrace>> GetAllCallsNotManaged(GetCallRequest request)
         {
             var errorMessages = request.Validate().ToList();
@@ -70,10 +101,15 @@
             return ResponseSuccess(new List<List<CallHistoryTrace>> { call });
         }
 
+        /// <summary>
+        /// Method to Call Quality
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<CallHistoryTrace>> CallQuality(QualityCallRequest request)
         {
             var errorMessages = request.Validate().ToList();
-            var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request.SessionId, request.TokenId).Result;
+            var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request?.SessionId, request.TokenId).Result;
             if (callTrace.Count == 0)
             {
                 return ResponseFail<List<CallHistoryTrace>>();
@@ -103,7 +139,7 @@
 
             var existsCall = GetCallInfo(new GetCallRequest()
             {
-                OpenTokSessionId = callRequest.OpenTokSessionId,
+                OpenTokSessionId = callRequest?.OpenTokSessionId,
                 State = CallStates.Begun.ToString()
             }).Data.FirstOrDefault();
 
@@ -138,14 +174,7 @@
                     }
                     break;
                 case CallStates.EndByWeb:
-                    /// callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);                    
-                    if (callInfo.State != CallStates.EndByWeb.ToString())
-                    {
-                        callInfo.DateFinishCall = DateTime.Now;
-                        callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;                       
-                    }
-                    callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
-                           CallStates.Lost.ToString() : stateInput.ToString();                    
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput); 
                     if (agent != null)
                     {
                         agent.Available = false;                        
@@ -158,15 +187,7 @@
                     callInfo.UserCall = callRequest.UserName;
                     break;
                 case CallStates.EndByMobile:
-                    /// callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
-                    if (callInfo.State != CallStates.EndByMobile.ToString())
-                    {
-                        callInfo.DateFinishCall = DateTime.Now;
-                        callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
- 
-                    }                    
-                    callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
-                           CallStates.Lost.ToString() : stateInput.ToString();
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);                                 
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -188,16 +209,21 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     break;
             }
-            if (callInfo.Trace != "Logout")
+            if (callInfo.Trace != "Logout" && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
             {
-                if (!_callHistoryRepository.AddOrUpdate(callInfo).Result)
-                {
-                    return ResponseFail();
-                }
+                return ResponseFail();
             }
             return ResponseSuccess();
         }
 
+        /// <summary>
+        /// Method to trace Call Ended
+        /// </summary>
+        /// <param name="TypeCall"></param>
+        /// <param name="callInfo"></param>
+        /// <param name="callRequest"></param>
+        /// <param name="stateInput"></param>
+        /// <returns></returns>
         private CallHistoryTrace CallEnded(CallStates TypeCall, CallHistoryTrace callInfo, SetCallTraceRequest callRequest, CallStates stateInput)
         {
             if (callInfo.State != TypeCall.ToString())
@@ -210,6 +236,10 @@
             return callInfo;
         }
 
+        /// <summary>
+        /// Methos to vacate agent
+        /// </summary>
+        /// <param name="UserName"></param>
         private void Aviable(string UserName)
         {
             string type = string.Empty;
@@ -230,6 +260,11 @@
             }
         }
 
+        /// <summary>
+        /// Method to Get Default Call History Trace
+        /// </summary>
+        /// <param name="callRequest"></param>
+        /// <returns></returns>
         private CallHistoryTrace GetDefaultCallHistoryTrace(SetCallTraceRequest callRequest)
         {
             var call = GetCallForAnyManage(callRequest.OpenTokSessionId,
@@ -253,6 +288,11 @@
             };
         }
 
+        /// <summary>
+        /// Method to Get All User Call
+        /// </summary>
+        /// <param name="getAllUserCallRequest"></param>
+        /// <returns></returns>
         public Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest)
         {
             GetAllUserCallResponse response = new GetAllUserCallResponse();
@@ -272,15 +312,26 @@
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
             response.Calls = calls;
-            return ResponseSuccess(new List<GetAllUserCallResponse> { response }); ;
+            return ResponseSuccess(new List<GetAllUserCallResponse> { response });
         }
 
+        /// <summary>
+        /// Method to Get Call For Any Manage
+        /// </summary>
+        /// <param name="OpenTokSessionId"></param>
+        /// <param name="OpenTokAccessToken"></param>
+        /// <returns></returns>
         private CallHistoryTrace GetCallForAnyManage(string OpenTokSessionId, string OpenTokAccessToken)
         {
             return _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(OpenTokSessionId, OpenTokAccessToken).Result
                 .OrderByDescending(t => t.DateCall).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Method to Get Caller Info
+        /// </summary>
+        /// <param name="OpenTokSessionId"></param>
+        /// <returns></returns>
         public Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId)
         {
             if (string.IsNullOrEmpty(OpenTokSessionId))

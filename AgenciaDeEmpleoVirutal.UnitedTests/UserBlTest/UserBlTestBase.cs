@@ -15,7 +15,6 @@
     public class UserBlTestBase : BusinessBase<User>
     {
         protected Mock<IPDFConvertExternalService> PdfConvertService;
-        protected Mock<IGenericQueue> QueueMock;
 
         protected Mock<IGenericRep<PDI>> PDIRepMoq;
 
@@ -51,7 +50,6 @@
 
         public UserBlTestBase()
         {
-            QueueMock = new Mock<IGenericQueue>();
             PDIRepMoq = new Mock<IGenericRep<PDI>>();
             options = Options.Create(new UserSecretSettings());
             _settings = options.Value;
@@ -66,7 +64,6 @@
                 options, 
                 _openTokExternalService.Object,
                 PDIRepMoq.Object,
-                QueueMock.Object,
                 BusyRepMoq.Object,
                 PdfConvertService.Object);
             LoadEntitiesMock();
