@@ -55,6 +55,10 @@
         /// <returns></returns>
         public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionary)
         {
+            if (funcionary == null)
+            {
+                throw new ArgumentNullException("funcionary");
+            }
             string message = string.Empty;
             var errorsMesage = funcionary.Validate().ToList();
             if (errorsMesage.Count > 0)
@@ -83,11 +87,11 @@
 
             var funcionaryEntity = new User()
             {
-                Position = funcionary?.Position,
+                Position = funcionary.Position,
                 State = funcionary.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
                 NoDocument = funcionary.NoDocument,
-                LastName = Utils.Helpers.UString.UppercaseWords(funcionary.LastName),
-                Name = Utils.Helpers.UString.UppercaseWords(funcionary.Name),
+                LastName = UString.UppercaseWords(funcionary.LastName),
+                Name = UString.UppercaseWords(funcionary.Name),
                 Password = funcionary.Password,
                 Role = funcionary.Role,
                 DeviceId = string.Empty,
