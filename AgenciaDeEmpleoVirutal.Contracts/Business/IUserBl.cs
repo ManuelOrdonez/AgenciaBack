@@ -21,8 +21,10 @@
 
         Response<AuthenticateUserResponse> AviableUser(AviableUserRequest RequestAviable);
 
-        Response<User> CreatePDI(PDIRequest PDIRequest);
+        Response<User> UpdateUserInfo(UserUdateRequest userRequest);
 
-        Response<User> GetPDIsFromUser(string userName);
+        /// Response<User> CreatePDI(PDIRequest PDIRequest);
+
+        /// Response<User> GetPDIsFromUser(string userName);
     }
 }

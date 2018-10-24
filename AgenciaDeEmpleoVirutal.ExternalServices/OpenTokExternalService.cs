@@ -21,7 +21,7 @@
 
             using (WebClient context = GetWebClient())
             {
-                resul.Data = JsonConvert.DeserializeObject<string>(context.DownloadString($"{Url}/GetSesssionId"));
+                resul.Data = JsonConvert.DeserializeObject<string>(context.DownloadString($"{Url}/GetSesssionId")); 
             }
 
             return resul;

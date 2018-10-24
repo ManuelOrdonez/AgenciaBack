@@ -198,4 +198,7 @@
   <data name="UserNotFound" xml:space="preserve">
     <value>Usuario no encontrado.</value>
   </data>
+  <data name="UserWithoutPDI" xml:space="preserve">
+    <value>El usuario no tiene PDI asociado</value>
+  </data>
 </root>

@@ -11,7 +11,7 @@
     [Produces("application/json")]
     [Route("api/Admin")]
     [EnableCors("CorsPolitic")]
-    [Authorize]
+    /// [Authorize]
     public class AdminController : Controller
     {
         private readonly IAdminBl _AdminBussines;

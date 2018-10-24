@@ -8,7 +8,6 @@
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
-    using DinkToPdf.Contracts;
     using Microsoft.Extensions.Options;
     using Moq;
     using System.Collections.Generic;
@@ -16,8 +15,6 @@
     public class UserBlTestBase : BusinessBase<User>
     {
         protected Mock<IGenericQueue> QueueMock;
-
-        protected Mock<IConverter> ConverterInterface;
 
         protected Mock<IGenericRep<PDI>> PDIRepMoq;
 
@@ -54,7 +51,6 @@
         public UserBlTestBase()
         {
             QueueMock = new Mock<IGenericQueue>();
-            ConverterInterface = new Mock<IConverter>();
             PDIRepMoq = new Mock<IGenericRep<PDI>>();
             options = Options.Create(new UserSecretSettings());
             _settings = options.Value;
@@ -68,7 +64,6 @@
                 options, 
                 _openTokExternalService.Object,
                 PDIRepMoq.Object, 
-                ConverterInterface.Object,
                 QueueMock.Object,
                 BusyRepMoq.Object);
             LoadEntitiesMock();

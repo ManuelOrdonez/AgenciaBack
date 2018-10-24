@@ -82,13 +82,12 @@
         }
 
         [HttpPost]
-        [Route("CreatePDI")]
+        [Route("UpdateUser")]
         [Authorize]
         [Produces(typeof(Response<User>))]
-        public IActionResult CreatePDI([FromBody] PDIRequest pdiRequest)
+        public IActionResult UpdateUser([FromBody] UserUdateRequest RequestUser)
         {
-            return Ok(_UserBussines.CreatePDI(pdiRequest));
+            return Ok(_UserBussines.UpdateUserInfo(RequestUser));
         }
-
     }
 }
