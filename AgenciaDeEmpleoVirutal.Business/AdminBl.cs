@@ -12,6 +12,7 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -82,7 +83,7 @@
 
             var funcionaryEntity = new User()
             {
-                Position = funcionary.Position,
+                Position = funcionary?.Position,
                 State = funcionary.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
                 NoDocument = funcionary.NoDocument,
                 LastName = Utils.Helpers.UString.UppercaseWords(funcionary.LastName),
@@ -166,13 +167,17 @@
         /// <returns></returns>
         public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
+            if (funcionaryReq == null)
+            {
+                throw new ArgumentNullException("funcionaryReq");
+            }
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0)
             {
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
 
-            List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq?.NoDocument, funcionaryReq?.TypeDocument)).Result;
+            List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             User funcionary = null;
             User people = null;
             GetUserFuncionary(funcionaries, out funcionary, out people);
@@ -182,8 +187,8 @@
             }
 
             funcionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
-            funcionary.Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name);
-            funcionary.LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName);
+            funcionary.Name = UString.UppercaseWords(funcionaryReq.Name);
+            funcionary.LastName = UString.UppercaseWords(funcionaryReq.LastName);
             funcionary.Role = funcionaryReq.Role;
             funcionary.Position = funcionaryReq.Position;
             funcionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();

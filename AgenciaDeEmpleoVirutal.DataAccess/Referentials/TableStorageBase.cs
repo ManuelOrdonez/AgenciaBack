@@ -128,7 +128,7 @@
         /// <param name="rowKey">User name.</param>
         public async Task<T> GetAsync(string rowKey)
         {
-            await CreateTableInStorage();
+            await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower()));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results.FirstOrDefault();
             return entity;
@@ -141,7 +141,7 @@
         /// <param name="rowKey">User name.</param>
         public async Task<List<T>> GetAsyncAll(string rowKey)
         {
-            await CreateTableInStorage();
+            await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower()));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entity;
@@ -155,7 +155,7 @@
         /// <returns></returns>
         public async Task<List<T>> GetByPatitionKeyAsync(string partitionKey)
         {
-            await CreateTableInStorage();
+            await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey?.ToLower()));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
@@ -170,7 +170,7 @@
         /// <returns></returns>
         public async Task<List<T>> GetByPartitionKeyAndRowKeyAsync(string partitionKey, string rowKey)
         {
-            await CreateTableInStorage();
+            await CreateTableInStorage().ConfigureAwait(false);
             var filterOne = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower());
             var filterTwo = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower());
             var query = new TableQuery<T>().Where(TableQuery.CombineFilters(filterOne, TableOperators.And, filterTwo));
@@ -187,7 +187,7 @@
         /// <returns></returns>
         public async Task<List<T>> GetSomeAsync(string column, string value)
         {
-            await CreateTableInStorage();
+            await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition(column, QueryComparisons.Equal, value));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
@@ -200,7 +200,7 @@
         /// <returns></returns>
         public async Task<List<T>> GetSomeAsync(IList<ConditionParameter> conditionParameters)        
         {
-            await CreateTableInStorage();
+            await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>();
             List<string> conditions = new List<string>();
             string qry = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.NotEqual, string.Empty);

@@ -1,5 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
+    using System;
+
     /// <summary>
     /// Uper case String Class
     /// </summary>
@@ -12,7 +14,11 @@
         /// <returns></returns>
         public static string UppercaseWords(string value)
         {
-            char[] array = value?.ToCharArray();
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+            char[] array = value.ToCharArray();
             // Handle the first letter in the string.
             if (array.Length >= 1 && char.IsLower(array[0]))
             {

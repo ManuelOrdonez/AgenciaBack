@@ -7,6 +7,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -77,7 +78,11 @@
         /// <returns></returns>
         public Response<ParametersResponse> GetSomeParametersByType(IList<string> type)
         {
-            if (type?.Count == 0)
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+            if (type.Count == 0)
             {
                 return ResponseFail<ParametersResponse>(ServiceResponseCode.BadRequest);
             }

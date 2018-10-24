@@ -279,12 +279,16 @@
         /// <returns></returns>
         public Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq)
         {
+            if (userReq == null)
+            {
+                throw new ArgumentNullException("userReq");
+            }
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq?.NoDocument, userReq.TypeDocument)).Result;
+            var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
 
             if (lResult.Count == 0)
             {
@@ -451,7 +455,11 @@
         /// <returns></returns>
         public Response<AuthenticateUserResponse> AviableUser(AviableUserRequest RequestAviable)
         {
-            String[] user = RequestAviable?.UserName.Split('_');
+            if (RequestAviable == null)
+            {
+                throw new ArgumentNullException("RequestAviable");
+            }
+            String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
                 NoDocument = user[0],
@@ -522,12 +530,16 @@
         /// <returns></returns>
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
         {
+            if (logOurReq == null)
+            {
+                throw new ArgumentNullException("logOurReq");
+            }
             var errorsMessage = logOurReq.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
-            var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq?.NoDocument, logOurReq.TypeDocument)).Result;
+            var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null)
             {
                 return ResponseFail<AuthenticateUserResponse>();
@@ -565,12 +577,16 @@
         /// <returns></returns>
         public Response<User> CreatePDI(PDIRequest PDIRequest)
         {
+            if (PDIRequest == null)
+            {
+                throw new ArgumentNullException("PDIRequest");
+            }
             var errorsMessage = PDIRequest.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
                 return ResponseBadRequest<User>(errorsMessage);
             }
-            var userStorage = _userRep.GetAsyncAll(PDIRequest?.CallerUserName).Result;
+            var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
             if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
             {
                 return ResponseFail<User>(ServiceResponseCode.UserNotFound);

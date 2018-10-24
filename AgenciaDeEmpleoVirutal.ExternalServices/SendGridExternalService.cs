@@ -5,6 +5,7 @@
     using Entities;
     using Entities.Referentials;
     using Microsoft.Extensions.Options;
+    using System;
     using System.Collections.Generic;
     using System.Net.Mail;
     using Utils.Resources;
@@ -53,8 +54,12 @@
         /// <returns></returns>
         public bool SendMail(User userInfo)
         {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
-            _sendMailOptions.EmailAddressTo = userInfo?.Email;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
             _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
@@ -70,6 +75,10 @@
         /// <returns></returns>
         public bool SendMail(User userInfo,string urlReset)
         {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
@@ -87,8 +96,12 @@
         /// <returns></returns>
         public bool SendMailPDI(User userInfo, IList<Attachment> attachments)
         {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
-            _sendMailOptions.EmailAddressTo = userInfo?.Email;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPDI;
             _sendMailOptions.SubJect = ParametersApp.SubjectPDI;

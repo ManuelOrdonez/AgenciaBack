@@ -18,6 +18,10 @@
         /// <returns></returns>
         public static bool SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
         {
+            if (sendMailData == null)
+            {
+                throw new ArgumentNullException("sendMailData");
+            }
             var client = new SmtpClient
             {
                 Port = 25,
@@ -26,7 +30,7 @@
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
-                Credentials = new System.Net.NetworkCredential(sendMailData?.EmailAddressFrom, sendMailData.SendMailApiKey)
+                Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
             };  
             var mail = new MailMessage();
             if (attachments.Any())
