@@ -8,6 +8,7 @@
     using System.Collections.Generic;
     using System.Net;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
+    using System;
 
     /// <summary>
     /// OpenTok External Service Class
@@ -45,6 +46,10 @@
         /// <returns></returns>
         public override OpenTokResult Get(IDictionary<string, string> data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
             var param = string.Empty;
             foreach (var item in data)
             {

@@ -63,7 +63,7 @@
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request null");
+                throw new ArgumentNullException("request");
             }
             var errorMessages = request.Validate().ToList();
             if (errorMessages.Count > 0)
@@ -116,6 +116,10 @@
         /// <returns></returns>
         public Response<List<CallHistoryTrace>> CallQuality(QualityCallRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
             var errorMessages = request.Validate().ToList();
             var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request.SessionId, request.TokenId).Result;
             if (callTrace.Count == 0)
@@ -137,6 +141,10 @@
         /// <returns></returns>
         public Response<CallHistoryTrace> SetCallTrace(SetCallTraceRequest callRequest)
         {
+            if (callRequest == null)
+            {
+                throw new ArgumentNullException("callRequest");
+            }
             var messagesValidationEntity = callRequest.Validate().ToList();
             var stateInput = (CallStates)callRequest.State;
 

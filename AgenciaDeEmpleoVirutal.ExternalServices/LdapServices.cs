@@ -62,12 +62,12 @@
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }
             }
@@ -105,12 +105,12 @@
                         }
                         else
                         {
-                            throw ex;
+                            throw;
                         }
                     }
                     else
                     {
-                        throw ex;
+                        throw;
                     }
                 }                
             }

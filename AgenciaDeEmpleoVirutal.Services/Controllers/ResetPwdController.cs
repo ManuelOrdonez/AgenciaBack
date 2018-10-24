@@ -10,6 +10,7 @@
     /// <summary>
     /// Reset Password Controller
     /// </summary>
+    /// <author>Juan Sebastián Gil Garnica.</author>
     [Produces("application/json")]
     [Route("api/Reset")]
     [EnableCors("CorsPolitic")]
@@ -18,6 +19,7 @@
         /// <summary>
         /// Interface of Reset password business logic
         /// </summary>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         private readonly IResetBI _ResetBussines;
 
         public ResetPwdController(IResetBI ResetBussines)
@@ -30,6 +32,7 @@
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("RegisterResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]
@@ -43,6 +46,7 @@
         /// </summary>
         /// <param name="token"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("ValidateResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]
@@ -56,6 +60,7 @@
         /// </summary>
         /// <param name="userRequest"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("ResetPassword")]
         [Produces(typeof(Response<ResetResponse>))]

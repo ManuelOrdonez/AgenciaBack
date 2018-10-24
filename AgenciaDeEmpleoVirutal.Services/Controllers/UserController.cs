@@ -12,6 +12,7 @@
     /// <summary>
     /// User Controller
     /// </summary>
+    /// <author>Juan Sebastián Gil Garnica.</author>
     [Produces("application/json")]
     [Route("api/User")]
     [EnableCors("CorsPolitic")]
@@ -20,12 +21,14 @@
         /// <summary>
         /// Interface of User business logic
         /// </summary>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         private readonly IUserBl _UserBussines;
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="UserBussines"></param>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         public UserController(IUserBl UserBussines)
         {
             _UserBussines = UserBussines;
@@ -36,6 +39,7 @@
         /// </summary>
         /// <param name="userRequest"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("AuthenticateUser")]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
@@ -49,6 +53,7 @@
         /// </summary>
         /// <param name="userRequest"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("RegisterUser")]
         [Produces(typeof(Response<RegisterUserResponse>))]
@@ -62,6 +67,7 @@
         /// </summary>
         /// <param name="deviceId"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("IsAuthenticated")]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
@@ -75,6 +81,7 @@
         /// </summary>
         /// <param name="userReq"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("IsRegister")]
         [Produces(typeof(Response<RegisterUserResponse>))]
@@ -88,6 +95,7 @@
         /// </summary>
         /// <param name="logOutReq"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("LogOut")]
         [Authorize]
@@ -102,6 +110,7 @@
         /// </summary>
         /// <param name="UserName"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetUserInfo")]
         [Authorize]
@@ -116,6 +125,7 @@
         /// </summary>
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("AviableUser")]
         [Authorize]
@@ -130,6 +140,7 @@
         /// </summary>
         /// <param name="pdiRequest"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("CreatePDI")]
         [Authorize]

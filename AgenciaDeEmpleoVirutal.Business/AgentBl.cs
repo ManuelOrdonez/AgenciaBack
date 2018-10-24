@@ -154,6 +154,10 @@
         /// <returns></returns>
         public Response<User> ImAviable(AviableUserRequest RequestAviable)
         {
+            if (RequestAviable == null)
+            {
+                throw new ArgumentNullException("RequestAviable");
+            }
             if (string.IsNullOrEmpty(RequestAviable.UserName))
             {
                 return ResponseFail<User>(ServiceResponseCode.BadRequest);

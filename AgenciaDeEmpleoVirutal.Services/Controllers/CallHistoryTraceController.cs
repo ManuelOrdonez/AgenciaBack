@@ -9,6 +9,7 @@
     /// <summary>
     /// Call History Trace Controller
     /// </summary>
+    /// <author>Juan Sebastián Gil Garnica.</author>
     [Produces("application/json")]
     [Route("api/CallHistoryTrace")]
     [EnableCors("CorsPolitic")]
@@ -18,12 +19,14 @@
         /// <summary>
         /// Interface of CallHistoryTrace business
         /// </summary>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         private readonly ICallHistoryTrace _callHistoryBusiness;
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="callHistoryBusiness"></param>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         public CallHistoryTraceController(ICallHistoryTrace callHistoryBusiness)
         {
             _callHistoryBusiness = callHistoryBusiness;
@@ -34,6 +37,7 @@
         /// </summary>
         /// <param name="call"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("TraceCall")]
         public IActionResult TraceCall([FromBody] SetCallTraceRequest call)
@@ -46,6 +50,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("GetCallInfo")]
         public IActionResult GetCallInfo([FromBody] GetCallRequest request)
@@ -58,6 +63,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetAllCallsNotManaged")]
         public IActionResult GetAllCallsNotManaged(GetCallRequest request)
@@ -70,6 +76,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("CallQuality")]
         public IActionResult CallQuality([FromBody] QualityCallRequest request)
@@ -82,6 +89,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetCallerInfo")]
         public IActionResult GetCallerInfo(string request)
@@ -94,6 +102,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("GetAllUserCall")]
         public IActionResult GetAllUserCall([FromBody] GetAllUserCallRequest request)

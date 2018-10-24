@@ -10,6 +10,7 @@
     /// <summary>
     /// Parameters Controller
     /// </summary>
+    /// <author>Juan Sebastián Gil Garnica.</author>
     [Produces("application/json")]
     [Route("api/Parameters")]
     [EnableCors("CorsPolitic")]
@@ -18,12 +19,14 @@
         /// <summary>
         /// Interface ofr parameters business
         /// </summary>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         private readonly IParametersBI _ParameterBussines;
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="parameterBussines"></param>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         public ParametersController(IParametersBI parameterBussines)
         {
             _ParameterBussines = parameterBussines;
@@ -33,6 +36,7 @@
         /// Operation to Get Parameters
         /// </summary>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetParameters")]
         [Produces(typeof(Response<ParametersResponse>))]
@@ -46,6 +50,7 @@
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetParametersByType")]
         [Produces(typeof(Response<ParametersResponse>))]
@@ -59,6 +64,7 @@
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("GetSomeParametersByType")]
         [Produces(typeof(Response<ParametersResponse>))]

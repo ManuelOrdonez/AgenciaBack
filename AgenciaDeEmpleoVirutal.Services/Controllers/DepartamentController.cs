@@ -9,6 +9,7 @@
     /// <summary>
     /// Departament Controller
     /// </summary>
+    /// <author>Juan Sebastián Gil Garnica.</author>
     [Produces("application/json")]
     [Route("api/Departament")]
     [EnableCors("CorsPolitic")]
@@ -17,12 +18,14 @@
         /// <summary>
         /// Interface of departament business
         /// </summary>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         private readonly IDepartamentBl _DepartamentBussines;
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="DepartamentBussines"></param>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         public DepartamentController(IDepartamentBl DepartamentBussines)
         {
             _DepartamentBussines = DepartamentBussines;
@@ -33,6 +36,7 @@
         /// </summary>
         /// <param name="departament"></param>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetCitiesOfDepartment")]
         [Produces(typeof(Response<DepartamenCityResponse>))]
@@ -45,6 +49,7 @@
         /// Operation to Get all Departments
         /// </summary>
         /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpGet]
         [Route("GetDepartments")]
         [Produces(typeof(Response<DepartamenCityResponse>))]

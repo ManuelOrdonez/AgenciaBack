@@ -22,6 +22,10 @@
             {
                 throw new ArgumentNullException("sendMailData");
             }
+            if (attachments == null)
+            {
+                throw new ArgumentNullException("attachments");
+            }
             var client = new SmtpClient
             {
                 Port = 25,

@@ -203,6 +203,10 @@
         /// <returns></returns>
         public virtual T Get(IDictionary<string,string> data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
             var param = string.Empty;
             foreach (var item in data)
             {
