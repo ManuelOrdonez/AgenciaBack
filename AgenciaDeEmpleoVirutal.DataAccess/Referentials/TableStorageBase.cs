@@ -156,7 +156,7 @@
         public async Task<List<T>> GetByPatitionKeyAsync(string partitionKey)
         {
             await CreateTableInStorage().ConfigureAwait(false);
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey?.ToLower()));
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;
         }
