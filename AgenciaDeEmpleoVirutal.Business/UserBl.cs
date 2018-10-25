@@ -549,6 +549,35 @@
             return user;
         }
 
+        public void getAllUsersData()
+        {
+
+        }
+
+        public Response<List<string>> getUserTypeFilters(UserTypeFilters request)
+        {
+            var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result.FirstOrDefault();
+
+            var Allitems = Items.GetType().GetProperties()
+                .Select(x => new { property = x.Name, value = x.GetValue(Items) })
+                        .Where(x => x.value != null).ToList();
+            List<string> result = new List<string>();
+
+            foreach (var item in Allitems)
+            {
+                string column = string.Empty;
+
+
+                result.Add(item.property);
+            }
+
+            var listList = new List<List<string>>();
+
+            listList.Add(result);
+
+            return ResponseSuccessList(listList);
+        }
+
         public void Dispose()
         {
             if (this._crypto != null)

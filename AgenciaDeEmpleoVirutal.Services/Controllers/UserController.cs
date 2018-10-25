@@ -8,6 +8,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
 
     [Produces("application/json")]
     [Route("api/User")]
@@ -88,6 +89,14 @@
         public IActionResult UpdateUser([FromBody] UserUdateRequest RequestUser)
         {
             return Ok(_UserBussines.UpdateUserInfo(RequestUser));
+        }
+        [HttpPost]
+        [Route("getUserTypeFilters")]
+       //[Authorize]
+        [Produces(typeof(Response<List<string>>))]
+        public IActionResult getUserTypeFilters(UserTypeFilters request)
+        {
+            return Ok(_UserBussines.getUserTypeFilters(request));
         }
     }
 }
