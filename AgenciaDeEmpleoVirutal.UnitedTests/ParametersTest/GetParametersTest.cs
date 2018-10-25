@@ -10,7 +10,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
     using System.Threading.Tasks;
 
     [TestClass]
-    class GetParametersTest :ParameterBITestBase
+    class GetParametersTest : ParameterBITestBase
     {
 
         [TestMethod, TestCategory("ParameterBI")]

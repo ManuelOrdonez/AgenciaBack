@@ -120,7 +120,7 @@
                 {
                     AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
-                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokApiKey = _settings?.OpenTokApiKey,
                     OpenTokAccessToken = token,
                 }
             };
@@ -160,7 +160,7 @@
             else
             {
                 var AutenticateCompOrPerson = AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt);
-                if (AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
+                if (AutenticateCompOrPerson != ServiceResponseCode.Success)
                 {
                     return ResponseFail<AuthenticateUserResponse>(AutenticateCompOrPerson);
                 }
@@ -181,7 +181,7 @@
                 {
                     AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
-                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokApiKey = _settings?.OpenTokApiKey,
                     OpenTokAccessToken = token,
                 }
             };
@@ -214,8 +214,7 @@
                 return ServiceResponseCode.UserCalling;
             }
 
-            var passwordUserDecrypt = /* userRequest.DeviceType.Equals("WEB") ?*/
-                Crypto.DecryptWeb(user.Password, "ColsubsidioAPP"); /// : Crypto.DecryptPhone(user.Password, "ColsubsidioAPP");
+            var passwordUserDecrypt = Crypto.DecryptWeb(user.Password, "ColsubsidioAPP");
             if (!passwordUserDecrypt.Equals(passwordDecrypt))
             {
                 user.IntentsLogin = user.IntentsLogin + 1;
@@ -271,7 +270,7 @@
             {
                 return ServiceResponseCode.IsNotRegisterInLdap;
             }
-            if (user != null && user.IntentsLogin > 4) /// intentos maximos
+            if (user != null && user?.IntentsLogin > 4) /// intentos maximos
             {
                 return ServiceResponseCode.UserBlock;
             }
@@ -383,9 +382,10 @@
                 return ResponseSuccess(response);
             }
 
-            if(RegisterInLdap(userReq, passwordDecrypt) != ServiceResponseCode.Success)
+            var registerUser = RegisterInLdap(userReq, passwordDecrypt);
+            if (registerUser != ServiceResponseCode.Success)
             {
-                return ResponseFail<RegisterUserResponse>();
+                return ResponseFail<RegisterUserResponse>(registerUser);
             }
             /// Ya existe en LDAP
             /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
@@ -540,7 +540,7 @@
                     {
                         AuthInfo = SetAuthenticationToken(userAviable.UserName),
                         UserInfo = userAviable,
-                        OpenTokApiKey = _settings.OpenTokApiKey,
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
                         OpenTokAccessToken = token,
                     }
                 };
@@ -560,7 +560,7 @@
                     {
                         AuthInfo = SetAuthenticationToken(usercall.UserName),
                         UserInfo = usercall,
-                        OpenTokApiKey = _settings.OpenTokApiKey,
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
                         OpenTokAccessToken = token,
                     }
                 };
@@ -760,7 +760,7 @@
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        private AuthenticationToken SetAuthenticationToken(string username)
+        public AuthenticationToken SetAuthenticationToken(string username)
         {
             return new AuthenticationToken()
             {
@@ -801,6 +801,10 @@
         {
             User user = null;
             List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            if(!lUser.Any() || lUser is null)
+            {
+                return user;
+            }
             foreach (var item in lUser)
             {
                 if (item.State == UserStates.Enable.ToString())
