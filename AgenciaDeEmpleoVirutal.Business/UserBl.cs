@@ -18,38 +18,67 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class UserBl : BusinessBase<User>, IUserBl, IDisposable
+    /// <summary>
+    /// User Business Logic
+    /// </summary>
+    public class UserBl : BusinessBase<User>, IUserBl
     {
-        private IGenericRep<BusyAgent> _busyAgentRepository;
+        /// <summary>
+        /// Busy Agent repository
+        /// </summary>
+        private readonly IGenericRep<BusyAgent> _busyAgentRepository;
 
-        private IGenericRep<User> _userRep;
+        /// <summary>
+        /// User repository
+        /// </summary>
+        private readonly IGenericRep<User> _userRep;
 
-        private ILdapServices _LdapServices;
+        /// <summary>
+        /// Interface of ldap services
+        /// </summary>
+        private readonly ILdapServices _LdapServices;
 
-        private ISendGridExternalService _sendMailService;
+        /// <summary>
+        /// interface to send mails
+        /// </summary>
+        private readonly ISendGridExternalService _sendMailService;
 
-        private IOpenTokExternalService _openTokService;
+        /// <summary>
+        /// interface of opentok services
+        /// </summary>
+        private readonly IOpenTokExternalService _openTokService;
 
-        private Crypto _crypto;
+        /// <summary>
+        /// Class to enctryp and decript
+        /// </summary>
+        private readonly Crypto _crypto;
 
+        /// <summary>
+        /// User Secret Settings 
+        /// </summary>
         private readonly UserSecretSettings _settings;
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
+                        IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
             _LdapServices = LdapServices;
-            _settings = options.Value;
+            _settings = options?.Value;
             _crypto = new Crypto();
             _openTokService = _openTokExternalService;
             _busyAgentRepository = busyAgentRepository;
         }
 
+        /// <summary>
+        /// Method to identify is an user is authenticate
+        /// </summary>
+        /// <param name="deviceId"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> IsAuthenticate(IsAuthenticateRequest deviceId)
         {
-            if (string.IsNullOrEmpty(deviceId.DeviceId))
+            if (string.IsNullOrEmpty(deviceId?.DeviceId))
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
             }
@@ -82,8 +111,17 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Authenticate User
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
+            if (userReq == null)
+            {
+                throw new ArgumentNullException("userReq");
+            }
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
@@ -94,86 +132,24 @@
 
             passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
-
-            string passwordUserDecrypt;
             User user = GetUserActive(userReq);
-
-
             if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
-                if (user == null)
+                var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
+                if (AutenticateFunc != ServiceResponseCode.Success)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                }
-                if (user.State.Equals(UserStates.Disable.ToString()) && user.IntentsLogin == 5)
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                }
-                if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
-                }
-                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
-                if (!(userCalling.Count == 0 || userCalling is null))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
-                }
-
-                passwordUserDecrypt = userReq.DeviceType.Equals("WEB") ?
-                    Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
-                if (!passwordUserDecrypt.Equals(passwordDecrypt))
-                {
-                    user.IntentsLogin = user.IntentsLogin + 1;
-                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                    var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt)
-                    {
-                        return ResponseFail<AuthenticateUserResponse>();
-                    }
-
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
+                    return ResponseFail<AuthenticateUserResponse>(AutenticateFunc);
                 }
             }
             else
             {
-                /// Authenticate in LDAP Service
-                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument), passwordDecrypt);
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                var AutenticateCompOrPerson = AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt);
+                if (AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+                    return ResponseFail<AuthenticateUserResponse>(AutenticateCompOrPerson);
                 }
-                if (user != null && user.IntentsLogin > 4) /// intentos maximos
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserBlock);
-                }
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
-                {
-                    user.IntentsLogin = user.IntentsLogin + 1;
-                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                    var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt)
-                    {
-                        return ResponseFail<AuthenticateUserResponse>();
-                    }
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
-                }
-
-                if (user == null && result.estado.Equals("0000"))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-                }
-                if (user.State.Equals(UserStates.Disable.ToString()))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
-                }
-
-                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
-                if (!(userCalling.Count == 0 || userCalling is null))
-                {
-                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
-                }
-
             }
+
             user.Authenticated = true;
             user.DeviceId = userReq.DeviceId;
             user.Password = userReq.Password;
@@ -183,7 +159,6 @@
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
-
             var response = new List<AuthenticateUserResponse>()
             {
                 new AuthenticateUserResponse()
@@ -197,8 +172,121 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Authenticate Funcionary
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
+        private ServiceResponseCode AuthenticateFuncionary(User user, string passwordDecrypt)
+        {
+            if (user == null)
+            {
+                return ServiceResponseCode.IsNotRegisterInAz;
+            }
+            if (user.State.Equals(UserStates.Disable.ToString()) /*&& user.IntentsLogin == 5*/)
+            {
+                return ServiceResponseCode.UserDesable;
+            }
+            if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
+            {
+                return ServiceResponseCode.UserBlock;
+            }
+            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
+            if (!(userCalling.Count == 0 || userCalling is null))
+            {
+                return ServiceResponseCode.UserCalling;
+            }
+
+            var passwordUserDecrypt = Crypto.DecryptWeb(user.Password, "ColsubsidioAPP");
+            if (!passwordUserDecrypt.Equals(passwordDecrypt))
+            {
+                user.IntentsLogin = user.IntentsLogin + 1;
+                user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                var resultUpt = _userRep.AddOrUpdate(user).Result;
+                if (!resultUpt)
+                {
+                    return ServiceResponseCode.InternalError;
+                }
+                return ServiceResponseCode.IncorrectPassword;
+            }
+            return ServiceResponseCode.Success;
+        }
+
+        /// <summary>
+        /// Method to Authenticate Company Or Person
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userRequest"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
+        private ServiceResponseCode AuthenticateCompanyOrPerson(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
+        {
+            var AutenticateLDAP = AuthenticateCompanyOrPersonInLdap(user, userRequest, passwordDecrypt);
+            if (AutenticateLDAP != ServiceResponseCode.Success)
+            {
+                return AutenticateLDAP;
+            }
+            if (user.State.Equals(UserStates.Disable.ToString()))
+            {
+                return ServiceResponseCode.UserDesable;
+            }
+            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
+            if (!(userCalling.Count == 0 || userCalling is null))
+            {
+                return ServiceResponseCode.UserCalling;
+            }
+            return ServiceResponseCode.Success;
+        }
+
+        /// <summary>
+        /// Method to Authenticate Company Or Person in Ldap
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="userRequest"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
+        private ServiceResponseCode AuthenticateCompanyOrPersonInLdap(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
+        {
+            /// Authenticate in LDAP Service
+            var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+            if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+            {
+                return ServiceResponseCode.IsNotRegisterInLdap;
+            }
+            if (user != null && user.IntentsLogin > 4) /// intentos maximos
+            {
+                return ServiceResponseCode.UserBlock;
+            }
+            if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
+            {
+                user.IntentsLogin = user.IntentsLogin + 1;
+                user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                var resultUpt = _userRep.AddOrUpdate(user).Result;
+                if (!resultUpt)
+                {
+                    return ServiceResponseCode.InternalError;
+                }
+                return ServiceResponseCode.IncorrectPassword;
+            }
+            if (user == null && result.estado.Equals("0000"))
+            {
+                return ServiceResponseCode.IsNotRegisterInAz;
+            }
+            return ServiceResponseCode.Success;
+        }
+
+        /// <summary>
+        /// Method to identify if an user is register
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         public Response<RegisterUserResponse> IsRegister(IsRegisterUserRequest userReq)
         {
+            if (userReq == null)
+            {
+                throw new ArgumentNullException("userReq");
+            }
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
@@ -234,6 +322,11 @@
             });
         }
 
+        /// <summary>
+        /// Methos to register user
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         public Response<RegisterUserResponse> RegisterUser(RegisterUserRequest userReq)
         {
             var errorsMessage = userReq.Validate().ToList();
@@ -241,19 +334,83 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-
             var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
-
             if (!ValRegistriesUser(users, out int pos))
             {
-                if (pos == 0) return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                else return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                if (pos == 0)
+                {
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
+                }
+                else
+                {
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
+                } 
             }
 
             string passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
+            
+            var user = LoadRegisterRequest(userReq);
+            if (string.IsNullOrEmpty(user.UserName))
+            {
+                return ResponseFail<RegisterUserResponse>();
+            }
 
-            List<RegisterUserResponse> response = new List<RegisterUserResponse>();
+            List<RegisterUserResponse> response = new List<RegisterUserResponse>
+            {
+                new RegisterUserResponse() { IsRegister = true, State = true, User = user }
+            };
+
+            if (userReq.OnlyAzureRegister)
+            {
+                return ResponseSuccess(response);
+            }
+
+            if(RegisterInLdap(userReq, passwordDecrypt) != ServiceResponseCode.Success)
+            {
+                return ResponseFail<RegisterUserResponse>();
+            }
+            /// Ya existe en LDAP
+            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
+            return ResponseSuccess(response);
+        }
+
+        /// <summary>
+        /// Register user In Ldap
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
+        private ServiceResponseCode RegisterInLdap(RegisterUserRequest userReq, string passwordDecrypt)
+        {
+            var regLdap = new RegisterLdapRequest()
+            {
+                question = "Agencia virtual de empleo question",
+                answer = "Agencia virtual de empleo answer",
+                birtdate = "01-01-1999",
+                givenName = UString.UppercaseWords(userReq.Name),
+                surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
+                mail = userReq.Mail,
+                userId = userReq.NoDocument,
+                userIdType = userReq.CodTypeDocument.ToString(),
+                username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                userpassword = passwordDecrypt
+            };
+            var resultLdap = _LdapServices.Register(regLdap);
+            if (resultLdap is null)
+            {
+                return ServiceResponseCode.ServiceExternalError;
+            }
+            return ServiceResponseCode.Success;
+        }
+
+        /// <summary>
+        /// Load Register Request
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
+        private User LoadRegisterRequest(RegisterUserRequest userReq)
+        {
             if (!userReq.IsCesante)
             {
                 var company = new User()
@@ -285,11 +442,11 @@
                 _sendMailService.SendMail(company);
                 if (!result)
                 {
-                    return ResponseFail<RegisterUserResponse>();
+                    return new User();
                 }
-                response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = company });
+                return company;
             }
-            if (userReq.IsCesante)
+            else
             {
                 var cesante = new User()
                 {
@@ -319,42 +476,23 @@
                 _sendMailService.SendMail(cesante);
                 if (!result)
                 {
-                    return ResponseFail<RegisterUserResponse>();
+                    return new User();
                 }
-                response.Add(new RegisterUserResponse() { IsRegister = true, State = true, User = cesante });
+                return cesante;
             }
-
-            if (userReq.OnlyAzureRegister)
-            {
-                return ResponseSuccess(response);
-            }
-
-            /// Ldap Register        
-            var regLdap = new RegisterLdapRequest()
-            {
-                question = "Agencia virtual de empleo question",
-                answer = "Agencia virtual de empleo answer",
-                birtdate = "01-01-1999",
-                givenName = UString.UppercaseWords(userReq.Name),
-                surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
-                mail = userReq.Mail,
-                userId = userReq.NoDocument,
-                userIdType = userReq.CodTypeDocument.ToString(),
-                username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                userpassword = passwordDecrypt
-            };
-            var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap is null)
-            {
-                return ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
-            }
-            /// Ya existe en LDAP
-            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
-            return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Aviable User
+        /// </summary>
+        /// <param name="RequestAviable"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> AviableUser(AviableUserRequest RequestAviable)
         {
+            if (RequestAviable == null)
+            {
+                throw new ArgumentNullException("RequestAviable");
+            }
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
             {
@@ -417,8 +555,17 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Log Out
+        /// </summary>
+        /// <param name="logOurReq"></param>
+        /// <returns></returns>
         public Response<AuthenticateUserResponse> LogOut(LogOutRequest logOurReq)
         {
+            if (logOurReq == null)
+            {
+                throw new ArgumentNullException("logOurReq");
+            }
             var errorsMessage = logOurReq.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
@@ -490,7 +637,12 @@
             var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString()));
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
-        
+
+        /// <summary>
+        /// Method to Set Authentication Token
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
         private AuthenticationToken SetAuthenticationToken(string username)
         {
             return new AuthenticationToken()
@@ -501,6 +653,12 @@
             };
         }
 
+        /// <summary>
+        /// Method to Validate Register User
+        /// </summary>
+        /// <param name="lUser"></param>
+        /// <param name="position"></param>
+        /// <returns></returns>
         private bool ValRegistriesUser(List<User> lUser, out int position)
         {
             bool result = true;
@@ -517,6 +675,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Method to Get User Active
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         private User GetUserActive(AuthenticateUserRequest userReq)
         {
             User user = null;
@@ -535,6 +698,11 @@
             return user;
         }
 
+        /// <summary>
+        /// Method to Get Agent Active
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
         private User GetAgentActive(AuthenticateUserRequest userReq)
         {
             User user = null;
@@ -547,14 +715,6 @@
                 }
             }
             return user;
-        }
-
-        public void Dispose()
-        {
-            if (this._crypto != null)
-            {
-                this._crypto.Dispose();
-            }
         }
     }
 }

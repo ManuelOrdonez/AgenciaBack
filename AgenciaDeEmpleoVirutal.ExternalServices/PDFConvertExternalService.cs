@@ -7,18 +7,29 @@
     using AgenciaDeEmpleoVirutal.ExternalServices.Referentials;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
-    using System.Collections.Generic;
     using System.Net;
 
+    /// <summary>
+    /// PDF Convert External Service
+    /// </summary>
     public class PDFConvertExternalService : ClientWebBase<ResultPdfConvert>, IPDFConvertExternalService
     {
-        public PDFConvertExternalService(IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "PdfConvert", "PdfConvert/GetPdfContent")
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="options"></param>
+        public PDFConvertExternalService(IOptions<UserSecretSettings> options) : base(options, "PdfConvertService", "PdfConvert/GetPdfContent")
         {
         }
 
-        public ResultPdfConvert GenaratePdfContent(RequestPdfConvert conctentHTML)
+        /// <summary>
+        /// Operation to Genarate Pdf Content
+        /// </summary>
+        /// <param name="contentHTML"></param>
+        /// <returns></returns>
+        public ResultPdfConvert GenaratePdfContent(RequestPdfConvert contentHTML)
         {
-            string parameters = JsonConvert.SerializeObject(conctentHTML);
+            string parameters = JsonConvert.SerializeObject(contentHTML);
             ResultPdfConvert entidadResultado;
 
             using (WebClient context = GetWebClient())

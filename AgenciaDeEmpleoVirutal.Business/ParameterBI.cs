@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AgenciaDeEmpleoVirutal.Business
+﻿namespace AgenciaDeEmpleoVirutal.Business
 {
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
@@ -12,16 +8,33 @@ namespace AgenciaDeEmpleoVirutal.Business
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
+
+    /// <summary>
+    /// Parameter Business Iogic
+    /// </summary>
     public class ParameterBI : BusinessBase<ParametersResponse>, IParametersBI
     {
-        private IGenericRep<Parameters> _paramentRep;
+        /// <summary>
+        /// Parameters Repository
+        /// </summary>
+        private readonly IGenericRep<Parameters> _paramentRep;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="paramentRep"></param>
         public ParameterBI(IGenericRep<Parameters> paramentRep)
         {
             _paramentRep = paramentRep;
         }
+
+        /// <summary>
+        /// Method to Get Parameters
+        /// </summary>
+        /// <returns></returns>
         public Response<ParametersResponse> GetParameters()
         {
             var result = _paramentRep.GetList().Result;
@@ -37,6 +50,11 @@ namespace AgenciaDeEmpleoVirutal.Business
             return ResponseSuccess(paramentsResult);
         }
 
+        /// <summary>
+        /// Method to Get Parameters By Type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Response<ParametersResponse> GetParametersByType(string type)
         {
             if (string.IsNullOrEmpty(type))
@@ -54,18 +72,27 @@ namespace AgenciaDeEmpleoVirutal.Business
             return ResponseSuccess(parametsList);
         }
 
-        public Response<ParametersResponse> GetSomeParametersByType(List<string> type)
+        /// <summary>
+        /// Method to Get Some Parameters By Type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public Response<ParametersResponse> GetSomeParametersByType(IList<string> type)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
             if (type.Count == 0)
             {
                 return ResponseFail<ParametersResponse>(ServiceResponseCode.BadRequest);
             }
             var result = new List<Parameters>();
-            type.ForEach(t =>
+            foreach (var t in type)
             {
                 var res = _paramentRep.GetByPatitionKeyAsync(t).Result;
                 res.ForEach(p => result.Add(p));
-            });
+            }
             if (result == null || result.Count == 0)
             {
                 return ResponseFail<ParametersResponse>();

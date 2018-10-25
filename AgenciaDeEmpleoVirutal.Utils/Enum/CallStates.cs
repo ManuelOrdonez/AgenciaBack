@@ -1,5 +1,8 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Utils.Enum
 {
+    /// <summary>
+    /// Call States Enum
+    /// </summary>
     public enum CallStates
     {
 

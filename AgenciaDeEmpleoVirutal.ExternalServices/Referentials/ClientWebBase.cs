@@ -11,8 +11,7 @@
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    using System.Collections.Generic;   
     using System.Net;
 
 
@@ -38,14 +37,14 @@
         /// <param name="serviceOptions">The service options.</param>
         /// <param name="serviceName">Name of the service.</param>
         /// <param name="controllerName">Name of the controller.</param>
-        public ClientWebBase(IOptions<List<ServiceSettings>> serviceOptions, string serviceName, string controllerName)
+        public ClientWebBase(IOptions<UserSecretSettings> options, string serviceName, string controllerName)
         {
-            if (serviceOptions == null)
+            if (options == null)
             {
                 return;
             }
-            var service = serviceOptions.Value.FindAll(a => a.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-            Url = new Uri($"{service.Url}/{controllerName}");
+            string urlBase = (string)options.Value.GetType().GetProperty(serviceName).GetValue(options.Value);
+            Url = new Uri($"{urlBase}/{controllerName}");
         }
 
         /// <summary>
@@ -55,14 +54,14 @@
         /// <param name="serviceName">Name of the service.</param>
         /// <param name="controllerName">Name of the controller.</param>
         /// <param name="token">The token.</param>
-        public ClientWebBase(IOptions<List<ServiceSettings>> serviceOptions, string serviceName, string controllerName, string token)
+        public ClientWebBase(IOptions<UserSecretSettings> options, string serviceName, string controllerName, string token)
         {
-            if (serviceOptions == null)
+            if (options == null)
             {
                 return;
             }
-            var service = serviceOptions.Value.FindAll(a => a.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-            Url = new Uri($"{service.Url}/{controllerName}");
+            string urlBase = (string)options.Value.GetType().GetProperty(serviceName).GetValue(options.Value);
+            Url = new Uri($"{urlBase}/{controllerName}");
             _accessToken = token;
         }
 
@@ -204,6 +203,10 @@
         /// <returns></returns>
         public virtual T Get(IDictionary<string,string> data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
             var param = string.Empty;
             foreach (var item in data)
             {
