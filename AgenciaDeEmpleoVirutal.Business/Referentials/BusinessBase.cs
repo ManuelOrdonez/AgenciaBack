@@ -36,7 +36,7 @@
         /// Responses the success.
         /// </summary>
         /// <returns></returns>
-        public Response<T> ResponseSuccess()
+        public Response<T> ResponseSuccess(Entities.Responses.UsersDataResponse response)
         {
             ResponseBusiness.TransactionMade = true;
             ResponseBusiness.CodeResponse = (int) ServiceResponseCode.Success;

@@ -225,4 +225,10 @@
   <data name="ValueParameter_Required" xml:space="preserve">
     <value>Valor parametro rerquerido</value>
   </data>
+  <data name="EndDate_Required" xml:space="preserve">
+    <value>Fecha fin requerida</value>
+  </data>
+  <data name="StartDate_Required" xml:space="preserve">
+    <value>Fecha Inicio requerida</value>
+  </data>
 </root>

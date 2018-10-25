@@ -65,8 +65,6 @@
       
         Response<List<string>> getUserTypeFilters(UserTypeFilters request);
 
-        /// Response<User> CreatePDI(PDIRequest PDIRequest);
-
-        /// Response<User> GetPDIsFromUser(string userName);
+        Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request);
     }
 }

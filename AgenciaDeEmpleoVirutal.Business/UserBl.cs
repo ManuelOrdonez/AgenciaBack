@@ -717,9 +717,27 @@
             return user;
         }
 
-        public void getAllUsersData()
+        public Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request)
         {
+            var users = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result;
 
+
+            if (!users.Any())
+            {
+                return ResponseFail<UsersDataResponse>(ServiceResponseCode.UserNotFound);
+            }
+
+            UsersDataResponse Users = new UsersDataResponse()
+            {
+                Users = users
+            };
+
+            List<UsersDataResponse> response = new List<UsersDataResponse>()
+            {
+                Users
+            };
+
+            return ResponseSuccess(response);
         }
 
         public Response<List<string>> getUserTypeFilters(UserTypeFilters request)
@@ -744,14 +762,6 @@
             listList.Add(result);
 
             return ResponseSuccessList(listList);
-        }
-
-        public void Dispose()
-        {
-            if (this._crypto != null)
-            {
-                this._crypto.Dispose();
-            }
-        }
+        }            
     }
 }

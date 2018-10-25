@@ -150,13 +150,24 @@
         {
             return Ok(_UserBussines.UpdateUserInfo(RequestUser));
         }
+
         [HttpPost]
         [Route("getUserTypeFilters")]
-       //[Authorize]
+       [Authorize]
         [Produces(typeof(Response<List<string>>))]
         public IActionResult getUserTypeFilters(UserTypeFilters request)
         {
             return Ok(_UserBussines.getUserTypeFilters(request));
         }
+
+        [HttpPost]
+        [Route("GetAllUsersData")]
+        //[Authorize]
+        [Produces(typeof(Response<UsersDataResponse>))]
+        public IActionResult GetAllUsersData(UsersDataRequest request)
+        {
+            return Ok(_UserBussines.GetAllUsersData(request));
+        }
+
     }
 }
