@@ -24,19 +24,9 @@
     public class UserBl : BusinessBase<User>, IUserBl
     {
         /// <summary>
-        /// Interface to pdf convert service
-        /// </summary>
-        private readonly IPDFConvertExternalService _pdfConvertService;
-
-        /// <summary>
         /// Busy Agent repository
         /// </summary>
         private readonly IGenericRep<BusyAgent> _busyAgentRepository;
-
-        /// <summary>
-        /// PDI repository
-        /// </summary>
-        private readonly IGenericRep<PDI> _pdiRep;
 
         /// <summary>
         /// User repository
@@ -70,7 +60,7 @@
 
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IGenericQueue queue, IGenericRep<BusyAgent> busyAgentRepository)
+                        IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
@@ -208,8 +198,7 @@
                 return ServiceResponseCode.UserCalling;
             }
 
-            var passwordUserDecrypt = /* userRequest.DeviceType.Equals("WEB") ?*/
-                Crypto.DecryptWeb(user.Password, "ColsubsidioAPP"); /// : Crypto.DecryptPhone(user.Password, "ColsubsidioAPP");
+            var passwordUserDecrypt = Crypto.DecryptWeb(user.Password, "ColsubsidioAPP");
             if (!passwordUserDecrypt.Equals(passwordDecrypt))
             {
                 user.IntentsLogin = user.IntentsLogin + 1;

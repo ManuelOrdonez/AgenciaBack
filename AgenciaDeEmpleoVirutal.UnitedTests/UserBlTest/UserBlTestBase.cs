@@ -14,8 +14,6 @@
 
     public class UserBlTestBase : BusinessBase<User>
     {
-        protected Mock<IPDFConvertExternalService> PdfConvertService;
-
         protected Mock<IGenericRep<PDI>> PDIRepMoq;
 
         protected Mock<IGenericRep<User>> UserRepMoq;
@@ -57,15 +55,14 @@
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
-            PdfConvertService = new Mock<IPDFConvertExternalService>();
-            UserBusiness = new UserBl(UserRepMoq.Object,
+            UserBusiness = new UserBl(
+                UserRepMoq.Object,
                 LdapServicesMoq.Object, 
                 SendMailServiceMoq.Object, 
                 options, 
                 _openTokExternalService.Object,
                 PDIRepMoq.Object,
-                BusyRepMoq.Object,
-                PdfConvertService.Object);
+                BusyRepMoq.Object);
             LoadEntitiesMock();
         }
 
