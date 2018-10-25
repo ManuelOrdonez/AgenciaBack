@@ -18,9 +18,9 @@
         /// <param name="user"></param>
         /// <returns></returns>
         string CreateToken(string sessionId, string user);
-        
+
         /// <summary>
-        /// 
+        /// Start Record
         /// </summary>
         /// <param name="sessionId"></param>
         /// <param name="user"></param>
@@ -28,7 +28,7 @@
         string StartRecord(string sessionId, string user);
 
         /// <summary>
-        /// 
+        /// Stop Record
         /// </summary>
         /// <param name="recordId"></param>
         /// <returns></returns>

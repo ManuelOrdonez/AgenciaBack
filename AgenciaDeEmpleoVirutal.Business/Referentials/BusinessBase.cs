@@ -88,7 +88,7 @@
         /// <param name="code">The code.</param>
         /// <param name="messages">The message.</param>
         /// <returns></returns>
-        public Response<T> ResponseFail(ServiceResponseCode code, List<string> messages)
+        public Response<T> ResponseFail(ServiceResponseCode code, IList<string> messages)
         {
             ResponseBusiness.TransactionMade = false;
             ResponseBusiness.CodeResponse = (int) code;
@@ -101,7 +101,7 @@
         /// </summary>
         /// <typeparam name="TEntity"></typeparam>
         /// <returns></returns>
-        public static Response<TEntity> ResponseSuccess<TEntity>(List<TEntity> entity) where TEntity : class, new()
+        public static Response<TEntity> ResponseSuccess<TEntity>(IList<TEntity> entity) where TEntity : class, new()
         {
             return new Response<TEntity>
             {
@@ -152,7 +152,7 @@
         /// <typeparam name="TEntity">The type of the entity.</typeparam>
         /// <param name="messages">The messages.</param>
         /// <returns></returns>
-        public static Response<TEntity> ResponseFail<TEntity>(List<string> messages) where TEntity : class, new()
+        public static Response<TEntity> ResponseFail<TEntity>(IList<string> messages) where TEntity : class, new()
         {
             var delimiter = Environment.NewLine;
             return new Response<TEntity>
@@ -172,7 +172,7 @@
         /// </summary>
         /// <param name="messages">The message.</param>
         /// <returns></returns>
-        public Response<TEntity> ResponseBadRequest<TEntity>(List<string> messages) where TEntity : class, new()
+        public Response<TEntity> ResponseBadRequest<TEntity>(IList<string> messages) where TEntity : class, new()
         {
             var delimiter = Environment.NewLine;
             return new Response<TEntity>

@@ -3,8 +3,12 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Net.Mail;
 
+    /// <summary>
+    /// Send Grid Helper Class
+    /// </summary>
     public static class SendGridHelper
     {
         /// <summary>
@@ -12,8 +16,16 @@
         /// </summary>
         /// <param name="sendMailData">The send mail data.</param>
         /// <returns></returns>
-        public static bool SenMailRelay(SendMailData sendMailData, List<Attachment> attachments = null)
+        public static bool SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
         {
+            if (sendMailData == null)
+            {
+                throw new ArgumentNullException("sendMailData");
+            }
+            if (attachments == null)
+            {
+                throw new ArgumentNullException("attachments");
+            }
             var client = new SmtpClient
             {
                 Port = 25,
@@ -23,9 +35,15 @@
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
-            };
+            };  
             var mail = new MailMessage();
-            if (attachments != null) attachments.ForEach(at => mail.Attachments.Add(at));
+            if (attachments.Any())
+            {
+                foreach (var item in attachments)
+                {
+                    mail.Attachments.Add(item);
+                }
+            }
             mail.To.Add(new MailAddress(sendMailData.EmailAddressTo));
             mail.From = new MailAddress(sendMailData.EmailAddressFrom, sendMailData.NameEmail);
             mail.Subject = sendMailData.SubJect;

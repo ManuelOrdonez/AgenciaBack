@@ -14,16 +14,37 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Call History Trace Business logic
+    /// </summary>
     public class CallHistoryTraceBl : BusinessBase<CallHistoryTrace>, ICallHistoryTrace
     {
+        /// <summary>
+        /// Busy Agents Reposotory
+        /// </summary>
         private readonly IGenericRep<BusyAgent> _busyAgentRepository;
 
+        /// <summary>
+        /// Call History Trace Repository
+        /// </summary>
         private readonly IGenericRep<CallHistoryTrace> _callHistoryRepository;
 
+        /// <summary>
+        /// Users Repository
+        /// </summary>
         private readonly IGenericRep<User> _callerRepository;
 
+        /// <summary>
+        /// Agents Repository
+        /// </summary>
         private readonly IGenericRep<User> _agentRepository;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="callHistoryRepository"></param>
+        /// <param name="agentRepository"></param>
+        /// <param name="busyAgentRepository"></param>
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository)
         {
@@ -33,8 +54,17 @@
             _busyAgentRepository = busyAgentRepository;
         }
 
+        /// <summary>
+        /// Method to Get Call Info
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<CallHistoryTrace> GetCallInfo(GetCallRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
             var errorMessages = request.Validate().ToList();
             if (errorMessages.Count > 0)
             {
@@ -54,8 +84,17 @@
             });
         }
 
+        /// <summary>
+        /// Method to Get All Calls Not Managed
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<CallHistoryTrace>> GetAllCallsNotManaged(GetCallRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
             var errorMessages = request.Validate().ToList();
             if (errorMessages.Count > 0)
             {
@@ -70,8 +109,17 @@
             return ResponseSuccess(new List<List<CallHistoryTrace>> { call });
         }
 
+        /// <summary>
+        /// Method to Call Quality
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<CallHistoryTrace>> CallQuality(QualityCallRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
             var errorMessages = request.Validate().ToList();
             var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request.SessionId, request.TokenId).Result;
             if (callTrace.Count == 0)
@@ -93,6 +141,10 @@
         /// <returns></returns>
         public Response<CallHistoryTrace> SetCallTrace(SetCallTraceRequest callRequest)
         {
+            if (callRequest == null)
+            {
+                throw new ArgumentNullException("callRequest");
+            }
             var messagesValidationEntity = callRequest.Validate().ToList();
             var stateInput = (CallStates)callRequest.State;
 
@@ -103,7 +155,7 @@
 
             var existsCall = GetCallInfo(new GetCallRequest()
             {
-                OpenTokSessionId = callRequest.OpenTokSessionId,
+                OpenTokSessionId = callRequest?.OpenTokSessionId,
                 State = CallStates.Begun.ToString()
             }).Data.FirstOrDefault();
 
@@ -117,8 +169,6 @@
             {
                 agent = null;
             }
-
-
             switch (stateInput)
             {
                 case CallStates.Begun:
@@ -135,19 +185,12 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        /// this.Aviable(agent.UserName);
                         agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString()) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
                     break;
                 case CallStates.EndByWeb:
-                    if (callInfo.State != CallStates.EndByWeb.ToString())
-                    {
-                        callInfo.DateFinishCall = DateTime.Now;
-                        callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;                       
-                    }
-                    callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
-                           CallStates.Lost.ToString() : stateInput.ToString();
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput); 
                     if (agent != null)
                     {
                         agent.Available = false;                        
@@ -156,21 +199,11 @@
                             return ResponseFail();
                         }
                     }
-                    if (callInfo.State == CallStates.Lost.ToString())
-                    {
-                        this.Aviable(callRequest.UserName);
-                        callInfo.UserCall = callRequest.UserName;
-                    }
+                    this.Aviable(callRequest.UserName);
+                    callInfo.UserCall = callRequest.UserName;
                     break;
                 case CallStates.EndByMobile:
-                    if (callInfo.State != CallStates.EndByMobile.ToString())
-                    {
-                        callInfo.DateFinishCall = DateTime.Now;
-                        callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
- 
-                    }
-                    callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
-                           CallStates.Lost.ToString() : stateInput.ToString();
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);                                 
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -192,16 +225,37 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     break;
             }
-            if (callInfo.Trace != "Logout")
+            if (callInfo.Trace != "Logout" && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
             {
-                if (!_callHistoryRepository.AddOrUpdate(callInfo).Result)
-                {
-                    return ResponseFail();
-                }
+                return ResponseFail();
             }
             return ResponseSuccess();
         }
 
+        /// <summary>
+        /// Method to trace Call Ended
+        /// </summary>
+        /// <param name="TypeCall"></param>
+        /// <param name="callInfo"></param>
+        /// <param name="callRequest"></param>
+        /// <param name="stateInput"></param>
+        /// <returns></returns>
+        private CallHistoryTrace CallEnded(CallStates TypeCall, CallHistoryTrace callInfo, SetCallTraceRequest callRequest, CallStates stateInput)
+        {
+            if (callInfo.State != TypeCall.ToString())
+            {
+                callInfo.DateFinishCall = DateTime.Now;
+                callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
+            }
+            callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
+                           CallStates.Lost.ToString() : stateInput.ToString();
+            return callInfo;
+        }
+
+        /// <summary>
+        /// Methos to vacate agent
+        /// </summary>
+        /// <param name="UserName"></param>
         private void Aviable(string UserName)
         {
             string type = string.Empty;
@@ -222,6 +276,11 @@
             }
         }
 
+        /// <summary>
+        /// Method to Get Default Call History Trace
+        /// </summary>
+        /// <param name="callRequest"></param>
+        /// <returns></returns>
         private CallHistoryTrace GetDefaultCallHistoryTrace(SetCallTraceRequest callRequest)
         {
             var call = GetCallForAnyManage(callRequest.OpenTokSessionId,
@@ -245,6 +304,11 @@
             };
         }
 
+        /// <summary>
+        /// Method to Get All User Call
+        /// </summary>
+        /// <param name="getAllUserCallRequest"></param>
+        /// <returns></returns>
         public Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest)
         {
             var response = new List<GetAllUserCallResponse>();
@@ -283,12 +347,23 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Get Call For Any Manage
+        /// </summary>
+        /// <param name="OpenTokSessionId"></param>
+        /// <param name="OpenTokAccessToken"></param>
+        /// <returns></returns>
         private CallHistoryTrace GetCallForAnyManage(string OpenTokSessionId, string OpenTokAccessToken)
         {
             return _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(OpenTokSessionId, OpenTokAccessToken).Result
                 .OrderByDescending(t => t.DateCall).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Method to Get Caller Info
+        /// </summary>
+        /// <param name="OpenTokSessionId"></param>
+        /// <returns></returns>
         public Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId)
         {
             if (string.IsNullOrEmpty(OpenTokSessionId))
@@ -304,10 +379,12 @@
                 };
                 var callInfo = GetCallInfo(getCallReq).Data.First();
                 var caller = _callerRepository.GetAsync(callInfo?.UserCall).Result;
-                CallerInfoResponse response = new CallerInfoResponse();
-                response.Caller = caller;
-                response.OpenTokAccessToken = callInfo.OpenTokAccessToken;
-                response.CallInfo = callInfo;
+                CallerInfoResponse response = new CallerInfoResponse
+                {
+                    Caller = caller,
+                    OpenTokAccessToken = callInfo?.OpenTokAccessToken,
+                    CallInfo = callInfo
+                };
                 return ResponseSuccess(new List<CallerInfoResponse> { response });
             }
         }

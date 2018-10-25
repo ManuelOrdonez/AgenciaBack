@@ -16,9 +16,21 @@
         /// <returns></returns>
         bool SendMail(User userInfo);
 
+        /// <summary>
+        /// Send mail to reset password
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="urlReset"></param>
+        /// <returns></returns>
         bool SendMail(User userInfo, string urlReset);
 
-        bool SendMailPDI(User userInfo, List<Attachment> attachments);
+        /// <summary>
+        /// Send mail with PDI
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="attachments"></param>
+        /// <returns></returns>
+        bool SendMailPDI(User userInfo, IList<Attachment> attachments);
 
     }
 }

@@ -81,6 +81,6 @@
         /// </summary>
         /// <param name="conditionParameters"></param>
         /// <returns></returns>
-        Task<List<T>> GetSomeAsync(List<ConditionParameter> conditionParameters);
+        Task<List<T>> GetSomeAsync(IList<ConditionParameter> conditionParameters);
     }
 }
