@@ -100,12 +100,15 @@
             {
                 return ResponseBadRequest<List<CallHistoryTrace>>(errorMessages);
             }
-
             var parameters = new List<ConditionParameter> {
                     new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower() },
                     new ConditionParameter{ColumnName="State", Condition = "ne", Value = request.State }
                 };
             var call = _callHistoryRepository.GetSomeAsync(parameters).Result;
+            if(call is null)
+            {
+                return ResponseFail<List<CallHistoryTrace>>();
+            }
             return ResponseSuccess(new List<List<CallHistoryTrace>> { call });
         }
 
@@ -121,6 +124,10 @@
                 throw new ArgumentNullException("request");
             }
             var errorMessages = request.Validate().ToList();
+            if(errorMessages.Count > 0)
+            {
+                return ResponseFail<List<CallHistoryTrace>>(ServiceResponseCode.BadRequest);
+            }
             var callTrace = _callHistoryRepository.GetByPartitionKeyAndRowKeyAsync(request.SessionId, request.TokenId).Result;
             if (callTrace.Count == 0)
             {
@@ -362,7 +369,11 @@
                     State = CallStates.Begun.ToString(),
                 };
                 var callInfo = GetCallInfo(getCallReq).Data.First();
-                var caller = _callerRepository.GetAsync(callInfo?.UserCall).Result;
+                var caller = _callerRepository.GetAsync(callInfo.UserCall).Result;
+                if(caller is null)
+                {
+                    return ResponseFail<CallerInfoResponse>();
+                }
                 CallerInfoResponse response = new CallerInfoResponse
                 {
                     Caller = caller,
