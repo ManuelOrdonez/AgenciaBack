@@ -16,14 +16,31 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class AdminBl : BusinessBase<User>, IAdminBl , IDisposable
+    /// <summary>
+    /// Administrator Business logic
+    /// </summary>
+    public class AdminBl : BusinessBase<User>, IAdminBl
     {
-        private IGenericRep<User> _usersRepo;
+        /// <summary>
+        /// User Repository
+        /// </summary>
+        private readonly IGenericRep<User> _usersRepo;
 
-        private IOpenTokExternalService _openTokExternalService;
+        /// <summary>
+        /// Interface of OpenTok External Service
+        /// </summary>
+        private readonly IOpenTokExternalService _openTokExternalService;
 
-        private Crypto _crypto;
+        /// <summary>
+        /// Class to Encrypt and decrypt 
+        /// </summary>
+        private readonly Crypto _crypto;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="usersRepo"></param>
+        /// <param name="openTokService"></param>
         public AdminBl(IGenericRep<User> usersRepo, IOpenTokExternalService openTokService)
         {
             _usersRepo = usersRepo;
@@ -31,18 +48,26 @@
             _openTokExternalService = openTokService;
         }
 
-        public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionaryReq)
+        /// <summary>
+        /// Method to Create Funcionary
+        /// </summary>
+        /// <param name="funcionary"></param>
+        /// <returns></returns>
+        public Response<CreateOrUpdateFuncionaryResponse> CreateFuncionary(CreateFuncionaryRequest funcionary)
         {
+            if (funcionary == null)
+            {
+                throw new ArgumentNullException("funcionary");
+            }
             string message = string.Empty;
-            var errorsMesage = funcionaryReq.Validate().ToList();
+            var errorsMesage = funcionary.Validate().ToList();
             if (errorsMesage.Count > 0)
             {
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
-            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument)).Result;
+            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionary?.NoDocument, funcionary?.CodTypeDocument)).Result;
 
             int pos = 0;
-            /// Valida cuando existe mas de un registro y 
             if (!ValRegistriesUser(funcoinaries, out pos))
             {
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
@@ -62,18 +87,18 @@
 
             var funcionaryEntity = new User()
             {
-                Position = funcionaryReq.Position,
-                State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
-                NoDocument = funcionaryReq.NoDocument,
-                LastName = Utils.Helpers.UString.UppercaseWords(funcionaryReq.LastName),
-                Name = Utils.Helpers.UString.UppercaseWords(funcionaryReq.Name),
-                Password = funcionaryReq.Password,
-                Role = funcionaryReq.Role,
+                Position = funcionary.Position,
+                State = funcionary.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
+                NoDocument = funcionary.NoDocument,
+                LastName = UString.UppercaseWords(funcionary.LastName),
+                Name = UString.UppercaseWords(funcionary.Name),
+                Password = funcionary.Password,
+                Role = funcionary.Role,
                 DeviceId = string.Empty,
-                UserName = string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.CodTypeDocument),
-                CodTypeDocument = funcionaryReq.CodTypeDocument.ToString(),
-                TypeDocument = funcionaryReq.TypeDocument,
-                Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail),
+                UserName = string.Format("{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument),
+                CodTypeDocument = funcionary.CodTypeDocument.ToString(),
+                TypeDocument = funcionary.TypeDocument,
+                Email = string.Format("{0}@colsubsidio.com", funcionary.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
                 CountCallAttended = 0,
                 Available = false
@@ -85,7 +110,6 @@
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             }
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>() { new CreateOrUpdateFuncionaryResponse() { Message = message } });
-
         }
 
         /// <summary>
@@ -110,6 +134,13 @@
 
             return eRta;
         }
+
+        /// <summary>
+        /// Method to Get User Funcionary
+        /// </summary>
+        /// <param name="lUser"></param>
+        /// <param name="funtionary"></param>
+        /// <param name="people"></param>
         private void GetUserFuncionary(List<User> lUser, out User funtionary, out User people)
         {
             funtionary = null;
@@ -132,15 +163,24 @@
             }
 
         }
+
+        /// <summary>
+        /// Method to Update Funcionary Info
+        /// </summary>
+        /// <param name="funcionaryReq"></param>
+        /// <returns></returns>
         public Response<CreateOrUpdateFuncionaryResponse> UpdateFuncionaryInfo(UpdateFuncionaryRequest funcionaryReq)
         {
+            if (funcionaryReq == null)
+            {
+                throw new ArgumentNullException("funcionaryReq");
+            }
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0)
             {
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
 
-            //var funcionary = _usersRepo.GetAsync(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             User funcionary = null;
             User people = null;
@@ -175,6 +215,11 @@
             return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
         }
 
+        /// <summary>
+        /// Method to Get Funcionary Info
+        /// </summary>
+        /// <param name="funcionaryMail"></param>
+        /// <returns></returns>
         public Response<FuncionaryInfoResponse> GetFuncionaryInfo(string funcionaryMail)
         {
             if (string.IsNullOrEmpty(funcionaryMail))
@@ -204,6 +249,10 @@
             return ResponseSuccess(funcionary);
         }
 
+        /// <summary>
+        /// Method to Get All Funcionaries
+        /// </summary>
+        /// <returns></returns>
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
             var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
@@ -228,13 +277,6 @@
                 });
             });
             return ResponseSuccess(funcionariesInfo);
-        }
-        public void Dispose()
-        {
-            if (this._crypto != null)
-            {
-                this._crypto.Dispose(); 
-            }
         }
     }
 }

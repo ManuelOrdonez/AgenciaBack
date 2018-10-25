@@ -6,10 +6,14 @@
     using Entities;
     using Entities.Referentials;
     using Microsoft.Extensions.Options;
+    using System;
     using System.Collections.Generic;
     using System.Net.Mail;
     using Utils.Resources;
 
+    /// <summary>
+    /// Send Grid External Service
+    /// </summary>
     public class SendGridExternalService : ISendGridExternalService
     {
         /// <summary>
@@ -17,6 +21,9 @@
         /// </summary>
         private readonly SendMailData _sendMailOptions;
 
+        /// <summary>
+        /// User secret options 
+        /// </summary>
         private readonly UserSecretSettings _userSecretOptions;
 
         /// <summary>
@@ -26,12 +33,17 @@
         /// <param name="userSecretOptions"></param>
         public SendGridExternalService(IOptions<SendMailData> sendMailOptions, IOptions<UserSecretSettings> userSecretOptions)
         {
-            _sendMailOptions = sendMailOptions.Value;
-            _userSecretOptions = userSecretOptions.Value;
+            _sendMailOptions = sendMailOptions?.Value;
+            _userSecretOptions = userSecretOptions?.Value;
         }
+
+        /// <summary>
+        /// Operatin to Send Mail
+        /// </summary>
+        /// <returns></returns>
         private bool SendMail()
         {
-            SendGridHelper.SenMailRelay(_sendMailOptions);
+            SendGridHelper.SenMailRelay(_sendMailOptions, new List<Attachment>());
             return true;
         }
 
@@ -43,6 +55,10 @@
         /// <returns></returns>
         public bool SendMail(User userInfo)
         {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
@@ -54,8 +70,18 @@
             return SendMail();
         }
 
+        /// <summary>
+        /// Method to Send mail to reset password
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="urlReset"></param>
+        /// <returns></returns>
         public bool SendMail(User userInfo,string urlReset)
         {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
@@ -67,8 +93,18 @@
             return SendMail();
         }
 
-        public bool SendMailPDI(User userInfo, List<Attachment> attachments)
+        /// <summary>
+        /// Methosd to send mail with pdi
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="attachments"></param>
+        /// <returns></returns>
+        public bool SendMailPDI(User userInfo, IList<Attachment> attachments)
         {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;

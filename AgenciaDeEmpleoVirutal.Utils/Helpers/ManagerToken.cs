@@ -6,6 +6,9 @@
     using System.Security.Claims;
     using System.Text;
 
+    /// <summary>
+    /// Manager Token Class
+    /// </summary>
     public static class ManagerToken
     {
         /// <summary>

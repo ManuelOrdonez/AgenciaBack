@@ -8,13 +8,25 @@
     using System.Collections.Generic;
     using System.Net;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
+    using System;
 
+    /// <summary>
+    /// OpenTok External Service Class
+    /// </summary>
     public class OpenTokExternalService : ClientWebBase<OpenTokResult>, IOpenTokExternalService
     {
-        public OpenTokExternalService(IOptions<List<ServiceSettings>> serviceOptions) : base(serviceOptions, "OpenTokServiceIG", "OpenTok")
+        /// <summary>
+        /// Class Constructor
+        /// </summary>
+        /// <param name="options"></param>
+        public OpenTokExternalService(IOptions<UserSecretSettings> options) : base(options, "OpenTokServiceIG", "OpenTok")
         {
         }
 
+        /// <summary>
+        /// OpenTok Service Get
+        /// </summary>
+        /// <returns></returns>
         public override OpenTokResult Get()
         {
             var resul = new OpenTokResult();
@@ -27,8 +39,17 @@
             return resul;
         }
 
+        /// <summary>
+        /// OpenTok Service Get
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public override OpenTokResult Get(IDictionary<string, string> data)
         {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
             var param = string.Empty;
             foreach (var item in data)
             {
@@ -55,11 +76,21 @@
             return entidad;
         }
 
+        /// <summary>
+        /// Oparation to create opentok session
+        /// </summary>
+        /// <returns></returns>
         public string CreateSession()
         {
             return Get().Data;
         }
 
+        /// <summary>
+        /// Oparation to create opentok session token
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public string CreateToken(string sessionId, string user)
         {
             var data = new Dictionary<string, string>();
@@ -68,6 +99,12 @@
             return Get(data).Data;
         }
 
+        /// <summary>
+        /// Oparation to Start Record
+        /// </summary>
+        /// <param name="sessionId"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public string StartRecord(string sessionId, string user)
         {
             var data = new Dictionary<string, string>();
@@ -76,6 +113,11 @@
             return Get(data).Data;
         }
 
+        /// <summary>
+        /// Oparation to Stop Record
+        /// </summary>
+        /// <param name="RecordId"></param>
+        /// <returns></returns>
         public string StopRecord(string RecordId)
         {
             var data = new Dictionary<string,string>();

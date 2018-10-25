@@ -6,21 +6,34 @@
     using System.Security.Cryptography;
     using System.Text;
 
-    public class Crypto : IDisposable
+    /// <summary>
+    /// Crypto Class
+    /// </summary>
+    public class Crypto 
     {
-        
-        private RijndaelManaged myRijndael = new RijndaelManaged();
-
-        /// This size of the IV (in bytes) must = (keysize / 8).  Default keysize is 256, so the IV must be
-        /// 32 bytes long.  Using a 16 character string here gives us 32 bytes when converted to a byte array.
+        /// <summary>
+        /// init Vector
+        /// </summary>
         private const string initVector = "colsubsidiovecto";
-        /// This constant is used to determine the keysize of the encryption algorithm
+
+        /// <summary>
+        /// Key size
+        /// </summary>
         private const int Keysize = 256;
 
+        /// <summary>
+        /// Class contructor
+        /// </summary>
         public Crypto()
         {
         }
 
+        /// <summary>
+        /// Method to Decrypt string by Phone
+        /// </summary>
+        /// <param name="cipherText"></param>
+        /// <param name="passPhrase"></param>
+        /// <returns></returns>
         public static string DecryptPhone(string cipherText, string passPhrase)
         {
             byte[] initVectorBytes = Encoding.UTF8.GetBytes(initVector);
@@ -39,6 +52,12 @@
             return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
         }
 
+        /// <summary>
+        /// Method to Decrypt string by Web
+        /// </summary>
+        /// <param name="cipherText"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public static string DecryptWeb(string cipherText, string password)
         {
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
@@ -67,11 +86,6 @@
                     }
                 }
             }
-        }
-
-        public void Dispose()
-        {
-            myRijndael.Dispose();
         }
     }
 }

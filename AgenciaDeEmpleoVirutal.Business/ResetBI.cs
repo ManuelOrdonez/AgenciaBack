@@ -13,20 +13,46 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
-    using System.IO;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Text;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
 
+    /// <summary>
+    /// Reset Business Iogic
+    /// </summary>
     public class ResetBI : BusinessBase<ResetResponse>, IResetBI
     {
-        private ISendGridExternalService _sendMailService;
-        private ILdapServices _ldapServices;
-        private IGenericRep<User> _userRep;
-        private IGenericRep<ResetPassword> _passwordRep;
-        private IGenericRep<Parameters> _parametersRep;
+        /// <summary>
+        /// Interface to dens mails
+        /// </summary>
+        private readonly ISendGridExternalService _sendMailService;
 
+        /// <summary>
+        /// Interface of Ldap Services
+        /// </summary>
+        private readonly ILdapServices _ldapServices;
+
+        /// <summary>
+        /// User repository
+        /// </summary>
+        private readonly IGenericRep<User> _userRep;
+
+        /// <summary>
+        /// Reset Password repository
+        /// </summary>
+        private readonly IGenericRep<ResetPassword> _passwordRep;
+
+        /// <summary>
+        /// Parameters repository
+        /// </summary>
+        private readonly IGenericRep<Parameters> _parametersRep;
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="userRep"></param>
+        /// <param name="resetPasswordRep"></param>
+        /// <param name="parametersRep"></param>
+        /// <param name="sendMailService"></param>
+        /// <param name="ldapService"></param>
         public ResetBI(IGenericRep<User> userRep, 
             IGenericRep<ResetPassword> resetPasswordRep,
             IGenericRep<Parameters> parametersRep, 
@@ -40,6 +66,12 @@
             _parametersRep = parametersRep;
         }
 
+        /// <summary>
+        /// Method to GetInfoUser
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="idUser"></param>
+        /// <returns></returns>
         private User GetInfoUser(string user,out string idUser)
         {
             string userAux = string.Empty;
@@ -56,7 +88,7 @@
                 state = UsersTypes.Empresa.ToString();
                 userAux = userAux.Replace("_empresa", "");
             }
-            else if (userAux.IndexOf("_funcionario") > -1)
+            else
             {
                 state = UsersTypes.Funcionario.ToString();
                 userAux = userAux.Replace("_funcionario", "");
@@ -120,9 +152,9 @@
                 /// PasswordChangeRequest ldapService
                 var request = new PasswordChangeRequest()
                 {
-                    message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
-                    subject = "Recuperar Contraseña Colsubsidio",
-                    username = result.UserName
+                    Message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
+                    Subject = "Recuperar Contraseña Colsubsidio",
+                    Username = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
             }
@@ -151,7 +183,6 @@
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
-            //var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
             var result = _passwordRep.GetAsync(token).Result;
             if (result == null)
             {
@@ -178,6 +209,11 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Reset Password
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         public Response<ResetResponse> ResetPassword(ResetPasswordRequest userRequest)
         {
             if (string.IsNullOrEmpty(userRequest.UserName))

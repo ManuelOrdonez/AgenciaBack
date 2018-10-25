@@ -19,16 +19,38 @@
     using System.Linq;
     using System.Net.Mail;
 
+    /// <summary>
+    /// Pdi Business Logic
+    /// </summary>
     public class PdiBl : BusinessBase<PDI>, IPdiBl
     {
+        /// <summary>
+        /// Interface to Convert PDF
+        /// </summary>
         private IPDFConvertExternalService _pdfConvertService;
 
+        /// <summary>
+        /// PDI Repository
+        /// </summary>
         private IGenericRep<PDI> _pdiRep;
 
+        /// <summary>
+        /// User Repository
+        /// </summary>
         private IGenericRep<User> _userRep;
 
+        /// <summary>
+        /// Interface to Send Mails
+        /// </summary>
         private ISendGridExternalService _sendMailService;
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="pdfConvertService"></param>
+        /// <param name="pdiRep"></param>
+        /// <param name="userRep"></param>
+        /// <param name="sendMailService"></param>
         public PdiBl(
             IPDFConvertExternalService pdfConvertService,
             IGenericRep<PDI> pdiRep, 
@@ -41,6 +63,11 @@
             _sendMailService = sendMailService;
         }
 
+        /// <summary>
+        /// Method Create PDI
+        /// </summary>
+        /// <param name="PDIRequest"></param>
+        /// <returns></returns>
         public Response<PDI> CreatePDI(PDIRequest PDIRequest)
         {
             var errorsMessage = PDIRequest.Validate().ToList();
@@ -89,7 +116,6 @@
                 Observations = SetFieldOfPDI(PDIRequest.Observations),
                 OnlySave = PDIRequest.OnlySave
             };
-
             if (PDIRequest.OnlySave)
             {
                 if (!_pdiRep.AddOrUpdate(pdi).Result)
@@ -98,26 +124,46 @@
                 }
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
+            var sendPdi = SendPdi(pdi, user);
+            if (sendPdi != ServiceResponseCode.Success)
+            {
+                return ResponseFail<PDI>(sendPdi);
+            }
+            return ResponseSuccess(sendPdi);
+        }
 
+        /// <summary>
+        /// Method to Send PDI
+        /// </summary>
+        /// <param name="pdi"></param>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private ServiceResponseCode SendPdi(PDI pdi, User user)
+        {
             var ContentPDI = GenarateContentPDI(pdi);
             if (ContentPDI is null)
             {
-                return ResponseFail<PDI>(ServiceResponseCode.ServiceExternalError);
+                return ServiceResponseCode.ServiceExternalError;
             }
             MemoryStream stream = new MemoryStream(ContentPDI);
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdiName, "application/pdf") };
+            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdi.PDIName, "application/pdf") };
             if (!_sendMailService.SendMailPDI(user, attachmentPDI))
             {
-                return ResponseFail<PDI>(ServiceResponseCode.ErrorSendMail);
+                return ServiceResponseCode.ErrorSendMail;
             }
             stream.Close();
             if (!_pdiRep.AddOrUpdate(pdi).Result)
             {
-                return ResponseFail<PDI>();
+                return ServiceResponseCode.InternalError;
             }
-            return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
+            return ServiceResponseCode.SendAndSavePDI;
         }
 
+        /// <summary>
+        /// Method Get PDIs From User
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
         public Response<PDI> GetPDIsFromUser(string userName)
         {
             var PDIs = _pdiRep.GetByPatitionKeyAsync(userName).Result;
@@ -133,6 +179,11 @@
             return ResponseSuccess(result);
         }
 
+        /// <summary>
+        /// Methos Genarate Content PDI
+        /// </summary>
+        /// <param name="pdi"></param>
+        /// <returns></returns>
         private byte[] GenarateContentPDI(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert();
@@ -158,6 +209,11 @@
             return result;
         }
 
+        /// <summary>
+        /// Method to Set Fields Of PDI
+        /// </summary>
+        /// <param name="field"></param>
+        /// <returns></returns>
         private string SetFieldOfPDI(string field)
         {
             string fieldAux = string.Empty;
