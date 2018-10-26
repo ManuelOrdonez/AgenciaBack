@@ -603,6 +603,7 @@
                 Email = userRequest.Mail,
                 Name = userRequest.Name,
                 UserName = userRequest.UserName,
+                Authenticated = true,                    
             };
             if (userRequest.IsCesante)
             {
@@ -610,6 +611,7 @@
                 userUpdate.DegreeGeted = userRequest.DegreeGeted;
                 userUpdate.EducationLevel = userRequest.EducationLevel;
                 userUpdate.Genre = userRequest.Genre;
+                userUpdate.LastName = userRequest.LastNames;
             }
             else
             {
