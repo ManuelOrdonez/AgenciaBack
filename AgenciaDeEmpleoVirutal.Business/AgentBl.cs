@@ -96,7 +96,7 @@
                     {
                         ColumnName = "Available",
                         Condition = QueryComparisons.Equal,
-                        ValueBool = true
+                        ValueBool = true,
                     },
 
                      new ConditionParameter()

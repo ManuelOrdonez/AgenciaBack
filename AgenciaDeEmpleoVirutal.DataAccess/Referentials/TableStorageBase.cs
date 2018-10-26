@@ -208,7 +208,7 @@
             {
                 if (string.IsNullOrEmpty(item.Value))
                 {
-                    if (item.ValueDateTime == null)
+                    if (item.ValueDateTime == default(System.DateTime))
                     {
                         conditions.Add(TableQuery.GenerateFilterConditionForBool(item.ColumnName, item.Condition, item.ValueBool));
                     }
