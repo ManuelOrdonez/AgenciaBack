@@ -745,14 +745,14 @@
                     },
                     new ConditionParameter()
                     {
-                        ColumnName = "Timestamp",
+                        ColumnName = "RegisterDate",
                         Condition = QueryComparisons.GreaterThanOrEqual,
                         ValueDateTime = request.StartDate
                     },
 
                      new ConditionParameter()
                     {
-                        ColumnName = "Timestamp",
+                        ColumnName = "RegisterDate",
                         Condition = QueryComparisons.LessThan,
                         ValueDateTime = request.EndDate.AddDays(1)
                     }
