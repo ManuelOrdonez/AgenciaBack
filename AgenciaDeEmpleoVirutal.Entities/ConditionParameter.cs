@@ -1,4 +1,6 @@
-﻿namespace AgenciaDeEmpleoVirutal.Entities
+﻿using System;
+
+namespace AgenciaDeEmpleoVirutal.Entities
 {
     /// <summary>
     /// Condition Parameter Entity
@@ -24,5 +26,7 @@
         /// Get or Sets Value Bool
         /// </summary>
         public bool ValueBool { get; set; }
+
+        public DateTime ValueDateTime { get; set; }
     }
 }

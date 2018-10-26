@@ -155,16 +155,16 @@
         [Route("getUserTypeFilters")]
        [Authorize]
         [Produces(typeof(Response<List<string>>))]
-        public IActionResult getUserTypeFilters(UserTypeFilters request)
+        public IActionResult getUserTypeFilters([FromBody] UserTypeFilters request)
         {
             return Ok(_UserBussines.getUserTypeFilters(request));
         }
 
         [HttpPost]
         [Route("GetAllUsersData")]
-        //[Authorize]
+        [Authorize]
         [Produces(typeof(Response<UsersDataResponse>))]
-        public IActionResult GetAllUsersData(UsersDataRequest request)
+        public IActionResult GetAllUsersData([FromBody] UsersDataRequest request)
         {
             return Ok(_UserBussines.GetAllUsersData(request));
         }

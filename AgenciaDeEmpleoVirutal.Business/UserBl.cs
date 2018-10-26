@@ -14,6 +14,7 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -719,7 +720,48 @@
 
         public Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request)
         {
-            var users = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result;
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+            var messagesValidationEntity = request.Validate().ToList();
+            
+            if (messagesValidationEntity.Count > 0)
+            {
+                return ResponseBadRequest<UsersDataResponse>(messagesValidationEntity);
+            }
+
+            var query = new List<ConditionParameter>()
+                {
+                    new ConditionParameter()
+                    {
+                        ColumnName = "PartitionKey",
+                        Condition = QueryComparisons.Equal,
+                        Value = request.UserType
+                    },
+                    new ConditionParameter()
+                    {
+                        ColumnName = "Timestamp",
+                        Condition = QueryComparisons.GreaterThanOrEqual,
+                        ValueDateTime = request.StartDate
+                    },
+
+                     new ConditionParameter()
+                    {
+                        ColumnName = "Timestamp",
+                        Condition = QueryComparisons.LessThan,
+                        ValueDateTime = request.EndDate.AddDays(1)
+                    }
+                };
+            var users = _userRep.GetSomeAsync(query).Result;
+
+
+
+
+
+
+
+
 
 
             if (!users.Any())
@@ -752,15 +794,11 @@
             foreach (var item in Allitems)
             {
                 string column = string.Empty;
-
-
                 result.Add(item.property);
             }
 
             var listList = new List<List<string>>();
-
             listList.Add(result);
-
             return ResponseSuccessList(listList);
         }            
     }
