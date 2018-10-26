@@ -437,7 +437,8 @@
                     Password = userReq.Password,
                     UserType = UsersTypes.Empresa.ToString(),
                     Authenticated = false,
-                    IntentsLogin = 0
+                    IntentsLogin = 0,
+                    RegisterDate = DateTimeOffset.Now
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
                 _sendMailService.SendMail(company);
@@ -471,7 +472,8 @@
                     Email = userReq.Mail,
                     UserType = UsersTypes.Cesante.ToString(),
                     Authenticated = false,
-                    IntentsLogin = 0
+                    IntentsLogin = 0,
+                    RegisterDate = DateTimeOffset.Now
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
                 _sendMailService.SendMail(cesante);

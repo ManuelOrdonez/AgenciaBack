@@ -163,5 +163,10 @@
         /// </summary>
         public int IntentsLogin { get; set; }
 
+        /// <summary>
+        /// Date Of Register
+        /// </summary>
+        public DateTimeOffset RegisterDate { get; set; }
+
     }
 }
