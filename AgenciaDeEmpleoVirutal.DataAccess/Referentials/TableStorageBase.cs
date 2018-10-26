@@ -208,8 +208,16 @@
             {
                 if (string.IsNullOrEmpty(item.Value))
                 {
-                    conditions.Add(TableQuery.GenerateFilterConditionForBool(item.ColumnName, item.Condition, item.ValueBool));               
+                    if (item.ValueDateTime == default(System.DateTime))
+                    {
+                        conditions.Add(TableQuery.GenerateFilterConditionForBool(item.ColumnName, item.Condition, item.ValueBool));
+                    }
+                    else
+                    {
+                        conditions.Add(TableQuery.GenerateFilterConditionForDate(item.ColumnName, item.Condition, item.ValueDateTime));
+                    }                                 
                 }
+                
                 else
                 {
                     conditions.Add(TableQuery.GenerateFilterCondition(item.ColumnName, item.Condition, item.Value));

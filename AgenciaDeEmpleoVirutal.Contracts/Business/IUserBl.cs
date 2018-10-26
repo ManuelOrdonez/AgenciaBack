@@ -4,6 +4,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using System.Collections.Generic;
 
     /// <summary>
     /// interface of User Business Logic
@@ -62,5 +63,8 @@
         Response<User> UpdateUserInfo(UserUdateRequest userRequest);
 
       
+        Response<List<string>> getUserTypeFilters(UserTypeFilters request);
+
+        Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request);
     }
 }

@@ -169,6 +169,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fecha fin requerida.
+        /// </summary>
+        public static string EndDate_Required {
+            get {
+                return ResourceManager.GetString("EndDate_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El campo genero es obligatorio.
         /// </summary>
         public static string Genre_Required {
@@ -309,6 +318,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string SocialReason_Required {
             get {
                 return ResourceManager.GetString("SocialReason_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fecha Inicio requerida.
+        /// </summary>
+        public static string StartDate_Required {
+            get {
+                return ResourceManager.GetString("StartDate_Required", resourceCulture);
             }
         }
         

@@ -8,6 +8,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Cors;
     using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
 
     /// <summary>
     /// User Controller
@@ -149,5 +150,24 @@
         {
             return Ok(_UserBussines.UpdateUserInfo(RequestUser));
         }
+
+        [HttpPost]
+        [Route("getUserTypeFilters")]
+       [Authorize]
+        [Produces(typeof(Response<List<string>>))]
+        public IActionResult getUserTypeFilters([FromBody] UserTypeFilters request)
+        {
+            return Ok(_UserBussines.getUserTypeFilters(request));
+        }
+
+        [HttpPost]
+        [Route("GetAllUsersData")]
+        [Authorize]
+        [Produces(typeof(Response<UsersDataResponse>))]
+        public IActionResult GetAllUsersData([FromBody] UsersDataRequest request)
+        {
+            return Ok(_UserBussines.GetAllUsersData(request));
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities
 {
     using Microsoft.WindowsAzure.Storage.Table;
+    using System;
 
     /// <summary>
     /// User Table
@@ -161,5 +162,6 @@
         /// Get or Sets User Intents to Login
         /// </summary>
         public int IntentsLogin { get; set; }
+
     }
 }

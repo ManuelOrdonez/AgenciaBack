@@ -39,7 +39,7 @@
         public Response<T> ResponseSuccess()
         {
             ResponseBusiness.TransactionMade = true;
-            ResponseBusiness.CodeResponse = (int) ServiceResponseCode.Success;
+            ResponseBusiness.CodeResponse = (int)ServiceResponseCode.Success;
             ResponseBusiness.Message.Add(ResponseMessageHelper.GetParameter(ServiceResponseCode.Success));
             return ResponseBusiness;
         }

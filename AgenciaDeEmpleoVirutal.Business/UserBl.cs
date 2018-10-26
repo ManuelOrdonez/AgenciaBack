@@ -14,6 +14,7 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -603,6 +604,7 @@
                 Email = userRequest.Mail,
                 Name = userRequest.Name,
                 UserName = userRequest.UserName,
+                Authenticated = true,                    
             };
             if (userRequest.IsCesante)
             {
@@ -610,6 +612,7 @@
                 userUpdate.DegreeGeted = userRequest.DegreeGeted;
                 userUpdate.EducationLevel = userRequest.EducationLevel;
                 userUpdate.Genre = userRequest.Genre;
+                userUpdate.LastName = userRequest.LastNames;
             }
             else
             {
@@ -716,5 +719,89 @@
             }
             return user;
         }
+
+        public Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request)
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+            var messagesValidationEntity = request.Validate().ToList();
+            
+            if (messagesValidationEntity.Count > 0)
+            {
+                return ResponseBadRequest<UsersDataResponse>(messagesValidationEntity);
+            }
+
+            var query = new List<ConditionParameter>()
+                {
+                    new ConditionParameter()
+                    {
+                        ColumnName = "PartitionKey",
+                        Condition = QueryComparisons.Equal,
+                        Value = request.UserType
+                    },
+                    new ConditionParameter()
+                    {
+                        ColumnName = "Timestamp",
+                        Condition = QueryComparisons.GreaterThanOrEqual,
+                        ValueDateTime = request.StartDate
+                    },
+
+                     new ConditionParameter()
+                    {
+                        ColumnName = "Timestamp",
+                        Condition = QueryComparisons.LessThan,
+                        ValueDateTime = request.EndDate.AddDays(1)
+                    }
+                };
+            var users = _userRep.GetSomeAsync(query).Result;
+
+
+
+
+
+
+
+
+
+
+            if (!users.Any())
+            {
+                return ResponseFail<UsersDataResponse>(ServiceResponseCode.UserNotFound);
+            }
+
+            UsersDataResponse Users = new UsersDataResponse()
+            {
+                Users = users
+            };
+
+            List<UsersDataResponse> response = new List<UsersDataResponse>()
+            {
+                Users
+            };
+
+            return ResponseSuccess(response);
+        }
+
+        public Response<List<string>> getUserTypeFilters(UserTypeFilters request)
+        {
+            var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result.FirstOrDefault();
+
+            var Allitems = Items.GetType().GetProperties()
+                .Select(x => new { property = x.Name, value = x.GetValue(Items) })
+                        .Where(x => x.value != null).ToList();
+            List<string> result = new List<string>();
+
+            foreach (var item in Allitems)
+            {
+                string column = string.Empty;
+                result.Add(item.property);
+            }
+
+            var listList = new List<List<string>>();
+            listList.Add(result);
+            return ResponseSuccessList(listList);
+        }            
     }
 }

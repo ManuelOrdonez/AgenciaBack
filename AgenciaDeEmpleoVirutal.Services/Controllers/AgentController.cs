@@ -15,7 +15,7 @@
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    [Authorize]
+    /// [Authorize]
     public class AgentController : Controller
     {
         /// <summary>
