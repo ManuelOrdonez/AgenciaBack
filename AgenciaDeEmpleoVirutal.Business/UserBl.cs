@@ -597,6 +597,8 @@
             {
                 return ResponseBadRequest<User>(errorsMessage);
             }
+            var userTableStorage = _userRep.GetAsyncAll(userRequest.UserName).Result.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+
             var userUpdate = new User()
             {
                 CellPhone1 = userRequest.Cellphon1,
@@ -606,7 +608,10 @@
                 Email = userRequest.Mail,
                 Name = userRequest.Name,
                 UserName = userRequest.UserName,
-                Authenticated = true,                    
+                Authenticated = true,
+                RegisterDate = userTableStorage.RegisterDate,
+                ETag = userTableStorage.ETag,
+                CodTypeDocument = userTableStorage.CodTypeDocument
             };
             if (userRequest.IsCesante)
             {
