@@ -153,7 +153,7 @@
 
         [HttpPost]
         [Route("getUserTypeFilters")]
-       [Authorize]
+        [Authorize]
         [Produces(typeof(Response<List<string>>))]
         public IActionResult getUserTypeFilters([FromBody] UserTypeFilters request)
         {
