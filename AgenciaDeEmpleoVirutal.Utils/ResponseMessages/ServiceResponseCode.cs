@@ -114,7 +114,12 @@
         /// <summary>
         /// User dont have PDI
         /// </summary>
-        UserWithoutPDI = 220
+        UserWithoutPDI = 220,
+
+        /// <summary>
+        /// Out Of Service
+        /// </summary>
+        OutOfService = 221
 
     }
 }

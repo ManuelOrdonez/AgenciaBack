@@ -14,6 +14,7 @@
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -37,6 +38,11 @@
         private readonly IGenericRep<User> _agentRepository;
 
         /// <summary>
+        /// Agents Repository
+        /// </summary>
+        private readonly IGenericRep<Parameters> _parametersRepository;
+
+        /// <summary>
         /// Interface of OpenTok External Service
         /// </summary>
         private readonly IOpenTokExternalService _openTokExternalService;
@@ -49,12 +55,13 @@
         /// <param name="openTokService"></param>
         /// <param name="busyAgentRepository"></param>
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
-            IGenericRep<BusyAgent> busyAgentRepository)
+            IGenericRep<BusyAgent> busyAgentRepository, IGenericRep<Parameters> parametersRepository)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
             _busyAgentRepository = busyAgentRepository;
+            _parametersRepository = parametersRepository;
         }
 
         private static readonly Object obj = new Object();
@@ -66,6 +73,42 @@
         /// <returns></returns>
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
+            var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
+            string[] days = { "domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sábado" };
+            string dayIni = parameters.Where(x => x.RowKey == "diainicio").FirstOrDefault().Value;
+            string dayEnd = parameters.Where(x => x.RowKey == "diafin").FirstOrDefault().Value;
+            string hourIni = parameters.Where(x => x.RowKey == "horainicio").FirstOrDefault().Value;
+            string hourEnd = parameters.Where(x => x.RowKey == "horafin").FirstOrDefault().Value;
+            string MessageShedule = parameters.Where(x => x.RowKey == "message").FirstOrDefault().Value;
+
+            int diaIniPos = Array.IndexOf(days, dayIni.ToLower());
+            int diaEndPos = Array.IndexOf(days, dayEnd.ToLower());
+            string dayNow = DateTime.Now.ToString("dddd", new CultureInfo("es-CO"));
+            int dayNowPos = Array.IndexOf(days, dayNow);
+
+            var result = new Response<GetAgentAvailableResponse>
+            {
+                CodeResponse = (int)ServiceResponseCode.OutOfService,
+                Message = new List<string> { MessageShedule },
+                TransactionMade = false
+            };
+
+            if (dayNowPos >= diaIniPos && dayNowPos <= diaEndPos)
+            {
+                DateTime timeInit = Convert.ToDateTime(DateTime.Now.ToShortDateString() + " " + hourIni + ":00 am");
+                DateTime timeEnd = Convert.ToDateTime(DateTime.Now.ToShortDateString() + " " + hourEnd + ":00 pm");
+                DateTime timeNow = DateTime.Now;
+
+                if (timeNow < timeInit || timeNow > timeEnd)
+                {
+                    return result;
+                }
+            }
+            else
+            {
+                return result;
+            }
+
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0)
             {
