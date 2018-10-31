@@ -11,6 +11,6 @@
     /// </summary>
     public interface IMenuBl
     {
-        Response<List<Menu>> GetMenu(GetMenuRequest request);
+        Response<List<Menu>> GetMenu(string role);
     }
 }

@@ -93,12 +93,12 @@
             return Ok(_ParameterBussines.SetParameterValue(request));
         }
 
-        [HttpPost]
+        [HttpGet]
         [Route("GetMenu")]
         [Produces(typeof(Response<List<Menu>>))]
-        public IActionResult GetMenu([FromBody] GetMenuRequest request)
+        public IActionResult GetMenu(string role)
         {
-            return Ok(_MenuBussines.GetMenu(request));
+            return Ok(_MenuBussines.GetMenu(role));
         }
     }
 }

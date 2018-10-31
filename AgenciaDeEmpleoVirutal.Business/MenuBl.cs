@@ -34,21 +34,16 @@ namespace AgenciaDeEmpleoVirutal.Business
             _menuRep = menuRep;
         }
 
-        public Response<List<Menu>> GetMenu(GetMenuRequest request)
+        public Response<List<Menu>> GetMenu(string request)
         {
             var parameter = string.Empty;
             if (request == null)
             {
                 throw new ArgumentNullException("request");
             }
-            var messagesValidationEntity = request.Validate().ToList();
+            
 
-            if (messagesValidationEntity.Count > 0)
-            {
-                return ResponseBadRequest<List<Menu>>(messagesValidationEntity);
-            }
-
-            var role = request.Role.Replace(" ", "_");
+            var role = request.Replace(" ", "_");
 
             if (role == Roles.Administrador.ToString()) { parameter = "menu_administrador"; }
             if (role == Roles.Analista_Revisor_FOSFEC.ToString()) { parameter = "menu_analista"; }
