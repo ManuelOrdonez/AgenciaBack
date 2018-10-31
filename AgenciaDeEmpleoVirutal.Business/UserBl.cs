@@ -270,6 +270,10 @@
             {
                 return ServiceResponseCode.IsNotRegisterInLdap;
             }
+            if(result.code == (int)ServiceResponseCode.ServiceExternalError)
+            {
+                return ServiceResponseCode.ServiceExternalError;
+            }
             if (user != null && user?.IntentsLogin > 4) /// intentos maximos
             {
                 return ServiceResponseCode.UserBlock;

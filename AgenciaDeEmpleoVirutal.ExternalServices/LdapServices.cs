@@ -62,12 +62,14 @@
                         }
                         else
                         {
-                            throw;
+                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            return result; 
                         }
                     }
                     else
                     {
-                        throw;
+                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        return result; 
                     }
                 }
             }
@@ -105,12 +107,14 @@
                         }
                         else
                         {
-                            throw;
+                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            return result;
                         }
                     }
                     else
                     {
-                        throw;
+                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        return result;
                     }
                 }                
             }
