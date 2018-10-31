@@ -150,6 +150,7 @@
             services.AddSingleton<IGenericRep<ResetPassword>, TableStorageBase<ResetPassword>>();
             services.AddSingleton<IGenericRep<PDI>, TableStorageBase<PDI>>();
             services.AddSingleton<IGenericRep<BusyAgent>, TableStorageBase<BusyAgent>>();
+            services.AddSingleton<IGenericRep<Menu>, TableStorageBase<Menu>>();
         }
 
         /// <summary>
@@ -178,6 +179,7 @@
             services.AddTransient<IParametersBI, ParameterBI>();
             services.AddTransient<IResetBI, ResetBI>();
             services.AddTransient<IPdiBl, PdiBl>();
+            services.AddTransient<IMenuBl, MenuBl>();
         }
     }
 }
