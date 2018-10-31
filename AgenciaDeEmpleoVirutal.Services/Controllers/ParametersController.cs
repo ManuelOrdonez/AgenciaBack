@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -22,15 +23,17 @@
         /// </summary>
         /// <author>Juan Sebastián Gil Garnica.</author>
         private readonly IParametersBI _ParameterBussines;
+        private readonly IMenuBl _MenuBussines;
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="parameterBussines"></param>
         /// <author>Juan Sebastián Gil Garnica.</author>
-        public ParametersController(IParametersBI parameterBussines)
+        public ParametersController(IParametersBI parameterBussines, IMenuBl menuBussines)
         {
             _ParameterBussines = parameterBussines;
+            _MenuBussines = menuBussines;
         }
 
         /// <summary>
@@ -88,6 +91,14 @@
         public IActionResult SetParameterValue([FromBody] SetParameterValueRequest request)
         {
             return Ok(_ParameterBussines.SetParameterValue(request));
+        }
+
+        [HttpPost]
+        [Route("GetMenu")]
+        [Produces(typeof(Response<List<Menu>>))]
+        public IActionResult GetMenu([FromBody] GetMenuRequest request)
+        {
+            return Ok(_MenuBussines.GetMenu(request));
         }
     }
 }
