@@ -251,6 +251,10 @@
         {
             /// Authenticate in LDAP Service
             var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+            if(result.code == (int)ServiceResponseCode.ServiceExternalError)
+            {
+                return ServiceResponseCode.ServiceExternalError;
+            }
             if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
             {
                 return ServiceResponseCode.IsNotRegisterInLdap;
@@ -398,7 +402,7 @@
                 userpassword = passwordDecrypt
             };
             var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap is null)
+            if (resultLdap is null || resultLdap.code == (int)ServiceResponseCode.ServiceExternalError)
             {
                 return ServiceResponseCode.ServiceExternalError;
             }
