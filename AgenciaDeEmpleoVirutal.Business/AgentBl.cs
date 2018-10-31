@@ -74,7 +74,7 @@
         public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
-            string[] days = { "domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sábado" };
+            string[] days = { "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado" };
             string dayIni = parameters.Where(x => x.RowKey == "diainicio").FirstOrDefault().Value;
             string dayEnd = parameters.Where(x => x.RowKey == "diafin").FirstOrDefault().Value;
             string hourIni = parameters.Where(x => x.RowKey == "horainicio").FirstOrDefault().Value;
@@ -95,9 +95,9 @@
 
             if (dayNowPos >= diaIniPos && dayNowPos <= diaEndPos)
             {
-                DateTime timeInit = Convert.ToDateTime(DateTime.Now.ToShortDateString() + " " + hourIni + ":00 am");
-                DateTime timeEnd = Convert.ToDateTime(DateTime.Now.ToShortDateString() + " " + hourEnd + ":00 pm");
-                DateTime timeNow = DateTime.Now;
+                DateTime timeInit = Convert.ToDateTime(DateTime.UtcNow.AddHours(-5).ToShortDateString() + " " + hourIni + ":00 am");
+                DateTime timeEnd = Convert.ToDateTime(DateTime.UtcNow.AddHours(-5).ToShortDateString() + " " + hourEnd + ":00 pm");
+                DateTime timeNow = DateTime.UtcNow.AddHours(-5);
 
                 if (timeNow < timeInit || timeNow > timeEnd)
                 {
