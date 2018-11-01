@@ -67,11 +67,10 @@
         private static readonly Object obj = new Object();
 
         /// <summary>
-        /// Method to Get any Agent Available
+        /// Method to validate shedule
         /// </summary>
-        /// <param name="agentAvailableRequest"></param>
         /// <returns></returns>
-        public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
+        private Response<GetAgentAvailableResponse> ValidateShedule()
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
             string[] days = { "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado" };
@@ -103,12 +102,30 @@
                 {
                     return result;
                 }
+                else
+                {
+                    result.TransactionMade = true;
+                    return result;
+                }
             }
             else
             {
                 return result;
             }
+        }
 
+        /// <summary>
+        /// Method to Get any Agent Available
+        /// </summary>
+        /// <param name="agentAvailableRequest"></param>
+        /// <returns></returns>
+        public Response<GetAgentAvailableResponse> GetAgentAvailable(GetAgentAvailableRequest agentAvailableRequest)
+        {
+            var validateShedule = ValidateShedule();
+            if (!validateShedule.TransactionMade)
+            {
+                return validateShedule;
+            }
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0)
             {
@@ -161,7 +178,7 @@
                         PartitionKey = Agent.OpenTokSessionId.ToLower(),
                         RowKey = Agent.UserName,
                         UserNameAgent = Agent.UserName,
-                        UserNameCaller =agentAvailableRequest.UserName}).Result)
+                        UserNameCaller = agentAvailableRequest.UserName}).Result)
                     {
                         return ResponseFail<GetAgentAvailableResponse>();
                     }
@@ -205,8 +222,14 @@
             {
                 return ResponseFail<User>(ServiceResponseCode.BadRequest);
             }
-            var user = _agentRepository.GetAsync(RequestAviable?.UserName).Result;
-            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
-        }      
+            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
+            if(user is null)
+            {
+                return ResponseFail<User>();
+            }
+            return ResponseSuccess(new List<User> { user });
+        }
+
+      
     }
 }

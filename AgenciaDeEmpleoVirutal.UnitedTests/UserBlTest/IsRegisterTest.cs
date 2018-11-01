@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.UserBlTest
 {
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
@@ -48,8 +49,7 @@
         public void IsRegister_WhenUserIsNotRegisterInTableStorage_ReturnError()
         {
             ///Arrage
-            UserInfoMock = null;
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             ///Action
             var result = UserBusiness.IsRegister(RequestIsRegister);
@@ -73,7 +73,7 @@
                     UserType = UserInfoMock.UserType
                 }
             };
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
             var expected = ResponseSuccess(response);
             ///Action
             var result = UserBusiness.IsRegister(RequestIsRegister);

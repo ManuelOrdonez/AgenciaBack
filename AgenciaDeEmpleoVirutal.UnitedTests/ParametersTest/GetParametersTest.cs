@@ -10,7 +10,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
     using System.Threading.Tasks;
 
     [TestClass]
-    class GetParametersTest :ParameterBITestBase
+    public class GetParametersTest : ParameterBITestBase
     {
 
         [TestMethod, TestCategory("ParameterBI")]
@@ -66,7 +66,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
                 }
             };
             var expected = ResponseSuccess(responseTableStorage);
-            _parameterRep.Setup(rep => rep.GetAll()).Returns(Task.FromResult(responseTableStorage));
+            _parameterRep.Setup(rep => rep.GetList()).Returns(Task.FromResult(responseTableStorage));
             //Action
             var result = DepBussines.GetParameters();
             //Assert

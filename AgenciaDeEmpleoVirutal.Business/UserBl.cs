@@ -105,7 +105,7 @@
                 {
                     AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
-                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokApiKey = _settings?.OpenTokApiKey,
                     OpenTokAccessToken = token,
                 }
             };
@@ -145,7 +145,7 @@
             else
             {
                 var AutenticateCompOrPerson = AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt);
-                if (AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt) != ServiceResponseCode.Success)
+                if (AutenticateCompOrPerson != ServiceResponseCode.Success)
                 {
                     return ResponseFail<AuthenticateUserResponse>(AutenticateCompOrPerson);
                 }
@@ -166,7 +166,7 @@
                 {
                     AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
-                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokApiKey = _settings?.OpenTokApiKey,
                     OpenTokAccessToken = token,
                 }
             };
@@ -259,7 +259,11 @@
             {
                 return ServiceResponseCode.IsNotRegisterInLdap;
             }
-            if (user != null && user.IntentsLogin > 4) /// intentos maximos
+            if(result.code == (int)ServiceResponseCode.ServiceExternalError)
+            {
+                return ServiceResponseCode.ServiceExternalError;
+            }
+            if (user != null && user?.IntentsLogin > 4) /// intentos maximos
             {
                 return ServiceResponseCode.UserBlock;
             }
@@ -371,9 +375,10 @@
                 return ResponseSuccess(response);
             }
 
-            if(RegisterInLdap(userReq, passwordDecrypt) != ServiceResponseCode.Success)
+            var registerUser = RegisterInLdap(userReq, passwordDecrypt);
+            if (registerUser != ServiceResponseCode.Success)
             {
-                return ResponseFail<RegisterUserResponse>();
+                return ResponseFail<RegisterUserResponse>(registerUser);
             }
             /// Ya existe en LDAP
             /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
@@ -530,7 +535,7 @@
                     {
                         AuthInfo = SetAuthenticationToken(userAviable.UserName),
                         UserInfo = userAviable,
-                        OpenTokApiKey = _settings.OpenTokApiKey,
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
                         OpenTokAccessToken = token,
                     }
                 };
@@ -550,7 +555,7 @@
                     {
                         AuthInfo = SetAuthenticationToken(usercall.UserName),
                         UserInfo = usercall,
-                        OpenTokApiKey = _settings.OpenTokApiKey,
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
                         OpenTokAccessToken = token,
                     }
                 };
@@ -594,6 +599,11 @@
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
 
+        /// <summary>
+        /// Update User Info
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         public Response<User> UpdateUserInfo(UserUdateRequest userRequest)
         {
             var errorsMessage = userRequest.Validate().ToList();
@@ -637,6 +647,11 @@
             return result ? ResponseSuccess() : ResponseFail();
         }
 
+        /// <summary>
+        /// Get User Info
+        /// </summary>
+        /// <param name="UserName"></param>
+        /// <returns></returns>
         public Response<User> GetUserInfo(string UserName)
         {
             if (string.IsNullOrEmpty(UserName))
@@ -657,7 +672,7 @@
         /// </summary>
         /// <param name="username"></param>
         /// <returns></returns>
-        private AuthenticationToken SetAuthenticationToken(string username)
+        public AuthenticationToken SetAuthenticationToken(string username)
         {
             return new AuthenticationToken()
             {
@@ -698,6 +713,10 @@
         {
             User user = null;
             List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            if(!lUser.Any() || lUser is null)
+            {
+                return user;
+            }
             foreach (var item in lUser)
             {
                 if (item.State == UserStates.Enable.ToString())
@@ -731,6 +750,11 @@
             return user;
         }
 
+        /// <summary>
+        /// Method to Get All Users Data
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request)
         {
             if (request == null)
@@ -768,15 +792,6 @@
                 };
             var users = _userRep.GetSomeAsync(query).Result;
 
-
-
-
-
-
-
-
-
-
             if (!users.Any())
             {
                 return ResponseFail<UsersDataResponse>(ServiceResponseCode.UserNotFound);
@@ -795,6 +810,11 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to get User Type Filters
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<string>> getUserTypeFilters(UserTypeFilters request)
         {
             var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result.FirstOrDefault();

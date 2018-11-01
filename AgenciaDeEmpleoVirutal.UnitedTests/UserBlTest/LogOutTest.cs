@@ -81,6 +81,7 @@
             ///Arrage
             UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
+            BusyRepMoq.Setup(ba => ba.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             var expected = ResponseFail<AuthenticateUserResponse>();
             ///Action
             var result = UserBusiness.LogOut(RequestLogOut);
@@ -97,6 +98,7 @@
             ///Arrage
             UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
+            BusyRepMoq.Setup(ba => ba.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             var expected = ResponseSuccess(new List<AuthenticateUserResponse>());
             ///Action
             var result = UserBusiness.LogOut(RequestLogOut);
