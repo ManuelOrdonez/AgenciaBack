@@ -66,6 +66,10 @@
 
         private static readonly Object obj = new Object();
 
+        /// <summary>
+        /// Method to validate shedule
+        /// </summary>
+        /// <returns></returns>
         private Response<GetAgentAvailableResponse> ValidateShedule()
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
