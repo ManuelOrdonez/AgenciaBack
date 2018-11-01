@@ -14,7 +14,7 @@
     [Produces("application/json")]
     [Route("api/Admin")]
     [EnableCors("CorsPolitic")]
-    /// [Authorize]
+    [Authorize]
     public class AdminController : Controller
     {
         /// <summary>
