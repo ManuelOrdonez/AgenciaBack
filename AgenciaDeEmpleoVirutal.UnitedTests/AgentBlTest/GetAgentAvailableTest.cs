@@ -15,7 +15,8 @@
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenUserNameIsNullOrEmpty_ReturnError()
         {
-            ///Arrange
+            ///Arrange            
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             GetAgentAvailableRequest.UserName = string.Empty;
             var expected = ResponseBadRequest<GetAgentAvailableResponse>(GetAgentAvailableRequest.Validate().ToList());
             ///Action
@@ -30,6 +31,7 @@
         public void GetAgentAvailable_WhenUserNotFound_ReturnError()
         {
             ///Arrange
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             UserMoq = null;
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             var expected = ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
@@ -45,6 +47,7 @@
         public void GetAgentAvailable_WhenUserCalling_ReturnError()
         {
             ///Arrange
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>() { BusyAgentMoq });
             var expected = ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserCalling);
@@ -60,6 +63,7 @@
         public void GetAgentAvailable_WhenAgentNotAvailable_ReturnError()
         {
             ///Arrange
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             AgentRepMoq.Setup(a => a.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<User>());
@@ -76,6 +80,7 @@
         public void GetAgentAvailable_WhenTableStorageFaildAddingRow_ReturnError()
         {
             ///Arrange
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             AgentRepMoq.Setup(a => a.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<User>() { UserMoq });
@@ -93,6 +98,7 @@
         public void GetAgentAvailable_WhenOpenTokExternalServiceFeild_ReturnError()
         {
             ///Arrange
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             AgentRepMoq.Setup(a => a.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<User>() { UserMoq });
@@ -112,6 +118,7 @@
         public void GetAgentAvailable_WhenWhenAllFieldsAreSuccessAndServicesFound_ReturnSuccess()
         {
             ///Arrange
+            ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
             UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             AgentRepMoq.Setup(a => a.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<User>() { UserMoq });

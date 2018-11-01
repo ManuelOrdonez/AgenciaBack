@@ -30,6 +30,8 @@
 
         protected Mock<IGenericRep<BusyAgent>> BusyRepMoq;
 
+        protected Mock<IGenericRep<Parameters>> ParametersRepMock;
+
         protected User UserMoq;
 
         protected BusyAgent BusyAgentMoq;
@@ -38,18 +40,49 @@
 
         protected GetAgentAvailableResponse GetAgentAvailableResult;
 
+        protected List<Parameters> ParametersMock;
         public AgentBlTestBase()
         {
             AgentRepMoq = new Mock<IGenericRep<User>>();
             UserRepMoq = new Mock<IGenericRep<User>>();
+            ParametersRepMock = new Mock<IGenericRep<Parameters>>();
             OpenTokExternalServiceMoq = new Mock<IOpenTokExternalService>();
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
-            AgentBussinesLogic = new AgentBl(AgentRepMoq.Object, UserRepMoq.Object, OpenTokExternalServiceMoq.Object, BusyRepMoq.Object);
+            AgentBussinesLogic = new AgentBl(AgentRepMoq.Object, UserRepMoq.Object, OpenTokExternalServiceMoq.Object, BusyRepMoq.Object, ParametersRepMock.Object);
             LoadMoqsEntityes();
         }
 
         private void LoadMoqsEntityes()
         {
+            ParametersMock = new List<Parameters>()
+            {
+                new Parameters()
+                {
+                    RowKey = "diainicio",
+                    Value = "lunes",                    
+                },
+                new Parameters()
+                {
+                    RowKey = "diafin",
+                    Value = "sábado",
+                },
+                new Parameters()
+                {
+                    RowKey = "horainicio",
+                    Value = "7",
+                },
+                new Parameters()
+                {
+                    RowKey = "horafin",
+                    Value = "7",
+                },
+                new Parameters()
+                {
+                    RowKey = "message",
+                    Value = "Message_Test, Message_Test, Message_Test",
+                }
+            };
+
             GetAgentAvailableResult = new GetAgentAvailableResponse()
             {
                 AgentLatName = "Gil Garnica",

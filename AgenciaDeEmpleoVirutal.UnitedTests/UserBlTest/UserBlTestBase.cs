@@ -25,7 +25,7 @@
 
         protected Mock<ISendGridExternalService> SendMailServiceMoq;
 
-        protected Mock<IOpenTokExternalService> _openTokExternalService;
+        protected Mock<IOpenTokExternalService> OpenTokExternalService;
 
         protected UserBl UserBusiness;
 
@@ -58,12 +58,13 @@
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
+            OpenTokExternalService = new Mock<IOpenTokExternalService>();
             UserBusiness = new UserBl(
                 UserRepMoq.Object,
                 LdapServicesMoq.Object, 
                 SendMailServiceMoq.Object, 
                 options, 
-                _openTokExternalService.Object,
+                OpenTokExternalService.Object,
                 PDIRepMoq.Object,
                 BusyRepMoq.Object);
             LoadEntitiesMock();

@@ -599,6 +599,11 @@
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
 
+        /// <summary>
+        /// Update User Info
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         public Response<User> UpdateUserInfo(UserUdateRequest userRequest)
         {
             var errorsMessage = userRequest.Validate().ToList();
@@ -642,6 +647,11 @@
             return result ? ResponseSuccess() : ResponseFail();
         }
 
+        /// <summary>
+        /// Get User Info
+        /// </summary>
+        /// <param name="UserName"></param>
+        /// <returns></returns>
         public Response<User> GetUserInfo(string UserName)
         {
             if (string.IsNullOrEmpty(UserName))
@@ -740,6 +750,11 @@
             return user;
         }
 
+        /// <summary>
+        /// Method to Get All Users Data
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request)
         {
             if (request == null)
@@ -777,15 +792,6 @@
                 };
             var users = _userRep.GetSomeAsync(query).Result;
 
-
-
-
-
-
-
-
-
-
             if (!users.Any())
             {
                 return ResponseFail<UsersDataResponse>(ServiceResponseCode.UserNotFound);
@@ -804,6 +810,11 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to get User Type Filters
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<string>> getUserTypeFilters(UserTypeFilters request)
         {
             var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result.FirstOrDefault();

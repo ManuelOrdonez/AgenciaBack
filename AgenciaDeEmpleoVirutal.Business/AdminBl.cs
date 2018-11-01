@@ -104,7 +104,8 @@
                 Email = string.Format("{0}@colsubsidio.com", funcionary.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
                 CountCallAttended = 0,
-                Available = false
+                Available = false,
+                RegisterDate = DateTimeOffset.UtcNow.AddHours(-5)                
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
