@@ -8,6 +8,7 @@
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Moq;
     using System.Collections.Generic;
@@ -42,6 +43,8 @@
 
         protected LogOutRequest RequestLogOut;
 
+        protected BusyAgent BusyAgentMock;
+
         private IOptions<UserSecretSettings> options;
 
         protected readonly UserSecretSettings _settings;
@@ -68,24 +71,33 @@
 
         private void LoadEntitiesMock()
         {
+            BusyAgentMock = new BusyAgent()
+            {
+                AgentSession = "5145614561",
+                UserNameAgent = "6541561456_2"
+            };
+
             RequestUserAuthenticate = new AuthenticateUserRequest()
             {
                 UserType = "Cesante",
                 TypeDocument = "2",
                 NoDocument = "12334455",
-                Password = "12345678",
-                DeviceId = "abcdefghijk"
+                Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==",
+                DeviceId = "asdasdasdasdas",
+                DeviceType = "WEB"
             };
 
             UserInfoMock = new User()
             {
+                PartitionKey = "cesante",
                 LastName = "Gil Garnica",
                 Name = "Juan Sebastian",
                 Position = "Auxiliar",
                 Role = "Auxiliar",
                 State = "Enable",
                 Email = "jgilg@colsubsidio.com",
-                UserType = "Cesante"
+                UserType = "cesante",
+                UserName = "541564564_2"
             };
 
             LdapResult = new LdapServicesResult<AuthenticateLdapResult>()
@@ -93,7 +105,9 @@
                 data = new List<AuthenticateLdapResult>()
                 {
                     new AuthenticateLdapResult() { Successurl = "success"}
-                }
+                },
+                code = (int)ServiceResponseCode.Success,
+                estado = "0000"
             };
 
             RequestRegisterUser = new RegisterUserRequest()
@@ -112,9 +126,13 @@
                 Name = "pepe",
                 NoDocument = "123345667899",
                 OnlyAzureRegister = false,
-                Password = "12345678",
+                Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==",
                 SocialReason = "Razon Social",
-                TypeDocument = "Cedula Ciudadania"
+                TypeDocument = "Cedula Ciudadania",
+                DegreeGeted = "Test",
+                EducationLevel = "Test",
+                PositionContact = "Test",
+                DeviceType = "WEB"
             };
 
             RequestIsAuthenticate = new IsAuthenticateRequest()

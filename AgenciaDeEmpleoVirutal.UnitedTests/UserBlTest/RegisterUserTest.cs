@@ -2,7 +2,6 @@
 {
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
-    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
@@ -66,7 +65,7 @@
         public void RegisterUserTest_WhenUerAlreadyExist_ReturnError()
         {
             ///Arrange
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
             var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             ///Action
             var result = UserBusiness.RegisterUser(RequestRegisterUser);
@@ -81,9 +80,8 @@
         public void RegisterUserTest_WhenTableStorageFaildAddingCesanteUser_ReturnError()
         {
             ///Arrange
-            UserInfoMock = null;
             RequestRegisterUser.IsCesante = true;
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
             var expected = ResponseFail<RegisterUserResponse>();
             ///Action
@@ -99,9 +97,8 @@
         public void RegisterUserTest_WhenTableStorageFaildAddingCompanyUser_ReturnError()
         {
             ///Arrange
-            UserInfoMock = null;
             RequestRegisterUser.IsCesante = false;
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
             var expected = ResponseFail<RegisterUserResponse>();
             ///Action
@@ -121,8 +118,7 @@
             {
                 new RegisterUserResponse() { IsRegister = true, State = true, User = UserInfoMock }
             };
-            UserInfoMock = null;
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
             RequestRegisterUser.OnlyAzureRegister = true;
             var expected = ResponseSuccess(response);
@@ -143,11 +139,10 @@
             {
                 new RegisterUserResponse() { IsRegister = true, State = true, User = UserInfoMock }
             };
-            UserInfoMock = null;
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
             RequestRegisterUser.OnlyAzureRegister = false;
-            LdapResult.data.First().Successurl = "Error";
+            LdapResult = null;
             LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterLdapRequest>())).Returns(LdapResult);
             var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.ServiceExternalError);
             ///Action
@@ -167,8 +162,7 @@
             {
                 new RegisterUserResponse() { IsRegister = true, State = true, User = UserInfoMock }
             };
-            UserInfoMock = null;
-            UserRepMoq.Setup(ur => ur.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             UserRepMoq.Setup(ur => ur.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
             RequestRegisterUser.OnlyAzureRegister = false;
             LdapServicesMoq.Setup(ld => ld.Register(It.IsAny<RegisterLdapRequest>())).Returns(LdapResult);

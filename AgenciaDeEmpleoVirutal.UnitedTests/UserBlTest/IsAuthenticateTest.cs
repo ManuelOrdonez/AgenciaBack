@@ -67,21 +67,18 @@
         public void IsAuthenticateTest_WhenUserIsAuthenticatedInDevice_ReturnSuccess()
         {
             ///Arrange
-            var resultTS = new List<User>()
-            {
-                new User()
-                {
-                    Authenticated = true
-                }
-            };
+            UserInfoMock.Authenticated = true;
             var response = new List<AuthenticateUserResponse>
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = resultTS.First()
+                    AuthInfo = UserBusiness.SetAuthenticationToken(UserInfoMock.UserName),
+                    UserInfo = UserInfoMock,
+                    OpenTokApiKey = _settings?.OpenTokApiKey,
+                    OpenTokAccessToken = string.Empty,
                 }
             };
-            UserRepMoq.Setup(ur => ur.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultTS);
+            UserRepMoq.Setup(ur => ur.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock } );
             var expected = ResponseSuccess(response);
             ///Action
             var result = UserBusiness.IsAuthenticate(RequestIsAuthenticate);

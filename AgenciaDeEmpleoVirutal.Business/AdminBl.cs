@@ -65,7 +65,7 @@
             {
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
-            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionary?.NoDocument, funcionary?.CodTypeDocument)).Result;
+            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument)).Result;
 
             int pos = 0;
             if (!ValRegistriesUser(funcoinaries, out pos))
@@ -77,7 +77,10 @@
                 /// Existe un usuario tipo persona que se debe desabilitar para continuar con el proceso de creación 
                 /// del usuario
                 funcoinaries[0].State = UserStates.Disable.ToString();
-                var resultp = _usersRepo.AddOrUpdate(funcoinaries[0]).Result;
+                if (!_usersRepo.AddOrUpdate(funcoinaries[0]).Result)
+                {
+                    return ResponseFail<CreateOrUpdateFuncionaryResponse>();
+                }
                 message = "Usuario creado exitosamente. El usuario que tenia registrado como Persona queda inactivo.";
             }
             else
@@ -145,6 +148,10 @@
         {
             funtionary = null;
             people = null;
+            if (!lUser.Any())
+            {
+                return;
+            }
             foreach (var item in lUser)
             {
                 switch (item.UserType)

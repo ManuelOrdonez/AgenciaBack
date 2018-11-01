@@ -161,7 +161,7 @@
                         PartitionKey = Agent.OpenTokSessionId.ToLower(),
                         RowKey = Agent.UserName,
                         UserNameAgent = Agent.UserName,
-                        UserNameCaller =agentAvailableRequest.UserName}).Result)
+                        UserNameCaller = agentAvailableRequest.UserName}).Result)
                     {
                         return ResponseFail<GetAgentAvailableResponse>();
                     }
@@ -205,8 +205,14 @@
             {
                 return ResponseFail<User>(ServiceResponseCode.BadRequest);
             }
-            var user = _agentRepository.GetAsync(RequestAviable?.UserName).Result;
-            return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
-        }      
+            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
+            if(user is null)
+            {
+                return ResponseFail<User>();
+            }
+            return ResponseSuccess(new List<User> { user });
+        }
+
+      
     }
 }

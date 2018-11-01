@@ -13,6 +13,7 @@
         protected Mock<IGenericRep<User>> FuncionaryRepMock;
         
         protected Mock<IOpenTokExternalService> _openTokExternalService;
+
         protected AdminBl AdminBusinessLogic;
 
         protected CreateFuncionaryRequest FuncionatyGodrequest;
@@ -26,6 +27,7 @@
         public AdminBlTestBase()
         {
             FuncionaryRepMock = new Mock<IGenericRep<User>>();
+            _openTokExternalService = new Mock<IOpenTokExternalService>();
             AdminBusinessLogic = new AdminBl(FuncionaryRepMock.Object, _openTokExternalService.Object);
             LoadMoqs();
         }
@@ -42,7 +44,9 @@
                 Email = "jgilg@colsubsidio.com", 
                 TypeDocument = "Cedula de ciudadania",
                 NoDocument = "123345667899",
-                CodTypeDocument = "2"
+                CodTypeDocument = "2",
+                UserName = "123345667899_2",
+                UserType = "cesante"
             };
 
             FuncionatyUpdateRequest = new UpdateFuncionaryRequest()
