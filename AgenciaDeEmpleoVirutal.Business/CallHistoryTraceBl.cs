@@ -214,7 +214,6 @@
                         }
                     }
                     this.Aviable(callRequest.UserName);
-                    callInfo.UserCall = callRequest.UserName;
                     var resultR = _openTokService.StopRecord(callInfo.RecordId);
                     break;
                 case CallStates.EndByMobile:
