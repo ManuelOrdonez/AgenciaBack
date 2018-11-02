@@ -76,6 +76,46 @@
             return entidad;
         }
 
+        public  OpenTokResult GetArchive(IDictionary<string, string> data, string operation)
+        {
+            if (data == null)
+            {
+                throw new ArgumentNullException("data");
+            }
+            var param = string.Empty;
+            foreach (var item in data)
+            {
+                param += $"{item.Key}={item.Value}&";
+            }
+
+            param = param.Substring(0, param.Length - 1);
+            var entidad = new OpenTokResult();
+
+            using (var context = GetWebClient())
+            {
+                try
+                {
+                    var serviceUrl = "";
+                    if (operation == "StartRecord")
+                    {
+                         serviceUrl = $"{Url}/StartRecord?{param}";
+                    }
+                    else
+                    {
+                         serviceUrl = $"{Url}/StopRecord?{param}";
+                    }
+                    entidad.Data = JsonConvert.DeserializeObject<string>(context.DownloadString(serviceUrl));
+                }
+                catch(Exception e)
+                {
+                    context.Dispose();
+                    throw;
+                }
+            }
+
+            return entidad;
+        }
+
         /// <summary>
         /// Oparation to create opentok session
         /// </summary>
@@ -110,7 +150,7 @@
             var data = new Dictionary<string, string>();
             data.Add(nameof(sessionId), sessionId);
             data.Add(nameof(user), user);
-            return Get(data).Data;
+            return GetArchive(data, "StartRecord").Data;
         }
 
         /// <summary>
@@ -122,7 +162,7 @@
         {
             var data = new Dictionary<string,string>();
             data.Add(nameof(RecordId), RecordId);            
-            return Get(data).Data;
+            return GetArchive(data, "StopRecord").Data;
         }
     }
 }
