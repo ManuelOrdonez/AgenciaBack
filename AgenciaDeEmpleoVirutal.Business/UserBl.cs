@@ -625,7 +625,7 @@
                 EducationLevel = userTableStorage.EducationLevel,
                 Genre = userTableStorage.Genre,
                 IsCesante = userRequest.IsCesante,
-                LastNames = userTableStorage.LastName,
+                LastNames = userRequest.IsCesante ? userTableStorage.LastName : userRequest.LastNames,
                 Mail = userTableStorage.Email,
                 Name = userTableStorage.Name,
                 PositionContact = userTableStorage.PositionContact,
@@ -636,7 +636,6 @@
             {
                 return ResponseFail(ServiceResponseCode.NotUpdate);
             }
-
             var userUpdate = new User()
             {
                 CellPhone1 = userRequest.Cellphon1,
@@ -672,7 +671,14 @@
             {
                 ResponseFail();
             }
-            _sendMailService.SendMailUpdate(userTableStorage);
+            var userMail = new User()
+            {
+                Email = userRequest.Mail,
+                Name = userRequest.Name,
+                LastName = userRequest.LastNames ?? string.Empty,
+                UserType = userRequest.IsCesante ? UsersTypes.Cesante.ToString().ToLower() : UsersTypes.Empresa.ToString().ToLower()
+            };
+            _sendMailService.SendMailUpdate(userMail);
             return ResponseSuccess();
         }
 
