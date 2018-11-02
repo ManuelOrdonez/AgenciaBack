@@ -69,5 +69,12 @@
         /// Get or Sets Observations
         /// </summary>
         public string Observations { get; set; }
+
+
+        /// <summary>
+        /// Get or Sets RecordId
+        /// </summary>
+        public string RecordId { get; set; }
+        
     }
 }
