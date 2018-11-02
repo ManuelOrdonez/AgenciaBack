@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
@@ -39,6 +40,8 @@
         /// </summary>
         private readonly IGenericRep<User> _agentRepository;
 
+        private readonly IOpenTokExternalService _openTokService;
+
         /// <summary>
         /// Class constructor
         /// </summary>
@@ -46,12 +49,14 @@
         /// <param name="agentRepository"></param>
         /// <param name="busyAgentRepository"></param>
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
-            IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository)
+            IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
+            IOpenTokExternalService openTokService)
         {
             _callHistoryRepository = callHistoryRepository;
             _agentRepository = agentRepository;
             _callerRepository = agentRepository;
             _busyAgentRepository = busyAgentRepository;
+            _openTokService = openTokService;
         }
 
         /// <summary>
@@ -185,10 +190,12 @@
                     callInfo.CallType = callRequest.CallType;
                     break;
                 case CallStates.Answered:
+                    var recordId = _openTokService.StartRecord(callRequest.OpenTokSessionId, callRequest.UserName);
                     callInfo.DateAnswerCall = DateTime.Now;
                     callInfo.UserAnswerCall = callRequest.UserName;
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     callInfo.State = stateInput.ToString();
+                    callInfo.RecordId = recordId;
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -197,7 +204,7 @@
                     }
                     break;
                 case CallStates.EndByWeb:
-                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput); 
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
                     if (agent != null)
                     {
                         agent.Available = false;                        
@@ -207,10 +214,10 @@
                         }
                     }
                     this.Aviable(callRequest.UserName);
-                    callInfo.UserCall = callRequest.UserName;
+                    var resultR = _openTokService.StopRecord(callInfo.RecordId);
                     break;
                 case CallStates.EndByMobile:
-                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);                                 
+                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -220,6 +227,7 @@
                             return ResponseFail();
                         }
                     }
+                    var resultRM = _openTokService.StopRecord(callInfo.RecordId);
                     break;
                 case CallStates.Managed:
                     callInfo.DateFinishCall = DateTime.Now;
