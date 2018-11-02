@@ -45,5 +45,11 @@
         public string EducationLevel { get; set; }
 
         public string DegreeGeted { get; set; }
+
+        public override string ToString()
+        {
+            return Address + UserName + Name + Mail + Cellphon1 + Cellphon2 + City + Departament + SocialReason + 
+                ContactName + PositionContact + Address + Genre + LastNames + EducationLevel + DegreeGeted;
+        }
     }
 }

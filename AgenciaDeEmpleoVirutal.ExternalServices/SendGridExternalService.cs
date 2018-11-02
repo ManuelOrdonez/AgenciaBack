@@ -71,6 +71,28 @@
         }
 
         /// <summary>
+        /// Send Mail to Update Info
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
+        public bool SendMailUpdate(User userInfo)
+        {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
+            _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailUpate;
+            _sendMailOptions.SubJect = ParametersApp.SubJectUpdate;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
+                                                        string.Empty : userInfo.LastName);
+            return SendMail();
+        }
+
+        /// <summary>
         /// Method to Send mail to reset password
         /// </summary>
         /// <param name="userInfo"></param>

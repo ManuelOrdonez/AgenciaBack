@@ -223,4 +223,23 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   <data name="SubJectWelcome" xml:space="preserve">
     <value>Registro Exitoso Agencia de Empleo Virtual Colsubsidio.</value>
   </data>
+  <data name="BodyMailUpate" xml:space="preserve">
+    <value>&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: center;"&gt;
+&lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;&lt;/p&gt;
+&lt;span style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: has actualizado tus datos con exito.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</value>
+  </data>
+  <data name="SubJectUpdate" xml:space="preserve">
+    <value>Actualización Exitosa Agencia de Empleo Virtual Colsubsidio.</value>
+  </data>
 </root>

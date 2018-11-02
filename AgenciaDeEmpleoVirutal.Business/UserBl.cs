@@ -613,6 +613,30 @@
             }
             var userTableStorage = _userRep.GetAsyncAll(userRequest.UserName).Result.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
+            var compareUser = new UserUdateRequest()
+            {
+                Address = userTableStorage.Addrerss,
+                Cellphon1 = userTableStorage.CellPhone1,
+                Cellphon2 = userTableStorage.CellPhone2,
+                City = userTableStorage.City,
+                ContactName = userTableStorage.ContactName,
+                DegreeGeted = userTableStorage.DegreeGeted,
+                Departament = userTableStorage.Departament,
+                EducationLevel = userTableStorage.EducationLevel,
+                Genre = userTableStorage.Genre,
+                IsCesante = userRequest.IsCesante,
+                LastNames = userTableStorage.LastName,
+                Mail = userTableStorage.Email,
+                Name = userTableStorage.Name,
+                PositionContact = userTableStorage.PositionContact,
+                SocialReason = userTableStorage.SocialReason,
+                UserName = userTableStorage.UserName
+            };
+            if (userRequest.ToString() == compareUser.ToString())
+            {
+                return ResponseFail(ServiceResponseCode.NotUpdate);
+            }
+
             var userUpdate = new User()
             {
                 CellPhone1 = userRequest.Cellphon1,
@@ -644,7 +668,12 @@
                 userUpdate.SocialReason = userRequest.SocialReason;
             }
             var result = _userRep.AddOrUpdate(userUpdate).Result;
-            return result ? ResponseSuccess() : ResponseFail();
+            if (!result)
+            {
+                ResponseFail();
+            }
+            _sendMailService.SendMailUpdate(userTableStorage);
+            return ResponseSuccess();
         }
 
         /// <summary>

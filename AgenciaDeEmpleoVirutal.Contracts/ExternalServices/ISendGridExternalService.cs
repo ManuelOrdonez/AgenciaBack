@@ -25,6 +25,13 @@
         bool SendMail(User userInfo, string urlReset);
 
         /// <summary>
+        /// Send Mail to Update Info
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
+        bool SendMailUpdate(User userInfo);
+
+        /// <summary>
         /// Send mail with PDI
         /// </summary>
         /// <param name="userInfo"></param>
