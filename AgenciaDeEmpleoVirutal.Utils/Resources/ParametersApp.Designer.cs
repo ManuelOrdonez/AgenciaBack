@@ -104,6 +104,28 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///&lt;tbody&gt;
         ///&lt;tr&gt;
         ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;&lt;/p&gt;
+        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: has actualizado tus datos con exito.&lt;/p&gt;
+        ///&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;/tbody&gt;
+        ///&lt;/table&gt;.
+        /// </summary>
+        public static string BodyMailUpate {
+            get {
+                return ResourceManager.GetString("BodyMailUpate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
         ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
         ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
         ///&lt;/tr&gt;
@@ -199,6 +221,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string SubjectPDI {
             get {
                 return ResourceManager.GetString("SubjectPDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actualización Exitosa Agencia de Empleo Virtual Colsubsidio..
+        /// </summary>
+        public static string SubJectUpdate {
+            get {
+                return ResourceManager.GetString("SubJectUpdate", resourceCulture);
             }
         }
         
