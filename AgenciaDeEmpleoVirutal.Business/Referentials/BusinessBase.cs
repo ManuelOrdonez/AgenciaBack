@@ -203,5 +203,17 @@
                 }
             };
         }
+        public Response<TEntity> ResponseFail<TEntity>(int codError,string Error) where TEntity : class, new()
+        {
+            return new Response<TEntity>
+            {
+                CodeResponse = codError,
+                TransactionMade = false,
+                Message = new List<string>
+                {
+                    Error
+                }
+            };
+        }
     }
 }

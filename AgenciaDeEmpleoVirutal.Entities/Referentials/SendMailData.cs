@@ -12,6 +12,7 @@
         /// The send mail API key.
         /// </value>
         public string SendMailApiKey { get; set; }
+
         /// <summary>
         /// Gets or sets the email adress from.
         /// </summary>
@@ -59,5 +60,17 @@
         /// The body mail.
         /// </value>
         public string BodyMail { get; set; }
+
+        public string EmailHost { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string EmailHostPort { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public string MyProperty { get; set; }
     }
 }

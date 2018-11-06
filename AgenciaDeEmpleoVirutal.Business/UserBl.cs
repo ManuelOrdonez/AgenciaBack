@@ -613,6 +613,29 @@
             }
             var userTableStorage = _userRep.GetAsyncAll(userRequest.UserName).Result.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
+            var compareUser = new UserUdateRequest()
+            {
+                Address = userTableStorage.Addrerss,
+                Cellphon1 = userTableStorage.CellPhone1,
+                Cellphon2 = userTableStorage.CellPhone2,
+                City = userTableStorage.City,
+                ContactName = userTableStorage.ContactName,
+                DegreeGeted = userTableStorage.DegreeGeted,
+                Departament = userTableStorage.Departament,
+                EducationLevel = userTableStorage.EducationLevel,
+                Genre = userTableStorage.Genre,
+                IsCesante = userRequest.IsCesante,
+                LastNames = userRequest.IsCesante ? userTableStorage.LastName : userRequest.LastNames,
+                Mail = userTableStorage.Email,
+                Name = userTableStorage.Name,
+                PositionContact = userTableStorage.PositionContact,
+                SocialReason = userTableStorage.SocialReason,
+                UserName = userTableStorage.UserName
+            };
+            if (userRequest.ToString() == compareUser.ToString())
+            {
+                return ResponseFail(ServiceResponseCode.NotUpdate);
+            }
             var userUpdate = new User()
             {
                 CellPhone1 = userRequest.Cellphon1,
@@ -644,7 +667,19 @@
                 userUpdate.SocialReason = userRequest.SocialReason;
             }
             var result = _userRep.AddOrUpdate(userUpdate).Result;
-            return result ? ResponseSuccess() : ResponseFail();
+            if (!result)
+            {
+                ResponseFail();
+            }
+            var userMail = new User()
+            {
+                Email = userRequest.Mail,
+                Name = userRequest.Name,
+                LastName = userRequest.LastNames ?? string.Empty,
+                UserType = userRequest.IsCesante ? UsersTypes.Cesante.ToString().ToLower() : UsersTypes.Empresa.ToString().ToLower()
+            };
+            _sendMailService.SendMailUpdate(userMail);
+            return ResponseSuccess();
         }
 
         /// <summary>

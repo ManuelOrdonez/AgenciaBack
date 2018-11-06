@@ -178,6 +178,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No realizaste alguna actualización en nuestro sistema.
+        /// </summary>
+        internal static string NotUpdate {
+            get {
+                return ResourceManager.GetString("NotUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parametro no registrado..
         /// </summary>
         internal static string ParameterNotFound {

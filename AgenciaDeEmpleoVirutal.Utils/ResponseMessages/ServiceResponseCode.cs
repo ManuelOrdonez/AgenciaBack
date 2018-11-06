@@ -119,7 +119,11 @@
         /// <summary>
         /// Out Of Service
         /// </summary>
-        OutOfService = 221
+        OutOfService = 221,
 
+        /// <summary>
+        /// Not Update
+        /// </summary>
+        NotUpdate = 222
     }
 }

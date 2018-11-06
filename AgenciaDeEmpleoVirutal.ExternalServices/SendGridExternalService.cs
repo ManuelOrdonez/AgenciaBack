@@ -41,10 +41,9 @@
         /// Operatin to Send Mail
         /// </summary>
         /// <returns></returns>
-        private bool SendMail()
+        private EmailResponse SendMail()
         {
-            SendGridHelper.SenMailRelay(_sendMailOptions, new List<Attachment>());
-            return true;
+            return SendGridHelper.SenMailRelay(_sendMailOptions, new List<Attachment>());
         }
 
         /// <inheritdoc />
@@ -53,19 +52,45 @@
         /// </summary>
         /// <param name="userInfo">The user information.</param>
         /// <returns></returns>
-        public bool SendMail(User userInfo)
+        public EmailResponse SendMail(User userInfo)
         {
             if (userInfo == null)
             {
                 throw new ArgumentNullException("userInfo");
             }
+            _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort; 
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
-            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+            _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
             _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, 
                                                         userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ? 
+                                                        string.Empty : userInfo.LastName);
+            return SendMail();
+        }
+
+        /// <summary>
+        /// Send Mail to Update Info
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <returns></returns>
+        public EmailResponse SendMailUpdate(User userInfo)
+        {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
+            _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
+            _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailUpate;
+            _sendMailOptions.SubJect = ParametersApp.SubJectUpdate;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
                                                         string.Empty : userInfo.LastName);
             return SendMail();
         }
@@ -76,15 +101,17 @@
         /// <param name="userInfo"></param>
         /// <param name="urlReset"></param>
         /// <returns></returns>
-        public bool SendMail(User userInfo,string urlReset)
+        public EmailResponse SendMail(User userInfo,string urlReset)
         {
             if (userInfo == null)
             {
                 throw new ArgumentNullException("userInfo");
             }
+            _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
-            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+            _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPass;
             _sendMailOptions.SubJect = ParametersApp.SubJectPass;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
@@ -99,15 +126,17 @@
         /// <param name="userInfo"></param>
         /// <param name="attachments"></param>
         /// <returns></returns>
-        public bool SendMailPDI(User userInfo, IList<Attachment> attachments)
+        public EmailResponse SendMailPDI(User userInfo, IList<Attachment> attachments)
         {
             if (userInfo == null)
             {
                 throw new ArgumentNullException("userInfo");
             }
+            _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
-            _sendMailOptions.EmailAddressFrom = ParametersApp.EmailAddressFrom;
+            _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPDI;
             _sendMailOptions.SubJect = ParametersApp.SubjectPDI;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
