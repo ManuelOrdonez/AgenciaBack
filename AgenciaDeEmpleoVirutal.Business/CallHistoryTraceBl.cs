@@ -214,10 +214,9 @@
                         }
                     }
                     this.Aviable(callRequest.UserName);
-                    var resultR = _openTokService.StopRecord(callInfo.RecordId);
                     break;
                 case CallStates.EndByMobile:
-                    callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
+                    callInfo = this.CallEnded(CallStates.EndByMobile, callInfo, callRequest, stateInput);
                     if (agent != null)
                     {
                         agent.Available = false;
@@ -227,7 +226,6 @@
                             return ResponseFail();
                         }
                     }
-                    var resultRM = _openTokService.StopRecord(callInfo.RecordId);
                     break;
                 case CallStates.Managed:
                     callInfo.DateFinishCall = DateTime.Now;
@@ -261,6 +259,7 @@
             {
                 callInfo.DateFinishCall = DateTime.Now;
                 callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
+                var resultR = _openTokService.StopRecord(callInfo.RecordId);
             }
             callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
