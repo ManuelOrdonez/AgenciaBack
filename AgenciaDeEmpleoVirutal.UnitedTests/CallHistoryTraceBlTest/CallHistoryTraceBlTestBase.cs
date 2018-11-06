@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Business;
     using AgenciaDeEmpleoVirutal.Business.Referentials;
+    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
@@ -55,6 +56,9 @@
         /// </summary>
         protected GetCallRequest GetCallRequestMoq;
 
+
+        protected Mock<IOpenTokExternalService> OpenTokExternalService;
+
         /// <summary>
         /// Class Constructor
         /// </summary>
@@ -63,8 +67,11 @@
             BusyAgentRepositoryMoq = new Mock<IGenericRep<BusyAgent>>();
             CallHistoryRepositoryMoq = new Mock<IGenericRep<CallHistoryTrace>>();
             UserRepositoryMoq = new Mock<IGenericRep<User>>();
-            CallHistoryTraceBusinessLogic = new CallHistoryTraceBl(CallHistoryRepositoryMoq.Object, UserRepositoryMoq.Object, BusyAgentRepositoryMoq.Object);
+            OpenTokExternalService = new Mock<IOpenTokExternalService>();
+            CallHistoryTraceBusinessLogic = new CallHistoryTraceBl(
+                CallHistoryRepositoryMoq.Object, UserRepositoryMoq.Object, BusyAgentRepositoryMoq.Object, OpenTokExternalService.Object);
             LoadMoqsEntities();
+
         }
 
         public void LoadMoqsEntities()

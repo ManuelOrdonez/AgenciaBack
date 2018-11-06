@@ -16,7 +16,7 @@
         /// </summary>
         /// <param name="sendMailData">The send mail data.</param>
         /// <returns></returns>
-        public static bool SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
+        public static EmailResponse SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
         {
             if (sendMailData == null)
             {
@@ -28,8 +28,8 @@
             }
             var client = new SmtpClient
             {
-                Port = 25,
-                Host = "smtp.gmail.com",
+                Port = Convert.ToInt32 (sendMailData.EmailHostPort),
+                Host = sendMailData.EmailHost,
                 Timeout = 10000,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
@@ -52,11 +52,11 @@
             try
             {
                 client.Send(mail);
-                return true;
+                return new EmailResponse() { Ok = true, Message= string.Empty };
             }
-            catch (Exception )
+            catch (Exception ex )
             {
-                return false;
+                return new EmailResponse() { Ok = false, Message = ex.Message };
             }
         }
     }

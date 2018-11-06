@@ -125,11 +125,11 @@
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
             var sendPdi = SendPdi(pdi, user);
-            if (sendPdi != ServiceResponseCode.Success)
+            if (!sendPdi.Ok)
             {
-                return ResponseFail<PDI>(sendPdi);
+                return ResponseFail<PDI>((int)ServiceResponseCode.ErrorSendMail, sendPdi.Message);
             }
-            return ResponseSuccess(sendPdi);
+            return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
         /// <summary>
@@ -138,25 +138,36 @@
         /// <param name="pdi"></param>
         /// <param name="user"></param>
         /// <returns></returns>
-        private ServiceResponseCode SendPdi(PDI pdi, User user)
+        private EmailResponse SendPdi(PDI pdi, User user)
         {
             var ContentPDI = GenarateContentPDI(pdi);
             if (ContentPDI is null)
             {
-                return ServiceResponseCode.ServiceExternalError;
+                return new EmailResponse() { Ok = false, Message = "Error generando PDI" };
             }
             MemoryStream stream = new MemoryStream(ContentPDI);
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdi.PDIName, "application/pdf") };
-            if (!_sendMailService.SendMailPDI(user, attachmentPDI))
+            var rta = _sendMailService.SendMailPDI(user, attachmentPDI);
+            try
             {
-                return ServiceResponseCode.ErrorSendMail;
+                stream.Close();
             }
-            stream.Close();
-            if (!_pdiRep.AddOrUpdate(pdi).Result)
+            catch (Exception)
             {
-                return ServiceResponseCode.InternalError;
             }
-            return ServiceResponseCode.SendAndSavePDI;
+            if (rta.Ok)
+            {
+                if (!_pdiRep.AddOrUpdate(pdi).Result)
+                {
+                    return new EmailResponse() { Ok = false, Message = "Error guardando PDI" };
+                }
+            }
+            return rta;
+            //if (!_pdiRep.AddOrUpdate(pdi).Result)
+            //{
+            //    return ServiceResponseCode.InternalError;
+            //}
+            //return ServiceResponseCode.SendAndSavePDI;
         }
 
         /// <summary>

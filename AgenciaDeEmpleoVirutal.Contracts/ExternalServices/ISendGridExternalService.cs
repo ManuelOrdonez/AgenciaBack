@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.ExternalServices
 {
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using Entities;
     using System.Collections.Generic;
     using System.Net.Mail;
@@ -14,7 +15,7 @@
         /// </summary>
         /// <param name="userInfo">The user information.</param>
         /// <returns></returns>
-        bool SendMail(User userInfo);
+        EmailResponse SendMail(User userInfo);
 
         /// <summary>
         /// Send mail to reset password
@@ -22,14 +23,14 @@
         /// <param name="userInfo"></param>
         /// <param name="urlReset"></param>
         /// <returns></returns>
-        bool SendMail(User userInfo, string urlReset);
+        EmailResponse SendMail(User userInfo, string urlReset);
 
         /// <summary>
         /// Send Mail to Update Info
         /// </summary>
         /// <param name="userInfo"></param>
         /// <returns></returns>
-        bool SendMailUpdate(User userInfo);
+        EmailResponse SendMailUpdate(User userInfo);
 
         /// <summary>
         /// Send mail with PDI
@@ -37,7 +38,7 @@
         /// <param name="userInfo"></param>
         /// <param name="attachments"></param>
         /// <returns></returns>
-        bool SendMailPDI(User userInfo, IList<Attachment> attachments);
+        EmailResponse SendMailPDI(User userInfo, IList<Attachment> attachments);
 
     }
 }
