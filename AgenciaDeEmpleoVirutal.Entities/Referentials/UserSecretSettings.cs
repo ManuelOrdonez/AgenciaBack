@@ -40,5 +40,10 @@
         /// </summary>
         public string PdfConvertService { get; set; }
 
+        public string EmailAddressFrom { get; set; }
+
+        public string EmailHost { get; set; }
+
+        public string EmailHostPort { get; set; }
     }
 }
