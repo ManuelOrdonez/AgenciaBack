@@ -73,9 +73,9 @@
         private Response<GetAgentAvailableResponse> ValidateShedule()
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
-            string[] days = { "domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado" };
-            string dayIni = parameters.Where(x => x.RowKey == "diainicio").FirstOrDefault().Value;
-            string dayEnd = parameters.Where(x => x.RowKey == "diafin").FirstOrDefault().Value;
+            string[] days = { "domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado" };
+            string dayIni = parameters.Where(x => x.RowKey == "diainicio").FirstOrDefault().Value.Replace("á","a").Replace("é", "e");
+            string dayEnd = parameters.Where(x => x.RowKey == "diafin").FirstOrDefault().Value.Replace("á", "a").Replace("é", "e");
             string hourIni = parameters.Where(x => x.RowKey == "horainicio").FirstOrDefault().Value;
             string hourEnd = parameters.Where(x => x.RowKey == "horafin").FirstOrDefault().Value;
             string MessageShedule = parameters.Where(x => x.RowKey == "message").FirstOrDefault().Value;
