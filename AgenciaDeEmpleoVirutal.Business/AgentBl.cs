@@ -82,7 +82,7 @@
 
             int diaIniPos = Array.IndexOf(days, dayIni.ToLower());
             int diaEndPos = Array.IndexOf(days, dayEnd.ToLower());
-            string dayNow = DateTime.UtcNow.AddHours(-5).ToString("dddd", new CultureInfo("es-CO"));
+            string dayNow = DateTime.UtcNow.AddHours(-5).ToString("dddd", new CultureInfo("es-CO")).Replace("á", "a").Replace("é", "e");
             int dayNowPos = Array.IndexOf(days, dayNow);
 
             var result = new Response<GetAgentAvailableResponse>
