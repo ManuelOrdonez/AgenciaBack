@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.ExternalServices
 {
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using Contracts.ExternalServices;
@@ -52,22 +53,31 @@
         /// </summary>
         /// <param name="userInfo">The user information.</param>
         /// <returns></returns>
-        public EmailResponse SendMail(User userInfo)
+        public EmailResponse SendMail(SendMailWelcomeRequest sendMailRequest)
         {
-            if (userInfo == null)
+            if (sendMailRequest == null)
             {
-                throw new ArgumentNullException("userInfo");
+                throw new ArgumentNullException("sendMailRequest");
             }
             _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
             _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort; 
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
-            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressTo = sendMailRequest.Mail;
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
-            _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcome;
             _sendMailOptions.SubJect = ParametersApp.SubJectWelcome;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, 
-                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ? 
-                                                        string.Empty : userInfo.LastName);
+
+            if (!sendMailRequest.IsCesante)
+            {
+
+                _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcomeCompany;
+                _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, sendMailRequest.Name);
+            }
+            else
+            {
+                _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcomePerson;
+                _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, sendMailRequest.IsMale, sendMailRequest.Name, sendMailRequest.LastName,
+                    sendMailRequest.DocType, sendMailRequest.DocNum, sendMailRequest.Pass);
+            }
             return SendMail();
         }
 
