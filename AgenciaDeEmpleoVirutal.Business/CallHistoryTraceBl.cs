@@ -259,7 +259,14 @@
             {
                 callInfo.DateFinishCall = DateTime.Now;
                 callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
-                var resultR = _openTokService.StopRecord(callInfo.RecordId);
+                try
+                {
+                    var resultR = _openTokService.StopRecord(callInfo.RecordId);
+                }
+                catch (Exception)
+                {
+
+                }
             }
             callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
