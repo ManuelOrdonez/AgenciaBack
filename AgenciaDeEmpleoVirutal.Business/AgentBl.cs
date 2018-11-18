@@ -73,7 +73,7 @@
         private Response<GetAgentAvailableResponse> ValidateShedule()
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
-            string[] days = { "domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado" };
+            string[] days = {  "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" };
             string dayIni = parameters.Where(x => x.RowKey == "diainicio").FirstOrDefault().Value.Replace("á","a").Replace("é", "e");
             string dayEnd = parameters.Where(x => x.RowKey == "diafin").FirstOrDefault().Value.Replace("á", "a").Replace("é", "e");
             string hourIni = parameters.Where(x => x.RowKey == "horainicio").FirstOrDefault().Value;
