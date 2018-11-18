@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.ExternalServices
 {
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
+    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using Entities;
     using System.Collections.Generic;
     using System.Net.Mail;
@@ -15,7 +16,7 @@
         /// </summary>
         /// <param name="userInfo">The user information.</param>
         /// <returns></returns>
-        EmailResponse SendMail(User userInfo);
+        EmailResponse SendMail(SendMailWelcomeRequest userInfo);
 
         /// <summary>
         /// Send mail to reset password

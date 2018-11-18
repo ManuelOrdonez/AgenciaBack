@@ -370,8 +370,21 @@
                 new RegisterUserResponse() { IsRegister = true, State = true, User = user }
             };
 
+            SendMailWelcomeRequest sendMailRequest = new SendMailWelcomeRequest()
+            {
+                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino") ? string.Empty : "a",
+                IsCesante = userReq.IsCesante,
+                DocNum = userReq.NoDocument,
+                LastName = string.IsNullOrEmpty(userReq.LastNames) ? string.Empty : UString.UppercaseWords(userReq.LastNames),
+                Name = UString.UppercaseWords(userReq.Name),
+                DocType = userReq.TypeDocument,
+                Pass = passwordDecrypt,
+                Mail = userReq.Mail
+            };
+
             if (userReq.OnlyAzureRegister)
             {
+                _sendMailService.SendMail(sendMailRequest);
                 return ResponseSuccess(response);
             }
 
@@ -381,7 +394,8 @@
                 return ResponseFail<RegisterUserResponse>(registerUser);
             }
             /// Ya existe en LDAP
-            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);
+            /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);            
+            _sendMailService.SendMail(sendMailRequest);
             return ResponseSuccess(response);
         }
 
@@ -450,7 +464,7 @@
                     RegisterDate = DateTimeOffset.UtcNow.AddHours(-5)
                 };
                 var result = _userRep.AddOrUpdate(company).Result;
-                _sendMailService.SendMail(company);
+                /// _sendMailService.SendMail(company);
                 if (!result)
                 {
                     return new User();
@@ -485,7 +499,7 @@
                     RegisterDate = DateTimeOffset.UtcNow.AddHours(-5)
                 };
                 var result = _userRep.AddOrUpdate(cesante).Result;
-                _sendMailService.SendMail(cesante);
+                /// _sendMailService.SendMail(cesante);
                 if (!result)
                 {
                     return new User();
