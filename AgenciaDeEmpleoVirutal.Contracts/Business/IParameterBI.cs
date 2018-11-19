@@ -24,6 +24,14 @@
         Response<ParametersResponse> GetParametersByType(string type);
 
         /// <summary>
+        /// Method to Get Parameters By Type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        Response<ParametersResponse> GetAllParametersByType(string type);
+        
+
+        /// <summary>
         /// Method to Get Some Parameters By Type
         /// </summary>
         /// <param name="type"></param>

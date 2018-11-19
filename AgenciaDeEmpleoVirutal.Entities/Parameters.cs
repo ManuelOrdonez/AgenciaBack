@@ -28,7 +28,7 @@
         /// <summary>
         /// Get or Sets Value
         /// </summary>
-        public string  Value { get; set; }
+        public string Value { get; set; }
 
         /// <summary>
         /// Get or Sets Description
@@ -41,5 +41,11 @@
         /// Get or Sets Sort By
         /// </summary>
         public string SortBy { get; set; }
+
+        /// <summary>
+        ///  Get or image
+        /// </summary>
+        public string ImageFile { get; set; }
     }
 }
+

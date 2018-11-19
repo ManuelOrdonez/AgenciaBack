@@ -13,6 +13,7 @@ namespace AgenciaDeEmpleoVirutal.Entities.Responses
         public string Desc { get; set; }
         
         public bool State { get; set; }
+        public string ImageFile { get; set; }
 
     }
 }

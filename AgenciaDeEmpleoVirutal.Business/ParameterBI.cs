@@ -68,7 +68,59 @@
             }
             result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var parametsList = new List<ParametersResponse>();
-            result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description, State = r.State }));
+
+            result.ForEach(r =>
+            {
+                if (r.State == true)
+                {
+                    parametsList.Add(new ParametersResponse()
+                    {
+                        ImageFile = r.ImageFile,
+                        Id = r.Id,
+                        Type = r.Type,
+                        Value = r.Value,
+                        Desc = r.Description,
+                        State = r.State
+                    });
+                }
+            });
+            return ResponseSuccess(parametsList);
+        }
+
+
+
+
+        /// <summary>
+        /// Method to All Get Parameters By Type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public Response<ParametersResponse> GetAllParametersByType(string type)
+        {
+            if (string.IsNullOrEmpty(type))
+            {
+                return ResponseFail<ParametersResponse>(ServiceResponseCode.BadRequest);
+            }
+            var result = _paramentRep.GetByPatitionKeyAsync(type).Result;
+            if (result == null || result.Count == 0)
+            {
+                return ResponseFail<ParametersResponse>();
+            }
+            result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
+            var parametsList = new List<ParametersResponse>();
+
+            result.ForEach(r =>
+            {
+                parametsList.Add(new ParametersResponse()
+                {
+                    ImageFile = r.ImageFile,
+                    Id = r.Id,
+                    Type = r.Type,
+                    Value = r.Value,
+                    Desc = r.Description,
+                    State = r.State
+                });
+            });
             return ResponseSuccess(parametsList);
         }
 
@@ -99,7 +151,22 @@
             }
             result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var parametsList = new List<ParametersResponse>();
-            result.ForEach(r => parametsList.Add(new ParametersResponse() { Id = r.Id, Type = r.Type, Value = r.Value, Desc = r.Description , State = r.State }));
+
+            result.ForEach(r =>
+            {
+                if (r.State == true)
+                {
+                    parametsList.Add(new ParametersResponse()
+                    {
+                        ImageFile = r.ImageFile,
+                        Id = r.Id,
+                        Type = r.Type,
+                        Value = r.Value,
+                        Desc = r.Description,
+                        State = r.State
+                    });
+                }
+            });
             return ResponseSuccess(parametsList);
         }
 
@@ -134,6 +201,7 @@
             parameter.Value = request.ParameterValue;
             parameter.Description = request.ParameterDesc;
             parameter.State = request.ParameterState;
+            parameter.ImageFile = request.ParameterImg;
             var resultUpdate = _paramentRep.AddOrUpdate(parameter);
 
             ParametersResponse response = new ParametersResponse()
@@ -141,7 +209,8 @@
                 Desc = parameter.Description,
                 Id = parameter.Id,
                 Type = parameter.Type,
-                Value = parameter.Value
+                Value = parameter.Value,
+                ImageFile = parameter.ImageFile
             };
             return ResponseSuccess(new List<ParametersResponse>() { response });
         }
