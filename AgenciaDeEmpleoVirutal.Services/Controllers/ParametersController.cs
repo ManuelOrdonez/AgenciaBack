@@ -64,6 +64,23 @@
         }
 
         /// <summary>
+        /// Operation to Get All Parameters By Type
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
+        [HttpGet]
+        [Route("GetAllParametersByType")]
+        [Produces(typeof(Response<ParametersResponse>))]
+        public IActionResult GetAllParametersByType(string type)
+        {
+            return Ok(_ParameterBussines.GetAllParametersByType(type));
+        }
+
+
+        
+
+        /// <summary>
         /// Operation to Get Some Parameters By Type
         /// </summary>
         /// <param name="type"></param>

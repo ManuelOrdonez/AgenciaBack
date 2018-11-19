@@ -15,6 +15,7 @@
         public string ParameterValue { get; set; }
 
         public string ParameterDesc { get; set; }
+        public string ParameterImg { get; set; }
         public bool ParameterState { get; set; }
 
     }
