@@ -167,10 +167,10 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///   Looks up a localized string similar to &lt;table border=&quot;0&quot; style=&quot;width: 900px&quot;&gt;
         ///	&lt;tbody&gt;
         ///		&lt;tr style=&quot;background:#00425f&quot;&gt;
-        ///			&lt;td colspan=&quot;3&quot; style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/colsubsidio_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
+        ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/colsubsidio_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
         ///		&lt;/tr&gt;
         ///		&lt;tr style=&quot;background:#00597c; padding: 10px;&quot;&gt;
-        ///			&lt;td colspan=&quot;3&quot; style=&quot;text-align: left&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/agencia_de_empleo_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
+        ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: left&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/agencia_de_empleo_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
         ///		&lt;/tr&gt;
         ///		&lt;tr&gt;
         ///			&lt;td colspan= [rest of string was truncated]&quot;;.
