@@ -161,7 +161,12 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/table&gt;</value>
   </data>
   <data name="ContentPDIPdf" xml:space="preserve">
-    <value>&lt;table border="0" style="width: 900px"&gt;
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta http-equiv="Content-Type" content="text/html; charset=utf-8"/&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;table border="0" style="width: 900px"&gt;
 	&lt;tbody&gt;
 		&lt;tr style="background:#00425f"&gt;
 			&lt;td colspan="7" style="text-align: center"&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/colsubsidio_logo.png" alt=""&gt;&lt;/td&gt;
@@ -247,7 +252,9 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 		    &lt;td style="text-align: right;"&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/proteccion_logo.png" alt=""&gt;&lt;/td&gt;
         &lt;/tr&gt;
 	&lt;/tbody&gt;
-&lt;/table&gt;</value>
+&lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="EmailAddressFrom" xml:space="preserve">
     <value>colsubsidioprueba@gmail.com</value>

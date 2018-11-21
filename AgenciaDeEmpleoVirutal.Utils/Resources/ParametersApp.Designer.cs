@@ -164,16 +164,18 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;table border=&quot;0&quot; style=&quot;width: 900px&quot;&gt;
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot;/&gt;
+        ///&lt;/head&gt;
+        ///&lt;body&gt;
+        ///&lt;table border=&quot;0&quot; style=&quot;width: 900px&quot;&gt;
         ///	&lt;tbody&gt;
         ///		&lt;tr style=&quot;background:#00425f&quot;&gt;
         ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/colsubsidio_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
         ///		&lt;/tr&gt;
         ///		&lt;tr style=&quot;background:#00597c; padding: 10px;&quot;&gt;
-        ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: left&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/agencia_de_empleo_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
-        ///		&lt;/tr&gt;
-        ///		&lt;tr&gt;
-        ///			&lt;td colspan= [rest of string was truncated]&quot;;.
+        ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: left&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsi [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ContentPDIPdf {
             get {
