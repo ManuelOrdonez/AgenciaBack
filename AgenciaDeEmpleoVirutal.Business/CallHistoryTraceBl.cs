@@ -381,7 +381,7 @@
                 var blobContainer = _UserSecretSettings.BlobContainer;
                 var StorageAccount = _UserSecretSettings.StorageAccountName;
                 var openTokApiKey = _UserSecretSettings.OpenTokApiKey;
-                cll.RecordUrl = "//" + StorageAccount + ".blob.core.windows.net/" + blobContainer + "/" + openTokApiKey + "/" + cll.RecordId + "/archive.zip";
+                cll.RecordUrl = "https://" + StorageAccount + ".blob.core.windows.net/" + blobContainer + "/" + openTokApiKey + "/" + cll.RecordId + "/archive.zip";
                 if (string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
                     continue;
