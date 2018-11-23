@@ -75,6 +75,11 @@
         /// Get or Sets RecordId
         /// </summary>
         public string RecordId { get; set; }
+
+        /// <summary>
+        /// Url Record
+        /// </summary>
+        public string RecordUrl { get; set; }
         
     }
 }

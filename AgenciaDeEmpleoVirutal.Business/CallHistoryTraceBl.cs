@@ -11,6 +11,8 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.Extensions.Options;
+    using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -41,6 +43,7 @@
         private readonly IGenericRep<User> _agentRepository;
 
         private readonly IOpenTokExternalService _openTokService;
+        private readonly UserSecretSettings _UserSecretSettings;
 
         /// <summary>
         /// Class constructor
@@ -50,13 +53,14 @@
         /// <param name="busyAgentRepository"></param>
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
-            IOpenTokExternalService openTokService)
+            IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options)
         {
             _callHistoryRepository = callHistoryRepository;
             _agentRepository = agentRepository;
             _callerRepository = agentRepository;
             _busyAgentRepository = busyAgentRepository;
             _openTokService = openTokService;
+            _UserSecretSettings = options.Value;
         }
 
         /// <summary>
@@ -110,7 +114,7 @@
                     new ConditionParameter{ColumnName="State", Condition = "ne", Value = request.State }
                 };
             var call = _callHistoryRepository.GetSomeAsync(parameters).Result;
-            if(call is null)
+            if (call is null)
             {
                 return ResponseFail<List<CallHistoryTrace>>();
             }
@@ -129,7 +133,7 @@
                 throw new ArgumentNullException("request");
             }
             var errorMessages = request.Validate().ToList();
-            if(errorMessages.Count > 0)
+            if (errorMessages.Count > 0)
             {
                 return ResponseFail<List<CallHistoryTrace>>(ServiceResponseCode.BadRequest);
             }
@@ -207,7 +211,7 @@
                     callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
                     if (agent != null)
                     {
-                        agent.Available = false;                        
+                        agent.Available = false;
                         if (!_agentRepository.AddOrUpdate(agent).Result)
                         {
                             return ResponseFail();
@@ -290,7 +294,7 @@
                 type = "UserNameCaller";
             }
 
-            var busy = _busyAgentRepository.GetSomeAsync(type,UserName).Result;
+            var busy = _busyAgentRepository.GetSomeAsync(type, UserName).Result;
             if (busy.Any())
             {
                 var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
@@ -342,13 +346,42 @@
             {
                 type = "UserCall";
             }
-            var calls = _callHistoryRepository.GetSomeAsync(type, getAllUserCallRequest.UserName).Result;
+
+            var query = new List<ConditionParameter>()
+                {
+                    new ConditionParameter()
+                    {
+                        ColumnName = "DateCall",
+                        Condition = QueryComparisons.GreaterThanOrEqual,
+                        ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                    },
+
+                     new ConditionParameter()
+                    {
+                        ColumnName = "DateCall",
+                        Condition = QueryComparisons.LessThan,
+                        ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                    },
+                     new ConditionParameter()
+                     {
+                        ColumnName = type,
+                        Condition = QueryComparisons.Equal,
+                        Value = getAllUserCallRequest.UserName
+                     }
+                };
+            var calls = _callHistoryRepository.GetSomeAsync(query).Result;
+
+
             if (calls.Count == 0 || calls is null)
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
             foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
-            {                
+            {
+                var blobContainer = _UserSecretSettings.BlobContainer;
+                var StorageAccount = _UserSecretSettings.StorageAccountName;
+                var openTokApiKey = _UserSecretSettings.OpenTokApiKey;
+                cll.RecordUrl = "//" + StorageAccount + ".blob.core.windows.net/" + blobContainer + "/" + openTokApiKey + "/" + cll.RecordId + "/archive.zip";
                 if (string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
                     continue;
@@ -400,7 +433,7 @@
                 };
                 var callInfo = GetCallInfo(getCallReq).Data.First();
                 var caller = _callerRepository.GetAsync(callInfo.UserCall).Result;
-                if(caller is null)
+                if (caller is null)
                 {
                     return ResponseFail<CallerInfoResponse>();
                 }
