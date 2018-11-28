@@ -12,6 +12,8 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
+    using Microsoft.WindowsAzure.Storage;
+    using Microsoft.WindowsAzure.Storage.Blob;
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
@@ -329,6 +331,31 @@
             };
         }
 
+        public Response<ResponseUrlRecord> GetRecordUrl(string RecordId)
+        {
+            var response = new List<ResponseUrlRecord>();
+
+            var blobContainer = _UserSecretSettings.BlobContainer;
+            var StorageConnectionString = _UserSecretSettings.TableStorage;
+            var openTokApiKey = _UserSecretSettings.OpenTokApiKey;
+
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
+
+            //Create the blob client object.
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+            //Get a reference to a container to use for the sample code, and create it if it does not exist.
+            CloudBlobContainer container = blobClient.GetContainerReference(blobContainer);
+
+            response.Add(new ResponseUrlRecord()
+            {
+                URL = this.GetContainerSasUri(container, openTokApiKey + "/" +RecordId + "/archive.zip")
+
+            });
+            return ResponseSuccess(response);
+
+        }
+
         /// <summary>
         /// Method to Get All User Call
         /// </summary>
@@ -346,29 +373,52 @@
             {
                 type = "UserCall";
             }
+            var query = new List<ConditionParameter>();
+            if (!string.IsNullOrEmpty(getAllUserCallRequest.UserName))
+            {
+                query = new List<ConditionParameter>()
+             {
+                 new ConditionParameter()
+                 {
+                     ColumnName = "DateCall",
+                     Condition = QueryComparisons.GreaterThanOrEqual,
+                     ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                 },
 
-            var query = new List<ConditionParameter>()
-                {
-                    new ConditionParameter()
-                    {
-                        ColumnName = "DateCall",
-                        Condition = QueryComparisons.GreaterThanOrEqual,
-                        ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
-                    },
+                  new ConditionParameter()
+                 {
+                     ColumnName = "DateCall",
+                     Condition = QueryComparisons.LessThan,
+                     ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                 },
+                  new ConditionParameter()
+                  {
+                     ColumnName = type,
+                     Condition = QueryComparisons.Equal,
+                     Value = getAllUserCallRequest.UserName
+                  }
+             };
+            }
+            else
+            {
+                query = new List<ConditionParameter>()
+             {
+                 new ConditionParameter()
+                 {
+                     ColumnName = "DateCall",
+                     Condition = QueryComparisons.GreaterThanOrEqual,
+                     ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                 },
 
-                     new ConditionParameter()
-                    {
-                        ColumnName = "DateCall",
-                        Condition = QueryComparisons.LessThan,
-                        ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
-                    },
-                     new ConditionParameter()
-                     {
-                        ColumnName = type,
-                        Condition = QueryComparisons.Equal,
-                        Value = getAllUserCallRequest.UserName
-                     }
-                };
+                  new ConditionParameter()
+                 {
+                     ColumnName = "DateCall",
+                     Condition = QueryComparisons.LessThan,
+                     ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                 },
+             };
+            }
+
             var calls = _callHistoryRepository.GetSomeAsync(query).Result;
 
 
@@ -376,29 +426,101 @@
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
+
+            List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();
+
+
+
             foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
             {
-                var blobContainer = _UserSecretSettings.BlobContainer;
-                var StorageAccount = _UserSecretSettings.StorageAccountName;
-                var openTokApiKey = _UserSecretSettings.OpenTokApiKey;
-                cll.RecordUrl = "https://" + StorageAccount + ".blob.core.windows.net/" + blobContainer + "/" + openTokApiKey + "/" + cll.RecordId + "/archive.zip";
+                cll.RecordUrl = cll.RecordId;
+                    //this.GetContainerSasUri(container, openTokApiKey + "/" + cll.RecordId + "/archive.zip");
+                //cll.RecordUrl = "https://" + StorageAccount + ".blob.core.windows.net/" + blobContainer + "/" + openTokApiKey + "/" + cll.RecordId + "/archive.zip";
                 if (string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
                     continue;
                 }
-                var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(), cll.UserAnswerCall).Result.First();
-                if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
+                if (!string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
-                    continue;
+                    var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(), cll.UserAnswerCall.ToLower()).Result.First();
+                    if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        cll.AgentName = agentInfo.Name + " " + agentInfo.LastName;
+                    }
                 }
-                response.Add(new GetAllUserCallResponse()
+                string typeU = string.Empty;
+
+
+                if (!string.IsNullOrEmpty(cll.UserCall))
                 {
-                    AgentName = agentInfo.Name + " " + agentInfo.LastName,
-                    CallInfo = cll,
-                    DateCall = cll.DateCall.ToString("dd/MM/yyyy")
-                });
+                    if (cll.UserCall.Substring(cll.UserCall.Length - 1) == "1")
+                    {
+                        typeU = UsersTypes.Empresa.ToString().ToLower();
+                    }
+                    else
+                    {
+                        typeU = UsersTypes.Cesante.ToString().ToLower();
+                    }
+
+                    var callerInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(typeU, cll.UserCall.ToLower()).Result.First();
+                    if (callerInfo is null || string.IsNullOrEmpty(callerInfo.Name))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (typeU != UsersTypes.Empresa.ToString().ToLower())
+                        {
+                            cll.CallerName = callerInfo.Name + " " + callerInfo.LastName;
+                        }
+                        else
+                        {
+                            cll.CallerName = callerInfo.ContactName + "-" + callerInfo.SocialReason;
+                        }
+                    }
+                }
+
+                cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
+
+                callsList.Add(cll);
+                    
             }
+
+            response.Add(new GetAllUserCallResponse()
+            {
+                CallInfo = callsList,
+            });
             return ResponseSuccess(response);
+        }
+
+
+        /// <summary>
+        /// Get secure Url Blob
+        /// </summary>
+        /// <param name="container"></param>
+        /// <returns></returns>
+        private string GetContainerSasUri(CloudBlobContainer container, string BlobName)
+        {
+            CloudBlockBlob blob = container.GetBlockBlobReference(BlobName);
+
+
+            //Set the expiry time and permissions for the blob.
+            //In this case, the start time is specified as a few minutes in the past, to mitigate clock skew.
+            //The shared access signature will be valid immediately.
+            SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
+            sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5);
+            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(1);
+            sasConstraints.Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write;
+
+            //Generate the shared access signature on the blob, setting the constraints directly on the signature.
+            string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
+
+            //Return the URI string for the container, including the SAS token.
+            return blob.Uri + sasBlobToken;
         }
 
         /// <summary>

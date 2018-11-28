@@ -40,5 +40,7 @@
         Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId);
 
         Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest);
+
+        Response<ResponseUrlRecord> GetRecordUrl(string RecordId);
     }
 }

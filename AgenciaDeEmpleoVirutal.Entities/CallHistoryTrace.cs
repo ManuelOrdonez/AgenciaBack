@@ -80,6 +80,21 @@
         /// Url Record
         /// </summary>
         public string RecordUrl { get; set; }
-        
+
+        /// <summary>
+        /// AgentName
+        /// </summary>
+        public string AgentName { get; set; }
+
+        /// <summary>
+        /// CallerName
+        /// </summary>
+        public string CallerName { get; set; }
+
+        /// <summary>
+        /// Time
+        /// </summary>
+        public TimeSpan Minutes { get; set; }
+
     }
 }
