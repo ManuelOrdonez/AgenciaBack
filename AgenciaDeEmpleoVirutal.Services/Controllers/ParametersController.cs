@@ -117,5 +117,13 @@
         {
             return Ok(_MenuBussines.GetMenu(role));
         }
+
+        [HttpPost]
+        [Route("GetUrlDownloadBlob")]
+        [Produces(typeof(Response<ResponseUrlRecord>))]
+        public IActionResult GetUrlDownloadBlob([FromBody] GetUrlDownloadBlobRequest request)
+        {
+            return Ok(_ParameterBussines.GetUrlDownloadBlob(request));
+        }
     }
 }
