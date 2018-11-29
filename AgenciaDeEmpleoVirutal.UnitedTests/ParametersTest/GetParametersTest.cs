@@ -1,6 +1,4 @@
-﻿
-
-namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
+﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
 {
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Responses;

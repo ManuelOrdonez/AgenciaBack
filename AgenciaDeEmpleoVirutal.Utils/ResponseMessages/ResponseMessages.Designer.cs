@@ -124,6 +124,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No hay solicitudes de subsidio activas.
+        /// </summary>
+        internal static string HaveNotSubsidyRequest {
+            get {
+                return ResourceManager.GetString("HaveNotSubsidyRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Contraseña Incorrecta.
         /// </summary>
         internal static string IncorrectPassword {
@@ -219,6 +228,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string ServiceExternalError {
             get {
                 return ResourceManager.GetString("ServiceExternalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El subsidio se encuentra en proceso.
+        /// </summary>
+        internal static string SubsidyInProcess {
+            get {
+                return ResourceManager.GetString("SubsidyInProcess", resourceCulture);
             }
         }
         

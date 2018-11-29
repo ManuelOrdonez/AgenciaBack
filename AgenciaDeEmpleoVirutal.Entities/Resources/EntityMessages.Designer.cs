@@ -223,6 +223,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El número de solicitud de subsidio es requerido.
+        /// </summary>
+        public static string NoSubsidyRequest_Required {
+            get {
+                return ResourceManager.GetString("NoSubsidyRequest_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El token de acceso al la llamada es obligatorio.
         /// </summary>
         public static string OpenTokAccessToken_Required {
@@ -282,6 +291,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string Position_Required {
             get {
                 return ResourceManager.GetString("Position_Required", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El nombre de usuario del funcionario es requerido.
+        /// </summary>
+        public static string Reviewer_Required {
+            get {
+                return ResourceManager.GetString("Reviewer_Required", resourceCulture);
             }
         }
         
@@ -354,6 +372,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         public static string StateCall_Valid {
             get {
                 return ResourceManager.GetString("StateCall_Valid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El estado de la solicitud de subsidio es requerido.
+        /// </summary>
+        public static string StateSubsid_Required {
+            get {
+                return ResourceManager.GetString("StateSubsid_Required", resourceCulture);
             }
         }
         

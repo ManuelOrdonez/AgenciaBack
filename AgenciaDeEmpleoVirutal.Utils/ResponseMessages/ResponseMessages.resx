@@ -138,6 +138,9 @@
   <data name="ExpiredtokenRPassword" xml:space="preserve">
     <value>Token de recordación de contraseña expiro solicite uno nuevo</value>
   </data>
+  <data name="HaveNotSubsidyRequest" xml:space="preserve">
+    <value>No hay solicitudes de subsidio activas</value>
+  </data>
   <data name="IncorrectPassword" xml:space="preserve">
     <value>Contraseña Incorrecta</value>
   </data>
@@ -170,6 +173,9 @@
   </data>
   <data name="ServiceExternalError" xml:space="preserve">
     <value>Error inesperado en un servicio externo, por favor intentar mas tarde.</value>
+  </data>
+  <data name="SubsidyInProcess" xml:space="preserve">
+    <value>El subsidio se encuentra en proceso</value>
   </data>
   <data name="Success" xml:space="preserve">
     <value>Operación realizada correctamente.</value>

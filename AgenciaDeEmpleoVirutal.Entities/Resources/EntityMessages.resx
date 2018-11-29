@@ -231,4 +231,13 @@
   <data name="StartDate_Required" xml:space="preserve">
     <value>Fecha Inicio requerida</value>
   </data>
+  <data name="NoSubsidyRequest_Required" xml:space="preserve">
+    <value>El número de solicitud de subsidio es requerido</value>
+  </data>
+  <data name="Reviewer_Required" xml:space="preserve">
+    <value>El nombre de usuario del funcionario es requerido</value>
+  </data>
+  <data name="StateSubsid_Required" xml:space="preserve">
+    <value>El estado de la solicitud de subsidio es requerido</value>
+  </data>
 </root>

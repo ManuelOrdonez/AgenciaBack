@@ -163,11 +163,6 @@
                 }
             }
             return rta;
-            //if (!_pdiRep.AddOrUpdate(pdi).Result)
-            //{
-            //    return ServiceResponseCode.InternalError;
-            //}
-            //return ServiceResponseCode.SendAndSavePDI;
         }
 
         /// <summary>

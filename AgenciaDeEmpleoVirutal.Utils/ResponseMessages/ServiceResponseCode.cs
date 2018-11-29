@@ -105,25 +105,29 @@
         /// Send And Save PDI
         /// </summary>
         SavePDI = 207,
-
         /// <summary>
         /// User Do Not Have Calls
         /// </summary>
         UserDoNotHaveCalls = 210,
-
         /// <summary>
         /// User dont have PDI
         /// </summary>
         UserWithoutPDI = 220,
-
         /// <summary>
         /// Out Of Service
         /// </summary>
         OutOfService = 221,
-
         /// <summary>
         /// Not Update
         /// </summary>
-        NotUpdate = 222
+        NotUpdate = 222,
+        /// <summary>
+        /// Subsidy In Process
+        /// </summary>
+        SubsidyRequestInProcess = 310,
+        /// <summary>
+        /// Have Not Subsidy Request
+        /// </summary>
+        HaveNotSubsidyRequest = 320,
     }
 }
