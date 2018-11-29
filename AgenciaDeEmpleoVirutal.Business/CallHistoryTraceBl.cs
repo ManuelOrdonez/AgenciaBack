@@ -335,21 +335,12 @@
         {
             var response = new List<ResponseUrlRecord>();
 
-            var blobContainer = _UserSecretSettings.BlobContainer;
-            var StorageConnectionString = _UserSecretSettings.TableStorage;
-            var openTokApiKey = _UserSecretSettings.OpenTokApiKey;
-
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
-
-            //Create the blob client object.
-            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
-
-            //Get a reference to a container to use for the sample code, and create it if it does not exist.
-            CloudBlobContainer container = blobClient.GetContainerReference(blobContainer);
+            var blobContainer = _UserSecretSettings.BlobContainer;            
+            var openTokApiKey = _UserSecretSettings.OpenTokApiKey;           
 
             response.Add(new ResponseUrlRecord()
             {
-                URL = this.GetContainerSasUri(container, openTokApiKey + "/" +RecordId + "/archive.zip")
+                URL = this.GetContainerSasUri(blobContainer, openTokApiKey + "/" +RecordId + "/archive.zip")
 
             });
             return ResponseSuccess(response);
@@ -503,8 +494,16 @@
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        private string GetContainerSasUri(CloudBlobContainer container, string BlobName)
+        public string GetContainerSasUri(string containerName, string BlobName)
         {
+            var StorageConnectionString = _UserSecretSettings.TableStorage;
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
+
+            //Create the blob client object.
+            CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+
+            //Get a reference to a container to use for the sample code, and create it if it does not exist.
+            CloudBlobContainer container = blobClient.GetContainerReference(containerName);
             CloudBlockBlob blob = container.GetBlockBlobReference(BlobName);
 
 

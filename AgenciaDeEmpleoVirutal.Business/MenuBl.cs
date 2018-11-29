@@ -11,6 +11,7 @@ namespace AgenciaDeEmpleoVirutal.Business
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -22,16 +23,18 @@ namespace AgenciaDeEmpleoVirutal.Business
     {
         private readonly IGenericRep<Menu> _menuRep;
         private readonly IGenericRep<Parameters> _paramentRep;
+        private readonly IOptions<UserSecretSettings> _UserSecretSettings;
 
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="paramentRep"></param>
-        public MenuBl(IGenericRep<Parameters> paramentRep, IGenericRep<Menu> menuRep)
+        public MenuBl(IGenericRep<Parameters> paramentRep, IGenericRep<Menu> menuRep, IOptions<UserSecretSettings> options)
         {
             _paramentRep = paramentRep;
             _menuRep = menuRep;
+            _UserSecretSettings = options;
         }
 
         public Response<List<Menu>> GetMenu(string request)
@@ -50,8 +53,9 @@ namespace AgenciaDeEmpleoVirutal.Business
             if (role == Roles.Orientador_Laboral.ToString()) { parameter = "menu_orientador"; }
             if (role == Roles.Supervisor_de_Agencia.ToString()) { parameter = "menu_supervisor"; }
             if (role == Roles.Oferente.ToString()) { parameter = "menu_oferente"; }
+            if (role == "empresa") { parameter = "menu_oferente_empresa"; }
 
-            ParameterBI parameterBl = new ParameterBI(_paramentRep);
+            ParameterBI parameterBl = new ParameterBI(_paramentRep, _UserSecretSettings);
             var menuRol = parameterBl.GetParametersByType(parameter).Data;
 
             List<string> menuIds = new List<string>();
