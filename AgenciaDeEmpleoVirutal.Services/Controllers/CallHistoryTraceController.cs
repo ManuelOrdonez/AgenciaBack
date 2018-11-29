@@ -112,5 +112,19 @@
         {
             return Ok(_callHistoryBusiness.GetAllUserCall(request));
         }
+
+        /// <summary>
+        /// Operation to Get All User Call
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
+        [HttpPost]
+        [Route("GetRecordUrl")]
+        [Produces(typeof(Response<ResponseUrlRecord>))]
+        public IActionResult GetRecordUrl([FromBody] string request)
+        {
+            return Ok(_callHistoryBusiness.GetRecordUrl(request));
+        }
     }
 }

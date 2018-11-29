@@ -4,9 +4,8 @@ using System.Text;
 
 namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
-    public class GetAllUserCallResponse
+    public class ResponseUrlRecord
     {
-        public List<CallHistoryTrace> CallInfo { get; set; }
-
+        public string URL { get; set; }
     }
 }

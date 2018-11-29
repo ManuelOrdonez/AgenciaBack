@@ -41,5 +41,7 @@
         Response<List<string>> GetCategories();
 
         Response<ParametersResponse> SetParameterValue(SetParameterValueRequest request);
+
+        Response<ResponseUrlRecord> GetUrlDownloadBlob(GetUrlDownloadBlobRequest request);
     }
 }
