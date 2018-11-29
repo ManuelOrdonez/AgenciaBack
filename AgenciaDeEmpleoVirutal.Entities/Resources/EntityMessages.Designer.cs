@@ -232,6 +232,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El campo observaciones es obligatorio.
+        /// </summary>
+        public static string ObservationsSubsidy_Request {
+            get {
+                return ResourceManager.GetString("ObservationsSubsidy_Request", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El token de acceso al la llamada es obligatorio.
         /// </summary>
         public static string OpenTokAccessToken_Required {

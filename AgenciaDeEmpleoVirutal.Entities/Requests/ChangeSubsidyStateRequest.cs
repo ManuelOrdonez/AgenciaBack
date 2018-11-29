@@ -31,5 +31,11 @@
         /// </summary>
         [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "Reviewer_Required")]
         public string Reviewer { get; set; }
+
+        /// <summary>
+        /// Observations to Subsidy request
+        /// </summary>
+        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "ObservationsSubsidy_Request")]
+        public string Observations { get; set; }
     }
 }

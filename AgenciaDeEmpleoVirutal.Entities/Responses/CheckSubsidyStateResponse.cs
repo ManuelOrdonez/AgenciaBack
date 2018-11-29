@@ -8,6 +8,6 @@
     {
         public int state { get; set; }
 
-        public DateTime DateTimeSubsidyState { get; set; }
+        public Subsidy subsidy { get; set; }
     }
 }
