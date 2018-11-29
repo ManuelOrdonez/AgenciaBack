@@ -1,30 +1,20 @@
-﻿namespace AgenciaDeEmpleoVirutal.Entities
+﻿namespace AgenciaDeEmpleoVirutal.Entities.Requests
 {
-    using Microsoft.WindowsAzure.Storage.Table;
     using System;
+    using System.Collections.Generic;
+    using System.Text;
 
-    /// <summary>
-    /// Subsidy Table Entity
-    /// </summary>
-    public class Subsidy : TableEntity
+    public class GetSubsidyResponse
     {
         /// <summary>
         /// Get or Sets User Name of subsidy
         /// </summary>
-        public string UserName
-        {
-            set => PartitionKey = value;
-            get => PartitionKey;
-        }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Get or Sets No Subsidy
         /// </summary>
-        public string NoSubsidyRequest
-        {
-            get => RowKey;
-            set => RowKey = value;
-        }
+        public string NoSubsidyRequest { get; set; }
 
         /// <summary>
         /// Get or Sets Caller Name
@@ -45,5 +35,10 @@
         /// Get or Sets Observations of subsidy request
         /// </summary>
         public string Observations { get; set; }
+
+        /// <summary>
+        /// Get or Sets Documents Name of subsidy request
+        /// </summary>
+        public List<string> FilesPhat { get; set; }
     }
 }

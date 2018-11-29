@@ -240,4 +240,7 @@
   <data name="StateSubsid_Required" xml:space="preserve">
     <value>El estado de la solicitud de subsidio es requerido</value>
   </data>
+  <data name="ObservationsSubsidy_Request" xml:space="preserve">
+    <value>El campo observaciones es obligatorio</value>
+  </data>
 </root>

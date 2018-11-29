@@ -47,6 +47,9 @@
         public string EmailHostPort { get; set; }
 
         public string BlobContainer { get; set; }
+
+        public string BlobContainerSubsidy { get; set; }
+
         public string StorageAccountName { get; set; }
     }
 }

@@ -11,6 +11,9 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.Extensions.Options;
+    using Microsoft.WindowsAzure.Storage;
+    using Microsoft.WindowsAzure.Storage.Blob;
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
@@ -31,13 +34,16 @@
         /// </summary>
         private IGenericRep<User> _userRep;
 
+        private UserSecretSettings _UserSecretSettings;
+
         /// <summary>
         /// Constructor's Subsidy Business logic
         /// </summary>
-        public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep)
+        public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep, IOptions<UserSecretSettings> options)
         {
             _subsidyRep = subsidyRep;
             _userRep = userRep;
+            _UserSecretSettings = options.Value;
         }
 
         /// <summary>
@@ -96,7 +102,7 @@
                 {
                     new CheckSubsidyStateResponse()
                     {
-                        DateTimeSubsidyState = DateTime.Now,
+                        subsidy = new Subsidy(),
                         state = (int)SubsidyStates.NoRequests
                     }
                 };
@@ -107,7 +113,7 @@
             {
                 new CheckSubsidyStateResponse()
                 {
-                    DateTimeSubsidyState = lastRequestSubsidy.DateTime,
+                    subsidy = lastRequestSubsidy,
                     state = EnumValues.GetValueFromDescription<SubsidyStates>(lastRequestSubsidy.State).GetHashCode()
                 }
             };
@@ -151,7 +157,8 @@
                 DateTime = subsidyRequest.First().DateTime,
                 Reviewer = request.Reviewer,
                 NoSubsidyRequest = request.NoSubsidyRequest, 
-                State = EnumValues.GetDescriptionFromValue((SubsidyStates)request.State)
+                State = EnumValues.GetDescriptionFromValue((SubsidyStates)request.State),
+                Observations = request.Observations
             };
             var result = _subsidyRep.AddOrUpdate(updateSubsidyRequest).Result;
             return result ? ResponseSuccess() : ResponseFail(); 
@@ -162,7 +169,7 @@
         /// </summary>
         /// <param name="userNameReviewer"></param>
         /// <returns></returns>
-        public Response<Subsidy> GetSubsidyRequests(string userNameReviewer)
+        public Response<GetSubsidyResponse> GetSubsidyRequests(string userNameReviewer)
         {
             var queryRequestsActive = new List<ConditionParameter>()
             {
@@ -176,12 +183,12 @@
             var reviewer = _userRep.GetAsync(userNameReviewer).Result;
             if (reviewer is null)
             {
-                return ResponseFail(ServiceResponseCode.AgentNotFound);
+                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.AgentNotFound);
             }
             var SubsidyRequestsActive = _subsidyRep.GetSomeAsync(queryRequestsActive).Result;
             if (SubsidyRequestsActive is null)
             {
-                return ResponseFail();
+                return ResponseFail<GetSubsidyResponse>();
             }
             var queryRequestInProcess = new List<ConditionParameter>()
             {
@@ -201,16 +208,47 @@
             var SubsidyInProcess = _subsidyRep.GetSomeAsync(queryRequestInProcess).Result;
             if (!SubsidyRequestsActive.Any() && !SubsidyInProcess.Any())
             {
-                return ResponseFail(ServiceResponseCode.HaveNotSubsidyRequest);
+                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.HaveNotSubsidyRequest);
             }
-            var result = SubsidyRequestsActive.OrderByDescending(sb => sb.DateTime).ToList();
+            var SubsidiRequestOrder = SubsidyRequestsActive.OrderByDescending(sb => sb.DateTime).ToList();
             var postion = 0;
             if (SubsidyInProcess.Any())
             {
-                SubsidyInProcess.OrderByDescending(sb => sb.DateTime).ToList().ForEach(sbP => result.Insert(postion,sbP));
+                SubsidyInProcess.OrderByDescending(sb => sb.DateTime).ToList().ForEach(sbP => SubsidiRequestOrder.Insert(postion,sbP));
                 postion++;
             }
-            return ResponseSuccess(result);
+            var result = new List<GetSubsidyResponse>();
+            foreach (var sub in SubsidiRequestOrder)
+            {
+                result.Add(new GetSubsidyResponse()
+                {
+                    DateTime = sub.DateTime,
+                    Observations = sub.Observations,
+                    Reviewer = sub.Reviewer,
+                    State = sub.State,
+                    NoSubsidyRequest = sub.NoSubsidyRequest,
+                    UserName = sub.UserName,
+                    FilesPhat = GetDocumentsByUser(sub.UserName, sub.NoSubsidyRequest)
+            });
+            }
+            return ResponseSuccess<GetSubsidyResponse>(result);
+        }
+
+        private List<string> GetDocumentsByUser(string userName, string NoSubsidyRequest)
+        {
+            List<string> fileNames = new List<string>();
+            var StorageConnectionString = _UserSecretSettings.TableStorage;
+            var containerSubsidy = _UserSecretSettings.BlobContainerSubsidy;
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+            var container = blobClient.GetContainerReference(containerSubsidy);
+            var directory = container.GetDirectoryReference(string.Format("{0}/{1}",userName,NoSubsidyRequest));
+            var result = directory.ListBlobsSegmentedAsync(true, BlobListingDetails.None, 500, null, null, null).Result.Results.ToList();
+            foreach (var blob in result)
+            {
+                fileNames.Add(blob.Uri.LocalPath.Replace("/"+ containerSubsidy + "/",string.Empty));
+            }
+            return fileNames;
         }
     }
 }
