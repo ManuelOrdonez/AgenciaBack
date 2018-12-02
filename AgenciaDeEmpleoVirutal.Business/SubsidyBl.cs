@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
@@ -34,13 +35,22 @@
         /// </summary>
         private IGenericRep<User> _userRep;
 
+        /// <summary>
+        /// User Secret Settings
+        /// </summary>
         private UserSecretSettings _UserSecretSettings;
+
+        /// <summary>
+        /// Interface to Send Mails
+        /// </summary>
+        private ISendGridExternalService _sendMailService;
 
         /// <summary>
         /// Constructor's Subsidy Business logic
         /// </summary>
-        public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep, IOptions<UserSecretSettings> options)
+        public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep, IOptions<UserSecretSettings> options, ISendGridExternalService sendMailService)
         {
+            _sendMailService = sendMailService;
             _subsidyRep = subsidyRep;
             _userRep = userRep;
             _UserSecretSettings = options.Value;
@@ -72,7 +82,12 @@
                 UserName = request.UserName
             };
             var result = _subsidyRep.AddOrUpdate(subsidyRequest).Result;
-            return result ? ResponseSuccess() : ResponseFail();
+            if(!result)
+            {
+                ResponseFail();
+            }
+            _sendMailService.SendMailRequestSubsidy(user, subsidyRequest);
+            return ResponseSuccess();
         }
 
         /// <summary>
@@ -161,7 +176,15 @@
                 Observations = request.Observations
             };
             var result = _subsidyRep.AddOrUpdate(updateSubsidyRequest).Result;
-            return result ? ResponseSuccess() : ResponseFail(); 
+            if (!result)
+            {
+                ResponseFail();
+            }
+            if (request.State != (int)SubsidyStates.InProcess)
+            {
+                _sendMailService.SendMailNotificationSubsidy(user, subsidyRequest.First());
+            }
+            return ResponseSuccess();
         }
 
         /// <summary>
