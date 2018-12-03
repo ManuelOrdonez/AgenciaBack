@@ -46,6 +46,13 @@
         ///  Get or image
         /// </summary>
         public string ImageFile { get; set; }
+
+
+        /// <summary>
+        /// Required
+        /// </summary>
+        public bool Required { get; set; }
+
     }
 }
 
