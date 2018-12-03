@@ -317,4 +317,65 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   &lt;/body&gt;
   &lt;/html&gt;</value>
   </data>
+  <data name="BodiMailRequestSubsidy" xml:space="preserve">
+    <value>&lt;html lang="es"&gt;
+  &lt;head&gt;
+		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+		&lt;meta charset="utf-8"&gt;
+	&lt;/head&gt;	
+  &lt;body&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+
+  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+  Estimado{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
+  &lt;br /&gt;&lt;br /&gt;
+  Recibe un Cordial Saludo:
+  &lt;br /&gt;&lt;br /&gt;
+  Acabas de realizar una solicitud de sibsidio con numero {3}, 
+&lt;br /&gt;&lt;br /&gt;
+  Te estaremos informando el estado de esta solucitud por medio de correo electronico.
+  &lt;/p&gt;
+  
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;  
+  &lt;/body&gt;
+  &lt;/html&gt;</value>
+  </data>
+  <data name="BodyMailNotificationSubsidy" xml:space="preserve">
+    <value>&lt;html lang="es"&gt;
+  &lt;head&gt;
+		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+		&lt;meta charset="utf-8"&gt;
+	&lt;/head&gt;	
+  &lt;body&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+
+  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+  Estimado{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
+  &lt;br /&gt;&lt;br /&gt;
+  Recibe un Cordial Saludo:
+  &lt;br /&gt;&lt;br /&gt;
+  Tu solicitud de subsidio {3}, acaba de pasar al estado {4}
+  &lt;/p&gt;
+  
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;  
+  &lt;/body&gt;
+  &lt;/html&gt;</value>
+  </data>
+  <data name="SubjectSubsidyRequest" xml:space="preserve">
+    <value>Subsidio Colsubsidio</value>
+  </data>
 </root>

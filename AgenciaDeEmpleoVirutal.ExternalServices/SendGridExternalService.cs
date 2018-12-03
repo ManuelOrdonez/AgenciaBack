@@ -152,5 +152,53 @@
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             return SendGridHelper.SenMailRelay(_sendMailOptions, attachments);
         }
+
+        public EmailResponse SendMailNotificationSubsidy(User userInfo, Subsidy subsidyInfo)
+        {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
+            if (subsidyInfo == null)
+            {
+                throw new ArgumentNullException("subsidyInfo");
+            }
+            _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
+            _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
+
+            _sendMailOptions.BodyMail = ParametersApp.BodyMailNotificationSubsidy;
+            _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? string.Empty : "a",
+                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State);
+
+            return SendMail();
+        }
+
+        public EmailResponse SendMailRequestSubsidy(User userInfo, Subsidy subsidyInfo)
+        {
+            if (userInfo == null)
+            {
+                throw new ArgumentNullException("userInfo");
+            }
+            if (subsidyInfo == null)
+            {
+                throw new ArgumentNullException("subsidyInfo");
+            }
+            _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
+            _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
+            _sendMailOptions.EmailAddressTo = userInfo.Email;
+            _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
+
+            _sendMailOptions.BodyMail = ParametersApp.BodiMailRequestSubsidy;
+            _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? string.Empty : "a",
+                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest);
+
+            return SendMail();
+        }
     }
 }

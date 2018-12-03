@@ -41,5 +41,21 @@
         /// <returns></returns>
         EmailResponse SendMailPDI(User userInfo, IList<Attachment> attachments);
 
+        /// <summary>
+        /// Send Mail Notification Subsidy
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="subsidyInfo"></param>
+        /// <returns></returns>
+        EmailResponse SendMailNotificationSubsidy(User userInfo, Subsidy subsidyInfo);
+
+        /// <summary>
+        /// Send Mail Request Subsidy
+        /// </summary>
+        /// <param name="userInfo"></param>
+        /// <param name="subsidyInfo"></param>
+        /// <returns></returns>
+        EmailResponse SendMailRequestSubsidy(User userInfo, Subsidy subsidyInfo);
+
     }
 }
