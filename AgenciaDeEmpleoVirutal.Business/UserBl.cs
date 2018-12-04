@@ -839,7 +839,7 @@
                         ValueDateTime = request.EndDate.AddDays(1).AddHours(-5)
                     }
                 };
-            var users = _userRep.GetSomeAsync(query).Result;
+            var users = _userRep.GetListQuery(query).Result;
 
             if (!users.Any())
             {
