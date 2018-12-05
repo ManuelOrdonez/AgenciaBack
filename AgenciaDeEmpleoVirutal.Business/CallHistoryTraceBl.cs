@@ -410,7 +410,7 @@
              };
             }
 
-            var calls = _callHistoryRepository.GetSomeAsync(query).Result;
+            var calls = _callHistoryRepository.GetListQuery(query).Result;
 
 
             if (calls.Count == 0 || calls is null)

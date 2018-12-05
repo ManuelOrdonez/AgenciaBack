@@ -15,5 +15,8 @@ namespace AgenciaDeEmpleoVirutal.Entities.Responses
         public bool State { get; set; }
         public string ImageFile { get; set; }
 
+        public bool Required{get; set; }
+
+
     }
 }

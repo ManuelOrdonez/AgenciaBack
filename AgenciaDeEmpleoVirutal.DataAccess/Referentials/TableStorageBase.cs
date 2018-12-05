@@ -263,6 +263,52 @@
             } while (continuationToken != null);
 
             return results;
-        }       
+        }
+
+        public async Task<List<T>> GetListQuery(IList<ConditionParameter> conditionParameters)
+        {
+            await CreateTableInStorage().ConfigureAwait(false);
+            var query = new TableQuery<T>();
+            List<string> conditions = new List<string>();
+            string qry = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.NotEqual, string.Empty);
+            foreach (var item in conditionParameters)
+            {
+                if (string.IsNullOrEmpty(item.Value))
+                {
+                    if (item.ValueDateTime == default(System.DateTime))
+                    {
+                        conditions.Add(TableQuery.GenerateFilterConditionForBool(item.ColumnName, item.Condition, item.ValueBool));
+                    }
+                    else
+                    {
+                        conditions.Add(TableQuery.GenerateFilterConditionForDate(item.ColumnName, item.Condition, item.ValueDateTime));
+                    }
+                }
+
+                else
+                {
+                    conditions.Add(TableQuery.GenerateFilterCondition(item.ColumnName, item.Condition, item.Value));
+                }
+            }
+            foreach (string conditional in conditions)
+            {
+                qry = TableQuery.CombineFilters(conditional, TableOperators.And, qry);
+            }
+            query.Where(qry);          
+
+            List<T> results = new List<T>();
+            TableContinuationToken continuationToken = null;
+            do
+            {
+                TableQuerySegment<T> queryResults =
+                    await Table.ExecuteQuerySegmentedAsync(query, continuationToken).ConfigureAwait(false);
+
+                continuationToken = queryResults.ContinuationToken;
+                results.AddRange(queryResults.Results);
+
+            } while (continuationToken != null);
+
+            return results;
+        }
     }
 }

@@ -52,7 +52,17 @@
             result.ForEach(r => paraments.Add(r));
             result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var paramentsResult = new List<ParametersResponse>();
-            paraments.ToList().ForEach(d => paramentsResult.Add(new ParametersResponse() { Type = d.Type, Id = d.Id, Value = d.Value, Desc = d.Description }));
+            paraments.ToList().ForEach(d =>
+            paramentsResult.Add(new ParametersResponse()
+            {
+                Type = d.Type,
+                Id = d.Id,
+                Value = d.Value,
+                Desc = d.Description,
+                ImageFile = d.ImageFile,
+                Required = d.Required,
+                State = d.State
+            }));
             return ResponseSuccess(paramentsResult);
         }
 
@@ -133,7 +143,8 @@
                         Type = r.Type,
                         Value = r.Value,
                         Desc = r.Description,
-                        State = r.State
+                        State = r.State,
+                        Required = r.Required
                     });
                 }
             });
@@ -171,7 +182,8 @@
                     Type = r.Type,
                     Value = r.Value,
                     Desc = r.Description,
-                    State = r.State
+                    State = r.State,
+                    Required = r.Required
                 });
             });
             return ResponseSuccess(parametsList);
@@ -216,7 +228,8 @@
                         Type = r.Type,
                         Value = r.Value,
                         Desc = r.Description,
-                        State = r.State
+                        State = r.State,
+                        Required = r.Required
                     });
                 }
             });

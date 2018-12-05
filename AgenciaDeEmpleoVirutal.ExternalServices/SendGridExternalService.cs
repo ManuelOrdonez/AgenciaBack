@@ -60,7 +60,7 @@
                 throw new ArgumentNullException("sendMailRequest");
             }
             _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
-            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort; 
+            _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = sendMailRequest.Mail;
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
@@ -111,7 +111,7 @@
         /// <param name="userInfo"></param>
         /// <param name="urlReset"></param>
         /// <returns></returns>
-        public EmailResponse SendMail(User userInfo,string urlReset)
+        public EmailResponse SendMail(User userInfo, string urlReset)
         {
             if (userInfo == null)
             {
@@ -125,7 +125,7 @@
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPass;
             _sendMailOptions.SubJect = ParametersApp.SubJectPass;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
-                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ? 
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
                                                         string.Empty : userInfo.LastName);
             return SendMail();
         }
@@ -171,8 +171,8 @@
 
             _sendMailOptions.BodyMail = ParametersApp.BodyMailNotificationSubsidy;
             _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? string.Empty : "a",
-                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State);
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? "o" : "a",
+                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State, subsidyInfo.Observations);
 
             return SendMail();
         }

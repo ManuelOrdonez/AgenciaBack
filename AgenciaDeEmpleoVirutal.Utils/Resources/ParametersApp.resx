@@ -335,9 +335,9 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   &lt;br /&gt;&lt;br /&gt;
   Recibe un Cordial Saludo:
   &lt;br /&gt;&lt;br /&gt;
-  Acabas de realizar una solicitud de sibsidio con numero {3}, 
+  Acabas de realizar una solicitud de subsidio con número {3}, 
 &lt;br /&gt;&lt;br /&gt;
-  Te estaremos informando el estado de esta solucitud por medio de correo electronico.
+  Te estaremos informando el estado de esta solicitud por medio de correo electrónico.
   &lt;/p&gt;
   
 &lt;/td&gt;
@@ -361,11 +361,13 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;td colspan="2"&gt;
 
   &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
-  Estimado{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
+  Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
   &lt;br /&gt;&lt;br /&gt;
   Recibe un Cordial Saludo:
   &lt;br /&gt;&lt;br /&gt;
-  Tu solicitud de subsidio {3}, acaba de pasar al estado {4}
+  Tu solicitud de subsidio {3}, acaba de pasar al estado {4}.
+  &lt;br /&gt;&lt;br /&gt;
+  Observaciones de la gestión: {5}
   &lt;/p&gt;
   
 &lt;/td&gt;
