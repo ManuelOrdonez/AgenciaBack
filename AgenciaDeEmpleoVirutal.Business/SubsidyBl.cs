@@ -182,7 +182,7 @@
             }
             if (request.State != (int)SubsidyStates.InProcess)
             {
-                _sendMailService.SendMailNotificationSubsidy(user, subsidyRequest.First());
+                _sendMailService.SendMailNotificationSubsidy(user, updateSubsidyRequest);
             }
             return ResponseSuccess();
         }
