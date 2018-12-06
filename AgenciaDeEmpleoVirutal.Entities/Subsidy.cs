@@ -45,5 +45,10 @@
         /// Get or Sets Observations of subsidy request
         /// </summary>
         public string Observations { get; set; }
+
+        /// <summary>
+        /// Gets or Sets Number Sap.
+        /// </summary>
+        public string NumberSap { get; set; }
     }
 }

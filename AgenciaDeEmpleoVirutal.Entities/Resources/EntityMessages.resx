@@ -243,4 +243,7 @@
   <data name="ObservationsSubsidy_Request" xml:space="preserve">
     <value>El campo observaciones es obligatorio</value>
   </data>
+  <data name="NumberSapSubsidy_Request" xml:space="preserve">
+    <value>El campo número Sap es requerido</value>
+  </data>
 </root>

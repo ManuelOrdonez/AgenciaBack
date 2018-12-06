@@ -5,8 +5,10 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
+    using Microsoft.Extensions.Options;
     using Moq;
 
     public class CallHistoryTraceBlTestBase : BusinessBase<CallHistoryTrace>
@@ -68,8 +70,10 @@
             CallHistoryRepositoryMoq = new Mock<IGenericRep<CallHistoryTrace>>();
             UserRepositoryMoq = new Mock<IGenericRep<User>>();
             OpenTokExternalService = new Mock<IOpenTokExternalService>();
+            IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
+
             CallHistoryTraceBusinessLogic = new CallHistoryTraceBl(
-                CallHistoryRepositoryMoq.Object, UserRepositoryMoq.Object, BusyAgentRepositoryMoq.Object, OpenTokExternalService.Object);
+                CallHistoryRepositoryMoq.Object, UserRepositoryMoq.Object, BusyAgentRepositoryMoq.Object, OpenTokExternalService.Object, options);
             LoadMoqsEntities();
 
         }

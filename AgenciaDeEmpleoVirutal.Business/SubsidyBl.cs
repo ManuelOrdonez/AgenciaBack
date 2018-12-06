@@ -66,7 +66,7 @@
             var errorMesasge = request.Validate().ToList();
             if(errorMesasge.Any())
             {
-                ResponseBadRequest<Subsidy>(errorMesasge);
+                return ResponseBadRequest<Subsidy>(errorMesasge);
             }
             var user = _userRep.GetAsync(request.UserName).Result;
             if(user is null)
@@ -173,7 +173,8 @@
                 Reviewer = request.Reviewer,
                 NoSubsidyRequest = request.NoSubsidyRequest, 
                 State = EnumValues.GetDescriptionFromValue((SubsidyStates)request.State),
-                Observations = request.Observations
+                Observations = request.Observations,
+                NumberSap = request.NumberSap
             };
             var result = _subsidyRep.AddOrUpdate(updateSubsidyRequest).Result;
             if (!result)
@@ -281,6 +282,16 @@
         /// <returns></returns>
         public Response<GetSubsidyResponse> GetSubsidiesUser(string userName)
         {
+            if (string.IsNullOrEmpty(userName))
+            {
+                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.BadRequest);
+            }
+            var user = _userRep.GetAsync(userName).Result;
+            if (user is null)
+            {
+                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserNotFound);
+            }
+
             var subsidiesUser = _subsidyRep.GetByPatitionKeyAsync(userName).Result;
 
             if (subsidiesUser is null ||
