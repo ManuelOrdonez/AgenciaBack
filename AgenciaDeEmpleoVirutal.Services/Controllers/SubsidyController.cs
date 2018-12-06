@@ -82,5 +82,18 @@
         {
             return Ok(_subsidyBussines.GetSubsidyRequests(userNameReviewer));
         }
+
+        /// <summary>
+        /// Operation to Get Subsidies User.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("GetSubsidiesUser")]
+        [Produces(typeof(Response<Subsidy>))]
+        public IActionResult GetSubsidiesUser(string userName)
+        {
+            return Ok(_subsidyBussines.GetSubsidiesUser(userName));
+        }
     }
 }

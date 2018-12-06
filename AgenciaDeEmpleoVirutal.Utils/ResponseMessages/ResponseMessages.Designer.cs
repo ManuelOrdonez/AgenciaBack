@@ -313,6 +313,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Usuario no tiene solicitudes de subsidio..
+        /// </summary>
+        internal static string UserHaveNotSubsidyRequest {
+            get {
+                return ResourceManager.GetString("UserHaveNotSubsidyRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Usuario no autorizado..
         /// </summary>
         internal static string UserIsNotVip {

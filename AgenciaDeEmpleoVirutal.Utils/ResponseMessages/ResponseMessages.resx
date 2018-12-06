@@ -201,6 +201,9 @@
   <data name="UserDoNotHaveCalls" xml:space="preserve">
     <value>El Usuario No tiene Llamadas Registradas</value>
   </data>
+  <data name="UserHaveNotSubsidyRequest" xml:space="preserve">
+    <value>Usuario no tiene solicitudes de subsidio.</value>
+  </data>
   <data name="UserIsNotVip" xml:space="preserve">
     <value>Usuario no autorizado.</value>
   </data>

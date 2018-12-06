@@ -37,5 +37,12 @@
         /// <param name="userNameReviewer"></param>
         /// <returns></returns>
         Response<GetSubsidyResponse> GetSubsidyRequests(string userNameReviewer);
+
+        /// <summary>
+        /// Get subsidies user.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        Response<GetSubsidyResponse> GetSubsidiesUser(string userName);
     }
 }
