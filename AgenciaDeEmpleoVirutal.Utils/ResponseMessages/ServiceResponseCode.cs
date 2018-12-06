@@ -129,5 +129,9 @@
         /// Have Not Subsidy Request
         /// </summary>
         HaveNotSubsidyRequest = 320,
+        /// <summary>
+        /// User Have Not Subsidy Request
+        /// </summary>
+        UserHaveNotSubsidyRequest = 330,
     }
 }

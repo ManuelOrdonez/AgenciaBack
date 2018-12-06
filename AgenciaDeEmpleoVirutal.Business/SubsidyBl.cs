@@ -273,5 +273,37 @@
             }
             return fileNames;
         }
+
+        /// <summary>
+        /// Get Subsidies User.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        public Response<GetSubsidyResponse> GetSubsidiesUser(string userName)
+        {
+            var subsidiesUser = _subsidyRep.GetByPatitionKeyAsync(userName).Result;
+
+            if (subsidiesUser is null ||
+                !subsidiesUser.Any())
+            {
+                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
+            }
+
+            var result = new List<GetSubsidyResponse>();
+            foreach (var sub in subsidiesUser)
+            {
+                result.Add(new GetSubsidyResponse()
+                {
+                    DateTime = sub.DateTime,
+                    Observations = sub.Observations,
+                    Reviewer = sub.Reviewer,
+                    State = sub.State,
+                    NoSubsidyRequest = sub.NoSubsidyRequest,
+                    UserName = sub.UserName
+                });
+            }
+
+            return ResponseSuccess<GetSubsidyResponse>(result);
+        }
     }
 }
