@@ -7,9 +7,6 @@
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using Moq;
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
 
     public class PdiBlTestBase : BusinessBase<PDI>
     {

@@ -99,7 +99,7 @@
         {
             if (string.IsNullOrEmpty(userName))
             {
-                ResponseFail(ServiceResponseCode.BadRequest);
+                return ResponseFail<CheckSubsidyStateResponse>(ServiceResponseCode.BadRequest);
             }
             var user = _userRep.GetAsync(userName).Result;
             if (user is null)
@@ -173,7 +173,8 @@
                 Reviewer = request.Reviewer,
                 NoSubsidyRequest = request.NoSubsidyRequest, 
                 State = EnumValues.GetDescriptionFromValue((SubsidyStates)request.State),
-                Observations = request.Observations
+                Observations = request.Observations,
+                NumberSap = request.NumberSap
             };
             var result = _subsidyRep.AddOrUpdate(updateSubsidyRequest).Result;
             if (!result)

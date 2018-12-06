@@ -232,6 +232,15 @@ namespace AgenciaDeEmpleoVirutal.Entities.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to El campo número Sap es requerido.
+        /// </summary>
+        public static string NumberSapSubsidy_Request {
+            get {
+                return ResourceManager.GetString("NumberSapSubsidy_Request", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El campo observaciones es obligatorio.
         /// </summary>
         public static string ObservationsSubsidy_Request {
