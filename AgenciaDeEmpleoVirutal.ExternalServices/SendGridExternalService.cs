@@ -195,7 +195,7 @@
 
             _sendMailOptions.BodyMail = ParametersApp.BodiMailRequestSubsidy;
             _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? string.Empty : "a",
+            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? "o" : "a",
                 userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest);
 
             return SendMail();
