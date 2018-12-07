@@ -126,7 +126,7 @@
             _sendMailOptions.SubJect = ParametersApp.SubJectPass;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
                                                         userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
-                                                        string.Empty : userInfo.LastName);
+                                                        string.Empty : userInfo.LastName,urlReset);
             return SendMail();
         }
 
