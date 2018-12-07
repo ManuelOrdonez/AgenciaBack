@@ -152,9 +152,9 @@
                 /// PasswordChangeRequest ldapService
                 var request = new PasswordChangeRequest()
                 {
-                    Message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
-                    Subject = "Recuperar Contraseña Colsubsidio",
-                    Username = result.UserName
+                    message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
+                    subject = "Recuperar Contraseña Colsubsidio",
+                    username = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
             }

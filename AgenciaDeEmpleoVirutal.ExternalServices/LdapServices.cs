@@ -132,13 +132,38 @@
             SetHeadersLdapService(webClient);
 
             string parameters = JsonConvert.SerializeObject(request);
-            LdapServicesResult<AuthenticateLdapResult> result;
+            LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>(); 
             
             using (WebClient context = webClient)
             {
-                var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
-                result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
+                try
+                {
+                    var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
+                }
+                catch (WebException ex)
+            {
+                if (ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    var response = ex.Response as HttpWebResponse;
+                    if (response != null && (int)response.StatusCode == 400)
+                    {
+                        result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                        return result;
+                    }
+                    else
+                    {
+                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        return result;
+                    }
+                }
+                else
+                {
+                    result.code = (int)ServiceResponseCode.ServiceExternalError;
+                    return result;
+                }
             }
+        }
             return result;
         }
 
