@@ -152,6 +152,7 @@
             services.AddSingleton<IGenericRep<BusyAgent>, TableStorageBase<BusyAgent>>();
             services.AddSingleton<IGenericRep<Menu>, TableStorageBase<Menu>>();
             services.AddSingleton<IGenericRep<Subsidy>, TableStorageBase<Subsidy>>();
+            services.AddSingleton<IGenericRep<Log>, TableStorageBase<Log>>();
         }
 
         /// <summary>
@@ -182,6 +183,7 @@
             services.AddTransient<IPdiBl, PdiBl>();
             services.AddTransient<IMenuBl, MenuBl>();
             services.AddTransient<ISubsidyBl, SubsidyBl>();
+            services.AddTransient<ILogBl, LogBl>();
         }
     }
 }

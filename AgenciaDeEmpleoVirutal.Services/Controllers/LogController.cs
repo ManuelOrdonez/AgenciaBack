@@ -39,9 +39,9 @@
         [HttpPost]
         [Route("SetLog")]
         [Produces(typeof(Response<Log>))]
-        public IActionResult SetLog([FromBody] SetLogRequest pdiRequest)
+        public IActionResult SetLog([FromBody] SetLogRequest logRequest)
         {
-            return Ok(_LogBussines.SetLog(pdiRequest));
+            return Ok(_LogBussines.SetLog(logRequest));
         }
        
     }
