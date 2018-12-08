@@ -270,10 +270,10 @@
             {
                 var passswordChangeLdap = new PasswordChangeConfirmRequests()
                 {
-                    ConfirmationId = userRequest.ConfirmationLdapId,
-                    TokenId = userRequest.TokenId,
-                    Username = userRequest.UserName,
-                    UserNewPassword = userRequest.Password
+                    confirmationId = userRequest.ConfirmationLdapId,
+                    tokenId = userRequest.TokenId,
+                    username = userRequest.UserName,
+                    userpassword = userRequest.Password
                 };
                 var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
                 if (resultt is null)
