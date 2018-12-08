@@ -111,7 +111,7 @@
         /// <param name="userInfo"></param>
         /// <param name="urlReset"></param>
         /// <returns></returns>
-        public EmailResponse SendMail(User userInfo, string urlReset)
+        public EmailResponse SendMail(User userInfo, string urlReset, string bodyMail, string subject)
         {
             if (userInfo == null)
             {
@@ -122,11 +122,11 @@
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
             _sendMailOptions.EmailAddressTo = userInfo.Email;
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
-            _sendMailOptions.BodyMail = ParametersApp.BodyMailPass;
-            _sendMailOptions.SubJect = ParametersApp.SubJectPass;
+            _sendMailOptions.BodyMail = bodyMail;
+            _sendMailOptions.SubJect = subject;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
                                                         userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
-                                                        string.Empty : userInfo.LastName);
+                                                        string.Empty : userInfo.LastName,urlReset);
             return SendMail();
         }
 

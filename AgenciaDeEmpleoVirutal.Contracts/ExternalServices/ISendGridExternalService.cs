@@ -23,8 +23,10 @@
         /// </summary>
         /// <param name="userInfo"></param>
         /// <param name="urlReset"></param>
+        /// <param name="bodyMail"></param>
+        /// <param name="subject"></param>
         /// <returns></returns>
-        EmailResponse SendMail(User userInfo, string urlReset);
+        EmailResponse SendMail(User userInfo, string urlReset,string bodyMail, string subject);
 
         /// <summary>
         /// Send Mail to Update Info

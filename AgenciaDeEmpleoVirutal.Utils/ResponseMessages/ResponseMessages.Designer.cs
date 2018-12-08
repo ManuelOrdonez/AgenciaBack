@@ -340,6 +340,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Nombre de usuario o correo electrónico no proporcionado en la petición..
+        /// </summary>
+        internal static string UserOrEmailNotRepuest {
+            get {
+                return ResourceManager.GetString("UserOrEmailNotRepuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to El usuario no tiene PDI asociado.
         /// </summary>
         internal static string UserWithoutPDI {

@@ -53,9 +53,9 @@
         /// <param name="parametersRep"></param>
         /// <param name="sendMailService"></param>
         /// <param name="ldapService"></param>
-        public ResetBI(IGenericRep<User> userRep, 
+        public ResetBI(IGenericRep<User> userRep,
             IGenericRep<ResetPassword> resetPasswordRep,
-            IGenericRep<Parameters> parametersRep, 
+            IGenericRep<Parameters> parametersRep,
             ISendGridExternalService sendMailService,
             ILdapServices ldapService)
         {
@@ -72,7 +72,7 @@
         /// <param name="user"></param>
         /// <param name="idUser"></param>
         /// <returns></returns>
-        private User GetInfoUser(string user,out string idUser)
+        private User GetInfoUser(string user, out string idUser)
         {
             string userAux = string.Empty;
             string state = string.Empty;
@@ -102,7 +102,7 @@
                     return item;
                 }
             }
-            if (lUser.Count > 0 )
+            if (lUser.Count > 0)
             {
                 return lUser[0];
             }
@@ -121,42 +121,76 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
             string idMod = string.Empty;
-            User result = GetInfoUser(id,out idMod);
+            User result = GetInfoUser(id, out idMod);
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
+            var token = string.Empty;
             var email = result.Email;
 
             var len = email.IndexOf('@');
             var aux = email.Substring(0, len - 4);
             aux = aux + "****" + email.Substring(len);
-            var token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
-            ResetPassword rpwd = new ResetPassword() { PartitionKey = idMod, RowKey = token };
-            ExistReset(idMod);
-            var res = _passwordRep.AddOrUpdate(rpwd).Result;
-            var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result;
-            var servername = serverInfo.Find(delegate (Parameters parameter)
-            {
-                return parameter.RowKey == "name";
-            });
-            var urlResetPwd = servername.Value + "/resetpwd?tokenAZ=" + token;
 
+            var emailInfo = _parametersRep.GetByPatitionKeyAsync("resetpwd").Result;
 
             if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
-                _sendMailService.SendMail(result, urlResetPwd);
+                token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
+                ResetPassword rpwd = new ResetPassword() { PartitionKey = idMod, RowKey = token };
+                ExistReset(idMod);
+                var res = _passwordRep.AddOrUpdate(rpwd).Result;
+                var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result; // Nombre del servidor
+                var servername = serverInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "name";
+                });
+                var urlResetPwd = servername.Value + "/resetpwd?tokenAZ=" + token;
+
+                // Captura la información del cuerpo y subject del correo de reseteo contraseña
+
+                var bodyMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "bodymailadm";
+                });
+
+                var subjectMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "subjectadm";
+                });
+                _sendMailService.SendMail(result, urlResetPwd, bodyMail.Value, subjectMail.Value);
             }
             else
             {
+                var messageMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "message";
+                });
+
+                var subjectMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "subject";
+                });
                 /// PasswordChangeRequest ldapService
                 var request = new PasswordChangeRequest()
                 {
-                    Message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
-                    Subject = "Recuperar Contraseña Colsubsidio",
-                    Username = result.UserName
+                    message = messageMail.Value,
+                    subject = subjectMail.Value,
+                    //message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
+                    //subject = "Recuperar Contraseña Colsubsidio",
+                    username = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
+                if (result is null)
+                {
+                    return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
+                }
+                else if (responseService.code != 200)
+                {
+                    return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.code);
+                }
+
             }
 
             var response = new List<ResetResponse>()
@@ -232,23 +266,23 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
 
-            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 var passswordChangeLdap = new PasswordChangeConfirmRequests()
                 {
-                    ConfirmationId = userRequest.ConfirmationLdapId,
-                    TokenId = userRequest.TokenId,
-                    Username = userRequest.UserName,
-                    UserNewPassword = userRequest.Password
+                    confirmationId = userRequest.ConfirmationLdapId,
+                    tokenId = userRequest.TokenId,
+                    username = userRequest.UserName,
+                    userpassword = userRequest.Password
                 };
                 var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
-                if(resultt is null || !string.IsNullOrEmpty(resultt.code.ToString()))
+                if (resultt is null)
                 {
                     return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
                 }
-                else
+                else if (resultt.code != 200)
                 {
-                    return ResponseSuccess();
+                    return ResponseFail<ResetResponse>((ServiceResponseCode)resultt.code);
                 }
             }
 

@@ -133,5 +133,10 @@
         /// User Have Not Subsidy Request
         /// </summary>
         UserHaveNotSubsidyRequest = 330,
+        /// <summary>
+        /// User or Email not in Request
+        /// </summary>
+        UserOrEmailNotRepuest = 400,
+            
     }
 }

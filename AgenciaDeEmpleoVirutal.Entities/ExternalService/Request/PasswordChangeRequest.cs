@@ -8,16 +8,16 @@
         /// <summary>
         /// User name
         /// </summary>
-        public string Username { get; set; }
+        public string username { get; set; }
 
         /// <summary>
         /// subject of mail
         /// </summary>
-        public string Subject { get; set; }
+        public string subject { get; set; }
 
         /// <summary>
         /// message of mail
         /// </summary>
-        public string Message { get; set; }
+        public string message { get; set; }
     }
 }
