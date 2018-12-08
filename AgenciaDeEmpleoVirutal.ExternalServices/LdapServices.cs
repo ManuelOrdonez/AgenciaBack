@@ -40,7 +40,7 @@
             var webClient = new WebClient();
             SetHeadersLdapService(webClient);
             webClient.Headers.Add("x-password", pass);
-            webClient.Headers.Add("x-username", userName); 
+            webClient.Headers.Add("x-username", userName);
 
             LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
 
@@ -63,13 +63,13 @@
                         else
                         {
                             result.code = (int)ServiceResponseCode.ServiceExternalError;
-                            return result; 
+                            return result;
                         }
                     }
                     else
                     {
                         result.code = (int)ServiceResponseCode.ServiceExternalError;
-                        return result; 
+                        return result;
                     }
                 }
             }
@@ -116,7 +116,7 @@
                         result.code = (int)ServiceResponseCode.ServiceExternalError;
                         return result;
                     }
-                }                
+                }
             }
             return result;
         }
@@ -132,24 +132,31 @@
             SetHeadersLdapService(webClient);
 
             string parameters = JsonConvert.SerializeObject(request);
-            LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>(); 
-            
+            LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
+
             using (WebClient context = webClient)
             {
                 try
                 {
                     var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
+                    result.code = 200;
                 }
                 catch (WebException ex)
-            {
-                if (ex.Status == WebExceptionStatus.ProtocolError)
                 {
-                    var response = ex.Response as HttpWebResponse;
-                    if (response != null && (int)response.StatusCode == 400)
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
-                        result.code = (int)ServiceResponseCode.UserAlreadyExist;
-                        return result;
+                        var response = ex.Response as HttpWebResponse;
+                        if (response != null && (int)response.StatusCode == 400)
+                        {
+                            result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                            return result;
+                        }
+                        else
+                        {
+                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            return result;
+                        }
                     }
                     else
                     {
@@ -157,13 +164,7 @@
                         return result;
                     }
                 }
-                else
-                {
-                    result.code = (int)ServiceResponseCode.ServiceExternalError;
-                    return result;
-                }
             }
-        }
             return result;
         }
 
@@ -178,11 +179,37 @@
             SetHeadersLdapService(webClient);
 
             string parameters = JsonConvert.SerializeObject(request);
-            LdapServicesResult<AuthenticateLdapResult> result;
+            LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
 
             using (WebClient context = webClient)
             {
-                result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/ForgotPasswordReset", "PUT", parameters));
+                try
+                {
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/ForgotPasswordReset", "PUT", parameters));
+                    result.code = 200;
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        var response = ex.Response as HttpWebResponse;
+                        if (response != null && (int)response.StatusCode == 400)
+                        {
+                            result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                            return result;
+                        }
+                        else
+                        {
+                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            return result;
+                        }
+                    }
+                    else
+                    {
+                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        return result;
+                    }
+                }
             }
             return result;
         }
