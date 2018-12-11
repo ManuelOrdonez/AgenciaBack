@@ -47,6 +47,15 @@
             return SendGridHelper.SenMailRelay(_sendMailOptions, new List<Attachment>());
         }
 
+        /// <summary>
+        /// Operatin to Send Mail
+        /// </summary>
+        /// <returns></returns>
+        private EmailResponse SendMail(bool readNotification)
+        {
+            return SendGridHelper.SenMailRelay(_sendMailOptions, new List<Attachment>(), readNotification);
+        }
+
         /// <inheritdoc />
         /// <summary>
         /// Sends the mail.
@@ -174,7 +183,7 @@
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? "o" : "a",
                 userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State, subsidyInfo.Observations);
 
-            return SendMail();
+            return SendMail(true);
         }
 
         public EmailResponse SendMailRequestSubsidy(User userInfo, Subsidy subsidyInfo)
@@ -198,7 +207,7 @@
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino") ? "o" : "a",
                 userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest);
 
-            return SendMail();
+            return SendMail(true);
         }
     }
 }

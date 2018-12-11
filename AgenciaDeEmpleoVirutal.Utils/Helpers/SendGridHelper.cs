@@ -18,6 +18,15 @@
         /// <returns></returns>
         public static EmailResponse SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
         {
+            return SenMailRelay(sendMailData, attachments, false);
+        }
+        /// <summary>
+        /// Sens the mail relay.
+        /// </summary>
+        /// <param name="sendMailData">The send mail data.</param>
+        /// <returns></returns>
+        public static EmailResponse SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments, bool readNotifaction)
+        {
             if (sendMailData == null)
             {
                 throw new ArgumentNullException("sendMailData");
@@ -37,6 +46,11 @@
                 Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
             };  
             var mail = new MailMessage();
+            if (readNotifaction)
+            {
+                mail.Headers.Add("Disposition-Notification-To", sendMailData.EmailAddressFrom);
+                mail.Headers.Add("Return-Receipt-To", sendMailData.EmailAddressFrom); 
+            }
             if (attachments.Any())
             {
                 foreach (var item in attachments)
