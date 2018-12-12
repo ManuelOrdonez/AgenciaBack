@@ -51,5 +51,7 @@
         public string BlobContainerSubsidy { get; set; }
 
         public string StorageAccountName { get; set; }
+
+        public bool LdapFlag { get; set; }
     }
 }

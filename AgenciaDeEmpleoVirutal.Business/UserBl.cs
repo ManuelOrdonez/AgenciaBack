@@ -223,21 +223,28 @@
         /// <returns></returns>
         private ServiceResponseCode AuthenticateCompanyOrPerson(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
         {
-            var AutenticateLDAP = AuthenticateCompanyOrPersonInLdap(user, userRequest, passwordDecrypt);
-            if (AutenticateLDAP != ServiceResponseCode.Success)
+            if (_settings.LdapFlag)
             {
-                return AutenticateLDAP;
+                var AutenticateLDAP = AuthenticateCompanyOrPersonInLdap(user, userRequest, passwordDecrypt);
+                if (AutenticateLDAP != ServiceResponseCode.Success)
+                {
+                    return AutenticateLDAP;
+                }
+                if (user.State.Equals(UserStates.Disable.ToString()))
+                {
+                    return ServiceResponseCode.UserDesable;
+                }
+                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
+                if (!(userCalling.Count == 0 || userCalling is null))
+                {
+                    return ServiceResponseCode.UserCalling;
+                }
+                return ServiceResponseCode.Success;
             }
-            if (user.State.Equals(UserStates.Disable.ToString()))
+            else
             {
-                return ServiceResponseCode.UserDesable;
+                return ServiceResponseCode.Success;
             }
-            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
-            if (!(userCalling.Count == 0 || userCalling is null))
-            {
-                return ServiceResponseCode.UserCalling;
-            }
-            return ServiceResponseCode.Success;
         }
 
         /// <summary>
@@ -249,40 +256,47 @@
         /// <returns></returns>
         private ServiceResponseCode AuthenticateCompanyOrPersonInLdap(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
         {
-            /// Authenticate in LDAP Service
-            var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
-            if(result.code == (int)ServiceResponseCode.ServiceExternalError)
+            if (_settings.LdapFlag)
             {
-                return ServiceResponseCode.ServiceExternalError;
-            }
-            if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
-            {
-                return ServiceResponseCode.IsNotRegisterInLdap;
-            }
-            if(result.code == (int)ServiceResponseCode.ServiceExternalError)
-            {
-                return ServiceResponseCode.ServiceExternalError;
-            }
-            if (user != null && user?.IntentsLogin > 4) /// intentos maximos
-            {
-                return ServiceResponseCode.UserBlock;
-            }
-            if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
-            {
-                user.IntentsLogin = user.IntentsLogin + 1;
-                user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                var resultUpt = _userRep.AddOrUpdate(user).Result;
-                if (!resultUpt)
+                /// Authenticate in LDAP Service
+                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+                if (result.code == (int)ServiceResponseCode.ServiceExternalError)
                 {
-                    return ServiceResponseCode.InternalError;
+                    return ServiceResponseCode.ServiceExternalError;
                 }
-                return ServiceResponseCode.IncorrectPassword;
+                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                {
+                    return ServiceResponseCode.IsNotRegisterInLdap;
+                }
+                if (result.code == (int)ServiceResponseCode.ServiceExternalError)
+                {
+                    return ServiceResponseCode.ServiceExternalError;
+                }
+                if (user != null && user?.IntentsLogin > 4) /// intentos maximos
+                {
+                    return ServiceResponseCode.UserBlock;
+                }
+                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
+                {
+                    user.IntentsLogin = user.IntentsLogin + 1;
+                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                    var resultUpt = _userRep.AddOrUpdate(user).Result;
+                    if (!resultUpt)
+                    {
+                        return ServiceResponseCode.InternalError;
+                    }
+                    return ServiceResponseCode.IncorrectPassword;
+                }
+                if (user == null && result.estado.Equals("0000"))
+                {
+                    return ServiceResponseCode.IsNotRegisterInAz;
+                }
+                return ServiceResponseCode.Success;
             }
-            if (user == null && result.estado.Equals("0000"))
+            else
             {
-                return ServiceResponseCode.IsNotRegisterInAz;
+                return ServiceResponseCode.Success;
             }
-            return ServiceResponseCode.Success;
         }
 
         /// <summary>
@@ -362,6 +376,7 @@
             var user = LoadRegisterRequest(userReq);
             if (string.IsNullOrEmpty(user.UserName))
             {
+
                 return ResponseFail<RegisterUserResponse>();
             }
 
@@ -391,8 +406,11 @@
             var registerUser = RegisterInLdap(userReq, passwordDecrypt);
             if (registerUser != ServiceResponseCode.Success)
             {
+                var userCreated = _userRep.GetAsyncAll(string.Format("{0}_{1}", user.NoDocument, user.CodTypeDocument)).Result.FirstOrDefault();
+                var resp = _userRep.DeleteRowAsync(userCreated);
                 return ResponseFail<RegisterUserResponse>(registerUser);
             }
+
             /// Ya existe en LDAP
             /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);            
             _sendMailService.SendMail(sendMailRequest);
@@ -407,25 +425,32 @@
         /// <returns></returns>
         private ServiceResponseCode RegisterInLdap(RegisterUserRequest userReq, string passwordDecrypt)
         {
-            var regLdap = new RegisterLdapRequest()
+            if (_settings.LdapFlag)
             {
-                question = "Agencia virtual de empleo question",
-                answer = "Agencia virtual de empleo answer",
-                birtdate = "01-01-1999",
-                givenName = UString.UppercaseWords(userReq.Name),
-                surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
-                mail = userReq.Mail,
-                userId = userReq.NoDocument,
-                userIdType = userReq.CodTypeDocument.ToString(),
-                username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                userpassword = passwordDecrypt
-            };
-            var resultLdap = _LdapServices.Register(regLdap);
-            if (resultLdap is null || resultLdap.code == (int)ServiceResponseCode.ServiceExternalError)
-            {
-                return ServiceResponseCode.ServiceExternalError;
+                var regLdap = new RegisterLdapRequest()
+                {
+                    question = "Agencia virtual de empleo question",
+                    answer = "Agencia virtual de empleo answer",
+                    birtdate = "01-01-1999",
+                    givenName = UString.UppercaseWords(userReq.Name),
+                    surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
+                    mail = userReq.Mail,
+                    userId = userReq.NoDocument,
+                    userIdType = userReq.CodTypeDocument.ToString(),
+                    username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    userpassword = passwordDecrypt
+                };
+                var resultLdap = _LdapServices.Register(regLdap);
+                if (resultLdap is null || resultLdap.code == (int)ServiceResponseCode.ServiceExternalError)
+                {
+                    return ServiceResponseCode.ServiceExternalError;
+                }
+                return ServiceResponseCode.Success;
             }
-            return ServiceResponseCode.Success;
+            else
+            {
+                return ServiceResponseCode.Success;
+            }
         }
 
         /// <summary>
