@@ -9,7 +9,7 @@
         /// <summary>
         /// Get or Sets User Name of subsidy
         /// </summary>
-        public string UserName { get; set; }
+        public User User { get; set; }
 
         /// <summary>
         /// Get or Sets No Subsidy

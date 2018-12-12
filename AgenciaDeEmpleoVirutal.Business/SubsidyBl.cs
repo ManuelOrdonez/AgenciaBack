@@ -25,6 +25,7 @@
     /// </summary>
     public class SubsidyBl : BusinessBase<Subsidy>, ISubsidyBl
     {
+
         /// <summary>
         /// Subsidy reppository
         /// </summary>
@@ -64,12 +65,12 @@
         public Response<Subsidy> SubsidyRequest(SubsidyRequest request)
         {
             var errorMesasge = request.Validate().ToList();
-            if(errorMesasge.Any())
+            if (errorMesasge.Any())
             {
                 return ResponseBadRequest<Subsidy>(errorMesasge);
             }
             var user = _userRep.GetAsync(request.UserName).Result;
-            if(user is null)
+            if (user is null)
             {
                 return ResponseFail(ServiceResponseCode.UserNotFound);
             }
@@ -82,7 +83,7 @@
                 UserName = request.UserName
             };
             var result = _subsidyRep.AddOrUpdate(subsidyRequest).Result;
-            if(!result)
+            if (!result)
             {
                 ResponseFail();
             }
@@ -107,7 +108,7 @@
                 return ResponseFail<CheckSubsidyStateResponse>(ServiceResponseCode.UserNotFound);
             }
             var subsidyUser = _subsidyRep.GetByPatitionKeyAsync(userName).Result;
-            if(subsidyUser is null)
+            if (subsidyUser is null)
             {
                 return ResponseFail<CheckSubsidyStateResponse>();
             }
@@ -158,7 +159,7 @@
                 return ResponseFail(ServiceResponseCode.AgentNotFound);
             }
             var subsidyRequest = _subsidyRep.GetByPartitionKeyAndRowKeyAsync(request.UserName, request.NoSubsidyRequest).Result;
-            if(subsidyRequest is null)
+            if (subsidyRequest is null)
             {
                 return ResponseFail();
             }
@@ -171,7 +172,7 @@
                 UserName = request.UserName,
                 DateTime = subsidyRequest.First().DateTime,
                 Reviewer = request.Reviewer,
-                NoSubsidyRequest = request.NoSubsidyRequest, 
+                NoSubsidyRequest = request.NoSubsidyRequest,
                 State = EnumValues.GetDescriptionFromValue((SubsidyStates)request.State),
                 Observations = request.Observations,
                 NumberSap = request.NumberSap
@@ -209,7 +210,7 @@
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.AgentNotFound);
             }
-            var SubsidyRequestsActive = _subsidyRep.GetSomeAsync(queryRequestsActive).Result;
+            var SubsidyRequestsActive = _subsidyRep.GetListQuery(queryRequestsActive).Result;
             if (SubsidyRequestsActive is null)
             {
                 return ResponseFail<GetSubsidyResponse>();
@@ -229,7 +230,7 @@
                     Value = userNameReviewer
                 },
             };
-            var SubsidyInProcess = _subsidyRep.GetSomeAsync(queryRequestInProcess).Result;
+            var SubsidyInProcess = _subsidyRep.GetListQuery(queryRequestInProcess).Result;
             if (!SubsidyRequestsActive.Any() && !SubsidyInProcess.Any())
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.HaveNotSubsidyRequest);
@@ -238,7 +239,7 @@
             var postion = 0;
             if (SubsidyInProcess.Any())
             {
-                SubsidyInProcess.OrderByDescending(sb => sb.DateTime).ToList().ForEach(sbP => SubsidiRequestOrder.Insert(postion,sbP));
+                SubsidyInProcess.OrderByDescending(sb => sb.DateTime).ToList().ForEach(sbP => SubsidiRequestOrder.Insert(postion, sbP));
                 postion++;
             }
             var result = new List<GetSubsidyResponse>();
@@ -251,11 +252,32 @@
                     Reviewer = sub.Reviewer,
                     State = sub.State,
                     NoSubsidyRequest = sub.NoSubsidyRequest,
-                    UserName = sub.UserName,
+                    User = this.getUserActive(sub.UserName),
                     FilesPhat = GetDocumentsByUser(sub.UserName, sub.NoSubsidyRequest)
-            });
+                });
             }
             return ResponseSuccess<GetSubsidyResponse>(result);
+        }
+        private User getUserActive(string username)
+        {
+            User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(username).Result;
+            if (!lUser.Any() || lUser is null)
+            {
+                return user;
+            }
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                return lUser[0];
+            }
+            return user;
         }
 
         private List<string> GetDocumentsByUser(string userName, string NoSubsidyRequest)
@@ -266,11 +288,11 @@
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference(containerSubsidy);
-            var directory = container.GetDirectoryReference(string.Format("{0}/{1}",userName,NoSubsidyRequest));
+            var directory = container.GetDirectoryReference(string.Format("{0}/{1}", userName, NoSubsidyRequest));
             var result = directory.ListBlobsSegmentedAsync(true, BlobListingDetails.None, 500, null, null, null).Result.Results.ToList();
             foreach (var blob in result)
             {
-                fileNames.Add(blob.Uri.LocalPath.Replace("/"+ containerSubsidy + "/",string.Empty));
+                fileNames.Add(blob.Uri.LocalPath.Replace("/" + containerSubsidy + "/", string.Empty));
             }
             return fileNames;
         }
@@ -280,28 +302,91 @@
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        public Response<GetSubsidyResponse> GetSubsidiesUser(string userName)
+        public Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request)
         {
-            if (string.IsNullOrEmpty(userName))
+
+            var response = new List<GetSubsidyResponse>();
+
+            var query = new List<ConditionParameter>();
+
+            if (request.StartDate != null && request.StartDate.Year != default(DateTime).Year)
             {
-                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.BadRequest);
-            }
-            var user = _userRep.GetAsync(userName).Result;
-            if (user is null)
-            {
-                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserNotFound);
+                var condition = new ConditionParameter()
+                {
+                    ColumnName = "DateCall",
+                    Condition = QueryComparisons.GreaterThanOrEqual,
+                    ValueDateTime = request.StartDate.AddHours(-5)
+                };
+                query.Add(condition);
             }
 
-            var subsidiesUser = _subsidyRep.GetByPatitionKeyAsync(userName).Result;
+            if (request.EndDate != null && request.EndDate.Year != default(DateTime).Year)
+            {
+                var condition = new ConditionParameter()
+                {
+                    ColumnName = "DateCall",
+                    Condition = QueryComparisons.LessThan,
+                    ValueDateTime = request.EndDate.AddDays(1).AddHours(-5)
+                };
+                query.Add(condition);
+            }
+            
+            if (!string.IsNullOrEmpty(request.UserName))
+            {
+                var condition = new ConditionParameter()
+                {
+                    ColumnName = "UserName",
+                    Condition = QueryComparisons.Equal,
+                    Value = request.UserName
+                };
+                query.Add(condition);
+            }
 
-            if (subsidiesUser is null ||
-                !subsidiesUser.Any())
+            if (!string.IsNullOrEmpty(request.Reviewer))
+            {
+                var condition = new ConditionParameter()
+                {
+                    ColumnName = "Reviewer",
+                    Condition = QueryComparisons.Equal,
+                    Value = request.Reviewer
+                };
+                query.Add(condition);
+            }
+
+
+            if (!string.IsNullOrEmpty(request.NumberSap))
+            {
+                var condition = new ConditionParameter()
+                {
+                    ColumnName = "NumberSap",
+                    Condition = QueryComparisons.Equal,
+                    Value = request.NumberSap
+                };
+                query.Add(condition);
+            }
+
+            if (!string.IsNullOrEmpty(request.State))
+            {
+                var condition = new ConditionParameter()
+                {
+                    ColumnName = "State",
+                    Condition = QueryComparisons.Equal,
+                    Value = request.State
+                };
+                query.Add(condition);
+            }
+
+            var subsidies = _subsidyRep.GetListQuery(query).Result;
+
+            if (subsidies.Count == 0 || subsidies is null)
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
             }
 
+            List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();            
+
             var result = new List<GetSubsidyResponse>();
-            foreach (var sub in subsidiesUser)
+            foreach (var sub in subsidies)
             {
                 result.Add(new GetSubsidyResponse()
                 {
@@ -310,7 +395,8 @@
                     Reviewer = sub.Reviewer,
                     State = sub.State,
                     NoSubsidyRequest = sub.NoSubsidyRequest,
-                    UserName = sub.UserName
+                    User = this.getUserActive(sub.UserName),
+                    FilesPhat = this.GetDocumentsByUser(sub.UserName, sub.NoSubsidyRequest)
                 });
             }
 
