@@ -43,6 +43,6 @@
         /// </summary>
         /// <param name="userName"></param>
         /// <returns></returns>
-        Response<GetSubsidyResponse> GetSubsidiesUser(string userName);
+        Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request);
     }
 }

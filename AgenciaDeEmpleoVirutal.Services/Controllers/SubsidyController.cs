@@ -86,14 +86,14 @@
         /// <summary>
         /// Operation to Get Subsidies User.
         /// </summary>
-        /// <param name="userName"></param>
+        /// <param name="GetAllSubsidiesRequest"></param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpPost]
         [Route("GetSubsidiesUser")]
-        [Produces(typeof(Response<Subsidy>))]
-        public IActionResult GetSubsidiesUser(string userName)
+        [Produces(typeof(Response<GetSubsidyResponse>))]
+        public IActionResult GetSubsidiesUser([FromBody]  GetAllSubsidiesRequest request)
         {
-            return Ok(_subsidyBussines.GetSubsidiesUser(userName));
+            return Ok(_subsidyBussines.GetSubsidiesUser(request));
         }
     }
 }
