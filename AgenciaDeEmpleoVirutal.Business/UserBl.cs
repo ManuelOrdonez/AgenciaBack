@@ -134,7 +134,11 @@
             passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
             User user = GetUserActive(userReq);
-            if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if(user is null)
+            {
+                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+            }
+            else if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
                 if (AutenticateFunc != ServiceResponseCode.Success)

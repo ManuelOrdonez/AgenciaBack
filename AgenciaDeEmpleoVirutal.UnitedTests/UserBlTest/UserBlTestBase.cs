@@ -52,7 +52,7 @@
         public UserBlTestBase()
         {
             PDIRepMoq = new Mock<IGenericRep<PDI>>();
-            options = Options.Create(new UserSecretSettings());
+            options = Options.Create(new UserSecretSettings { LdapFlag = true });
             _settings = options.Value;
             UserRepMoq = new Mock<IGenericRep<User>>();
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
