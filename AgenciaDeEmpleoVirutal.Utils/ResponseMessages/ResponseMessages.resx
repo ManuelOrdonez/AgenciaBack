@@ -127,10 +127,13 @@
     <value>Error en los siguientes campos: {0}{1}</value>
   </data>
   <data name="DeviceNotFound" xml:space="preserve">
-    <value>El dispocitivo no se encuentra registrado</value>
+    <value>El dispositivo no se encuentra registrado</value>
   </data>
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
+  </data>
+  <data name="ErrorRequest" xml:space="preserve">
+    <value>Error request.</value>
   </data>
   <data name="ErrorSendMail" xml:space="preserve">
     <value>Error enviando el correo</value>

@@ -10,6 +10,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
+    using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
@@ -230,6 +231,46 @@
             return ResponseSuccess(new List<User> { user });
         }
 
-      
+        /// <summary>
+        /// Get all agent fosfec.
+        /// </summary>
+        /// <returns></returns>
+        public Response<GetAllAgentByRoleResponse> GetAllAgentByRole(int role)
+        {
+            if (default(int) == role)
+            {
+                return ResponseFail<GetAllAgentByRoleResponse>(ServiceResponseCode.ErrorRequest);
+            }
+
+            var queryRequestsActive = new List<ConditionParameter>()
+            {
+                new ConditionParameter()
+                {
+                    ColumnName = "Role",
+                    Condition = QueryComparisons.Equal,
+                    Value = EnumValues.GetDescriptionFromValue((Roles)role)
+                }
+            };
+
+            var agents = _agentRepository.GetListQuery(queryRequestsActive).Result;
+            if (agents is null)
+            {
+                return ResponseFail<GetAllAgentByRoleResponse>();
+            }
+
+            var agentFosfec = new List<GetAllAgentByRoleResponse>();
+
+            foreach (var agent in agents)
+            {
+                agentFosfec.Add(new GetAllAgentByRoleResponse
+                {
+                    Name = agent.Name + " " + agent.LastName,
+                    NoDocument = agent.NoDocument,
+                    Role = agent.Role,
+                    UserName = agent.RowKey
+                });
+            }
+            return ResponseSuccess(agentFosfec);
+        }
     }
 }

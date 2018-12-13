@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Services.Controllers
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
+    using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -60,6 +61,18 @@
         public IActionResult ImAviable([FromBody] AviableUserRequest request)
         {
             return Ok(_agentBusiness.ImAviable(request));
+        }
+
+        /// <summary>
+        /// Get all agent by role.
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("GetAllAgentByRole")]
+        [Produces(typeof(Response<GetAllAgentByRoleResponse>))]
+        public IActionResult GetAllAgentByRole(int role)
+        {
+            return Ok(_agentBusiness.GetAllAgentByRole(role));
         }
     }
 }

@@ -88,7 +88,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El dispocitivo no se encuentra registrado.
+        ///   Looks up a localized string similar to El dispositivo no se encuentra registrado.
         /// </summary>
         internal static string DeviceNotFound {
             get {
@@ -102,6 +102,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string EmailAddress_FormatEmail {
             get {
                 return ResourceManager.GetString("EmailAddress_FormatEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error request..
+        /// </summary>
+        internal static string ErrorRequest {
+            get {
+                return ResourceManager.GetString("ErrorRequest", resourceCulture);
             }
         }
         
