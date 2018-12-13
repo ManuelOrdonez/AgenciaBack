@@ -390,6 +390,7 @@
             foreach (var sub in subsidies)
             {
                 var userSub = this.getUserActive(sub.UserName);
+                var agentSub = this.getUserActive(sub.Reviewer);
                 result.Add(new GetSubsidyResponse()
                 {
                     UserName=sub.UserName,
@@ -403,6 +404,7 @@
                     NoSubsidyRequest = sub.NoSubsidyRequest,
                     User = userSub,
                     NumberSap = sub.NumberSap,
+                    AgentName= agentSub?.Name + " " + agentSub?.LastName,
                     FilesPhat = this.GetDocumentsByUser(sub.UserName, sub.NoSubsidyRequest)
                 });
             }

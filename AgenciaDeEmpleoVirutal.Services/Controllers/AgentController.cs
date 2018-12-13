@@ -70,7 +70,7 @@
         [HttpPost]
         [Route("GetAllAgentByRole")]
         [Produces(typeof(Response<GetAllAgentByRoleResponse>))]
-        public IActionResult GetAllAgentByRole(int role)
+        public IActionResult GetAllAgentByRole([FromBody] int role)
         {
             return Ok(_agentBusiness.GetAllAgentByRole(role));
         }
