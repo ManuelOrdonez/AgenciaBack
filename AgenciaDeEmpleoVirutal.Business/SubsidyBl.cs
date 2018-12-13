@@ -313,7 +313,7 @@
             {
                 var condition = new ConditionParameter()
                 {
-                    ColumnName = "DateCall",
+                    ColumnName = "DateTime",
                     Condition = QueryComparisons.GreaterThanOrEqual,
                     ValueDateTime = request.StartDate.AddHours(-5)
                 };
@@ -324,7 +324,7 @@
             {
                 var condition = new ConditionParameter()
                 {
-                    ColumnName = "DateCall",
+                    ColumnName = "DateTime",
                     Condition = QueryComparisons.LessThan,
                     ValueDateTime = request.EndDate.AddDays(1).AddHours(-5)
                 };
@@ -386,16 +386,23 @@
             List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();            
 
             var result = new List<GetSubsidyResponse>();
+            
             foreach (var sub in subsidies)
             {
+                var userSub = this.getUserActive(sub.UserName);
                 result.Add(new GetSubsidyResponse()
                 {
+                    UserName=sub.UserName,
+                    Name = userSub.Name+" "+userSub.LastName,
+                    TypeDoc = userSub.TypeDocument,
+                    NumberDoc= userSub.NoDocument,
                     DateTime = sub.DateTime,
                     Observations = sub.Observations,
                     Reviewer = sub.Reviewer,
                     State = sub.State,
                     NoSubsidyRequest = sub.NoSubsidyRequest,
-                    User = this.getUserActive(sub.UserName),
+                    User = userSub,
+                    NumberSap = sub.NumberSap,
                     FilesPhat = this.GetDocumentsByUser(sub.UserName, sub.NoSubsidyRequest)
                 });
             }
