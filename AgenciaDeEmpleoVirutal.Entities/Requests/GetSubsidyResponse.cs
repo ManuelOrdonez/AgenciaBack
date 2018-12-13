@@ -37,6 +37,33 @@
         public string Observations { get; set; }
 
         /// <summary>
+        /// NumberSap
+        /// </summary>
+        public string NumberSap { get; set; }
+
+        /// <summary>
+        /// UserName
+        /// </summary>
+        public string UserName { get; set; }
+
+        /// <summary>
+        /// name
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string NumberDoc { get; set; }
+
+        /// <summary>
+        /// TypeDoc
+        /// </summary>
+        public string TypeDoc { get; set; }
+
+
+
+        /// <summary>
         /// Get or Sets Documents Name of subsidy request
         /// </summary>
         public List<string> FilesPhat { get; set; }
