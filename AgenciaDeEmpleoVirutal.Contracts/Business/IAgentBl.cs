@@ -25,5 +25,11 @@
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
         Response<User> ImAviable(AviableUserRequest RequestAviable);
+
+        /// <summary>
+        /// Get all agent fosfec.
+        /// </summary>
+        /// <returns></returns>
+        Response<GetAllAgentByRoleResponse> GetAllAgentByRole(int role);
     }
 }

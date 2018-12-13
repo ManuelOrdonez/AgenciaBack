@@ -137,6 +137,9 @@
         /// User or Email not in Request
         /// </summary>
         UserOrEmailNotRepuest = 400,
-            
+        /// <summary>
+        /// Not Role Is Found.
+        /// </summary>
+        ErrorRequest = 401,
     }
 }

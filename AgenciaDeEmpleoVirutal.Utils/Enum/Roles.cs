@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace AgenciaDeEmpleoVirutal.Utils.Enum
@@ -7,29 +8,32 @@ namespace AgenciaDeEmpleoVirutal.Utils.Enum
     public enum Roles
     {
         /// <summary>
-        /// Administrador
+        /// oferente
         /// </summary>
-        Administrador,
+        [Description("Oferente")]
+        Oferente = 0,
 
         /// <summary>
-        /// OrientadorLaboral
+        /// Administrador
         /// </summary>
-        Orientador_Laboral,
-        /// <summary>
-        /// Analista_Revisor_FOSFEC
-        /// </summary>
-        Analista_Revisor_FOSFEC,
+        [Description("Administrador")]
+        Administrador = 1,
 
         /// <summary>
         /// Supervisor_de_Agencia
         /// </summary>
-        /// 
-        Supervisor_de_Agencia,
+        [Description("Supervisor de Agencia")]
+        Supervisor_de_Agencia = 2,
 
         /// <summary>
-        /// oferente
+        /// OrientadorLaboral
         /// </summary>
-        Oferente
-    
+        [Description("Orientador Laboral")]
+        Orientador_Laboral = 3,
+        /// <summary>
+        /// Analista_Revisor_FOSFEC
+        /// </summary>
+        [Description("Analista Revisor FOSFEC")]
+        Analista_Revisor_FOSFEC = 4,
     }
 }
