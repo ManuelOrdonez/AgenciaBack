@@ -156,13 +156,13 @@
         }
 
         [TestMethod, TestCategory("UserBl")]
-        public void AuthenticateUsersTest_WhenUserIsNotRegisterInLdap_ReturnError()
+        public void AuthenticateUsersTest_WhenUserIsNotRegisterInAz_ReturnError()
         {
-            LdapResult.code = (int)ServiceResponseCode.IsNotRegisterInLdap;
+            LdapResult.code = (int)ServiceResponseCode.IsNotRegisterInAz;
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             /// BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
-            var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+            var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
             ///Assert
@@ -178,22 +178,6 @@
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-            ///Action
-            var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
-            ///Assert
-            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.IsFalse(result.TransactionMade);
-        }
-
-        [TestMethod, TestCategory("UserBl")]
-        public void AuthenticateUsersTest_WhenUserIsDisable_ReturnError()
-        {
-            ///Arrange
-            LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
-            UserInfoMock.State = "Disable";
-            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
-            var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
             ///Assert
