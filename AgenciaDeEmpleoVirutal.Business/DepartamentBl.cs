@@ -8,6 +8,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -58,7 +59,7 @@
             {
                 return ResponseFail<DepartamenCityResponse>(ServiceResponseCode.BadRequest);
             }
-            var result = _departamentCityRep.GetByPatitionKeyAsync(department?.ToUpper()).Result;
+            var result = _departamentCityRep.GetByPatitionKeyAsync(department?.ToUpper(new CultureInfo("es-CO"))).Result;
             if (result == null || result.Count == 0)
             {
                 return ResponseFail<DepartamenCityResponse>();

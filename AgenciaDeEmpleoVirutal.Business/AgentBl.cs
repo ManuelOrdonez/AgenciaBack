@@ -75,14 +75,14 @@
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
             string[] days = {  "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" };
-            string dayIni = parameters.Where(x => x.RowKey == "diainicio").FirstOrDefault().Value.Replace("á","a").Replace("é", "e");
-            string dayEnd = parameters.Where(x => x.RowKey == "diafin").FirstOrDefault().Value.Replace("á", "a").Replace("é", "e");
-            string hourIni = parameters.Where(x => x.RowKey == "horainicio").FirstOrDefault().Value;
-            string hourEnd = parameters.Where(x => x.RowKey == "horafin").FirstOrDefault().Value;
-            string MessageShedule = parameters.Where(x => x.RowKey == "message").FirstOrDefault().Value;
+            string dayIni = parameters.FirstOrDefault(x => x.RowKey == "diainicio").Value.Replace("á","a").Replace("é", "e");
+            string dayEnd = parameters.FirstOrDefault(x => x.RowKey == "diafin").Value.Replace("á", "a").Replace("é", "e");
+            string hourIni = parameters.FirstOrDefault(x => x.RowKey == "horainicio").Value;
+            string hourEnd = parameters.FirstOrDefault(x => x.RowKey == "horafin").Value;
+            string MessageShedule = parameters.FirstOrDefault(x => x.RowKey == "message").Value;
 
-            int diaIniPos = Array.IndexOf(days, dayIni.ToLower());
-            int diaEndPos = Array.IndexOf(days, dayEnd.ToLower());
+            int diaIniPos = Array.IndexOf(days, dayIni.ToLower(new CultureInfo("es-CO")));
+            int diaEndPos = Array.IndexOf(days, dayEnd.ToLower(new CultureInfo("es-CO")));
             string dayNow = DateTime.UtcNow.AddHours(-5).ToString("dddd", new CultureInfo("es-CO")).Replace("á", "a").Replace("é", "e");
             int dayNowPos = Array.IndexOf(days, dayNow);
 
@@ -145,22 +145,22 @@
 
             lock (obj)
             {
-                var query = new List<ConditionParameter>()
+                var query = new List<ConditionParameter>
                 {
-                    new ConditionParameter()
+                    new ConditionParameter
                     {
                         ColumnName = "PartitionKey",
                         Condition = QueryComparisons.Equal,
-                        Value = UsersTypes.Funcionario.ToString().ToLower()
+                        Value = UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))
                     },
-                    new ConditionParameter()
+                    new ConditionParameter
                     {
                         ColumnName = "Available",
                         Condition = QueryComparisons.Equal,
                         ValueBool = true,
                     },
 
-                     new ConditionParameter()
+                     new ConditionParameter
                     {
                         ColumnName = "Authenticated",
                         Condition = QueryComparisons.Equal,
@@ -175,8 +175,8 @@
                 var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
                 try
                 {
-                    if(!_busyAgentRepository.Add(new BusyAgent() {
-                        PartitionKey = Agent.OpenTokSessionId.ToLower(),
+                    if(!_busyAgentRepository.Add(new BusyAgent {
+                        PartitionKey = Agent.OpenTokSessionId.ToLower(new CultureInfo("es-CO")),
                         RowKey = Agent.UserName,
                         UserNameAgent = Agent.UserName,
                         UserNameCaller = agentAvailableRequest.UserName}).Result)
@@ -184,7 +184,7 @@
                         return ResponseFail<GetAgentAvailableResponse>();
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
@@ -242,9 +242,9 @@
                 return ResponseFail<GetAllAgentByRoleResponse>(ServiceResponseCode.ErrorRequest);
             }
 
-            var queryRequestsActive = new List<ConditionParameter>()
+            var queryRequestsActive = new List<ConditionParameter>
             {
-                new ConditionParameter()
+                new ConditionParameter
                 {
                     ColumnName = "Role",
                     Condition = QueryComparisons.Equal,

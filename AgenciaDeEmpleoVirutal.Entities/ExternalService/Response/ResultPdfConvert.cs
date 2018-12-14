@@ -8,6 +8,6 @@
         /// <summary>
         /// Content PDF Result
         /// </summary>
-        public byte[] ContentPDF { get; set; }
+        public byte[] ContentPdf { get; set; }
     }
 }

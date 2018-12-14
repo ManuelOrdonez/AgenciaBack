@@ -17,6 +17,7 @@
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -57,12 +58,15 @@
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
             IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options)
         {
-            _callHistoryRepository = callHistoryRepository;
-            _agentRepository = agentRepository;
-            _callerRepository = agentRepository;
-            _busyAgentRepository = busyAgentRepository;
-            _openTokService = openTokService;
-            _UserSecretSettings = options.Value;
+            if (options != null)
+            {
+                _callHistoryRepository = callHistoryRepository;
+                _agentRepository = agentRepository;
+                _callerRepository = agentRepository;
+                _busyAgentRepository = busyAgentRepository;
+                _openTokService = openTokService;
+                _UserSecretSettings = options.Value;
+            }
         }
 
         /// <summary>
@@ -84,7 +88,7 @@
 
             var parameters = new List<ConditionParameter>
             {
-                new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower() },
+                new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower(new CultureInfo("es-CO")) },
                 new ConditionParameter{ColumnName="State", Condition = "eq" ,Value= request.State }
             };
             var call = _callHistoryRepository.GetSomeAsync(parameters).Result?
@@ -205,7 +209,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString()) + 1;
+                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString(new CultureInfo("es-CO"))) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
                     break;
@@ -267,7 +271,7 @@
                 callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                 try
                 {
-                    var resultR = _openTokService.StopRecord(callInfo.RecordId);
+                    _openTokService.StopRecord(callInfo.RecordId);
                 }
                 catch (Exception)
                 {
@@ -287,7 +291,7 @@
         {
             string type = string.Empty;
             var user = _agentRepository.GetAsync(UserName).Result;
-            if (user.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
             {
                 type = "UserNameAgent";
             }
@@ -338,7 +342,7 @@
             var blobContainer = _UserSecretSettings.BlobContainer;            
             var openTokApiKey = _UserSecretSettings.OpenTokApiKey;           
 
-            response.Add(new ResponseUrlRecord()
+            response.Add(new ResponseUrlRecord
             {
                 URL = this.GetContainerSasUri(blobContainer, openTokApiKey + "/" +RecordId + "/archive.zip")
 
@@ -356,7 +360,7 @@
         {
             var response = new List<GetAllUserCallResponse>();
             string type = string.Empty;
-            if (getAllUserCallRequest.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
             {
                 type = "UserAnswerCall";
             }
@@ -367,22 +371,22 @@
             var query = new List<ConditionParameter>();
             if (!string.IsNullOrEmpty(getAllUserCallRequest.UserName))
             {
-                query = new List<ConditionParameter>()
+                query = new List<ConditionParameter>
              {
-                 new ConditionParameter()
+                 new ConditionParameter
                  {
                      ColumnName = "DateCall",
                      Condition = QueryComparisons.GreaterThanOrEqual,
                      ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
                  },
 
-                  new ConditionParameter()
+                  new ConditionParameter
                  {
                      ColumnName = "DateCall",
                      Condition = QueryComparisons.LessThan,
                      ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
                  },
-                  new ConditionParameter()
+                  new ConditionParameter
                   {
                      ColumnName = type,
                      Condition = QueryComparisons.Equal,
@@ -392,16 +396,16 @@
             }
             else
             {
-                query = new List<ConditionParameter>()
+                query = new List<ConditionParameter>
              {
-                 new ConditionParameter()
+                 new ConditionParameter
                  {
                      ColumnName = "DateCall",
                      Condition = QueryComparisons.GreaterThanOrEqual,
                      ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
                  },
 
-                  new ConditionParameter()
+                  new ConditionParameter
                  {
                      ColumnName = "DateCall",
                      Condition = QueryComparisons.LessThan,
@@ -420,20 +424,17 @@
 
             List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();
 
-
-
             foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
             {
                 cll.RecordUrl = cll.RecordId;
-                    //this.GetContainerSasUri(container, openTokApiKey + "/" + cll.RecordId + "/archive.zip");
-                //cll.RecordUrl = "https://" + StorageAccount + ".blob.core.windows.net/" + blobContainer + "/" + openTokApiKey + "/" + cll.RecordId + "/archive.zip";
                 if (string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
                     continue;
                 }
                 if (!string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
-                    var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(), cll.UserAnswerCall.ToLower()).Result.First();
+                    var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), 
+                        cll.UserAnswerCall.ToLower(new CultureInfo("es-CO"))).Result.First();
                     if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
                     {
                         continue;
@@ -450,21 +451,21 @@
                 {
                     if (cll.UserCall.Substring(cll.UserCall.Length - 1) == "1")
                     {
-                        typeU = UsersTypes.Empresa.ToString().ToLower();
+                        typeU = UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO"));
                     }
                     else
                     {
-                        typeU = UsersTypes.Cesante.ToString().ToLower();
+                        typeU = UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
                     }
 
-                    var callerInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(typeU, cll.UserCall.ToLower()).Result.First();
+                    var callerInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(typeU, cll.UserCall.ToLower(new CultureInfo("es-CO"))).Result.First();
                     if (callerInfo is null || string.IsNullOrEmpty(callerInfo.Name))
                     {
                         continue;
                     }
                     else
                     {
-                        if (typeU != UsersTypes.Empresa.ToString().ToLower())
+                        if (typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")))
                         {
                             cll.CallerName = callerInfo.Name + " " + callerInfo.LastName;
                         }
@@ -476,12 +477,10 @@
                 }
 
                 cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
-
                 callsList.Add(cll);
-                    
             }
 
-            response.Add(new GetAllUserCallResponse()
+            response.Add(new GetAllUserCallResponse
             {
                 CallInfo = callsList,
             });
@@ -547,7 +546,7 @@
             }
             else
             {
-                GetCallRequest getCallReq = new GetCallRequest()
+                GetCallRequest getCallReq = new GetCallRequest
                 {
                     OpenTokSessionId = OpenTokSessionId,
                     State = CallStates.Begun.ToString(),
