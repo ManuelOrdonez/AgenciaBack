@@ -53,7 +53,7 @@
             result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
             var paramentsResult = new List<ParametersResponse>();
             paraments.ToList().ForEach(d =>
-            paramentsResult.Add(new ParametersResponse()
+            paramentsResult.Add(new ParametersResponse
             {
                 Type = d.Type,
                 Id = d.Id,
@@ -68,10 +68,14 @@
 
         public Response<ResponseUrlRecord> GetUrlDownloadBlob(GetUrlDownloadBlobRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+
             var response = new List<ResponseUrlRecord>();
 
-
-            response.Add(new ResponseUrlRecord()
+            response.Add(new ResponseUrlRecord
             {
                 URL = this.GetContainerSasUri(request.ContainerName, request.fileName)
 
@@ -134,9 +138,9 @@
 
             result.ForEach(r =>
             {
-                if (r.State == true)
+                if (r.State)
                 {
-                    parametsList.Add(new ParametersResponse()
+                    parametsList.Add(new ParametersResponse
                     {
                         ImageFile = r.ImageFile,
                         Id = r.Id,
@@ -175,7 +179,7 @@
 
             result.ForEach(r =>
             {
-                parametsList.Add(new ParametersResponse()
+                parametsList.Add(new ParametersResponse
                 {
                     ImageFile = r.ImageFile,
                     Id = r.Id,
@@ -219,9 +223,9 @@
 
             result.ForEach(r =>
             {
-                if (r.State == true)
+                if (r.State)
                 {
-                    parametsList.Add(new ParametersResponse()
+                    parametsList.Add(new ParametersResponse
                     {
                         ImageFile = r.ImageFile,
                         Id = r.Id,
@@ -238,9 +242,6 @@
 
         public Response<List<string>> GetCategories()
         {
-            //var result = _paramentRep.GetList().Result;
-
-
             var DistinctItems = _paramentRep.GetList().Result.GroupBy(x => x.PartitionKey).Select(y => y.First());
             List<string> result = new List<string>();
             foreach (var item in DistinctItems)
@@ -257,6 +258,11 @@
 
         public Response<ParametersResponse> SetParameterValue(SetParameterValueRequest request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+
             var result = _paramentRep.GetByPartitionKeyAndRowKeyAsync(request.Category, request.ParameterId).Result;
 
             if (result == null || result.Count == 0)
@@ -268,9 +274,9 @@
             parameter.Description = request.ParameterDesc;
             parameter.State = request.ParameterState;
             parameter.ImageFile = request.ParameterImg;
-            var resultUpdate = _paramentRep.AddOrUpdate(parameter);
+            _paramentRep.AddOrUpdate(parameter);
 
-            ParametersResponse response = new ParametersResponse()
+            ParametersResponse response = new ParametersResponse
             {
                 Desc = parameter.Description,
                 Id = parameter.Id,
@@ -278,7 +284,7 @@
                 Value = parameter.Value,
                 ImageFile = parameter.ImageFile
             };
-            return ResponseSuccess(new List<ParametersResponse>() { response });
+            return ResponseSuccess(new List<ParametersResponse> { response });
         }
     }
 }

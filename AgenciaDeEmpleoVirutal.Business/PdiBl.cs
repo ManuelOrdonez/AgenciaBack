@@ -99,21 +99,21 @@
                 pdiName = string.Format("PDI-{0}.pdf", user.NoDocument);
             }
 
-            var pdi = new PDI()
+            var pdi = new PDI
             {
                 CallerUserName = user.UserName,
                 PDIName = pdiName,
-                MyStrengths = SetFieldOfPDI(PDIRequest.MyStrengths),
-                MustPotentiate = SetFieldOfPDI(PDIRequest.MustPotentiate),
-                MyWeaknesses = SetFieldOfPDI(PDIRequest.MyWeaknesses),
+                MyStrengths = SetFieldOfPdi(PDIRequest.MyStrengths),
+                MustPotentiate = SetFieldOfPdi(PDIRequest.MustPotentiate),
+                MyWeaknesses = SetFieldOfPdi(PDIRequest.MyWeaknesses),
                 CallerName = UString.UppercaseWords(string.Format("{0} {1}", user.Name, user.LastName)),
                 AgentName = UString.UppercaseWords(string.Format("{0} {1}", agent.Name, agent.LastName)),
-                WhatAbilities = SetFieldOfPDI(PDIRequest.WhatAbilities),
-                WhatJob = SetFieldOfPDI(PDIRequest.WhatJob),
-                WhenAbilities = SetFieldOfPDI(PDIRequest.WhenAbilities),
-                WhenJob = SetFieldOfPDI(PDIRequest.WhenJob),
+                WhatAbilities = SetFieldOfPdi(PDIRequest.WhatAbilities),
+                WhatJob = SetFieldOfPdi(PDIRequest.WhatJob),
+                WhenAbilities = SetFieldOfPdi(PDIRequest.WhenAbilities),
+                WhenJob = SetFieldOfPdi(PDIRequest.WhenJob),
                 PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
-                Observations = SetFieldOfPDI(PDIRequest.Observations),
+                Observations = SetFieldOfPdi(PDIRequest.Observations),
                 OnlySave = PDIRequest.OnlySave
             };
             if (PDIRequest.OnlySave)
@@ -140,10 +140,10 @@
         /// <returns></returns>
         private EmailResponse SendPdi(PDI pdi, User user)
         {
-            var ContentPDI = GenarateContentPDI(pdi);
+            var ContentPDI = GenarateContentPdi(pdi);
             if (ContentPDI is null)
             {
-                return new EmailResponse() { Ok = false, Message = "Error generando PDI" };
+                return new EmailResponse { Ok = false, Message = "Error generando PDI" };
             }
             MemoryStream stream = new MemoryStream(ContentPDI);
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdi.PDIName, "application/pdf") };
@@ -159,7 +159,7 @@
             {
                 if (!_pdiRep.AddOrUpdate(pdi).Result)
                 {
-                    return new EmailResponse() { Ok = false, Message = "Error guardando PDI" };
+                    return new EmailResponse { Ok = false, Message = "Error guardando PDI" };
                 }
             }
             return rta;
@@ -190,7 +190,7 @@
         /// </summary>
         /// <param name="pdi"></param>
         /// <returns></returns>
-        private byte[] GenarateContentPDI(PDI pdi)
+        private byte[] GenarateContentPdi(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert();
             RequestPDF.ContentHtml = string.Format(ParametersApp.ContentPDIPdf,
@@ -220,11 +220,11 @@
         /// </summary>
         /// <param name="field"></param>
         /// <returns></returns>
-        private string SetFieldOfPDI(string field)
+        private string SetFieldOfPdi(string field)
         {
             string fieldAux = string.Empty;
             fieldAux = field;
-            var naOptiond = new List<string>() { "n/a", "na", "no aplica", "noaplica" };
+            var naOptiond = new List<string> { "n/a", "na", "no aplica", "noaplica" };
             fieldAux = fieldAux.ToLower();
             if (naOptiond.Any(op => op.Equals(fieldAux)))
             {

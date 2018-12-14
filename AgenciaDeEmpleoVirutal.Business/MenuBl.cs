@@ -48,16 +48,51 @@ namespace AgenciaDeEmpleoVirutal.Business
 
             var role = request.Replace(" ", "_");
 
-            if (role == Roles.Administrador.ToString()) { parameter = "menu_administrador"; }
-            if (role == Roles.Analista_Revisor_FOSFEC.ToString()) { parameter = "menu_analista"; }
-            if (role == Roles.Orientador_Laboral.ToString()) { parameter = "menu_orientador"; }
-            if (role == Roles.Supervisor_de_Agencia.ToString()) { parameter = "menu_supervisor"; }
-            if (role == Roles.Oferente.ToString()) { parameter = "menu_oferente"; }
-            if (role == "empresa") { parameter = "menu_oferente_empresa"; }
+            if (role == Roles.Administrador.ToString())
+            {
+                parameter = "menu_administrador";
+            }
+            if (role == Roles.Analista_Revisor_FOSFEC.ToString())
+            {
+                parameter = "menu_analista";
+            }
+            if (role == Roles.Orientador_Laboral.ToString())
+            {
+                parameter = "menu_orientador";
+            }
+            if (role == Roles.Supervisor_de_Agencia.ToString())
+            {
+                parameter = "menu_supervisor";
+            }
+            if (role == Roles.Oferente.ToString())
+            {
+                parameter = "menu_oferente";
+            }
+            if (role == "empresa")
+            {
+                parameter = "menu_oferente_empresa";
+            }
 
             ParameterBI parameterBl = new ParameterBI(_paramentRep, _UserSecretSettings);
             var menuRol = parameterBl.GetParametersByType(parameter).Data;
 
+            List<Menu> optionsMenu = new List<Menu>();
+
+            optionsMenu = ListsMenus(menuRol);
+
+            if (optionsMenu == null || optionsMenu.Count == 0)
+            {
+                return ResponseFail<List<Menu>>();
+            }
+
+            var listMenu = new List<List<Menu>>();
+            listMenu.Add(optionsMenu);
+
+            return ResponseSuccess(listMenu);
+        }
+
+        private List<Menu> ListsMenus(IList<ParametersResponse> menuRol)
+        {
             List<string> menuIds = new List<string>();
             List<Menu> optionsMenu = new List<Menu>();
 
@@ -74,16 +109,7 @@ namespace AgenciaDeEmpleoVirutal.Business
                 optionsMenu.Add(_menuRep.GetByPatitionKeyAsync(idMenu).Result.FirstOrDefault());
             }
 
-            if (optionsMenu == null || optionsMenu.Count == 0)
-            {
-                return ResponseFail<List<Menu>>();
-            }
-
-            var listMenu = new List<List<Menu>>();
-
-            listMenu.Add(optionsMenu);
-
-            return ResponseSuccess(listMenu);
+            return optionsMenu;
         }
 
     }
