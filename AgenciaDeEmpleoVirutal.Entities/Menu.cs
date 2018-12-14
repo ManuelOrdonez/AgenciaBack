@@ -34,36 +34,36 @@ namespace AgenciaDeEmpleoVirutal.Entities
         /// <summary>
         /// Get or Sets Description
         /// </summary>
-        public string father { get; set; }
+        public string Father { get; set; }
 
         /// <summary>
         /// haveChilds
         /// </summary>
-        public bool haveChilds { get; set; }
+        public bool HaveChilds { get; set; }
 
         /// <summary>
         /// Get or Sets Sort By
         /// </summary>
-        public string html { get; set; }
+        public string Html { get; set; }
 
         /// <summary>
         /// icon
         /// </summary>
-        public string icon { get; set; }
+        public string Icon { get; set; }
 
         /// <summary>
         /// label
         /// </summary>
-        public string label { get; set; }
+        public string Label { get; set; }
 
         /// <summary>
         /// routerLink
         /// </summary>
-        public string routerLink { get; set; }
+        public string RouterLink { get; set; }
 
         /// <summary>
         /// click
         /// </summary>
-        public string click { get; set; }
+        public string Click { get; set; }
     }
 }
