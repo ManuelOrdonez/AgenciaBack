@@ -14,6 +14,7 @@
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -27,16 +28,6 @@
         private readonly IGenericRep<User> _usersRepo;
 
         /// <summary>
-        /// Interface of OpenTok External Service
-        /// </summary>
-        private readonly IOpenTokExternalService _openTokExternalService;
-
-        /// <summary>
-        /// Class to Encrypt and decrypt 
-        /// </summary>
-        private readonly Crypto _crypto;
-
-        /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="usersRepo"></param>
@@ -44,8 +35,8 @@
         public AdminBl(IGenericRep<User> usersRepo, IOpenTokExternalService openTokService)
         {
             _usersRepo = usersRepo;
-            _crypto = new Crypto();
-            _openTokExternalService = openTokService;
+            Crypto _crypto = new Crypto();
+            IOpenTokExternalService _openTokExternalService = openTokService;
         }
 
         /// <summary>
@@ -65,7 +56,7 @@
             {
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
-            var funcoinaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument)).Result;
+            var funcoinaries = _usersRepo.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument)).Result;
 
             int pos = 0;
             if (!ValRegistriesUser(funcoinaries, out pos))
@@ -98,10 +89,10 @@
                 Password = funcionary.Password,
                 Role = funcionary.Role,
                 DeviceId = string.Empty,
-                UserName = string.Format("{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument),
-                CodTypeDocument = funcionary.CodTypeDocument.ToString(),
+                UserName = string.Format(new CultureInfo("es-CO"), "{0}_{1}", funcionary.NoDocument, funcionary.CodTypeDocument),
+                CodTypeDocument = funcionary.CodTypeDocument.ToString(new CultureInfo("es-CO")),
                 TypeDocument = funcionary.TypeDocument,
-                Email = string.Format("{0}@colsubsidio.com", funcionary.InternalMail),
+                Email = string.Format(new CultureInfo("es-CO"), "{0}@colsubsidio.com", funcionary.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
                 CountCallAttended = 0,
                 Available = false,
@@ -165,11 +156,8 @@
                     case "funcionario":
                         funtionary = item;
                         break;
-                    default:
-                        break;
                 }
             }
-
         }
 
         /// <summary>
@@ -189,7 +177,7 @@
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
 
-            List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format("{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
+            List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
             User funcionary = null;
             User people = null;
             GetUserFuncionary(funcionaries, out funcionary, out people);
@@ -198,7 +186,7 @@
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             }
 
-            funcionary.Email = string.Format("{0}@colsubsidio.com", funcionaryReq.InternalMail);
+            funcionary.Email = string.Format(new CultureInfo("es-CO"), "{0}@colsubsidio.com", funcionaryReq.InternalMail);
             funcionary.Name = UString.UppercaseWords(funcionaryReq.Name);
             funcionary.LastName = UString.UppercaseWords(funcionaryReq.LastName);
             funcionary.Role = funcionaryReq.Role;
@@ -234,7 +222,7 @@
             {
                 return ResponseFail<FuncionaryInfoResponse>(ServiceResponseCode.BadRequest);
             }
-            var result = _usersRepo.GetSomeAsync("Email", string.Format("{0}@colsubsidio.com", funcionaryMail)).Result;
+            var result = _usersRepo.GetSomeAsync("Email", string.Format(new CultureInfo("es-CO"), "{0}@colsubsidio.com", funcionaryMail)).Result;
             if (!result.Any())
             {
                 return ResponseFail<FuncionaryInfoResponse>();
@@ -248,7 +236,7 @@
                     Mail = result.FirstOrDefault().Email,
                     Name = result.FirstOrDefault().Name,
                     LastName = result.FirstOrDefault().LastName,
-                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()),
                     CodTypeDocument = result.FirstOrDefault().CodTypeDocument,
                     NoDocument = result.FirstOrDefault().NoDocument,
                     TypeDocument = result.FirstOrDefault().TypeDocument
@@ -263,7 +251,7 @@
         /// <returns></returns>
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
-            var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
+            var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"),)).Result;
             if (funcionaries.Count == 0 || funcionaries is null)
             {
                 return ResponseFail<FuncionaryInfoResponse>();
@@ -276,7 +264,7 @@
                     Position = f.Position,
                     Role = f.Role,
                     Mail = f.Email,
-                    State = f.State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    State = f.State.Equals(UserStates.Enable.ToString()),
                     Name = f.Name,
                     LastName = f.LastName,
                     TypeDocument = f.TypeDocument,
