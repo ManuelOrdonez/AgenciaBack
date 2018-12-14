@@ -123,8 +123,8 @@
                 {
                     new CheckSubsidyStateResponse()
                     {
-                        subsidy = new Subsidy(),
-                        state = (int)SubsidyStates.NoRequests
+                        Subsidy = new Subsidy(),
+                        State = (int)SubsidyStates.NoRequests
                     }
                 };
                 return ResponseSuccess(response);
@@ -134,8 +134,8 @@
             {
                 new CheckSubsidyStateResponse()
                 {
-                    subsidy = lastRequestSubsidy,
-                    state = EnumValues.GetValueFromDescription<SubsidyStates>(lastRequestSubsidy.State).GetHashCode()
+                    Subsidy = lastRequestSubsidy,
+                    State = EnumValues.GetValueFromDescription<SubsidyStates>(lastRequestSubsidy.State).GetHashCode()
                 }
             };
             return ResponseSuccess(result);
