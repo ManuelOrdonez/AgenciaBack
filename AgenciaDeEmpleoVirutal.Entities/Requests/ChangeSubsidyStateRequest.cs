@@ -41,7 +41,6 @@
         /// <summary>
         /// Number Sap to Subsidy request
         /// </summary>
-        [Required(ErrorMessageResourceType = typeof(EntityMessages), ErrorMessageResourceName = "NumberSapSubsidy_Request")]
         public string NumberSap { get; set; }
     }
 }

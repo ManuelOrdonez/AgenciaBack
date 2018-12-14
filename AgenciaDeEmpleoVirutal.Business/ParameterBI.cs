@@ -77,7 +77,7 @@
 
             response.Add(new ResponseUrlRecord
             {
-                URL = this.GetContainerSasUri(request.ContainerName, request.fileName)
+                URL = this.GetContainerSasUri(request.ContainerName, request.FileName)
 
             });
             return ResponseSuccess(response);

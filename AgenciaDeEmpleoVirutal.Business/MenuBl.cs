@@ -37,6 +37,11 @@ namespace AgenciaDeEmpleoVirutal.Business
             _UserSecretSettings = options;
         }
 
+        /// <summary>
+        /// Get menu.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public Response<List<Menu>> GetMenu(string request)
         {
             var parameter = string.Empty;
@@ -45,7 +50,6 @@ namespace AgenciaDeEmpleoVirutal.Business
                 throw new ArgumentNullException("request");
             }
             
-
             var role = request.Replace(" ", "_");
 
             if (role == Roles.Administrador.ToString())
@@ -91,6 +95,11 @@ namespace AgenciaDeEmpleoVirutal.Business
             return ResponseSuccess(listMenu);
         }
 
+        /// <summary>
+        /// Lists menus.
+        /// </summary>
+        /// <param name="menuRol"></param>
+        /// <returns></returns>
         private List<Menu> ListsMenus(IList<ParametersResponse> menuRol)
         {
             List<string> menuIds = new List<string>();
@@ -111,6 +120,5 @@ namespace AgenciaDeEmpleoVirutal.Business
 
             return optionsMenu;
         }
-
     }
 }
