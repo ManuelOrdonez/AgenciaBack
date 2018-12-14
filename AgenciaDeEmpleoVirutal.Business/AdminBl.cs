@@ -88,7 +88,7 @@
                 message = "Usuario creado exitosamente.";
             }
 
-            var funcionaryEntity = new User()
+            var funcionaryEntity = new User
             {
                 Position = funcionary.Position,
                 State = funcionary.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
@@ -113,7 +113,7 @@
             {
                 return ResponseFail<CreateOrUpdateFuncionaryResponse>();
             }
-            return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>() { new CreateOrUpdateFuncionaryResponse() { Message = message } });
+            return ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse> { new CreateOrUpdateFuncionaryResponse { Message = message } });
         }
 
         /// <summary>
@@ -203,7 +203,7 @@
             funcionary.LastName = UString.UppercaseWords(funcionaryReq.LastName);
             funcionary.Role = funcionaryReq.Role;
             funcionary.Position = funcionaryReq.Position;
-            funcionary.State = funcionaryReq.State == true ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
+            funcionary.State = funcionaryReq.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString();
 
             var result = _usersRepo.AddOrUpdate(funcionary).Result;
             if (!result)
@@ -213,7 +213,7 @@
 
             if (people != null)
             {
-                people.State = funcionaryReq.State == true ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                people.State = funcionaryReq.State ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                 result = _usersRepo.AddOrUpdate(people).Result;
                 if (!result)
                 {
@@ -239,9 +239,9 @@
             {
                 return ResponseFail<FuncionaryInfoResponse>();
             }
-            var funcionary = new List<FuncionaryInfoResponse>()
+            var funcionary = new List<FuncionaryInfoResponse>
             {
-                new FuncionaryInfoResponse()
+                new FuncionaryInfoResponse
                 {
                     Position = result.FirstOrDefault().Position,
                     Role = result.FirstOrDefault().Role,
@@ -271,7 +271,7 @@
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             funcionaries.ForEach(f =>
             {
-                funcionariesInfo.Add(new FuncionaryInfoResponse()
+                funcionariesInfo.Add(new FuncionaryInfoResponse
                 {
                     Position = f.Position,
                     Role = f.Role,

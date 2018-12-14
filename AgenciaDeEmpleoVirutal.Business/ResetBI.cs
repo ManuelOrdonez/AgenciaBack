@@ -138,7 +138,7 @@
             if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
-                ResetPassword rpwd = new ResetPassword() { PartitionKey = idMod, RowKey = token };
+                ResetPassword rpwd = new ResetPassword { PartitionKey = idMod, RowKey = token };
                 ExistReset(idMod);
                 var res = _passwordRep.AddOrUpdate(rpwd).Result;
                 var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result; // Nombre del servidor
@@ -173,7 +173,7 @@
                     return parameter.RowKey == "subject";
                 });
                 /// PasswordChangeRequest ldapService
-                var request = new PasswordChangeRequest()
+                var request = new PasswordChangeRequest
                 {
                     Message = messageMail.Value,
                     Subject = subjectMail.Value,
@@ -193,9 +193,9 @@
 
             }
 
-            var response = new List<ResetResponse>()
+            var response = new List<ResetResponse>
             {
-                new ResetResponse()
+                new ResetResponse
                 {
                     UserId = idMod ,
                     Token = token,
@@ -231,9 +231,9 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.ExpiredtokenRPassword);
             }
             // token valido continue con el proceso de cambio de clave
-            var response = new List<ResetResponse>()
+            var response = new List<ResetResponse>
             {
-                new ResetResponse()
+                new ResetResponse
                 {
                     UserId = result.PartitionKey,
                     Token = token,
@@ -268,7 +268,7 @@
 
             if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
-                var passswordChangeLdap = new PasswordChangeConfirmRequests()
+                var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {
                     ConfirmationId = userRequest.ConfirmationLdapId,
                     TokenId = userRequest.TokenId,
