@@ -386,8 +386,8 @@
             List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();            
 
             var result = new List<GetSubsidyResponse>();
-            
-            foreach (var sub in subsidies)
+
+            foreach (var sub in subsidies.OrderByDescending(sub => sub.DateTime).ToList())
             {
                 var userSub = this.getUserActive(sub.UserName);
                 var agentSub = this.getUserActive(sub.Reviewer);
