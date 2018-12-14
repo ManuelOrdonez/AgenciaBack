@@ -27,7 +27,7 @@
         /// <summary>
         /// Interface to Convert PDF
         /// </summary>
-        private IPDFConvertExternalService _pdfConvertService;
+        private IPdfConvertExternalService _pdfConvertService;
 
         /// <summary>
         /// PDI Repository
@@ -52,7 +52,7 @@
         /// <param name="userRep"></param>
         /// <param name="sendMailService"></param>
         public PdiBl(
-            IPDFConvertExternalService pdfConvertService,
+            IPdfConvertExternalService pdfConvertService,
             IGenericRep<PDI> pdiRep, 
             IGenericRep<User> userRep,
             ISendGridExternalService sendMailService)
@@ -147,7 +147,7 @@
             }
             MemoryStream stream = new MemoryStream(ContentPDI);
             var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdi.PDIName, "application/pdf") };
-            var rta = _sendMailService.SendMailPDI(user, attachmentPDI);
+            var rta = _sendMailService.SendMailPdi(user, attachmentPDI);
             try
             {
                 stream.Close();
@@ -201,7 +201,7 @@
             byte[] result;                        
             try
             {
-                var content = _pdfConvertService.GenaratePdfContent(RequestPDF).ContentPDF;
+                var content = _pdfConvertService.GenaratePdfContent(RequestPDF).ContentPdf;
                 if(content is null)
                 {
                     return null;

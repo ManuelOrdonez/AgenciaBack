@@ -11,31 +11,31 @@
         /// <summary>
         /// Code of result
         /// </summary>
-        public int code { get; set; }
+        public int Code { get; set; }
 
         /// <summary>
         /// reason
         /// </summary>
-        public string reason { get; set; }
+        public string Reason { get; set; }
 
         /// <summary>
         /// message of result
         /// </summary>
-        public string message { get; set; }
+        public string Message { get; set; }
 
         /// <summary>
         /// estado of result
         /// </summary>
-        public string estado { get; set; }
+        public string Estado { get; set; }
 
         /// <summary>
         /// mensaje of result
         /// </summary>
-        public string mensaje { get; set; }
+        public string Mensaje { get; set; }
 
         /// <summary>
         /// data of result
         /// </summary>
-        public IList<T> data { get; set; }
+        public IList<T> Data { get; set; }
     }
 }

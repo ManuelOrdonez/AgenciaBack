@@ -22,13 +22,6 @@
         private const int Keysize = 256;
 
         /// <summary>
-        /// Class contructor
-        /// </summary>
-        public Crypto()
-        {
-        }
-
-        /// <summary>
         /// Method to Decrypt string by Phone
         /// </summary>
         /// <param name="cipherText"></param>

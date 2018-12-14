@@ -8,52 +8,52 @@
         /// <summary>
         /// User's Email
         /// </summary>
-        public string mail { get; set; }
+        public string Mail { get; set; }
 
         /// <summary>
         /// User's  user name
         /// </summary>
-        public string username { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// User's password
         /// </summary>
-        public string userpassword { get; set; }
+        public string UserPassword { get; set; }
 
         /// <summary>
         /// User's given name
         /// </summary>
-        public string givenName { get; set; }
+        public string GivenName { get; set; }
 
         /// <summary>
         /// User's  surname
         /// </summary>
-        public string surname { get; set; }
+        public string Surname { get; set; }
 
         /// <summary>
         /// User's ID type
         /// </summary>
-        public string userIdType { get; set; }
+        public string UserIdType { get; set; }
 
         /// <summary>
         /// User's ID
         /// </summary>
-        public string userId { get; set; }
+        public string UserId { get; set; }
 
         /// <summary>
         /// User's question
         /// </summary>
-        public string question { get; set; }
+        public string Question { get; set; }
 
         /// <summary>
         /// User's answer
         /// </summary>
-        public string answer { get; set; }
+        public string Answer { get; set; }
 
         /// <summary>
         /// User's birtdate
         /// </summary>
-        public string birtdate { get; set; }
+        public string BirtDate { get; set; }
 
     }
 }

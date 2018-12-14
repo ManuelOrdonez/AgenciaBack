@@ -12,7 +12,7 @@
     /// <summary>
     /// PDF Convert External Service
     /// </summary>
-    public class PDFConvertExternalService : ClientWebBase<ResultPdfConvert>, IPDFConvertExternalService
+    public class PDFConvertExternalService : ClientWebBase<ResultPdfConvert>, IPdfConvertExternalService
     {
         /// <summary>
         /// Class constructor

@@ -264,15 +264,15 @@
             {
                 /// Authenticate in LDAP Service
                 var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
-                if (result.code == (int)ServiceResponseCode.ServiceExternalError)
+                if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
                 }
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                 {
                     return ServiceResponseCode.IsNotRegisterInLdap;
                 }
-                if (result.code == (int)ServiceResponseCode.ServiceExternalError)
+                if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
                 }
@@ -280,7 +280,7 @@
                 {
                     return ServiceResponseCode.UserBlock;
                 }
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
+                if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
@@ -291,7 +291,7 @@
                     }
                     return ServiceResponseCode.IncorrectPassword;
                 }
-                if (user == null && result.estado.Equals("0000"))
+                if (user == null && result.Estado.Equals("0000"))
                 {
                     return ServiceResponseCode.IsNotRegisterInAz;
                 }
@@ -433,19 +433,19 @@
             {
                 var regLdap = new RegisterLdapRequest()
                 {
-                    question = "Agencia virtual de empleo question",
-                    answer = "Agencia virtual de empleo answer",
-                    birtdate = "01-01-1999",
-                    givenName = UString.UppercaseWords(userReq.Name),
-                    surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
-                    mail = userReq.Mail,
-                    userId = userReq.NoDocument,
-                    userIdType = userReq.CodTypeDocument.ToString(),
-                    username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                    userpassword = passwordDecrypt
+                    Question = "Agencia virtual de empleo question",
+                    Answer = "Agencia virtual de empleo answer",
+                    BirtDate = "01-01-1999",
+                    GivenName = UString.UppercaseWords(userReq.Name),
+                    Surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
+                    Mail = userReq.Mail,
+                    UserId = userReq.NoDocument,
+                    UserIdType = userReq.CodTypeDocument.ToString(),
+                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    UserPassword = passwordDecrypt
                 };
                 var resultLdap = _LdapServices.Register(regLdap);
-                if (resultLdap is null || resultLdap.code == (int)ServiceResponseCode.ServiceExternalError)
+                if (resultLdap is null || resultLdap.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
                 }

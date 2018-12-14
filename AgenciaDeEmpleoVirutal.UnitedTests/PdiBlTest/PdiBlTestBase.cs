@@ -13,7 +13,7 @@
         /// <summary>
         /// Interface to Convert PDF Mock
         /// </summary>
-        protected Mock<IPDFConvertExternalService> _pdfConvertServiceMock;
+        protected Mock<IPdfConvertExternalService> _pdfConvertServiceMock;
 
         /// <summary>
         /// PDI Repository Mock
@@ -50,7 +50,7 @@
         /// </summary>
         public PdiBlTestBase()
         {
-            _pdfConvertServiceMock = new Mock<IPDFConvertExternalService>();
+            _pdfConvertServiceMock = new Mock<IPdfConvertExternalService>();
             _pdiRepMock = new Mock<IGenericRep<PDI>>();
             _userRepMock = new Mock<IGenericRep<User>>();
             _sendMailServiceMock = new Mock<ISendGridExternalService>();

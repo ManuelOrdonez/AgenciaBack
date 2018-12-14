@@ -6,7 +6,7 @@
     /// <summary>
     /// Interface of PDF Convert External Service
     /// </summary>
-    public interface IPDFConvertExternalService
+    public interface IPdfConvertExternalService
     {
         /// <summary>
         /// Genarate Pdf Content

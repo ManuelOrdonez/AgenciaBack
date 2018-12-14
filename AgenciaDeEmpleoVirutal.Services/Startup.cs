@@ -164,7 +164,7 @@
             services.AddTransient<ISendGridExternalService, SendGridExternalService>();
             services.AddTransient<IOpenTokExternalService, OpenTokExternalService>();
             services.AddTransient<ILdapServices, LdapServices>();
-            services.AddTransient<IPDFConvertExternalService, PDFConvertExternalService>();
+            services.AddTransient<IPdfConvertExternalService, PDFConvertExternalService>();
         }
 
         /// <summary>
