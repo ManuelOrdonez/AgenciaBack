@@ -4,9 +4,17 @@
     using System.ComponentModel;
     using System.Reflection;
 
-
+    /// <summary>
+    /// Enum Values.
+    /// </summary>
     public static class EnumValues
     {
+        /// <summary>
+        /// Get value from description.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="description"></param>
+        /// <returns></returns>
         public static T GetValueFromDescription<T>(string description)
         {
             var type = typeof(T);
@@ -36,6 +44,11 @@
             throw new ArgumentException("Not found.", "description");
         }
 
+        /// <summary>
+        /// Get description from value.
+        /// </summary>
+        /// <param name="valor"></param>
+        /// <returns></returns>
         public static string GetDescriptionFromValue(this Enum valor)
         {
             DescriptionAttribute atributoDescripcion = new DescriptionAttribute();

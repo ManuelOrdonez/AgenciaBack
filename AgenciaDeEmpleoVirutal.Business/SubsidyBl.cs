@@ -29,28 +29,33 @@
         /// <summary>
         /// Subsidy reppository
         /// </summary>
-        private IGenericRep<Subsidy> _subsidyRep;
+        private readonly IGenericRep<Subsidy> _subsidyRep;
 
         /// <summary>
         /// User Repository
         /// </summary>
-        private IGenericRep<User> _userRep;
+        private readonly IGenericRep<User> _userRep;
 
         /// <summary>
         /// User Secret Settings
         /// </summary>
-        private UserSecretSettings _UserSecretSettings;
+        private readonly UserSecretSettings _UserSecretSettings;
 
         /// <summary>
         /// Interface to Send Mails
         /// </summary>
-        private ISendGridExternalService _sendMailService;
+        private readonly ISendGridExternalService _sendMailService;
 
         /// <summary>
         /// Constructor's Subsidy Business logic
         /// </summary>
         public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep, IOptions<UserSecretSettings> options, ISendGridExternalService sendMailService)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException("options");
+            }
+
             _sendMailService = sendMailService;
             _subsidyRep = subsidyRep;
             _userRep = userRep;
@@ -391,7 +396,7 @@
             {
                 var userSub = this.getUserActive(sub.UserName);
                 var agentSub = this.getUserActive(sub.Reviewer);
-                result.Add(new GetSubsidyResponse()
+                result.Add(new GetSubsidyResponse
                 {
                     UserName=sub.UserName,
                     Name = userSub.Name+" "+userSub.LastName,
