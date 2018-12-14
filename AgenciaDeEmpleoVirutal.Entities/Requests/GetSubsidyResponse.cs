@@ -62,6 +62,11 @@
         public string TypeDoc { get; set; }
 
 
+        /// <summary>
+        /// AgentName
+        /// </summary>
+        public string AgentName { get; set; }
+
 
         /// <summary>
         /// Get or Sets Documents Name of subsidy request
