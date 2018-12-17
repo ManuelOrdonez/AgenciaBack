@@ -105,7 +105,7 @@
         {
             if (string.IsNullOrEmpty(userName))
             {
-                ResponseFail(ServiceResponseCode.BadRequest);
+                return ResponseFail<CheckSubsidyStateResponse>(ServiceResponseCode.BadRequest);
             }
             var user = _userRep.GetAsync(userName).Result;
             if (user is null)
@@ -151,7 +151,7 @@
             var errorMesasge = request.Validate().ToList();
             if (errorMesasge.Any())
             {
-                ResponseBadRequest<Subsidy>(errorMesasge);
+                return ResponseBadRequest<Subsidy>(errorMesasge);
             }
             var user = _userRep.GetAsync(request.UserName).Result;
             if (user is null)
