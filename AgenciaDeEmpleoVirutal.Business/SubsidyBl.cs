@@ -185,7 +185,7 @@
             var result = _subsidyRep.AddOrUpdate(updateSubsidyRequest).Result;
             if (!result)
             {
-                ResponseFail();
+                return ResponseFail();
             }
             if (request.State != (int)SubsidyStates.InProcess)
             {
