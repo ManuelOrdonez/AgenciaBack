@@ -26,6 +26,13 @@
         /// </summary>
         public DateTime DateTime { get; set; }
 
+
+        /// <summary>
+        /// Get or Sets Date Time of subsidy
+        /// </summary>
+        public DateTimeOffset DateChange { get; set; }
+
+
         /// <summary>
         /// Get or Sets Reviewer user name
         /// </summary>
