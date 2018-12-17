@@ -27,22 +27,22 @@
         /// <summary>
         /// Interface to Convert PDF
         /// </summary>
-        private IPdfConvertExternalService _pdfConvertService;
+        private readonly IPdfConvertExternalService _pdfConvertService;
 
         /// <summary>
         /// PDI Repository
         /// </summary>
-        private IGenericRep<PDI> _pdiRep;
+        private readonly IGenericRep<PDI> _pdiRep;
 
         /// <summary>
         /// User Repository
         /// </summary>
-        private IGenericRep<User> _userRep;
+        private readonly IGenericRep<User> _userRep;
 
         /// <summary>
         /// Interface to Send Mails
         /// </summary>
-        private ISendGridExternalService _sendMailService;
+        private readonly ISendGridExternalService _sendMailService;
 
         /// <summary>
         /// Class constructor
@@ -146,7 +146,7 @@
                 return new EmailResponse { Ok = false, Message = "Error generando PDI" };
             }
             MemoryStream stream = new MemoryStream(ContentPDI);
-            var attachmentPDI = new List<Attachment>() { new Attachment(stream, pdi.PDIName, "application/pdf") };
+            var attachmentPDI = new List<Attachment> { new Attachment(stream, pdi.PDIName, "application/pdf") };
             var rta = _sendMailService.SendMailPdi(user, attachmentPDI);
             try
             {

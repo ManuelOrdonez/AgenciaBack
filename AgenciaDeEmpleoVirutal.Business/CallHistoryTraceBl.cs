@@ -116,7 +116,7 @@
                 return ResponseBadRequest<List<CallHistoryTrace>>(errorMessages);
             }
             var parameters = new List<ConditionParameter> {
-                    new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower() },
+                    new ConditionParameter{ColumnName="PartitionKey", Condition = "eq" ,Value = request.OpenTokSessionId.ToLower(new CultureInfo("es-CO")) },
                     new ConditionParameter{ColumnName="State", Condition = "ne", Value = request.State }
                 };
             var call = _callHistoryRepository.GetSomeAsync(parameters).Result;
@@ -175,7 +175,7 @@
                 return ResponseBadRequest<CallHistoryTrace>(messagesValidationEntity);
             }
 
-            var existsCall = GetCallInfo(new GetCallRequest()
+            var existsCall = GetCallInfo(new GetCallRequest
             {
                 OpenTokSessionId = callRequest?.OpenTokSessionId,
                 State = CallStates.Begun.ToString()
@@ -209,7 +209,7 @@
                     if (agent != null)
                     {
                         agent.Available = false;
-                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString(new CultureInfo("es-CO"))) + 1;
+                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString(new CultureInfo("es-CO")), new CultureInfo("es-CO")) + 1;
                         _agentRepository.AddOrUpdate(agent);
                     }
                     break;

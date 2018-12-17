@@ -7,6 +7,7 @@
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using Microsoft.Extensions.Options;
     using Moq;
 
@@ -28,12 +29,17 @@
         protected Mock<ISendGridExternalService> _sendMailServiceMock;
 
         /// <summary>
-        /// Pdi Request Mock
+        /// Subsidy Request Mock
         /// </summary>
         protected SubsidyRequest SubsidyRequestMock;
 
         /// <summary>
-        /// pdi Business Logic
+        /// Subsidy Request Mock
+        /// </summary>
+        protected ChangeSubsidyStateRequest ChangeSubsidyRequestMock;
+
+        /// <summary>
+        /// Subsidy Business Logic
         /// </summary>
         protected SubsidyBl subsidyBusinessLogic;
 
@@ -53,6 +59,16 @@
             {
                 NoSubsidyRequest = "2018120612547",
                 UserName = "1069444555_2"
+            };
+
+            ChangeSubsidyRequestMock = new ChangeSubsidyStateRequest
+            {
+                NoSubsidyRequest = "2018120612547",
+                UserName = "1069444555_2",
+                Observations = "Observations",
+                Reviewer = "Revisor Fosfec",
+                NumberSap = "5846123",
+                State = SubsidyStates.Approved.GetHashCode()
             };
         }
     }
