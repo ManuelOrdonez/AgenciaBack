@@ -398,6 +398,7 @@
                     TypeDoc = userSub.TypeDocument,
                     NumberDoc= userSub.NoDocument,
                     DateTime = sub.DateTime,
+                    DateChange=sub.Timestamp,
                     Observations = sub.Observations,
                     Reviewer = sub.Reviewer,
                     State = sub.State,
