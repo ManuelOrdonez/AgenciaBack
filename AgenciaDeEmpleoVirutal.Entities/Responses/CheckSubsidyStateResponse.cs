@@ -1,13 +1,18 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
+    /// <summary>
+    /// Check subsidy state response.
+    /// </summary>
     public class CheckSubsidyStateResponse
     {
-        public int state { get; set; }
+        /// <summary>
+        /// Gets or sets for state.
+        /// </summary>
+        public int State { get; set; }
 
-        public Subsidy subsidy { get; set; }
+        /// <summary>
+        /// Gets or sets for subsidy.
+        /// </summary>
+        public Subsidy Subsidy { get; set; }
     }
 }

@@ -158,7 +158,7 @@
         [TestMethod, TestCategory("UserBl")]
         public void AuthenticateUsersTest_WhenUserIsNotRegisterInAz_ReturnError()
         {
-            LdapResult.code = (int)ServiceResponseCode.IsNotRegisterInAz;
+            LdapResult.Code = (int)ServiceResponseCode.IsNotRegisterInAz;
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             /// BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());

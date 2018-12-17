@@ -14,7 +14,7 @@
         /// </summary>
         /// <param name="SetLog"></param>
         /// <returns></returns>
-        Response<Log> SetLog(SetLogRequest pdiRequest);
+        Response<Log> SetLog(SetLogRequest logRequest);
 
  
     }

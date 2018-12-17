@@ -103,12 +103,12 @@
 
             LdapResult = new LdapServicesResult<AuthenticateLdapResult>()
             {
-                data = new List<AuthenticateLdapResult>()
+                Data = new List<AuthenticateLdapResult>()
                 {
                     new AuthenticateLdapResult() { Successurl = "success"}
                 },
-                code = (int)ServiceResponseCode.Success,
-                estado = "0000"
+                Code = (int)ServiceResponseCode.Success,
+                Estado = "0000"
             };
 
             RequestRegisterUser = new RegisterUserRequest()

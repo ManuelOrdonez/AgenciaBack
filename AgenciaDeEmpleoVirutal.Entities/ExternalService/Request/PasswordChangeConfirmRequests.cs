@@ -8,21 +8,21 @@
         /// <summary>
         /// User name
         /// </summary>
-        public string username { get; set; }
+        public string UserName { get; set; }
 
         /// <summary>
         /// Token Id of pasword change request
         /// </summary>
-        public string tokenId { get; set; }
+        public string TokenId { get; set; }
 
         /// <summary>
         /// Confirmation Id of pasword change request
         /// </summary>
-        public string confirmationId { get; set; }
+        public string ConfirmationId { get; set; }
 
         /// <summary>
         /// New Password 
         /// </summary>
-        public string userpassword { get; set; }
+        public string UserPassword { get; set; }
     }
 }

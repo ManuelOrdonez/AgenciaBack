@@ -138,7 +138,7 @@
             if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
                 token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
-                ResetPassword rpwd = new ResetPassword() { PartitionKey = idMod, RowKey = token };
+                ResetPassword rpwd = new ResetPassword { PartitionKey = idMod, RowKey = token };
                 ExistReset(idMod);
                 var res = _passwordRep.AddOrUpdate(rpwd).Result;
                 var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result; // Nombre del servidor
@@ -173,29 +173,29 @@
                     return parameter.RowKey == "subject";
                 });
                 /// PasswordChangeRequest ldapService
-                var request = new PasswordChangeRequest()
+                var request = new PasswordChangeRequest
                 {
-                    message = messageMail.Value,
-                    subject = subjectMail.Value,
+                    Message = messageMail.Value,
+                    Subject = subjectMail.Value,
                     //message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
                     //subject = "Recuperar Contraseña Colsubsidio",
-                    username = result.UserName
+                    UserName = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
                 if (result is null)
                 {
                     return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
                 }
-                else if (responseService.code != 200)
+                else if (responseService.Code != 200)
                 {
-                    return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.code);
+                    return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.Code);
                 }
 
             }
 
-            var response = new List<ResetResponse>()
+            var response = new List<ResetResponse>
             {
-                new ResetResponse()
+                new ResetResponse
                 {
                     UserId = idMod ,
                     Token = token,
@@ -231,9 +231,9 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.ExpiredtokenRPassword);
             }
             // token valido continue con el proceso de cambio de clave
-            var response = new List<ResetResponse>()
+            var response = new List<ResetResponse>
             {
-                new ResetResponse()
+                new ResetResponse
                 {
                     UserId = result.PartitionKey,
                     Token = token,
@@ -268,21 +268,21 @@
 
             if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
             {
-                var passswordChangeLdap = new PasswordChangeConfirmRequests()
+                var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {
-                    confirmationId = userRequest.ConfirmationLdapId,
-                    tokenId = userRequest.TokenId,
-                    username = userRequest.UserName,
-                    userpassword = userRequest.Password
+                    ConfirmationId = userRequest.ConfirmationLdapId,
+                    TokenId = userRequest.TokenId,
+                    UserName = userRequest.UserName,
+                    UserPassword = userRequest.Password
                 };
                 var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
                 if (resultt is null)
                 {
                     return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
                 }
-                else if (resultt.code != 200)
+                else if (resultt.Code != 200)
                 {
-                    return ResponseFail<ResetResponse>((ServiceResponseCode)resultt.code);
+                    return ResponseFail<ResetResponse>((ServiceResponseCode)resultt.Code);
                 }
             }
 

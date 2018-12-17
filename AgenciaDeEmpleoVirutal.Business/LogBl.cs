@@ -49,7 +49,7 @@
                 return ResponseBadRequest<Log>(errorsMessage);
             }
 
-            var log = new Log()
+            var log = new Log
             {
                 Answered = logRequest.Answered,
                 Caller = logRequest.Caller,

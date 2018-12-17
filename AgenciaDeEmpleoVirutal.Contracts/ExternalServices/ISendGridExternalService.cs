@@ -41,7 +41,7 @@
         /// <param name="userInfo"></param>
         /// <param name="attachments"></param>
         /// <returns></returns>
-        EmailResponse SendMailPDI(User userInfo, IList<Attachment> attachments);
+        EmailResponse SendMailPdi(User userInfo, IList<Attachment> attachments);
 
         /// <summary>
         /// Send Mail Notification Subsidy

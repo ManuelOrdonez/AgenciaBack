@@ -17,6 +17,7 @@
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -50,11 +51,6 @@
         private readonly IOpenTokExternalService _openTokService;
 
         /// <summary>
-        /// Class to enctryp and decript
-        /// </summary>
-        private readonly Crypto _crypto;
-
-        /// <summary>
         /// User Secret Settings 
         /// </summary>
         private readonly UserSecretSettings _settings;
@@ -67,7 +63,7 @@
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options?.Value;
-            _crypto = new Crypto();
+            Crypto _crypto = new Crypto();
             _openTokService = _openTokExternalService;
             _busyAgentRepository = busyAgentRepository;
         }
@@ -90,7 +86,7 @@
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
             }
 
-            var userAuthenticate = result.Where(r => r.Authenticated == true);
+            var userAuthenticate = result.Where(r => r.Authenticated);
             if (!userAuthenticate.Any())
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotAuthenticateInDevice);
@@ -101,7 +97,7 @@
 
             var response = new List<AuthenticateUserResponse>
             {
-                new AuthenticateUserResponse()
+                new AuthenticateUserResponse
                 {
                     AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
@@ -138,7 +134,7 @@
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             }
-            else if (userReq.UserType.ToLower().Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            else if (userReq.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
             {
                 var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
                 if (AutenticateFunc != ServiceResponseCode.Success)
@@ -164,9 +160,9 @@
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
-            var response = new List<AuthenticateUserResponse>()
+            var response = new List<AuthenticateUserResponse>
             {
-                new AuthenticateUserResponse()
+                new AuthenticateUserResponse
                 {
                     AuthInfo = SetAuthenticationToken(user.UserName),
                     UserInfo = user,
@@ -263,16 +259,16 @@
             if (_settings.LdapFlag)
             {
                 /// Authenticate in LDAP Service
-                var result = _LdapServices.Authenticate(string.Format("{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
-                if (result.code == (int)ServiceResponseCode.ServiceExternalError)
+                var result = _LdapServices.Authenticate(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+                if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
                 }
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
+                if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
                 {
                     return ServiceResponseCode.IsNotRegisterInLdap;
                 }
-                if (result.code == (int)ServiceResponseCode.ServiceExternalError)
+                if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
                 }
@@ -280,7 +276,7 @@
                 {
                     return ServiceResponseCode.UserBlock;
                 }
-                if (result.code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
+                if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
                 {
                     user.IntentsLogin = user.IntentsLogin + 1;
                     user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
@@ -291,7 +287,7 @@
                     }
                     return ServiceResponseCode.IncorrectPassword;
                 }
-                if (user == null && result.estado.Equals("0000"))
+                if (user == null && result.Estado.Equals("0000"))
                 {
                     return ServiceResponseCode.IsNotRegisterInAz;
                 }
@@ -319,7 +315,7 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var lResult = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            var lResult = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
 
             if (lResult.Count == 0)
             {
@@ -338,12 +334,12 @@
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserDesable);
             }
-            return ResponseSuccess(new List<RegisterUserResponse>()
+            return ResponseSuccess(new List<RegisterUserResponse>
             {
-                new RegisterUserResponse()
+                new RegisterUserResponse
                 {
                     IsRegister = true,
-                    State = result.State.Equals(UserStates.Enable.ToString()) ? true : false,
+                    State = result.State.Equals(UserStates.Enable.ToString()),
                     UserType = result.PartitionKey
                 }
             });
@@ -361,7 +357,7 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var users = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
+            var users = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
             if (!ValRegistriesUser(users, out int pos))
             {
                 if (pos == 0)
@@ -386,10 +382,10 @@
 
             List<RegisterUserResponse> response = new List<RegisterUserResponse>
             {
-                new RegisterUserResponse() { IsRegister = true, State = true, User = user }
+                new RegisterUserResponse { IsRegister = true, State = true, User = user }
             };
 
-            SendMailWelcomeRequest sendMailRequest = new SendMailWelcomeRequest()
+            SendMailWelcomeRequest sendMailRequest = new SendMailWelcomeRequest
             {
                 IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino") ? string.Empty : "a",
                 IsCesante = userReq.IsCesante,
@@ -410,8 +406,8 @@
             var registerUser = RegisterInLdap(userReq, passwordDecrypt);
             if (registerUser != ServiceResponseCode.Success)
             {
-                var userCreated = _userRep.GetAsyncAll(string.Format("{0}_{1}", user.NoDocument, user.CodTypeDocument)).Result.FirstOrDefault();
-                var resp = _userRep.DeleteRowAsync(userCreated);
+                var userCreated = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", user.NoDocument, user.CodTypeDocument)).Result.FirstOrDefault();
+                _userRep.DeleteRowAsync(userCreated);
                 return ResponseFail<RegisterUserResponse>(registerUser);
             }
 
@@ -431,21 +427,21 @@
         {
             if (_settings.LdapFlag)
             {
-                var regLdap = new RegisterLdapRequest()
+                var regLdap = new RegisterLdapRequest
                 {
-                    question = "Agencia virtual de empleo question",
-                    answer = "Agencia virtual de empleo answer",
-                    birtdate = "01-01-1999",
-                    givenName = UString.UppercaseWords(userReq.Name),
-                    surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
-                    mail = userReq.Mail,
-                    userId = userReq.NoDocument,
-                    userIdType = userReq.CodTypeDocument.ToString(),
-                    username = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                    userpassword = passwordDecrypt
+                    Question = "Agencia virtual de empleo question",
+                    Answer = "Agencia virtual de empleo answer",
+                    BirtDate = "01-01-1999",
+                    GivenName = UString.UppercaseWords(userReq.Name),
+                    Surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
+                    Mail = userReq.Mail,
+                    UserId = userReq.NoDocument,
+                    UserIdType = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
+                    UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    UserPassword = passwordDecrypt
                 };
                 var resultLdap = _LdapServices.Register(regLdap);
-                if (resultLdap is null || resultLdap.code == (int)ServiceResponseCode.ServiceExternalError)
+                if (resultLdap is null || resultLdap.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
                 }
@@ -466,13 +462,13 @@
         {
             if (!userReq.IsCesante)
             {
-                var company = new User()
+                var company = new User
                 {
                     Name = userReq.Name,
                     LastName = "Empresa",
-                    CodTypeDocument = userReq.CodTypeDocument.ToString(),
+                    CodTypeDocument = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
                     TypeDocument = userReq.TypeDocument,
-                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = UString.UppercaseWords(userReq.ContactName),
@@ -502,15 +498,15 @@
             }
             else
             {
-                var cesante = new User()
+                var cesante = new User
                 {
                     Name = UString.UppercaseWords(userReq.Name),
                     LastName = UString.UppercaseWords(userReq.LastNames),
                     DegreeGeted = UString.UppercaseWords(userReq.DegreeGeted),
                     EducationLevel = userReq.EducationLevel,
-                    CodTypeDocument = userReq.CodTypeDocument.ToString(),
+                    CodTypeDocument = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
                     TypeDocument = userReq.TypeDocument,
-                    UserName = string.Format(string.Format("{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     NoDocument = userReq.NoDocument,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
@@ -572,9 +568,9 @@
                 {
                     var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
                 }
-                response = new List<AuthenticateUserResponse>()
+                response = new List<AuthenticateUserResponse>
                 {
-                    new AuthenticateUserResponse()
+                    new AuthenticateUserResponse
                     {
                         AuthInfo = SetAuthenticationToken(userAviable.UserName),
                         UserInfo = userAviable,
@@ -592,9 +588,9 @@
                 {
                     var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
                 }
-                response = new List<AuthenticateUserResponse>()
+                response = new List<AuthenticateUserResponse>
                 {
-                    new AuthenticateUserResponse()
+                    new AuthenticateUserResponse
                     {
                         AuthInfo = SetAuthenticationToken(usercall.UserName),
                         UserInfo = usercall,
@@ -626,14 +622,14 @@
             {
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
-            var user = _userRep.GetAsync(string.Format("{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
+            var user = _userRep.GetAsync(string.Format(new CultureInfo("es-CO"), "{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null)
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
             user.Authenticated = false;
             user.Available = false;
-            var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower()).Result;
+            var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower(new CultureInfo("es-CO"))).Result;
             if (busy.Any())
             {
                 var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
@@ -656,7 +652,7 @@
             }
             var userTableStorage = _userRep.GetAsyncAll(userRequest.UserName).Result.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
 
-            var compareUser = new UserUdateRequest()
+            var compareUser = new UserUdateRequest
             {
                 Address = userTableStorage.Addrerss,
                 Cellphon1 = userTableStorage.CellPhone1,
@@ -679,7 +675,7 @@
             {
                 return ResponseFail(ServiceResponseCode.NotUpdate);
             }
-            var userUpdate = new User()
+            var userUpdate = new User
             {
                 CellPhone1 = userRequest.Cellphon1,
                 CellPhone2 = userRequest.Cellphon2,
@@ -714,12 +710,12 @@
             {
                 ResponseFail();
             }
-            var userMail = new User()
+            var userMail = new User
             {
                 Email = userRequest.Mail,
                 Name = userRequest.Name,
                 LastName = userRequest.LastNames ?? string.Empty,
-                UserType = userRequest.IsCesante ? UsersTypes.Cesante.ToString().ToLower() : UsersTypes.Empresa.ToString().ToLower()
+                UserType = userRequest.IsCesante ? UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO"))
             };
             _sendMailService.SendMailUpdate(userMail);
             return ResponseSuccess();
@@ -741,7 +737,7 @@
             {
                 return ResponseFail();
             }
-            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString()));
+            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString(new CultureInfo("es-CO"))));
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
@@ -752,7 +748,7 @@
         /// <returns></returns>
         public AuthenticationToken SetAuthenticationToken(string username)
         {
-            return new AuthenticationToken()
+            return new AuthenticationToken
             {
                 TokenType = "Bearer",
                 Expiration = DateTime.Now.AddMinutes(60),
@@ -790,7 +786,7 @@
         private User GetUserActive(AuthenticateUserRequest userReq)
         {
             User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             if(!lUser.Any() || lUser is null)
             {
                 return user;
@@ -817,10 +813,10 @@
         private User GetAgentActive(AuthenticateUserRequest userReq)
         {
             User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format("{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
                 {
                     return item;
                 }
@@ -846,22 +842,22 @@
                 return ResponseBadRequest<UsersDataResponse>(messagesValidationEntity);
             }
 
-            var query = new List<ConditionParameter>()
+            var query = new List<ConditionParameter>
                 {
-                    new ConditionParameter()
+                    new ConditionParameter
                     {
                         ColumnName = "PartitionKey",
                         Condition = QueryComparisons.Equal,
                         Value = request.UserType
                     },
-                    new ConditionParameter()
+                    new ConditionParameter
                     {
                         ColumnName = "RegisterDate",
                         Condition = QueryComparisons.GreaterThanOrEqual,
                         ValueDateTime = request.StartDate.AddHours(-5)
                     },
 
-                     new ConditionParameter()
+                     new ConditionParameter
                     {
                         ColumnName = "RegisterDate",
                         Condition = QueryComparisons.LessThan,
@@ -875,12 +871,12 @@
                 return ResponseFail<UsersDataResponse>(ServiceResponseCode.UserNotFound);
             }
 
-            UsersDataResponse Users = new UsersDataResponse()
+            UsersDataResponse Users = new UsersDataResponse
             {
                 Users = users
             };
 
-            List<UsersDataResponse> response = new List<UsersDataResponse>()
+            List<UsersDataResponse> response = new List<UsersDataResponse>
             {
                 Users
             };
@@ -893,9 +889,9 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public Response<List<string>> getUserTypeFilters(UserTypeFilters request)
+        public Response<List<string>> GetUserTypeFilters(UserTypeFilters request)
         {
-            var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower()).Result.FirstOrDefault();
+            var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
 
             var Allitems = Items.GetType().GetProperties()
                 .Select(x => new { property = x.Name, value = x.GetValue(Items) })
@@ -904,7 +900,6 @@
 
             foreach (var item in Allitems)
             {
-                string column = string.Empty;
                 result.Add(item.property);
             }
 

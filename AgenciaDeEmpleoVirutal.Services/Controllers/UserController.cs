@@ -155,9 +155,9 @@
         [Route("getUserTypeFilters")]
         [Authorize]
         [Produces(typeof(Response<List<string>>))]
-        public IActionResult getUserTypeFilters([FromBody] UserTypeFilters request)
+        public IActionResult GetUserTypeFilters([FromBody] UserTypeFilters request)
         {
-            return Ok(_UserBussines.getUserTypeFilters(request));
+            return Ok(_UserBussines.GetUserTypeFilters(request));
         }
 
         [HttpPost]

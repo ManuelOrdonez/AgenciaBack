@@ -63,7 +63,7 @@
         Response<User> UpdateUserInfo(UserUdateRequest userRequest);
 
       
-        Response<List<string>> getUserTypeFilters(UserTypeFilters request);
+        Response<List<string>> GetUserTypeFilters(UserTypeFilters request);
 
         Response<UsersDataResponse> GetAllUsersData(UsersDataRequest request);
     }

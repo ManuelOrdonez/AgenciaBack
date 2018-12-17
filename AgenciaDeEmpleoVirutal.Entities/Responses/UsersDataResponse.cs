@@ -1,11 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AgenciaDeEmpleoVirutal.Entities.Responses
+﻿namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// User data response.
+    /// </summary>
     public class UsersDataResponse
     {
+        /// <summary>
+        /// Gets or sets for Users.
+        /// </summary>
         public List<User> Users { get; set; }
 
     }

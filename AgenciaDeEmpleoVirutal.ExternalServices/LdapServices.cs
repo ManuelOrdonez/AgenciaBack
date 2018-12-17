@@ -57,18 +57,18 @@
                         var response = ex.Response as HttpWebResponse;
                         if (response != null && (int)response.StatusCode == 401)
                         {
-                            result.code = (int)ServiceResponseCode.IsNotRegisterInLdap;
+                            result.Code = (int)ServiceResponseCode.IsNotRegisterInLdap;
                             return result;
                         }
                         else
                         {
-                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            result.Code = (int)ServiceResponseCode.ServiceExternalError;
                             return result;
                         }
                     }
                     else
                     {
-                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        result.Code = (int)ServiceResponseCode.ServiceExternalError;
                         return result;
                     }
                 }
@@ -88,7 +88,6 @@
 
             string parameters = JsonConvert.SerializeObject(request);
             var result = new LdapServicesResult<AuthenticateLdapResult>();
-            var content = string.Empty;
             using (WebClient context = webClient)
             {
                 try
@@ -102,18 +101,18 @@
                         var response = ex.Response as HttpWebResponse;
                         if (response != null && (int)response.StatusCode == 409)
                         {
-                            result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                            result.Code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;
                         }
                         else
                         {
-                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            result.Code = (int)ServiceResponseCode.ServiceExternalError;
                             return result;
                         }
                     }
                     else
                     {
-                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        result.Code = (int)ServiceResponseCode.ServiceExternalError;
                         return result;
                     }
                 }
@@ -140,7 +139,7 @@
                 {
                     var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
-                    result.code = 200;
+                    result.Code = 200;
                 }
                 catch (WebException ex)
                 {
@@ -149,18 +148,18 @@
                         var response = ex.Response as HttpWebResponse;
                         if (response != null && (int)response.StatusCode == 400)
                         {
-                            result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                            result.Code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;
                         }
                         else
                         {
-                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            result.Code = (int)ServiceResponseCode.ServiceExternalError;
                             return result;
                         }
                     }
                     else
                     {
-                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        result.Code = (int)ServiceResponseCode.ServiceExternalError;
                         return result;
                     }
                 }
@@ -186,7 +185,7 @@
                 try
                 {
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/ForgotPasswordReset", "PUT", parameters));
-                    result.code = 200;
+                    result.Code = 200;
                 }
                 catch (WebException ex)
                 {
@@ -195,18 +194,18 @@
                         var response = ex.Response as HttpWebResponse;
                         if (response != null && (int)response.StatusCode == 400)
                         {
-                            result.code = (int)ServiceResponseCode.UserAlreadyExist;
+                            result.Code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;
                         }
                         else
                         {
-                            result.code = (int)ServiceResponseCode.ServiceExternalError;
+                            result.Code = (int)ServiceResponseCode.ServiceExternalError;
                             return result;
                         }
                     }
                     else
                     {
-                        result.code = (int)ServiceResponseCode.ServiceExternalError;
+                        result.Code = (int)ServiceResponseCode.ServiceExternalError;
                         return result;
                     }
                 }

@@ -145,7 +145,7 @@
         /// <param name="userInfo"></param>
         /// <param name="attachments"></param>
         /// <returns></returns>
-        public EmailResponse SendMailPDI(User userInfo, IList<Attachment> attachments)
+        public EmailResponse SendMailPdi(User userInfo, IList<Attachment> attachments)
         {
             if (userInfo == null)
             {

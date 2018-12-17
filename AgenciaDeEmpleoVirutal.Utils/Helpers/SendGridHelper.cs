@@ -66,11 +66,11 @@
             try
             {
                 client.Send(mail);
-                return new EmailResponse() { Ok = true, Message= string.Empty };
+                return new EmailResponse { Ok = true, Message= string.Empty };
             }
             catch (Exception ex )
             {
-                return new EmailResponse() { Ok = false, Message = ex.Message };
+                return new EmailResponse { Ok = false, Message = ex.Message };
             }
         }
     }

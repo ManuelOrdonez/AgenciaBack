@@ -39,7 +39,7 @@
         [HttpPost]
         [Route("CreatePDI")]
         [Produces(typeof(Response<PDI>))]
-        public IActionResult CreatePDI([FromBody] PDIRequest pdiRequest)
+        public IActionResult CreatePdi([FromBody] PDIRequest pdiRequest)
         {
             return Ok(_PdiBussines.CreatePDI(pdiRequest));
         }
@@ -52,7 +52,7 @@
         [HttpGet]
         [Route("GetPDIsFromUser")]
         [Produces(typeof(Response<PDI>))]
-        public IActionResult GetPDIsFromUser(string username)
+        public IActionResult GetPdisFromUser(string username)
         {
             return Ok(_PdiBussines.GetPDIsFromUser(username));
         }
