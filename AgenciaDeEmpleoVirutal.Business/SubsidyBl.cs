@@ -79,7 +79,7 @@
             {
                 return ResponseFail(ServiceResponseCode.UserNotFound);
             }
-            var subsidyRequest = new Subsidy()
+            var subsidyRequest = new Subsidy
             {
                 DateTime = DateTime.UtcNow.AddHours(-5),
                 NoSubsidyRequest = request.NoSubsidyRequest,
@@ -90,7 +90,7 @@
             var result = _subsidyRep.AddOrUpdate(subsidyRequest).Result;
             if (!result)
             {
-                ResponseFail();
+                return ResponseFail();
             }
             _sendMailService.SendMailRequestSubsidy(user, subsidyRequest);
             return ResponseSuccess();
@@ -121,7 +121,7 @@
             {
                 var response = new List<CheckSubsidyStateResponse>
                 {
-                    new CheckSubsidyStateResponse()
+                    new CheckSubsidyStateResponse
                     {
                         Subsidy = new Subsidy(),
                         State = (int)SubsidyStates.NoRequests
@@ -132,7 +132,7 @@
             var lastRequestSubsidy = subsidyUser.OrderByDescending(sb => sb.DateTime).ToList().First();
             var result = new List<CheckSubsidyStateResponse>
             {
-                new CheckSubsidyStateResponse()
+                new CheckSubsidyStateResponse
                 {
                     Subsidy = lastRequestSubsidy,
                     State = EnumValues.GetValueFromDescription<SubsidyStates>(lastRequestSubsidy.State).GetHashCode()
@@ -172,7 +172,7 @@
             {
                 return ResponseFail(ServiceResponseCode.SubsidyRequestInProcess);
             }
-            var updateSubsidyRequest = new Subsidy()
+            var updateSubsidyRequest = new Subsidy
             {
                 UserName = request.UserName,
                 DateTime = subsidyRequest.First().DateTime,
@@ -201,9 +201,9 @@
         /// <returns></returns>
         public Response<GetSubsidyResponse> GetSubsidyRequests(string userNameReviewer)
         {
-            var queryRequestsActive = new List<ConditionParameter>()
+            var queryRequestsActive = new List<ConditionParameter>
             {
-                new ConditionParameter()
+                new ConditionParameter
                 {
                     ColumnName = "State",
                     Condition = QueryComparisons.Equal,
@@ -220,15 +220,15 @@
             {
                 return ResponseFail<GetSubsidyResponse>();
             }
-            var queryRequestInProcess = new List<ConditionParameter>()
+            var queryRequestInProcess = new List<ConditionParameter>
             {
-                new ConditionParameter()
+                new ConditionParameter
                 {
                     ColumnName = "State",
                     Condition = QueryComparisons.Equal,
                     Value = SubsidyStates.InProcess.ToString()
                 },
-                new ConditionParameter()
+                new ConditionParameter
                 {
                     ColumnName = "Reviewer",
                     Condition = QueryComparisons.Equal,
@@ -250,7 +250,7 @@
             var result = new List<GetSubsidyResponse>();
             foreach (var sub in SubsidiRequestOrder)
             {
-                result.Add(new GetSubsidyResponse()
+                result.Add(new GetSubsidyResponse
                 {
                     DateTime = sub.DateTime,
                     Observations = sub.Observations,
@@ -309,14 +309,13 @@
         /// <returns></returns>
         public Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request)
         {
-
             var response = new List<GetSubsidyResponse>();
 
             var query = new List<ConditionParameter>();
 
             if (request.StartDate != null && request.StartDate.Year != default(DateTime).Year)
             {
-                var condition = new ConditionParameter()
+                var condition = new ConditionParameter
                 {
                     ColumnName = "DateTime",
                     Condition = QueryComparisons.GreaterThanOrEqual,
@@ -327,7 +326,7 @@
 
             if (request.EndDate != null && request.EndDate.Year != default(DateTime).Year)
             {
-                var condition = new ConditionParameter()
+                var condition = new ConditionParameter
                 {
                     ColumnName = "DateTime",
                     Condition = QueryComparisons.LessThan,
@@ -338,7 +337,7 @@
             
             if (!string.IsNullOrEmpty(request.UserName))
             {
-                var condition = new ConditionParameter()
+                var condition = new ConditionParameter
                 {
                     ColumnName = "UserName",
                     Condition = QueryComparisons.Equal,
@@ -349,7 +348,7 @@
 
             if (!string.IsNullOrEmpty(request.Reviewer))
             {
-                var condition = new ConditionParameter()
+                var condition = new ConditionParameter
                 {
                     ColumnName = "Reviewer",
                     Condition = QueryComparisons.Equal,
@@ -358,10 +357,9 @@
                 query.Add(condition);
             }
 
-
             if (!string.IsNullOrEmpty(request.NumberSap))
             {
-                var condition = new ConditionParameter()
+                var condition = new ConditionParameter
                 {
                     ColumnName = "NumberSap",
                     Condition = QueryComparisons.Equal,
@@ -372,7 +370,7 @@
 
             if (!string.IsNullOrEmpty(request.State))
             {
-                var condition = new ConditionParameter()
+                var condition = new ConditionParameter
                 {
                     ColumnName = "State",
                     Condition = QueryComparisons.Equal,

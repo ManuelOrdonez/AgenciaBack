@@ -5,7 +5,10 @@
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Moq;
+    using System.Collections.Generic;
     using System.Linq;
+    using System.Threading.Tasks;
 
     [TestClass]
     public class SubsidyRequestTest: SubsidyBITestBase
@@ -40,6 +43,40 @@
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
             Assert.IsFalse(result.Data.Any());
+        }
+
+        [TestMethod, TestCategory("SubsidyBI")]
+        public void SubsidyRequest_WhenAddOrUpdateError_ReturnError()
+        {
+            /// Arrange
+            var expected = ResponseFail();
+            var resultTS = new User();
+            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            _subsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(false);
+
+            /// Act
+            var result = subsidyBusinessLogic.SubsidyRequest(SubsidyRequestMock);
+            /// Assert
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsFalse(result.TransactionMade);
+        }
+
+        [TestMethod, TestCategory("SubsidyBI")]
+        public void SubsidyRequest_WhenUserIsCorrect_ReturnSuccesfull()
+        {
+            /// Arrange
+            var expected = ResponseSuccess();
+            var resultTS = new User();
+            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            _subsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(true);
+
+            /// Act
+            var result = subsidyBusinessLogic.SubsidyRequest(SubsidyRequestMock);
+            /// Assert
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsTrue(result.TransactionMade);
         }
     }
 }
