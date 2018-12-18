@@ -15,6 +15,7 @@
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Net.Mail;
@@ -225,7 +226,7 @@
             string fieldAux = string.Empty;
             fieldAux = field;
             var naOptiond = new List<string> { "n/a", "na", "no aplica", "noaplica" };
-            fieldAux = fieldAux.ToLower();
+            fieldAux = fieldAux.ToLower(new CultureInfo("es-CO"));
             if (naOptiond.Any(op => op.Equals(fieldAux)))
             {
                 return "No aplica";

@@ -44,7 +44,7 @@
             var departaments = new List<string>(); 
             result.ForEach(r => departaments.Add(r.Departament));
             var departamentsResult = new List<DepartamenCityResponse>();
-            departaments.Distinct().ToList().ForEach(d => departamentsResult.Add(new DepartamenCityResponse() { Departaments = d}));
+            departaments.Distinct().ToList().ForEach(d => departamentsResult.Add(new DepartamenCityResponse { Departaments = d}));
             return ResponseSuccess(departamentsResult);
         }
 
@@ -65,7 +65,7 @@
                 return ResponseFail<DepartamenCityResponse>();
             }
             var citiesDepartamen = new List<DepartamenCityResponse>();
-            result.ForEach(r => citiesDepartamen.Add(new DepartamenCityResponse() { City = r.City }));
+            result.ForEach(r => citiesDepartamen.Add(new DepartamenCityResponse { City = r.City }));
             return ResponseSuccess(citiesDepartamen);
         }
     }
