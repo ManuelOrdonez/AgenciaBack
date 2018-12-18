@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Utils.Helpers
 {
     using System;
+    using System.Globalization;
 
     /// <summary>
     /// Uper case String Class
@@ -55,7 +56,7 @@
         {
             string auxValue = string.Empty;
             auxValue = value;
-            auxValue = auxValue.ToLower();
+            auxValue = auxValue.ToLower(new CultureInfo("es-CO"));
             char[] array = auxValue.ToCharArray();
             // Handle the first letter in the string.
             if (array.Length >= 1 && char.IsLower(array[0]))

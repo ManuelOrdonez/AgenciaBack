@@ -16,7 +16,7 @@
         /// </summary>
         /// <param name="userInfo">The user information.</param>
         /// <returns></returns>
-        EmailResponse SendMail(SendMailWelcomeRequest userInfo);
+        EmailResponse SendMail(SendMailWelcomeRequest sendMailRequest);
 
         /// <summary>
         /// Send mail to reset password

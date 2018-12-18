@@ -14,6 +14,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
+    using System.Globalization;
 
     /// <summary>
     /// Reset Business Iogic
@@ -97,7 +98,7 @@
             idUser = userAux;
             foreach (var item in lUser)
             {
-                if (state.ToLower() == item.UserType.ToLower())
+                if (state.ToLower(new CultureInfo("es-CO")) == item.UserType.ToLower(new CultureInfo("es-CO")))
                 {
                     return item;
                 }
@@ -135,7 +136,7 @@
 
             var emailInfo = _parametersRep.GetByPatitionKeyAsync("resetpwd").Result;
 
-            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
             {
                 token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
                 ResetPassword rpwd = new ResetPassword { PartitionKey = idMod, RowKey = token };
@@ -190,7 +191,6 @@
                 {
                     return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.Code);
                 }
-
             }
 
             var response = new List<ResetResponse>
@@ -266,7 +266,7 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
 
-            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
             {
                 var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {

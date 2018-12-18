@@ -9,6 +9,7 @@
     using Entities.Referentials;
     using System.Collections.Generic;
     using Entities;
+    using System.Globalization;
 
     /// <summary>
     /// Table Storage Base
@@ -87,8 +88,8 @@
         /// <param name="entity">Device.</param>
         public virtual async Task<bool> AddOrUpdate(T entity)
         {
-            entity.PartitionKey = entity?.PartitionKey.ToLower();
-            entity.RowKey = entity.RowKey.ToLower();
+            entity.PartitionKey = entity?.PartitionKey.ToLower(new CultureInfo("es-CO"));
+            entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.InsertOrMerge(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
@@ -101,8 +102,8 @@
         /// <returns></returns>
         public virtual async Task<bool> Add(T entity)
         {
-            entity.PartitionKey = entity?.PartitionKey.ToLower();
-            entity.RowKey = entity.RowKey.ToLower();
+            entity.PartitionKey = entity?.PartitionKey.ToLower(new CultureInfo("es-CO"));
+            entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.Insert(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
             return (result / 100).Equals(2);
@@ -171,8 +172,8 @@
         public async Task<List<T>> GetByPartitionKeyAndRowKeyAsync(string partitionKey, string rowKey)
         {
             await CreateTableInStorage().ConfigureAwait(false);
-            var filterOne = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower());
-            var filterTwo = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower());
+            var filterOne = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower(new CultureInfo("es-CO")));
+            var filterTwo = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower(new CultureInfo("es-CO")));
             var query = new TableQuery<T>().Where(TableQuery.CombineFilters(filterOne, TableOperators.And, filterTwo));
             var entities = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entities;

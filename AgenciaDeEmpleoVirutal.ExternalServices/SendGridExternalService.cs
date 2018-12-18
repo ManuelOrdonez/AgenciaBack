@@ -9,6 +9,7 @@
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Net.Mail;
     using Utils.Resources;
 
@@ -109,7 +110,7 @@
             _sendMailOptions.BodyMail = ParametersApp.BodyMailUpate;
             _sendMailOptions.SubJect = ParametersApp.SubJectUpdate;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
-                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO"))) ?
                                                         string.Empty : userInfo.LastName);
             return SendMail();
         }
@@ -134,7 +135,7 @@
             _sendMailOptions.BodyMail = bodyMail;
             _sendMailOptions.SubJect = subject;
             _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
-                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower()) ?
+                                                        userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO"))) ?
                                                         string.Empty : userInfo.LastName,urlReset);
             return SendMail();
         }

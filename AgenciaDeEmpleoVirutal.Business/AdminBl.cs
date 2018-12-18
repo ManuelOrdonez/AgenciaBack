@@ -35,8 +35,6 @@
         public AdminBl(IGenericRep<User> usersRepo, IOpenTokExternalService openTokService)
         {
             _usersRepo = usersRepo;
-            Crypto _crypto = new Crypto();
-            IOpenTokExternalService _openTokExternalService = openTokService;
         }
 
         /// <summary>
@@ -113,7 +111,7 @@
         /// <param name="lUser">Lista de usuarios registrados</param>
         /// <param name="position">posición que se encuentra el registro de persona</param>
         /// <returns></returns>
-        private bool ValRegistriesUser(List<User> lUser, out int position)
+        private static bool ValRegistriesUser(List<User> lUser, out int position)
         {
             bool eRta = true;
             position = -1;
@@ -136,7 +134,7 @@
         /// <param name="lUser"></param>
         /// <param name="funtionary"></param>
         /// <param name="people"></param>
-        private void GetUserFuncionary(List<User> lUser, out User funtionary, out User people)
+        private static void GetUserFuncionary(List<User> lUser, out User funtionary, out User people)
         {
             funtionary = null;
             people = null;
@@ -156,6 +154,8 @@
                     case "funcionario":
                         funtionary = item;
                         break;
+                    default:
+                        throw new InvalidOperationException("Unexpected value UserType = " + item.UserType);
                 }
             }
         }
