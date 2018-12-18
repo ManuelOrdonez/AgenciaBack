@@ -10,7 +10,7 @@
     using System.Threading.Tasks;
 
     [TestClass]
-    public class SubsidyRequestTest: SubsidyBITestBase
+    public class SubsidyRequestTest : SubsidyBITestBase
     {
         [TestMethod, TestCategory("SubsidyBI")]
         public void SubsidyRequest_WhenAnyFieldsAreNullOrEmpty_RetunError()

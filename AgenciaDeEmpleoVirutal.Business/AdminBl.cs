@@ -35,8 +35,6 @@
         public AdminBl(IGenericRep<User> usersRepo, IOpenTokExternalService openTokService)
         {
             _usersRepo = usersRepo;
-            Crypto _crypto = new Crypto();
-            IOpenTokExternalService _openTokExternalService = openTokService;
         }
 
         /// <summary>
@@ -156,6 +154,8 @@
                     case "funcionario":
                         funtionary = item;
                         break;
+                    default:
+                        throw new InvalidOperationException("Unexpected value UserType = " + item.UserType);
                 }
             }
         }
