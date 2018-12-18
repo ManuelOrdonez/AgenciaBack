@@ -155,9 +155,6 @@
             return ResponseSuccess(parametsList);
         }
 
-
-
-
         /// <summary>
         /// Method to All Get Parameters By Type
         /// </summary>
