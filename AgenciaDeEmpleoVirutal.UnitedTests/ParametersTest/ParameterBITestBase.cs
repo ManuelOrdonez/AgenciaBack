@@ -14,13 +14,13 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
     {
         protected Mock<IGenericRep<Parameters>> _parameterRep;
 
-        protected ParameterBI DepBussines;
+        protected ParameterBI ParameterBussines;
 
         public ParameterBITestBase()
         {
             _parameterRep = new Mock<IGenericRep<Parameters>>();
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
-            DepBussines = new ParameterBI(_parameterRep.Object, options);
+            ParameterBussines = new ParameterBI(_parameterRep.Object, options);
         }
     }
 }

@@ -6,11 +6,8 @@ namespace AgenciaDeEmpleoVirutal.Business
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
-    using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
-    using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
-    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
@@ -24,7 +21,6 @@ namespace AgenciaDeEmpleoVirutal.Business
         private readonly IGenericRep<Menu> _menuRep;
         private readonly IGenericRep<Parameters> _paramentRep;
         private readonly IOptions<UserSecretSettings> _UserSecretSettings;
-
 
         /// <summary>
         /// Class constructor

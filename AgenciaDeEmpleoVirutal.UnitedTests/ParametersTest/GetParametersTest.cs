@@ -18,7 +18,7 @@
             var expected = ResponseFail<ParametersResponse>();
             _parameterRep.Setup(rep => rep.GetAll()).Returns(Task.FromResult(new List<Parameters>()));
             //Action
-            var result = DepBussines.GetParameters();
+            var result = ParameterBussines.GetParameters();
             //Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
@@ -66,7 +66,7 @@
             var expected = ResponseSuccess(responseTableStorage);
             _parameterRep.Setup(rep => rep.GetList()).Returns(Task.FromResult(responseTableStorage));
             //Action
-            var result = DepBussines.GetParameters();
+            var result = ParameterBussines.GetParameters();
             //Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);

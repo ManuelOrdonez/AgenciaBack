@@ -48,10 +48,7 @@
             _sendMailServiceMock = new Mock<ISendGridExternalService>();
             _subsidyRepMock = new Mock<IGenericRep<Subsidy>>();
             _userRepMock = new Mock<IGenericRep<User>>();
-            IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings()
-            {
-                TableStorage = "BlobEndpoint=https://storagesample.blob.core.windows.net;SharedAccessSignature = sv = 2015 - 04 - 05 & sr = b & si = tutorial - policy - 635959936145100803 & sig = 9aCzs76n0E7y5BpEi2GvsSv433BZa22leDOZXX % 2BXXIU % 3D"
-            });
+            IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
             subsidyBusinessLogic = new SubsidyBl(_subsidyRepMock.Object, _userRepMock.Object, options, _sendMailServiceMock.Object);
             SetEntitiesMocks();
         }
