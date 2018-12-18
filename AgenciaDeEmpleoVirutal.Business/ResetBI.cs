@@ -191,7 +191,6 @@
                 {
                     return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.Code);
                 }
-
             }
 
             var response = new List<ResetResponse>
