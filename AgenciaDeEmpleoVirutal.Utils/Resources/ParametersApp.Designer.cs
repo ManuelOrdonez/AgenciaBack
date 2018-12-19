@@ -214,7 +214,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///&lt;/tr&gt;
         ///&lt;tr&gt;
         ///&lt;td colspan=&quot;2&quot;&gt;
-        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Estimado{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. &lt;br /&gt;&lt;br /&gt; Recibe un Cordial Salu [rest of string was truncated]&quot;;.
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. &lt;br /&gt;&lt;br /&gt; Recibe un Cordial Salud [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailWelcomePerson {
             get {
