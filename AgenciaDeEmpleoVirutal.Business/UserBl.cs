@@ -387,7 +387,7 @@
 
             SendMailWelcomeRequest sendMailRequest = new SendMailWelcomeRequest
             {
-                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino") ? string.Empty : "a",
+                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino") ? "o" : "a",
                 IsCesante = userReq.IsCesante,
                 DocNum = userReq.NoDocument,
                 LastName = string.IsNullOrEmpty(userReq.LastNames) ? string.Empty : UString.UppercaseWords(userReq.LastNames),
