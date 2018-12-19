@@ -74,13 +74,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///&lt;td colspan=&quot;2&quot;&gt;
         ///
         ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
-        ///  Estimado{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
-        ///  &lt;br /&gt;&lt;br /&gt;
-        ///  Recibe un Cordial Saludo:
-        ///  &lt;br /&gt;&lt;br /&gt;
-        ///  Acabas de realizar una solicitud de subsidio con número {3}, 
-        ///&lt;br /&gt;&lt;br /&gt;
-        ///  Te estaremos informando el estado de es [rest of string was truncated]&quot;;.
+        /// {0} {1} {2}: Su solicitud fue cargada exitosamente, una vez revisada la documentación y el formulario único de postulación, le estaremos informando por éste medio si fue aceptada o rechazada la solicitud
+        ///  &lt;/p&gt;
+        ///  
+        ///&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;/tbody&gt;
+        ///&lt;/table&gt;  
+        ///  &lt;/body&gt;
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodiMailRequestSubsidy {
             get {

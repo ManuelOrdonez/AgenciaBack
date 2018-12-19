@@ -331,13 +331,7 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;td colspan="2"&gt;
 
   &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
-  Estimado{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
-  &lt;br /&gt;&lt;br /&gt;
-  Recibe un Cordial Saludo:
-  &lt;br /&gt;&lt;br /&gt;
-  Acabas de realizar una solicitud de subsidio con número {3}, 
-&lt;br /&gt;&lt;br /&gt;
-  Te estaremos informando el estado de esta solicitud por medio de correo electrónico.
+ {0} {1} {2}: Su solicitud fue cargada exitosamente, una vez revisada la documentación y el formulario único de postulación, le estaremos informando por éste medio si fue aceptada o rechazada la solicitud
   &lt;/p&gt;
   
 &lt;/td&gt;
