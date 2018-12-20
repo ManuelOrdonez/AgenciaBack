@@ -310,8 +310,6 @@
         /// <returns></returns>
         public Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request)
         {
-            var response = new List<GetSubsidyResponse>();
-
             var query = new List<ConditionParameter>();
 
             if (request.StartDate != null && request.StartDate.Year != default(DateTime).Year)
@@ -385,9 +383,7 @@
             if (subsidies.Count == 0 || subsidies is null)
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
-            }
-
-            List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();            
+            }    
 
             var result = new List<GetSubsidyResponse>();
 

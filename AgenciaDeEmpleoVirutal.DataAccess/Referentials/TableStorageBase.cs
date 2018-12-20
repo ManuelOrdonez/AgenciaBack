@@ -218,7 +218,6 @@
                         conditions.Add(TableQuery.GenerateFilterConditionForDate(item.ColumnName, item.Condition, item.ValueDateTime));
                     }                                 
                 }
-                
                 else
                 {
                     conditions.Add(TableQuery.GenerateFilterCondition(item.ColumnName, item.Condition, item.Value));

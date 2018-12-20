@@ -96,14 +96,7 @@
                 try
                 {
                     var serviceUrl = "";
-                    if (operation == "StartRecord")
-                    {
-                         serviceUrl = $"{Url}/StartRecord?{param}";
-                    }
-                    else
-                    {
-                         serviceUrl = $"{Url}/StopRecord?{param}";
-                    }
+                    serviceUrl = operation == "StartRecord" ? $"{Url}/StartRecord?{param}" : $"{Url}/StopRecord?{param}";
                     entidad.Data = JsonConvert.DeserializeObject<string>(context.DownloadString(serviceUrl));
                 }
                 catch(Exception e)

@@ -141,7 +141,7 @@
                 token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
                 ResetPassword rpwd = new ResetPassword { PartitionKey = idMod, RowKey = token };
                 ExistReset(idMod);
-                var res = _passwordRep.AddOrUpdate(rpwd).Result;
+                _passwordRep.AddOrUpdate(rpwd);
                 var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result; // Nombre del servidor
                 var servername = serverInfo.Find(delegate (Parameters parameter)
                 {
@@ -259,7 +259,7 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
 
-            string passwordUserDecrypt = Crypto.DecryptWeb(userRequest.Password, "ColsubsidioAPP");
+            //// string passwordUserDecrypt = Crypto.DecryptWeb(userRequest.Password, "ColsubsidioAPP");
             User result = _userRep.GetAsync(userRequest.UserName).Result;
             if (result == null)
             {

@@ -91,14 +91,8 @@
 
             string pdiName; 
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
-            if(userPDI.Any())
-            {     
-                pdiName = string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count);
-            }
-            else
-            {
-                pdiName = string.Format(CultureInfo.CurrentCulture, "PDI-{0}.pdf", user.NoDocument);
-            }
+            pdiName = userPDI.Any() ? string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count) :
+                string.Format(CultureInfo.CurrentCulture, "PDI-{0}.pdf", user.NoDocument);
 
             var pdi = new PDI
             {
