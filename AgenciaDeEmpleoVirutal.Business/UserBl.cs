@@ -644,6 +644,11 @@
         /// <returns></returns>
         public Response<User> UpdateUserInfo(UserUdateRequest userRequest)
         {
+            if (userRequest == null)
+            {
+                throw new ArgumentNullException("userRequest");
+            }
+
             var errorsMessage = userRequest.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
@@ -890,6 +895,11 @@
         /// <returns></returns>
         public Response<List<string>> GetUserTypeFilters(UserTypeFilters request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException("request");
+            }
+
             var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
 
             var Allitems = Items.GetType().GetProperties()

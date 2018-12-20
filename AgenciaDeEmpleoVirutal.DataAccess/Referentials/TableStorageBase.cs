@@ -10,6 +10,7 @@
     using System.Collections.Generic;
     using Entities;
     using System.Globalization;
+    using System;
 
     /// <summary>
     /// Table Storage Base
@@ -88,6 +89,11 @@
         /// <param name="entity">Device.</param>
         public virtual async Task<bool> AddOrUpdate(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+
             entity.PartitionKey = entity?.PartitionKey.ToLower(new CultureInfo("es-CO"));
             entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.InsertOrMerge(entity);
@@ -102,6 +108,11 @@
         /// <returns></returns>
         public virtual async Task<bool> Add(T entity)
         {
+            if (entity == null)
+            {
+                throw new ArgumentNullException("entity");
+            }
+
             entity.PartitionKey = entity?.PartitionKey.ToLower(new CultureInfo("es-CO"));
             entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.Insert(entity);
@@ -171,6 +182,15 @@
         /// <returns></returns>
         public async Task<List<T>> GetByPartitionKeyAndRowKeyAsync(string partitionKey, string rowKey)
         {
+            if (partitionKey == null)
+            {
+                throw new ArgumentNullException("partitionKey");
+            }
+            if (rowKey == null)
+            {
+                throw new ArgumentNullException("rowKey");
+            }
+
             await CreateTableInStorage().ConfigureAwait(false);
             var filterOne = TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, partitionKey.ToLower(new CultureInfo("es-CO")));
             var filterTwo = TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey.ToLower(new CultureInfo("es-CO")));
@@ -201,6 +221,11 @@
         /// <returns></returns>
         public async Task<List<T>> GetSomeAsync(IList<ConditionParameter> conditionParameters)        
         {
+            if (conditionParameters == null)
+            {
+                throw new ArgumentNullException("conditionParameters");
+            }
+
             await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>();
             List<string> conditions = new List<string>();
@@ -209,7 +234,7 @@
             {
                 if (string.IsNullOrEmpty(item.Value))
                 {
-                    if (item.ValueDateTime == default(System.DateTime))
+                    if (item.ValueDateTime == default(DateTime))
                     {
                         conditions.Add(TableQuery.GenerateFilterConditionForBool(item.ColumnName, item.Condition, item.ValueBool));
                     }
@@ -267,6 +292,11 @@
 
         public async Task<List<T>> GetListQuery(IList<ConditionParameter> conditionParameters)
         {
+            if (conditionParameters == null)
+            {
+                throw new ArgumentNullException("conditionParameters");
+            }
+
             await CreateTableInStorage().ConfigureAwait(false);
             var query = new TableQuery<T>();
             List<string> conditions = new List<string>();

@@ -71,6 +71,11 @@
         /// <returns></returns>
         public Response<PDI> CreatePDI(PDIRequest PDIRequest)
         {
+            if (PDIRequest == null)
+            {
+                throw new ArgumentNullException("PDIRequest");
+            }
+
             var errorsMessage = PDIRequest.Validate().ToList();
             if (errorsMessage.Count > 0)
             {

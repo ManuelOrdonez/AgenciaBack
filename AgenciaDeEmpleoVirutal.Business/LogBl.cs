@@ -43,6 +43,11 @@
         /// <returns></returns>
         public Response<Log> SetLog(SetLogRequest logRequest)
         {
+            if(logRequest is null)
+            {
+                throw new ArgumentNullException("logRequest");
+            }
+
             var errorsMessage = logRequest.Validate().ToList();
             if (errorsMessage.Count > 0)
             {
