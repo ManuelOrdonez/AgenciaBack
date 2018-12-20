@@ -130,7 +130,7 @@
         public async Task<T> GetAsync(string rowKey)
         {
             await CreateTableInStorage().ConfigureAwait(false);
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower()));
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower(CultureInfo.CurrentCulture)));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results.FirstOrDefault();
             return entity;
         }
@@ -143,7 +143,7 @@
         public async Task<List<T>> GetAsyncAll(string rowKey)
         {
             await CreateTableInStorage().ConfigureAwait(false);
-            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower()));
+            var query = new TableQuery<T>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, rowKey?.ToLower(CultureInfo.CurrentCulture)));
             var entity = (await Table.ExecuteQuerySegmentedAsync(query, null).ConfigureAwait(false)).Results;
             return entity;
         }
@@ -218,7 +218,6 @@
                         conditions.Add(TableQuery.GenerateFilterConditionForDate(item.ColumnName, item.Condition, item.ValueDateTime));
                     }                                 
                 }
-                
                 else
                 {
                     conditions.Add(TableQuery.GenerateFilterCondition(item.ColumnName, item.Condition, item.Value));

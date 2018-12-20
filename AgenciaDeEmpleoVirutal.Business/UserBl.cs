@@ -63,7 +63,6 @@
             _userRep = userRep;
             _LdapServices = LdapServices;
             _settings = options?.Value;
-            Crypto _crypto = new Crypto();
             _openTokService = _openTokExternalService;
             _busyAgentRepository = busyAgentRepository;
         }
@@ -561,12 +560,12 @@
                     userAviable.OpenTokSessionId = _openTokService.CreateSession();
                     token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
                 }
-                var result = _userRep.AddOrUpdate(userAviable).Result;
+                _userRep.AddOrUpdate(userAviable);
 
                 var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
                 if (busy.Any())
                 {
-                    var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
                 }
                 response = new List<AuthenticateUserResponse>
                 {
@@ -586,7 +585,7 @@
                 var busy = _busyAgentRepository.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
                 if (busy.Any())
                 {
-                    var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
                 }
                 response = new List<AuthenticateUserResponse>
                 {
@@ -632,7 +631,7 @@
             var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower(new CultureInfo("es-CO"))).Result;
             if (busy.Any())
             {
-                var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
             }
             var result = _userRep.AddOrUpdate(user).Result;
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();

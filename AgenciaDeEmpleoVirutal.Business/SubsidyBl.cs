@@ -18,6 +18,7 @@
     using Microsoft.WindowsAzure.Storage.Table;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
 
     /// <summary>
@@ -293,7 +294,7 @@
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var container = blobClient.GetContainerReference(containerSubsidy);
-            var directory = container.GetDirectoryReference(string.Format("{0}/{1}", userName, NoSubsidyRequest));
+            var directory = container.GetDirectoryReference(string.Format(CultureInfo.CurrentCulture, "{0}/{1}", userName, NoSubsidyRequest));
             var result = directory.ListBlobsSegmentedAsync(true, BlobListingDetails.None, 500, null, null, null).Result.Results.ToList();
             foreach (var blob in result)
             {
@@ -309,8 +310,6 @@
         /// <returns></returns>
         public Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request)
         {
-            var response = new List<GetSubsidyResponse>();
-
             var query = new List<ConditionParameter>();
 
             if (request.StartDate != null && request.StartDate.Year != default(DateTime).Year)
@@ -384,9 +383,7 @@
             if (subsidies.Count == 0 || subsidies is null)
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
-            }
-
-            List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();            
+            }    
 
             var result = new List<GetSubsidyResponse>();
 

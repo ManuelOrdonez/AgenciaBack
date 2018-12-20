@@ -215,7 +215,7 @@
             {
                 return ResponseFail<ParametersResponse>();
             }
-            result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy));
+            result.Sort((p, q) => string.Compare(p.SortBy, q.SortBy, StringComparison.CurrentCulture));
             var parametsList = new List<ParametersResponse>();
 
             result.ForEach(r =>

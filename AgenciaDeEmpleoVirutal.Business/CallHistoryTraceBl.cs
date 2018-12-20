@@ -291,19 +291,13 @@
         {
             string type = string.Empty;
             var user = _agentRepository.GetAsync(UserName).Result;
-            if (user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
-            {
-                type = "UserNameAgent";
-            }
-            else
-            {
-                type = "UserNameCaller";
-            }
+            type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture) 
+                ? "UserNameAgent" : "UserNameCaller";
 
             var busy = _busyAgentRepository.GetSomeAsync(type, UserName).Result;
             if (busy.Any())
             {
-                var resultDelete = _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault()).Result;
+                _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
             }
         }
 
@@ -360,59 +354,49 @@
         {
             var response = new List<GetAllUserCallResponse>();
             string type = string.Empty;
-            if (getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
-            {
-                type = "UserAnswerCall";
-            }
-            else
-            {
-                type = "UserCall";
-            }
+            type = getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
+                ? "UserAnswerCall" : "UserCall";
+
             var query = new List<ConditionParameter>();
-            if (!string.IsNullOrEmpty(getAllUserCallRequest.UserName))
-            {
-                query = new List<ConditionParameter>
-             {
-                 new ConditionParameter
-                 {
-                     ColumnName = "DateCall",
-                     Condition = QueryComparisons.GreaterThanOrEqual,
-                     ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
-                 },
+            query = !string.IsNullOrEmpty(getAllUserCallRequest.UserName) ?
+                new List<ConditionParameter>
+                {
+                     new ConditionParameter
+                     {
+                         ColumnName = "DateCall",
+                         Condition = QueryComparisons.GreaterThanOrEqual,
+                         ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                     },
 
-                  new ConditionParameter
+                      new ConditionParameter
+                     {
+                         ColumnName = "DateCall",
+                         Condition = QueryComparisons.LessThan,
+                         ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                     },
+                      new ConditionParameter
+                      {
+                         ColumnName = type,
+                         Condition = QueryComparisons.Equal,
+                         Value = getAllUserCallRequest.UserName
+                      }
+                } :
+                new List<ConditionParameter>
                  {
-                     ColumnName = "DateCall",
-                     Condition = QueryComparisons.LessThan,
-                     ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
-                 },
-                  new ConditionParameter
-                  {
-                     ColumnName = type,
-                     Condition = QueryComparisons.Equal,
-                     Value = getAllUserCallRequest.UserName
-                  }
-             };
-            }
-            else
-            {
-                query = new List<ConditionParameter>
-             {
-                 new ConditionParameter
-                 {
-                     ColumnName = "DateCall",
-                     Condition = QueryComparisons.GreaterThanOrEqual,
-                     ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
-                 },
+                     new ConditionParameter
+                     {
+                         ColumnName = "DateCall",
+                         Condition = QueryComparisons.GreaterThanOrEqual,
+                         ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                     },
 
-                  new ConditionParameter
-                 {
-                     ColumnName = "DateCall",
-                     Condition = QueryComparisons.LessThan,
-                     ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
-                 },
-             };
-            }
+                      new ConditionParameter
+                     {
+                         ColumnName = "DateCall",
+                         Condition = QueryComparisons.LessThan,
+                         ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                     },
+                 };
 
             var calls = _callHistoryRepository.GetListQuery(query).Result;
 
@@ -449,14 +433,8 @@
 
                 if (!string.IsNullOrEmpty(cll.UserCall))
                 {
-                    if (cll.UserCall.Substring(cll.UserCall.Length - 1) == "1")
-                    {
-                        typeU = UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO"));
-                    }
-                    else
-                    {
-                        typeU = UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
-                    }
+                    typeU = cll.UserCall.Substring(cll.UserCall.Length - 1) == "1" ?
+                        UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
 
                     var callerInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(typeU, cll.UserCall.ToLower(new CultureInfo("es-CO"))).Result.First();
                     if (callerInfo is null || string.IsNullOrEmpty(callerInfo.Name))
@@ -465,14 +443,8 @@
                     }
                     else
                     {
-                        if (typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")))
-                        {
-                            cll.CallerName = callerInfo.Name + " " + callerInfo.LastName;
-                        }
-                        else
-                        {
-                            cll.CallerName = callerInfo.ContactName + "-" + callerInfo.SocialReason;
-                        }
+                        cll.CallerName = typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) ?
+                            callerInfo.Name + " " + callerInfo.LastName : callerInfo.ContactName + "-" + callerInfo.SocialReason;
                     }
                 }
 
