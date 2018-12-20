@@ -33,6 +33,11 @@
         public ParameterBI(IGenericRep<Parameters> paramentRep,
             IOptions<UserSecretSettings> options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException("options");
+            }
+
             _paramentRep = paramentRep;
             _UserSecretSettings = options.Value;
         }

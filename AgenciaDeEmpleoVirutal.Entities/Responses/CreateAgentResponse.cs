@@ -1,9 +1,8 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
+    /// <summary>
+    /// Create agent response.
+    /// </summary>
     public class CreateAgentResponse
     {
     }
