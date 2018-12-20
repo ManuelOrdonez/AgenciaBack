@@ -80,12 +80,12 @@
             {
 
                 _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcomeCompany;
-                _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, sendMailRequest.Name);
+                _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, sendMailRequest.Name);
             }
             else
             {
                 _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcomePerson;
-                _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, sendMailRequest.IsMale, sendMailRequest.Name, sendMailRequest.LastName,
+                _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, sendMailRequest.IsMale, sendMailRequest.Name, sendMailRequest.LastName,
                     sendMailRequest.DocType, sendMailRequest.DocNum, sendMailRequest.Pass);
             }
             return SendMail();
@@ -109,7 +109,7 @@
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailUpate;
             _sendMailOptions.SubJect = ParametersApp.SubJectUpdate;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Name,
                                                         userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture) ?
                                                         string.Empty : userInfo.LastName);
             return SendMail();
@@ -134,7 +134,7 @@
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = bodyMail;
             _sendMailOptions.SubJect = subject;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name,
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Name,
                                                         userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture) ?
                                                         string.Empty : userInfo.LastName,urlReset);
             return SendMail();
@@ -159,7 +159,7 @@
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPDI;
             _sendMailOptions.SubJect = ParametersApp.SubjectPDI;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
             return SendGridHelper.SenMailRelay(_sendMailOptions, attachments);
         }
 
@@ -181,7 +181,7 @@
 
             _sendMailOptions.BodyMail = ParametersApp.BodyMailNotificationSubsidy;
             _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "o" : "a",
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "o" : "a",
                 userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State, subsidyInfo.Observations);
 
             return SendMail(true);
@@ -205,7 +205,7 @@
 
             _sendMailOptions.BodyMail = ParametersApp.BodiMailRequestSubsidy;
             _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
-            _sendMailOptions.BodyMail = string.Format(_sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "Señor" : "Señora",
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "Señor" : "Señora",
                 userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest);
 
             return SendMail(true);

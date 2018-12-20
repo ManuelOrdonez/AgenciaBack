@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using Entities.Referentials;
     using Utils.ResponseMessages;
+    using System.Globalization;
 
 
     /// <summary>
@@ -181,7 +182,7 @@
                 TransactionMade = false,
                 Message = new List<string>
                 {
-                    string.Format(ResponseMessageHelper.GetParameter(ServiceResponseCode.BadRequest), delimiter, messages.Aggregate((i,j) => string.Concat(i,delimiter,j)))
+                    string.Format(CultureInfo.CurrentCulture, ResponseMessageHelper.GetParameter(ServiceResponseCode.BadRequest), delimiter, messages.Aggregate((i,j) => string.Concat(i,delimiter,j)))
                 }
             };
         }

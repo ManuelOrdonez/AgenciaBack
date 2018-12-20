@@ -93,11 +93,11 @@
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
             if(userPDI.Any())
             {     
-                pdiName = string.Format("PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count);
+                pdiName = string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count);
             }
             else
             {
-                pdiName = string.Format("PDI-{0}.pdf", user.NoDocument);
+                pdiName = string.Format(CultureInfo.CurrentCulture, "PDI-{0}.pdf", user.NoDocument);
             }
 
             var pdi = new PDI
@@ -107,13 +107,13 @@
                 MyStrengths = SetFieldOfPdi(PDIRequest.MyStrengths),
                 MustPotentiate = SetFieldOfPdi(PDIRequest.MustPotentiate),
                 MyWeaknesses = SetFieldOfPdi(PDIRequest.MyWeaknesses),
-                CallerName = UString.UppercaseWords(string.Format("{0} {1}", user.Name, user.LastName)),
-                AgentName = UString.UppercaseWords(string.Format("{0} {1}", agent.Name, agent.LastName)),
+                CallerName = UString.UppercaseWords(string.Format(CultureInfo.CurrentCulture, "{0} {1}", user.Name, user.LastName)),
+                AgentName = UString.UppercaseWords(string.Format(CultureInfo.CurrentCulture, "{0} {1}", agent.Name, agent.LastName)),
                 WhatAbilities = SetFieldOfPdi(PDIRequest.WhatAbilities),
                 WhatJob = SetFieldOfPdi(PDIRequest.WhatJob),
                 WhenAbilities = SetFieldOfPdi(PDIRequest.WhenAbilities),
                 WhenJob = SetFieldOfPdi(PDIRequest.WhenJob),
-                PDIDate = DateTime.Now.ToString("dd/MM/yyyy"),
+                PDIDate = DateTime.Now.ToString("dd/MM/yyyy", CultureInfo.CurrentCulture),
                 Observations = SetFieldOfPdi(PDIRequest.Observations),
                 OnlySave = PDIRequest.OnlySave
             };
@@ -194,7 +194,7 @@
         private byte[] GenarateContentPdi(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert();
-            RequestPDF.ContentHtml = string.Format(ParametersApp.ContentPDIPdf,
+            RequestPDF.ContentHtml = string.Format(CultureInfo.CurrentCulture, ParametersApp.ContentPDIPdf,
                     pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
