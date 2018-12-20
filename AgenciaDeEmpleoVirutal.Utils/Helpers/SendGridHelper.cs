@@ -3,6 +3,7 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Net.Mail;
 
@@ -37,7 +38,7 @@
             }
             var client = new SmtpClient
             {
-                Port = Convert.ToInt32 (sendMailData.EmailHostPort),
+                Port = Convert.ToInt32(sendMailData.EmailHostPort, CultureInfo.CurrentCulture),
                 Host = sendMailData.EmailHost,
                 Timeout = 10000,
                 EnableSsl = true,

@@ -79,12 +79,12 @@
             string state = string.Empty;
             userAux = user;
             idUser = string.Empty;
-            if (userAux.IndexOf("_cesante") > -1)
+            if (userAux.IndexOf("_cesante", StringComparison.CurrentCulture) > -1)
             {
                 state = UsersTypes.Cesante.ToString();
                 userAux = userAux.Replace("_cesante", "");
             }
-            else if (userAux.IndexOf("_empresa") > -1)
+            else if (userAux.IndexOf("_empresa", StringComparison.CurrentCulture) > -1)
             {
                 state = UsersTypes.Empresa.ToString();
                 userAux = userAux.Replace("_empresa", "");
@@ -136,7 +136,7 @@
 
             var emailInfo = _parametersRep.GetByPatitionKeyAsync("resetpwd").Result;
 
-            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
+            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
                 token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
                 ResetPassword rpwd = new ResetPassword { PartitionKey = idMod, RowKey = token };
@@ -266,7 +266,7 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
 
-            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
+            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
                 var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {

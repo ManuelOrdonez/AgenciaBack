@@ -236,7 +236,7 @@
                     Mail = result.FirstOrDefault().Email,
                     Name = result.FirstOrDefault().Name,
                     LastName = result.FirstOrDefault().LastName,
-                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString()),
+                    State = result.FirstOrDefault().State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture),
                     CodTypeDocument = result.FirstOrDefault().CodTypeDocument,
                     NoDocument = result.FirstOrDefault().NoDocument,
                     TypeDocument = result.FirstOrDefault().TypeDocument
@@ -264,7 +264,7 @@
                     Position = f.Position,
                     Role = f.Role,
                     Mail = f.Email,
-                    State = f.State.Equals(UserStates.Enable.ToString()),
+                    State = f.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture),
                     Name = f.Name,
                     LastName = f.LastName,
                     TypeDocument = f.TypeDocument,

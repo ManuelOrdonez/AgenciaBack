@@ -95,8 +95,8 @@
 
             if (dayNowPos >= diaIniPos && dayNowPos <= diaEndPos)
             {
-                DateTime timeInit = Convert.ToDateTime(DateTime.UtcNow.AddHours(-5).ToShortDateString() + " " + hourIni + ":00 am");
-                DateTime timeEnd = Convert.ToDateTime(DateTime.UtcNow.AddHours(-5).ToShortDateString() + " " + hourEnd + ":00 pm");
+                DateTime timeInit = Convert.ToDateTime(DateTime.UtcNow.AddHours(-5).ToShortDateString() + " " + hourIni + ":00 am", CultureInfo.CurrentCulture);
+                DateTime timeEnd = Convert.ToDateTime(DateTime.UtcNow.AddHours(-5).ToShortDateString() + " " + hourEnd + ":00 pm", CultureInfo.CurrentCulture);
                 DateTime timeNow = DateTime.UtcNow.AddHours(-5);
 
                 if (timeNow < timeInit || timeNow > timeEnd)
