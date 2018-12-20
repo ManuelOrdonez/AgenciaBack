@@ -291,7 +291,7 @@
         {
             string type = string.Empty;
             var user = _agentRepository.GetAsync(UserName).Result;
-            if (user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
+            if (user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
                 type = "UserNameAgent";
             }
@@ -360,7 +360,7 @@
         {
             var response = new List<GetAllUserCallResponse>();
             string type = string.Empty;
-            if (getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
+            if (getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
                 type = "UserAnswerCall";
             }

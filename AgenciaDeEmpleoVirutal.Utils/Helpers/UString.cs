@@ -23,7 +23,7 @@
             // Handle the first letter in the string.
             if (array.Length >= 1 && char.IsLower(array[0]))
             {
-                array[0] = char.ToUpper(array[0]);
+                array[0] = char.ToUpper(array[0], CultureInfo.CurrentCulture);
             }
             // Scan through the letters, checking for spaces.
             // ... Uppercase the lowercase letters following spaces.
@@ -33,14 +33,14 @@
                 {
                     if (char.IsLower(array[i]))
                     {
-                        array[i] = char.ToUpper(array[i]);
+                        array[i] = char.ToUpper(array[i], CultureInfo.CurrentCulture);
                     }
                 }
                 else
                 {
                     if (char.IsUpper(array[i]))
                     {
-                        array[i] = char.ToLower(array[i]);
+                        array[i] = char.ToLower(array[i], CultureInfo.CurrentCulture);
                     }
                 }
             }
@@ -61,7 +61,7 @@
             // Handle the first letter in the string.
             if (array.Length >= 1 && char.IsLower(array[0]))
             {
-                array[0] = char.ToUpper(array[0]);
+                array[0] = char.ToUpper(array[0], CultureInfo.CurrentCulture);
             }
             return new string(array);
         }

@@ -127,14 +127,14 @@
             string token = string.Empty;
             string passwordDecrypt = string.Empty;
 
-            passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
+            passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
             User user = GetUserActive(userReq);
             if(user is null)
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             }
-            else if (userReq.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
+            else if (userReq.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
                 var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
                 if (AutenticateFunc != ServiceResponseCode.Success)
@@ -185,11 +185,11 @@
             {
                 return ServiceResponseCode.IsNotRegisterInAz;
             }
-            if (user.State.Equals(UserStates.Disable.ToString()) /*&& user.IntentsLogin == 5*/)
+            if (user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture) /*&& user.IntentsLogin == 5*/)
             {
                 return ServiceResponseCode.UserDesable;
             }
-            if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString()))
+            if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture))
             {
                 return ServiceResponseCode.UserBlock;
             }
@@ -200,7 +200,7 @@
             }
 
             var passwordUserDecrypt = Crypto.DecryptWeb(user.Password, "ColsubsidioAPP");
-            if (!passwordUserDecrypt.Equals(passwordDecrypt))
+            if (!passwordUserDecrypt.Equals(passwordDecrypt, StringComparison.CurrentCulture))
             {
                 user.IntentsLogin = user.IntentsLogin + 1;
                 user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
@@ -230,7 +230,7 @@
                 {
                     return AutenticateLDAP;
                 }
-                if (user.State.Equals(UserStates.Disable.ToString()))
+                if (user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture))
                 {
                     return ServiceResponseCode.UserDesable;
                 }
@@ -287,7 +287,7 @@
                     }
                     return ServiceResponseCode.IncorrectPassword;
                 }
-                if (user == null && result.Estado.Equals("0000"))
+                if (user == null && result.Estado.Equals("0000", StringComparison.CurrentCulture))
                 {
                     return ServiceResponseCode.IsNotRegisterInAz;
                 }
@@ -339,7 +339,7 @@
                 new RegisterUserResponse
                 {
                     IsRegister = true,
-                    State = result.State.Equals(UserStates.Enable.ToString()),
+                    State = result.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture),
                     UserType = result.PartitionKey
                 }
             });
@@ -370,7 +370,7 @@
                 } 
             }
 
-            string passwordDecrypt = userReq.DeviceType.Equals("WEB") ?
+            string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
             
             var user = LoadRegisterRequest(userReq);
@@ -387,7 +387,7 @@
 
             SendMailWelcomeRequest sendMailRequest = new SendMailWelcomeRequest
             {
-                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino") ? "o" : "a",
+                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "o" : "a",
                 IsCesante = userReq.IsCesante,
                 DocNum = userReq.NoDocument,
                 LastName = string.IsNullOrEmpty(userReq.LastNames) ? string.Empty : UString.UppercaseWords(userReq.LastNames),
@@ -650,7 +650,7 @@
             {
                 return ResponseBadRequest<User>(errorsMessage);
             }
-            var userTableStorage = _userRep.GetAsyncAll(userRequest.UserName).Result.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+            var userTableStorage = _userRep.GetAsyncAll(userRequest.UserName).Result.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture));
 
             var compareUser = new UserUdateRequest
             {
@@ -737,7 +737,7 @@
             {
                 return ResponseFail();
             }
-            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString(new CultureInfo("es-CO"))));
+            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString(new CultureInfo("es-CO")), StringComparison.CurrentCulture));
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
@@ -816,7 +816,7 @@
             List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))))
+                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
                 {
                     return item;
                 }

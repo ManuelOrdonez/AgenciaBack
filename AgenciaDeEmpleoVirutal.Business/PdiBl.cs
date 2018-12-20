@@ -77,17 +77,17 @@
                 return ResponseBadRequest<PDI>(errorsMessage);
             }
             var userStorage = _userRep.GetAsyncAll(PDIRequest.CallerUserName).Result;
-            if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+            if (userStorage == null || userStorage.All(u => u.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture)))
             {
                 return ResponseFail<PDI>(ServiceResponseCode.UserNotFound);
             }
-            var user = userStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+            var user = userStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture));
             var agentStorage = _userRep.GetAsyncAll(PDIRequest.AgentUserName).Result;
-            if (agentStorage == null || agentStorage.All(u => u.State.Equals(UserStates.Disable.ToString())))
+            if (agentStorage == null || agentStorage.All(u => u.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture)))
             {
                 return ResponseFail<PDI>(ServiceResponseCode.UserNotFound);
             }
-            var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString()));
+            var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture));
 
             string pdiName; 
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
@@ -227,7 +227,7 @@
             fieldAux = field;
             var naOptiond = new List<string> { "n/a", "na", "no aplica", "noaplica" };
             fieldAux = fieldAux.ToLower(new CultureInfo("es-CO"));
-            if (naOptiond.Any(op => op.Equals(fieldAux)))
+            if (naOptiond.Any(op => op.Equals(fieldAux, StringComparison.CurrentCulture)))
             {
                 return "No aplica";
             }
