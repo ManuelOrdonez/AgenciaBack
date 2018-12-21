@@ -1,7 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Request
 {
     /// <summary>
-    /// Register Ldap Request Entity
+    /// Register Ldap Request Entity. No cambiar nombre variables por ldap.
     /// </summary>
     public class RegisterLdapRequest
     {
