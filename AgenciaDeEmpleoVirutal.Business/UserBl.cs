@@ -369,9 +369,8 @@
                 } 
             }
 
-            //string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
-            //Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
-            string passwordDecrypt = userReq.Password;
+            string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
+                Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
 
             var user = LoadRegisterRequest(userReq);
             if (string.IsNullOrEmpty(user.UserName))
@@ -429,18 +428,18 @@
             {
                 var regLdap = new RegisterLdapRequest
                 {
-                    Question = "Agencia virtual de empleo question",
-                    Answer = "Agencia virtual de empleo answer",
-                    BirtDate = "01-01-1999",
-                    GivenName = UString.UppercaseWords(userReq.Name),
-                    Surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
-                    Mail = userReq.Mail,
-                    UserId = userReq.NoDocument,
-                    UserIdType = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
-                    UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
-                    UserPassword = passwordDecrypt
+                    question = "Agencia virtual de empleo question",
+                    answer = "Agencia virtual de empleo answer",
+                    birtdate = "01-01-1999",
+                    givenName = UString.UppercaseWords(userReq.Name),
+                    surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
+                    mail = userReq.Mail,
+                    userId = userReq.NoDocument,
+                    userIdType = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
+                    username = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    userpassword = passwordDecrypt
                 };
-                var resultLdap = _LdapServices.Register(regLdap).Result;
+                var resultLdap = _LdapServices.Register(regLdap);
                 if (resultLdap is null || resultLdap.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;
