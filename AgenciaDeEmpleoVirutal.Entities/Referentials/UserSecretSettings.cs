@@ -53,5 +53,15 @@
         public string StorageAccountName { get; set; }
 
         public bool LdapFlag { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ClientIdLdap.
+        /// </summary>
+        public string ClientIdLdap { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ClienteSectretoLdap.
+        /// </summary>
+        public string ClienteSectretoLdap { get; set; }
     }
 }

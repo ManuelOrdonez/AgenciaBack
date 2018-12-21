@@ -369,9 +369,10 @@
                 } 
             }
 
-            string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
-                Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
-            
+            //string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
+            //Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
+            string passwordDecrypt = userReq.Password;
+
             var user = LoadRegisterRequest(userReq);
             if (string.IsNullOrEmpty(user.UserName))
             {
@@ -439,7 +440,7 @@
                     UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
                     UserPassword = passwordDecrypt
                 };
-                var resultLdap = _LdapServices.Register(regLdap);
+                var resultLdap = _LdapServices.Register(regLdap).Result;
                 if (resultLdap is null || resultLdap.Code == (int)ServiceResponseCode.ServiceExternalError)
                 {
                     return ServiceResponseCode.ServiceExternalError;

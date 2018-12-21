@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Interface of Ldap services
@@ -21,7 +22,7 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request);
+        Task<LdapServicesResult<AuthenticateLdapResult>> Register(RegisterLdapRequest request);
 
         /// <summary>
         /// Method to Password Change Request in LDAP

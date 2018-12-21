@@ -8,7 +8,12 @@
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
+    using System;
     using System.Net;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Ldap Services Class
@@ -21,12 +26,24 @@
         private readonly string _ldapAíKey;
 
         /// <summary>
+        /// Api key of ClientIdLdap.
+        /// </summary>
+        private readonly string _clientIdLdap;
+
+        /// <summary>
+        /// Api key of Client secret ldap.
+        /// </summary>
+        private readonly string _clientSecretLdap;
+
+        /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="options"></param>
         public LdapServices(IOptions<UserSecretSettings> options) : base(options, "LdapServices", "autenticacion/usuarios")
         {
             _ldapAíKey = options?.Value.LdapServiceApiKey;
+            _clientIdLdap = options?.Value.ClientIdLdap;
+            _clientSecretLdap = options?.Value.ClienteSectretoLdap;
         }
 
         /// <summary>
@@ -81,43 +98,71 @@
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request)
+        public async Task<LdapServicesResult<AuthenticateLdapResult>> Register(RegisterLdapRequest request)
         {
-            var webClient = new WebClient();
-            SetHeadersLdapService(webClient);
-
-            string parameters = JsonConvert.SerializeObject(request);
-            var result = new LdapServicesResult<AuthenticateLdapResult>();
-            using (WebClient context = webClient)
+            var obj = new LdapServicesResult<AuthenticateLdapResult>();
+            try
             {
-                try
-                {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url, "POST", parameters));
-                }
-                catch (WebException ex)
-                {
-                    if (ex.Status == WebExceptionStatus.ProtocolError)
-                    {
-                        var response = ex.Response as HttpWebResponse;
-                        if (response != null && (int)response.StatusCode == 409)
-                        {
-                            result.Code = (int)ServiceResponseCode.UserAlreadyExist;
-                            return result;
-                        }
-                        else
-                        {
-                            result.Code = (int)ServiceResponseCode.ServiceExternalError;
-                            return result;
-                        }
-                    }
-                    else
-                    {
-                        result.Code = (int)ServiceResponseCode.ServiceExternalError;
-                        return result;
-                    }
-                }
+
+           
+            var httpClient = new HttpClient();
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "fwKHt7LGruI4B4r7jkn1EDr4Aycx");
+
+            var json = JsonConvert.SerializeObject(request);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = null;
+            response = await httpClient.PostAsync(Url, content);
+            
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseString = await response.Content.ReadAsStringAsync();
+                obj = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(responseString);
             }
-            return result;
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            //var webClient = new WebClient();
+            ////SetHeadersLdapService(webClient);
+            //webClient.Headers.Add("Content-Type", "application/json");
+            //webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Bearer {0}", "fwKHt7LGruI4B4r7jkn1EDr4Aycx");
+
+            //string parameters = JsonConvert.SerializeObject(request);
+            //var result = new LdapServicesResult<AuthenticateLdapResult>();
+            //using (WebClient context = webClient)
+            //{
+            //    try
+            //    {
+            //        result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url, "GET", parameters));
+            //    }
+            //    catch (WebException ex)
+            //    {
+            //        if (ex.Status == WebExceptionStatus.ProtocolError)
+            //        {
+            //            var response = ex.Response as HttpWebResponse;
+            //            if (response != null && (int)response.StatusCode == 409)
+            //            {
+            //                result.Code = (int)ServiceResponseCode.UserAlreadyExist;
+            //                return result;
+            //            }
+            //            else
+            //            {
+            //                result.Code = (int)ServiceResponseCode.ServiceExternalError;
+            //                return result;
+            //            }
+            //        }
+            //        else
+            //        {
+            //            result.Code = (int)ServiceResponseCode.ServiceExternalError;
+            //            return result;
+            //        }
+            //    }
+            //}
+            return obj;
         }
 
         /// <summary>
@@ -219,8 +264,43 @@
         /// <param name="webClient"></param>
         private void SetHeadersLdapService(WebClient webClient)
         {
+            var result = new AccessTokenResult();
+            var accessTokenRequest = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdap,
+                clienteSecreto = _clientSecretLdap
+            };
+            string parameters = JsonConvert.SerializeObject(accessTokenRequest);
+            string myJson = "{'ClientIdLdap': 'AekiFwwIvs9zGd5FWiO4E9RlgYXByEJw','ClienteSectretoLdap':'UhO0vmdDKLbuzZIO'}";
+            parameters = Uri.EscapeUriString(parameters);
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                    var response = client.PostAsync(
+                        "https://colsubsidio-test.apigee.net/oauth/client_credential/accesstoken",
+                         new StringContent(parameters, Encoding.UTF8, "application/json"));
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            //using (WebClient context = webClient)
+            //{
+            //    context.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+            //    string HtmlResult = context.UploadString("https://colsubsidio-test.apigee.net/oauth/client_credential/accesstoken", parameters);
+            //   // webClient.Encoding = "application/json;charset=utf-8";
+            //    //var urlToken = "https://colsubsidio-test.apigee.net/oauth/client_credential/accesstoken";
+            //    //result = JsonConvert.DeserializeObject<AccessTokenResult>(context.UploadString(urlToken, "POST", parameters));
+            //}
             webClient.Headers.Add("Content-Type", "application/json");
-            webClient.Headers.Add("x-api-key", _ldapAíKey);
+            //webClient.Headers.Add("x-api-key", _ldapAíKey);
+            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Bearer {0}", "8NPgXx1EYGF272hpqGKqjKOlDW9H");
         }
     }
 }
