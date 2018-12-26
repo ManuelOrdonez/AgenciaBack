@@ -35,6 +35,11 @@
         private readonly string _clientSecretLdap;
 
         /// <summary>
+        /// Api key of url access token.
+        /// </summary>
+        private readonly string _urlAccessToken;
+
+        /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="options"></param>
@@ -43,6 +48,7 @@
             _ldapAíKey = options?.Value.LdapServiceApiKey;
             _clientIdLdap = options?.Value.ClientIdLdap;
             _clientSecretLdap = options?.Value.ClienteSectretoLdap;
+            _urlAccessToken = options?.Value.UrlAccessToken;
         }
 
         /// <summary>
@@ -242,7 +248,7 @@
             };
             string parameters = JsonConvert.SerializeObject(requestAccessToken);
 
-            var client = new RestClient("https://colsubsidio-test.apigee.net/oauth/client_credential/accesstoken");
+            var client = new RestClient(_urlAccessToken);
             var requestR = new RestRequest(Method.POST);
             requestR.AddHeader("cache-control", "no-cache");
             requestR.AddHeader("Content-Type", "application/json");

@@ -63,5 +63,10 @@
         /// Gets or sets the ClienteSectretoLdap.
         /// </summary>
         public string ClienteSectretoLdap { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UrlAccessToken.
+        /// </summary>
+        public string UrlAccessToken { get; set; }
     }
 }
