@@ -246,7 +246,6 @@
             var requestR = new RestRequest(Method.POST);
             requestR.AddHeader("cache-control", "no-cache");
             requestR.AddHeader("Content-Type", "application/json");
-            //requestR.AddParameter("undefined", "{\r\n\"clienteId\": \"AekiFwwIvs9zGd5FWiO4E9RlgYXByEJw\",\r\n\"clienteSecreto\": \"UhO0vmdDKLbuzZIO\"\r\n}", ParameterType.RequestBody);
             requestR.AddParameter("undefined", parameters, ParameterType.RequestBody);
             IRestResponse response = client.Execute(requestR);
             var content = JsonConvert.DeserializeObject<AccessTokenResult>(response.Content);

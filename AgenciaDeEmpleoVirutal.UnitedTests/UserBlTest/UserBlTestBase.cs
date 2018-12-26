@@ -105,7 +105,7 @@
             {
                 Data = new List<AuthenticateLdapResult>()
                 {
-                    new AuthenticateLdapResult() { Successurl = "success"}
+                    new AuthenticateLdapResult() { successUrl = "success"}
                 },
                 Code = (int)ServiceResponseCode.Success,
                 Estado = "0000"
