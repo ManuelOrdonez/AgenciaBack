@@ -153,7 +153,7 @@
             {
                 try
                 {
-                    var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
+                    var content = context.UploadString(Url + "/Forgot/Password", "PUT", parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
                     result.Code = 200;
                 }
