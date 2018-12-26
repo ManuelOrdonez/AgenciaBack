@@ -268,12 +268,16 @@
 
             if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
+                string passwordDecrypt = string.Empty;
+
+                passwordDecrypt = Crypto.DecryptWeb(userRequest.Password, "ColsubsidioAPP");
+
                 var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {
                     confirmationId = userRequest.ConfirmationLdapId,
                     tokenId = userRequest.TokenId,
                     username = userRequest.UserName,
-                    userpassword = userRequest.Password
+                    userpassword = passwordDecrypt
                 };
                 var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
                 if (resultt is null)
