@@ -62,11 +62,21 @@
         /// <summary>
         /// Gets or sets the ClienteSectretoLdap.
         /// </summary>
-        public string ClienteSectretoLdap { get; set; }
+        public string ClienteSecretoLdap { get; set; }
 
         /// <summary>
         /// Gets or sets the UrlAccessToken.
         /// </summary>
         public string UrlAccessToken { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ClientIdLdap password.
+        /// </summary>
+        public string ClientIdLdapPass { get; set; }
+
+        /// <summary>
+        /// Gets or sets the ClienteSectretoLdap password.
+        /// </summary>
+        public string ClienteSecretoLdapPass { get; set; }
     }
 }
