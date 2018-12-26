@@ -40,6 +40,16 @@
         private readonly string _urlAccessToken;
 
         /// <summary>
+        /// Api key of ClientIdLdap password.
+        /// </summary>
+        private readonly string _clientIdLdapPass;
+
+        /// <summary>
+        /// Api key of Client secret ldap password.
+        /// </summary>
+        private readonly string _clientSecretLdapPass;
+
+        /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="options"></param>
@@ -47,8 +57,10 @@
         {
             _ldapAíKey = options?.Value.LdapServiceApiKey;
             _clientIdLdap = options?.Value.ClientIdLdap;
-            _clientSecretLdap = options?.Value.ClienteSectretoLdap;
+            _clientSecretLdap = options?.Value.ClienteSecretoLdap;
             _urlAccessToken = options?.Value.UrlAccessToken;
+            _clientIdLdapPass = options?.Value.ClientIdLdapPass;
+            _clientSecretLdapPass = options?.Value.ClienteSecretoLdapPass;
         }
 
         /// <summary>
@@ -60,7 +72,14 @@
         public LdapServicesResult<AuthenticateLdapResult> Authenticate(string userName, string pass)
         {
             var webClient = new WebClient();
-            SetHeadersLdapService(webClient);
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdap,
+                clienteSecreto = _clientSecretLdap
+            };
+
+            SetHeadersLdapService(webClient, requestAccessToken);
             webClient.Headers.Add("x-password", pass);
             webClient.Headers.Add("x-username", userName);
 
@@ -106,7 +125,14 @@
         public LdapServicesResult<AuthenticateLdapResult> Register(RegisterLdapRequest request)
         {
             var webClient = new WebClient();
-            SetHeadersLdapService(webClient);
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdap,
+                clienteSecreto = _clientSecretLdap
+            };
+
+            SetHeadersLdapService(webClient, requestAccessToken);
 
             string parameters = JsonConvert.SerializeObject(request);
             var result = new LdapServicesResult<AuthenticateLdapResult>();
@@ -150,7 +176,14 @@
         public LdapServicesResult<AuthenticateLdapResult> PasswordChangeRequest(PasswordChangeRequest request)
         {
             var webClient = new WebClient();
-            SetHeadersLdapService(webClient);
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdapPass,
+                clienteSecreto = _clientSecretLdapPass
+            };
+
+            SetHeadersLdapService(webClient, requestAccessToken);
 
             string parameters = JsonConvert.SerializeObject(request);
             LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
@@ -197,7 +230,13 @@
         public LdapServicesResult<AuthenticateLdapResult> PasswordChangeConfirm(PasswordChangeConfirmRequests request)
         {
             var webClient = new WebClient();
-            SetHeadersLdapService(webClient);
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdapPass,
+                clienteSecreto = _clientSecretLdapPass
+            };
+            SetHeadersLdapService(webClient, requestAccessToken);
 
             string parameters = JsonConvert.SerializeObject(request);
             LdapServicesResult<AuthenticateLdapResult> result = new LdapServicesResult<AuthenticateLdapResult>();
@@ -206,7 +245,7 @@
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/ForgotPasswordReset", "PUT", parameters));
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/Forgot/PasswordReset", "PUT", parameters));
                     result.Code = 200;
                 }
                 catch (WebException ex)
@@ -239,14 +278,9 @@
         /// Method to Set Headers of Ldap Services
         /// </summary>
         /// <param name="webClient"></param>
-        private void SetHeadersLdapService(WebClient webClient)
+        private void SetHeadersLdapService(WebClient webClient, AccessTokenRequest requestKeys)
         {
-            var requestAccessToken = new AccessTokenRequest
-            {
-                clienteId = _clientIdLdap,
-                clienteSecreto = _clientSecretLdap
-            };
-            string parameters = JsonConvert.SerializeObject(requestAccessToken);
+            string parameters = JsonConvert.SerializeObject(requestKeys);
 
             var client = new RestClient(_urlAccessToken);
             var requestR = new RestRequest(Method.POST);
