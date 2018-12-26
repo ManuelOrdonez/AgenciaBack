@@ -8,11 +8,11 @@
         /// <summary>
         /// Token id
         /// </summary>
-        public string Tokenid { get; set; }
+        public string tokenId { get; set; }
 
         /// <summary>
         /// Success url
         /// </summary>
-        public string Successurl { get; set; }
+        public string successUrl { get; set; }
     }
 }

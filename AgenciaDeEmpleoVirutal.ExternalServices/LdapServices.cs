@@ -8,7 +8,11 @@
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
+    using RestSharp;
+    using System;
     using System.Net;
+    using System.Net.Http;
+    using System.Text;
 
     /// <summary>
     /// Ldap Services Class
@@ -21,12 +25,30 @@
         private readonly string _ldapAíKey;
 
         /// <summary>
+        /// Api key of ClientIdLdap.
+        /// </summary>
+        private readonly string _clientIdLdap;
+
+        /// <summary>
+        /// Api key of Client secret ldap.
+        /// </summary>
+        private readonly string _clientSecretLdap;
+
+        /// <summary>
+        /// Api key of url access token.
+        /// </summary>
+        private readonly string _urlAccessToken;
+
+        /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="options"></param>
         public LdapServices(IOptions<UserSecretSettings> options) : base(options, "LdapServices", "autenticacion/usuarios")
         {
             _ldapAíKey = options?.Value.LdapServiceApiKey;
+            _clientIdLdap = options?.Value.ClientIdLdap;
+            _clientSecretLdap = options?.Value.ClienteSectretoLdap;
+            _urlAccessToken = options?.Value.UrlAccessToken;
         }
 
         /// <summary>
@@ -137,7 +159,7 @@
             {
                 try
                 {
-                    var content = context.UploadString(Url + "/ForgotPassword", "PUT", parameters);
+                    var content = context.UploadString(Url + "/Forgot/Password", "PUT", parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
                     result.Code = 200;
                 }
@@ -219,8 +241,24 @@
         /// <param name="webClient"></param>
         private void SetHeadersLdapService(WebClient webClient)
         {
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdap,
+                clienteSecreto = _clientSecretLdap
+            };
+            string parameters = JsonConvert.SerializeObject(requestAccessToken);
+
+            var client = new RestClient(_urlAccessToken);
+            var requestR = new RestRequest(Method.POST);
+            requestR.AddHeader("cache-control", "no-cache");
+            requestR.AddHeader("Content-Type", "application/json");
+            requestR.AddParameter("undefined", parameters, ParameterType.RequestBody);
+            IRestResponse response = client.Execute(requestR);
+            var content = JsonConvert.DeserializeObject<AccessTokenResult>(response.Content);
+
             webClient.Headers.Add("Content-Type", "application/json");
             webClient.Headers.Add("x-api-key", _ldapAíKey);
+            webClient.Headers[HttpRequestHeader.Authorization] = string.Format("Bearer {0}", content.Access_Token);
         }
     }
 }

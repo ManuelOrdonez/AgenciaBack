@@ -1,59 +1,59 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Request
 {
     /// <summary>
-    /// Register Ldap Request Entity
+    /// Register Ldap Request Entity. No cambiar nombre variables por ldap.
     /// </summary>
     public class RegisterLdapRequest
     {
         /// <summary>
         /// User's Email
         /// </summary>
-        public string Mail { get; set; }
+        public string mail { get; set; }
 
         /// <summary>
         /// User's  user name
         /// </summary>
-        public string UserName { get; set; }
+        public string username { get; set; }
 
         /// <summary>
         /// User's password
         /// </summary>
-        public string UserPassword { get; set; }
+        public string userpassword { get; set; }
 
         /// <summary>
         /// User's given name
         /// </summary>
-        public string GivenName { get; set; }
+        public string givenName { get; set; }
 
         /// <summary>
         /// User's  surname
         /// </summary>
-        public string Surname { get; set; }
+        public string surname { get; set; }
 
         /// <summary>
         /// User's ID type
         /// </summary>
-        public string UserIdType { get; set; }
+        public string userIdType { get; set; }
 
         /// <summary>
         /// User's ID
         /// </summary>
-        public string UserId { get; set; }
+        public string userId { get; set; }
 
         /// <summary>
         /// User's question
         /// </summary>
-        public string Question { get; set; }
+        public string question { get; set; }
 
         /// <summary>
         /// User's answer
         /// </summary>
-        public string Answer { get; set; }
+        public string answer { get; set; }
 
         /// <summary>
         /// User's birtdate
         /// </summary>
-        public string BirtDate { get; set; }
+        public string birtdate { get; set; }
 
     }
 }

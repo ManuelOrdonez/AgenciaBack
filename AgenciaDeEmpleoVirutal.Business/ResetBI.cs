@@ -176,11 +176,11 @@
                 /// PasswordChangeRequest ldapService
                 var request = new PasswordChangeRequest
                 {
-                    Message = messageMail.Value,
-                    Subject = subjectMail.Value,
+                    message = messageMail.Value,
+                    subject = subjectMail.Value,
                     //message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
                     //subject = "Recuperar Contraseña Colsubsidio",
-                    UserName = result.UserName
+                    username = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
                 if (result is null)
@@ -270,10 +270,10 @@
             {
                 var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {
-                    ConfirmationId = userRequest.ConfirmationLdapId,
-                    TokenId = userRequest.TokenId,
-                    UserName = userRequest.UserName,
-                    UserPassword = userRequest.Password
+                    confirmationId = userRequest.ConfirmationLdapId,
+                    tokenId = userRequest.TokenId,
+                    username = userRequest.UserName,
+                    userpassword = userRequest.Password
                 };
                 var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
                 if (resultt is null)
