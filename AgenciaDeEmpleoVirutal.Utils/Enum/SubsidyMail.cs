@@ -2,45 +2,42 @@
 {
     using System.ComponentModel;
 
-    /// <summary>
-    /// Subsidy States.
-    /// </summary>
-    public enum SubsidyStates
+    public enum SubsidyMail
     {
         /// <summary>
         /// Approved.
         /// </summary>
-        [Description("Approved")]
+        [Description("Aprobada")]
         Approved = 10,
 
         /// <summary>
         /// Reviewed.
         /// </summary>
-        [Description("Reviewed")]
+        [Description("Revisada")]
         Reviewed = 20,
 
         /// <summary>
         /// Active.
         /// </summary>
-        [Description("Active")]
+        [Description("Activa")]
         Active = 30,
 
         /// <summary>
         /// Rejected.
         /// </summary>
-        [Description("Rejected")]
+        [Description("Rechazada")]
         Rejected = 40,
 
         /// <summary>
         /// InProcess.
         /// </summary>
-        [Description("InProcess")]
+        [Description("En Proceso")]
         InProcess = 50,
 
         /// <summary>
         /// NoRequest.
         /// </summary>
-        [Description("NoRequests")]
+        [Description("NoRequest")]
         NoRequests = 60
     }
 }
