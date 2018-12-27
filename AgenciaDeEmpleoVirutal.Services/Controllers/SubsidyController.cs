@@ -15,7 +15,7 @@
     [Produces("application/json")]
     [Route("api/Subsidy")]
     [EnableCors("CorsPolitic")]
-    //[Authorize]
+    [Authorize]
     public class SubsidyController : Controller
     {
         /// <summary>
