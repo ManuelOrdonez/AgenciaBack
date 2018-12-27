@@ -190,6 +190,7 @@
             }
             if (request.State != (int)SubsidyStates.InProcess)
             {
+                updateSubsidyRequest.State = EnumValues.GetDescriptionFromValue((SubsidyMail)request.State);
                 _sendMailService.SendMailNotificationSubsidy(user, updateSubsidyRequest);
             }
             return ResponseSuccess();
