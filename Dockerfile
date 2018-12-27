@@ -1,11 +1,6 @@
 FROM microsoft/dotnet:2.1-sdk AS dotnet-builder
 
-RUN apt-get update \ 
-	&& apt-get -y install libgdiplus \ 
-	&& apt-get clean \ 
-	&& rm -rf /var/lib/apt/lists/*
-
-WORKDIR /opt/agenciadeempleovirtualservices
+WORKDIR /opt/aevservices
 # copy csproj and restore as distinct layers
 COPY . .
 RUN dotnet restore
