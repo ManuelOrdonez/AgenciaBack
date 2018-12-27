@@ -1,8 +1,18 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Response
 {
+    /// <summary>
+    /// Authenticate Ldap Result Entity
+    /// </summary>
     public class AuthenticateLdapResult
     {
-        public string Tokenid { get; set; }
-        public string Successurl { get; set; }
+        /// <summary>
+        /// Token id
+        /// </summary>
+        public string tokenId { get; set; }
+
+        /// <summary>
+        /// Success url
+        /// </summary>
+        public string successUrl { get; set; }
     }
 }

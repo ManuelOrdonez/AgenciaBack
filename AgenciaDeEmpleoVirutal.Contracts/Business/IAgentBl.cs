@@ -5,14 +5,11 @@
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
 
+    /// <summary>
+    /// Interface of Agent Business logic
+    /// </summary>
     public interface IAgentBl
     {
-        /// <summary>
-        /// Create the Agent.
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        /// Response<CreateAgentResponse> Create(CreateAgentRequest request);
 
         /// <summary>
         /// Get Agent Available.
@@ -28,5 +25,11 @@
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
         Response<User> ImAviable(AviableUserRequest RequestAviable);
+
+        /// <summary>
+        /// Get all agent fosfec.
+        /// </summary>
+        /// <returns></returns>
+        Response<GetAllAgentByRoleResponse> GetAllAgentByRole(int role);
     }
 }

@@ -13,23 +13,50 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
-    using System.IO;
-    using System.Linq;
-    using System.Security.Cryptography;
-    using System.Text;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
+    using System.Globalization;
 
+    /// <summary>
+    /// Reset Business Iogic
+    /// </summary>
     public class ResetBI : BusinessBase<ResetResponse>, IResetBI
     {
-        private ISendGridExternalService _sendMailService;
-        private ILdapServices _ldapServices;
-        private IGenericRep<User> _userRep;
-        private IGenericRep<ResetPassword> _passwordRep;
-        private IGenericRep<Parameters> _parametersRep;
+        /// <summary>
+        /// Interface to dens mails
+        /// </summary>
+        private readonly ISendGridExternalService _sendMailService;
 
-        public ResetBI(IGenericRep<User> userRep, 
+        /// <summary>
+        /// Interface of Ldap Services
+        /// </summary>
+        private readonly ILdapServices _ldapServices;
+
+        /// <summary>
+        /// User repository
+        /// </summary>
+        private readonly IGenericRep<User> _userRep;
+
+        /// <summary>
+        /// Reset Password repository
+        /// </summary>
+        private readonly IGenericRep<ResetPassword> _passwordRep;
+
+        /// <summary>
+        /// Parameters repository
+        /// </summary>
+        private readonly IGenericRep<Parameters> _parametersRep;
+
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="userRep"></param>
+        /// <param name="resetPasswordRep"></param>
+        /// <param name="parametersRep"></param>
+        /// <param name="sendMailService"></param>
+        /// <param name="ldapService"></param>
+        public ResetBI(IGenericRep<User> userRep,
             IGenericRep<ResetPassword> resetPasswordRep,
-            IGenericRep<Parameters> parametersRep, 
+            IGenericRep<Parameters> parametersRep,
             ISendGridExternalService sendMailService,
             ILdapServices ldapService)
         {
@@ -40,23 +67,29 @@
             _parametersRep = parametersRep;
         }
 
-        private User GetInfoUser(string user,out string idUser)
+        /// <summary>
+        /// Method to GetInfoUser
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="idUser"></param>
+        /// <returns></returns>
+        private User GetInfoUser(string user, out string idUser)
         {
             string userAux = string.Empty;
             string state = string.Empty;
             userAux = user;
             idUser = string.Empty;
-            if (userAux.IndexOf("_cesante") > -1)
+            if (userAux.IndexOf("_cesante", StringComparison.CurrentCulture) > -1)
             {
                 state = UsersTypes.Cesante.ToString();
                 userAux = userAux.Replace("_cesante", "");
             }
-            else if (userAux.IndexOf("_empresa") > -1)
+            else if (userAux.IndexOf("_empresa", StringComparison.CurrentCulture) > -1)
             {
                 state = UsersTypes.Empresa.ToString();
                 userAux = userAux.Replace("_empresa", "");
             }
-            else if (userAux.IndexOf("_funcionario") > -1)
+            else
             {
                 state = UsersTypes.Funcionario.ToString();
                 userAux = userAux.Replace("_funcionario", "");
@@ -65,12 +98,12 @@
             idUser = userAux;
             foreach (var item in lUser)
             {
-                if (state.ToLower() == item.UserType.ToLower())
+                if (state.ToLower(new CultureInfo("es-CO")) == item.UserType.ToLower(new CultureInfo("es-CO")))
                 {
                     return item;
                 }
             }
-            if (lUser.Count > 0 )
+            if (lUser.Count > 0)
             {
                 return lUser[0];
             }
@@ -89,47 +122,80 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
             string idMod = string.Empty;
-            User result = GetInfoUser(id,out idMod);
+            User result = GetInfoUser(id, out idMod);
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
+            var token = string.Empty;
             var email = result.Email;
 
             var len = email.IndexOf('@');
             var aux = email.Substring(0, len - 4);
             aux = aux + "****" + email.Substring(len);
-            var token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
-            ResetPassword rpwd = new ResetPassword() { PartitionKey = idMod, RowKey = token };
-            ExistReset(idMod);
-            var res = _passwordRep.AddOrUpdate(rpwd).Result;
-            var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result;
-            var servername = serverInfo.Find(delegate (Parameters parameter)
-            {
-                return parameter.RowKey == "name";
-            });
-            var urlResetPwd = servername.Value + "/resetpwd?tokenAZ=" + token;
 
+            var emailInfo = _parametersRep.GetByPatitionKeyAsync("resetpwd").Result;
 
-            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower()))
+            if (result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
-                _sendMailService.SendMail(result, urlResetPwd);
+                token = Utils.Helpers.ManagerToken.GenerateToken(idMod);
+                ResetPassword rpwd = new ResetPassword { PartitionKey = idMod, RowKey = token };
+                ExistReset(idMod);
+                _passwordRep.AddOrUpdate(rpwd);
+                var serverInfo = _parametersRep.GetByPatitionKeyAsync("server").Result; // Nombre del servidor
+                var servername = serverInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "name";
+                });
+                var urlResetPwd = servername.Value + "/resetpwd?tokenAZ=" + token;
+
+                // Captura la información del cuerpo y subject del correo de reseteo contraseña
+
+                var bodyMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "bodymailadm";
+                });
+
+                var subjectMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "subjectadm";
+                });
+                _sendMailService.SendMail(result, urlResetPwd, bodyMail.Value, subjectMail.Value);
             }
             else
             {
-                /// PasswordChangeRequest ldapService
-                var request = new PasswordChangeRequest()
+                var messageMail = emailInfo.Find(delegate (Parameters parameter)
                 {
-                    message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
-                    subject = "Recuperar Contraseña Colsubsidio",
+                    return parameter.RowKey == "message";
+                });
+
+                var subjectMail = emailInfo.Find(delegate (Parameters parameter)
+                {
+                    return parameter.RowKey == "subject";
+                });
+                /// PasswordChangeRequest ldapService
+                var request = new PasswordChangeRequest
+                {
+                    message = messageMail.Value,
+                    subject = subjectMail.Value,
+                    //message = "Por favor ingrese al siguiente link para completar el proceso de cambio de clave",
+                    //subject = "Recuperar Contraseña Colsubsidio",
                     username = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
+                if (result is null)
+                {
+                    return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
+                }
+                else if (responseService.Code != 200)
+                {
+                    return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.Code);
+                }
             }
 
-            var response = new List<ResetResponse>()
+            var response = new List<ResetResponse>
             {
-                new ResetResponse()
+                new ResetResponse
                 {
                     UserId = idMod ,
                     Token = token,
@@ -151,7 +217,6 @@
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
-            //var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
             var result = _passwordRep.GetAsync(token).Result;
             if (result == null)
             {
@@ -166,9 +231,9 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.ExpiredtokenRPassword);
             }
             // token valido continue con el proceso de cambio de clave
-            var response = new List<ResetResponse>()
+            var response = new List<ResetResponse>
             {
-                new ResetResponse()
+                new ResetResponse
                 {
                     UserId = result.PartitionKey,
                     Token = token,
@@ -178,6 +243,11 @@
             return ResponseSuccess(response);
         }
 
+        /// <summary>
+        /// Method to Reset Password
+        /// </summary>
+        /// <param name="userRequest"></param>
+        /// <returns></returns>
         public Response<ResetResponse> ResetPassword(ResetPasswordRequest userRequest)
         {
             if (string.IsNullOrEmpty(userRequest.UserName))
@@ -189,30 +259,34 @@
                 return ResponseFail<ResetResponse>(ServiceResponseCode.BadRequest);
             }
 
-            string passwordUserDecrypt = Crypto.DecryptWeb(userRequest.Password, "ColsubsidioAPP");
+            //// string passwordUserDecrypt = Crypto.DecryptWeb(userRequest.Password, "ColsubsidioAPP");
             User result = _userRep.GetAsync(userRequest.UserName).Result;
             if (result == null)
             {
                 return ResponseFail<ResetResponse>(ServiceResponseCode.UserNotFound);
             }
 
-            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString()))
+            if (!result.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
             {
-                var passswordChangeLdap = new PasswordChangeConfirmRequests()
+                string passwordDecrypt = string.Empty;
+
+                passwordDecrypt = Crypto.DecryptWeb(userRequest.Password, "ColsubsidioAPP");
+
+                var passswordChangeLdap = new PasswordChangeConfirmRequests
                 {
-                    ConfirmationId = userRequest.ConfirmationLdapId,
-                    TokenId = userRequest.TokenId,
-                    Username = userRequest.UserName,
-                    UserNewPassword = userRequest.Password
+                    confirmationId = userRequest.ConfirmationLdapId,
+                    tokenId = userRequest.TokenId,
+                    username = userRequest.UserName,
+                    userpassword = passwordDecrypt
                 };
                 var resultt = _ldapServices.PasswordChangeConfirm(passswordChangeLdap);
-                if(resultt is null || !string.IsNullOrEmpty(resultt.code.ToString()))
+                if (resultt is null)
                 {
                     return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
                 }
-                else
+                else if (resultt.Code != 200)
                 {
-                    return ResponseSuccess();
+                    return ResponseFail<ResetResponse>((ServiceResponseCode)resultt.Code);
                 }
             }
 

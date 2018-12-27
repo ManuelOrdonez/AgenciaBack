@@ -88,7 +88,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to El dispocitivo no se encuentra registrado.
+        ///   Looks up a localized string similar to El dispositivo no se encuentra registrado.
         /// </summary>
         internal static string DeviceNotFound {
             get {
@@ -102,6 +102,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string EmailAddress_FormatEmail {
             get {
                 return ResourceManager.GetString("EmailAddress_FormatEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error request..
+        /// </summary>
+        internal static string ErrorRequest {
+            get {
+                return ResourceManager.GetString("ErrorRequest", resourceCulture);
             }
         }
         
@@ -120,6 +129,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string ExpiredtokenRPassword {
             get {
                 return ResourceManager.GetString("ExpiredtokenRPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No hay solicitudes de subsidio activas.
+        /// </summary>
+        internal static string HaveNotSubsidyRequest {
+            get {
+                return ResourceManager.GetString("HaveNotSubsidyRequest", resourceCulture);
             }
         }
         
@@ -178,6 +196,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No realizaste alguna actualización en nuestro sistema.
+        /// </summary>
+        internal static string NotUpdate {
+            get {
+                return ResourceManager.GetString("NotUpdate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parametro no registrado..
         /// </summary>
         internal static string ParameterNotFound {
@@ -210,6 +237,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string ServiceExternalError {
             get {
                 return ResourceManager.GetString("ServiceExternalError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El subsidio se encuentra en proceso.
+        /// </summary>
+        internal static string SubsidyInProcess {
+            get {
+                return ResourceManager.GetString("SubsidyInProcess", resourceCulture);
             }
         }
         
@@ -286,6 +322,15 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Usuario no tiene solicitudes de subsidio..
+        /// </summary>
+        internal static string UserHaveNotSubsidyRequest {
+            get {
+                return ResourceManager.GetString("UserHaveNotSubsidyRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Usuario no autorizado..
         /// </summary>
         internal static string UserIsNotVip {
@@ -300,6 +345,24 @@ namespace AgenciaDeEmpleoVirutal.Utils.ResponseMessages {
         internal static string UserNotFound {
             get {
                 return ResourceManager.GetString("UserNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nombre de usuario o correo electrónico no proporcionado en la petición..
+        /// </summary>
+        internal static string UserOrEmailNotRepuest {
+            get {
+                return ResourceManager.GetString("UserOrEmailNotRepuest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to El usuario no tiene PDI asociado.
+        /// </summary>
+        internal static string UserWithoutPDI {
+            get {
+                return ResourceManager.GetString("UserWithoutPDI", resourceCulture);
             }
         }
     }

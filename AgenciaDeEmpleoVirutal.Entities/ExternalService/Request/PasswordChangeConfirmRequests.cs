@@ -1,10 +1,28 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Request
 {
+    /// <summary>
+    /// Password Change Confirm Requests Entity
+    /// </summary>
     public class PasswordChangeConfirmRequests
     {
-        public string Username { get; set; }
-        public string TokenId { get; set; }
-        public string ConfirmationId { get; set; }
-        public string UserNewPassword { get; set; }
+        /// <summary>
+        /// User name
+        /// </summary>
+        public string username { get; set; }
+
+        /// <summary>
+        /// Token Id of pasword change request
+        /// </summary>
+        public string tokenId { get; set; }
+
+        /// <summary>
+        /// Confirmation Id of pasword change request
+        /// </summary>
+        public string confirmationId { get; set; }
+
+        /// <summary>
+        /// New Password 
+        /// </summary>
+        public string userpassword { get; set; }
     }
 }

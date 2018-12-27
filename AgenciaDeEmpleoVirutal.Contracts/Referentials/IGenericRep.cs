@@ -81,6 +81,13 @@
         /// </summary>
         /// <param name="conditionParameters"></param>
         /// <returns></returns>
-        Task<List<T>> GetSomeAsync(List<ConditionParameter> conditionParameters);
+        Task<List<T>> GetSomeAsync(IList<ConditionParameter> conditionParameters);
+
+        /// <summary>
+        /// GetListQuery
+        /// </summary>
+        /// <param name="conditionParameters"></param>
+        /// <returns></returns>
+        Task<List<T>> GetListQuery(IList<ConditionParameter> conditionParameters);
     }
 }

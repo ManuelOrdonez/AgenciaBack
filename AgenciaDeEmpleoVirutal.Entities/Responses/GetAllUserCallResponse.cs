@@ -1,12 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace AgenciaDeEmpleoVirutal.Entities.Responses
+﻿namespace AgenciaDeEmpleoVirutal.Entities.Responses
 {
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// Get all user call response.
+    /// </summary>
     public class GetAllUserCallResponse
     {
-         public List<CallHistoryTrace> Calls { get; set; }
-
+        /// <summary>
+        /// Gets or sets for CallInfo.
+        /// </summary>
+        public List<CallHistoryTrace> CallInfo { get; set; }
     }
 }

@@ -12,26 +12,36 @@
     using DataAccess.Referentials;
     using Swashbuckle.AspNetCore.Swagger;
     using System.Collections.Generic;
-    using DinkToPdf.Contracts;
-    using DinkToPdf;
-    using System.Runtime.Loader;
-    using System.Reflection;
-    using System.IO;
     using System;
     using System.Text;
     using Microsoft.IdentityModel.Tokens;
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.ExternalServices;
 
+    /// <summary>
+    /// Startup class
+    /// </summary>
     public class Startup
     {
+        /// <summary>
+        /// Class constructor
+        /// </summary>
+        /// <param name="configuration"></param>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
+
+        /// <summary>
+        /// Interface to configuration eweb apies
+        /// </summary>
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Method to Configur eServices
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             DependencySettings(services);
@@ -48,16 +58,13 @@
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = false,
-                    //ValidAudience = "the audience you want to validate",
+                    /// ValidAudience = "the audience you want to validate",
                     ValidateIssuer = false,
-                    //ValidIssuer = "the isser you want to validate",
-
+                    /// ValidIssuer = "the isser you want to validate",
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the secret code.")),
-
-                    ValidateLifetime = true, //validate the expiration and not before values in the token
-
-                    ClockSkew = TimeSpan.FromMinutes(15) //15 minute tolerance for the expiration date
+                    ValidateLifetime = true, /// validate the expiration and not before values in the token
+                    ClockSkew = TimeSpan.FromMinutes(15) /// 15 minute tolerance for the expiration date
                 };
             });
 
@@ -75,24 +82,14 @@
             {
                 c.SwaggerDoc("v1", new Info { Title = "Services Agencia de Empleo Virtual", Version = "v1" });
             });
-
-            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
-
             services.AddMvc();
-            try
-            {
-                var architectureFolder = (IntPtr.Size == 8) ? "64bits" : "32bits";
-                CustomAssemblyLoadContext context = new CustomAssemblyLoadContext();
-                context.LoadUnmanagedLibrary(Path.Combine(Directory.GetCurrentDirectory(), "libwkhtmltox", architectureFolder, "libwkhtmltox.dll"));
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
@@ -111,6 +108,10 @@
             app.UseMvc();
         }
 
+        /// <summary>
+        /// Method to register Dependency Settings
+        /// </summary>
+        /// <param name="services"></param>
         private void DependencySettings(IServiceCollection services)
         {
             services.Configure<AppSettings>(opt => Configuration.GetSection("AppSettings").Bind(opt));
@@ -119,6 +120,10 @@
             services.Configure<UserSecretSettings>(Configuration);
         }
 
+        /// <summary>
+        /// Method to register Dependency Repositories
+        /// </summary>
+        /// <param name="services"></param>
         private static void DependencyRepositories(IServiceCollection services)
         {
             services.AddSingleton<IGenericRep<User>, TableStorageBase<User>>();
@@ -129,16 +134,27 @@
             services.AddSingleton<IGenericRep<ResetPassword>, TableStorageBase<ResetPassword>>();
             services.AddSingleton<IGenericRep<PDI>, TableStorageBase<PDI>>();
             services.AddSingleton<IGenericRep<BusyAgent>, TableStorageBase<BusyAgent>>();
-            services.AddSingleton<IGenericQueue,QueueStorageBase> ();
+            services.AddSingleton<IGenericRep<Menu>, TableStorageBase<Menu>>();
+            services.AddSingleton<IGenericRep<Subsidy>, TableStorageBase<Subsidy>>();
+            services.AddSingleton<IGenericRep<Log>, TableStorageBase<Log>>();
         }
 
+        /// <summary>
+        /// Method to register Dependency External Services
+        /// </summary>
+        /// <param name="services"></param>
         private static void DependencyExternalServices(IServiceCollection services)
         {
             services.AddTransient<ISendGridExternalService, SendGridExternalService>();
             services.AddTransient<IOpenTokExternalService, OpenTokExternalService>();
             services.AddTransient<ILdapServices, LdapServices>();
+            services.AddTransient<IPdfConvertExternalService, PDFConvertExternalService>();
         }
 
+        /// <summary>
+        /// Method to register Dependency Business Logic
+        /// </summary>
+        /// <param name="services"></param>
         private static void DependencyBusiness(IServiceCollection services)
         {
             services.AddTransient<IAdminBl, AdminBl>();
@@ -148,23 +164,10 @@
             services.AddTransient<ICallHistoryTrace, CallHistoryTraceBl>();
             services.AddTransient<IParametersBI, ParameterBI>();
             services.AddTransient<IResetBI, ResetBI>();
-        }
-    }
-    internal class CustomAssemblyLoadContext : AssemblyLoadContext
-    {
-        public IntPtr LoadUnmanagedLibrary(string absolutePath)
-        {
-            return LoadUnmanagedDll(absolutePath);
-        }
-
-        protected override IntPtr LoadUnmanagedDll(String unmanagedDllName)
-        {
-            return LoadUnmanagedDllFromPath(unmanagedDllName);
-        }
-
-        protected override Assembly Load(AssemblyName assemblyName)
-        {
-            throw new NotImplementedException();
+            services.AddTransient<IPdiBl, PdiBl>();
+            services.AddTransient<IMenuBl, MenuBl>();
+            services.AddTransient<ISubsidyBl, SubsidyBl>();
+            services.AddTransient<ILogBl, LogBl>();
         }
     }
 }

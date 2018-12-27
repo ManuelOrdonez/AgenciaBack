@@ -1,6 +1,4 @@
-﻿
-
-namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
+﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
 {
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -10,7 +8,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
     using System.Threading.Tasks;
 
     [TestClass]
-    class GetParametersTest :ParameterBITestBase
+    public class GetParametersTest : ParameterBITestBase
     {
 
         [TestMethod, TestCategory("ParameterBI")]
@@ -20,7 +18,7 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
             var expected = ResponseFail<ParametersResponse>();
             _parameterRep.Setup(rep => rep.GetAll()).Returns(Task.FromResult(new List<Parameters>()));
             //Action
-            var result = DepBussines.GetParameters();
+            var result = ParameterBussines.GetParameters();
             //Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
@@ -66,9 +64,9 @@ namespace AgenciaDeEmpleoVirutal.UnitedTests.ParametersTest
                 }
             };
             var expected = ResponseSuccess(responseTableStorage);
-            _parameterRep.Setup(rep => rep.GetAll()).Returns(Task.FromResult(responseTableStorage));
+            _parameterRep.Setup(rep => rep.GetList()).Returns(Task.FromResult(responseTableStorage));
             //Action
-            var result = DepBussines.GetParameters();
+            var result = ParameterBussines.GetParameters();
             //Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);

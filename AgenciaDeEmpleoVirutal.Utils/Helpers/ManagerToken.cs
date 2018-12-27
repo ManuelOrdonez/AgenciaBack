@@ -2,10 +2,14 @@
 {
     using Microsoft.IdentityModel.Tokens;
     using System;
+    using System.Globalization;
     using System.IdentityModel.Tokens.Jwt;
     using System.Security.Claims;
     using System.Text;
 
+    /// <summary>
+    /// Manager Token Class
+    /// </summary>
     public static class ManagerToken
     {
         /// <summary>
@@ -18,8 +22,8 @@
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, username),
-                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString()),
-                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddMinutes(60)).ToUnixTimeSeconds().ToString())
+                new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString(CultureInfo.CurrentCulture)),
+                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddMinutes(60)).ToUnixTimeSeconds().ToString(CultureInfo.CurrentCulture))
             };
 
             var token = new JwtSecurityToken(

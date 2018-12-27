@@ -2,18 +2,40 @@
 {
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Ldap Services Result Base
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class LdapServicesResult<T> where T : class, new()
     {
-        public int code { get; set; }
+        /// <summary>
+        /// Code of result
+        /// </summary>
+        public int Code { get; set; }
 
-        public string reason { get; set; }
+        /// <summary>
+        /// reason
+        /// </summary>
+        public string Reason { get; set; }
 
-        public string message { get; set; }
+        /// <summary>
+        /// message of result
+        /// </summary>
+        public string Message { get; set; }
 
-        public string estado { get; set; }
+        /// <summary>
+        /// estado of result
+        /// </summary>
+        public string Estado { get; set; }
 
-        public string mensaje { get; set; }
+        /// <summary>
+        /// mensaje of result
+        /// </summary>
+        public string Mensaje { get; set; }
 
-        public List<T> data { get; set; }
+        /// <summary>
+        /// data of result
+        /// </summary>
+        public IList<T> Data { get; set; }
     }
 }

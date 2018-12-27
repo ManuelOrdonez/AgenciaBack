@@ -3,8 +3,13 @@
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
+    using System.Linq;
     using System.Net.Mail;
 
+    /// <summary>
+    /// Send Grid Helper Class
+    /// </summary>
     public static class SendGridHelper
     {
         /// <summary>
@@ -12,20 +17,48 @@
         /// </summary>
         /// <param name="sendMailData">The send mail data.</param>
         /// <returns></returns>
-        public static bool SenMailRelay(SendMailData sendMailData, List<Attachment> attachments = null)
+        public static EmailResponse SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments)
         {
+            return SenMailRelay(sendMailData, attachments, false);
+        }
+        /// <summary>
+        /// Sens the mail relay.
+        /// </summary>
+        /// <param name="sendMailData">The send mail data.</param>
+        /// <returns></returns>
+        public static EmailResponse SenMailRelay(SendMailData sendMailData, IList<Attachment> attachments, bool readNotifaction)
+        {
+            if (sendMailData == null)
+            {
+                throw new ArgumentNullException("sendMailData");
+            }
+            if (attachments == null)
+            {
+                throw new ArgumentNullException("attachments");
+            }
             var client = new SmtpClient
             {
-                Port = 25,
-                Host = "smtp.gmail.com",
+                Port = Convert.ToInt32(sendMailData.EmailHostPort, CultureInfo.CurrentCulture),
+                Host = sendMailData.EmailHost,
                 Timeout = 10000,
                 EnableSsl = true,
                 DeliveryMethod = SmtpDeliveryMethod.Network,
                 UseDefaultCredentials = false,
                 Credentials = new System.Net.NetworkCredential(sendMailData.EmailAddressFrom, sendMailData.SendMailApiKey)
-            };
+            };  
             var mail = new MailMessage();
-            if (attachments != null) attachments.ForEach(at => mail.Attachments.Add(at));
+            if (readNotifaction)
+            {
+                mail.Headers.Add("Disposition-Notification-To", sendMailData.EmailAddressFrom);
+                mail.Headers.Add("Return-Receipt-To", sendMailData.EmailAddressFrom); 
+            }
+            if (attachments.Any())
+            {
+                foreach (var item in attachments)
+                {
+                    mail.Attachments.Add(item);
+                }
+            }
             mail.To.Add(new MailAddress(sendMailData.EmailAddressTo));
             mail.From = new MailAddress(sendMailData.EmailAddressFrom, sendMailData.NameEmail);
             mail.Subject = sendMailData.SubJect;
@@ -34,11 +67,11 @@
             try
             {
                 client.Send(mail);
-                return true;
+                return new EmailResponse { Ok = true, Message= string.Empty };
             }
-            catch (Exception )
+            catch (Exception ex )
             {
-                return false;
+                return new EmailResponse { Ok = false, Message = ex.Message };
             }
         }
     }

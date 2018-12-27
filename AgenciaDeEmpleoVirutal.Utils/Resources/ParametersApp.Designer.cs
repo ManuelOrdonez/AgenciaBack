@@ -61,6 +61,65 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
+        ///  &lt;head&gt;
+        ///		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///	&lt;/head&gt;	
+        ///  &lt;body&gt;
+        ///&lt;table&gt;
+        ///&lt;tbody&gt;
+        ///
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///
+        ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
+        /// {0} {1} {2}: Su solicitud fue cargada exitosamente, una vez revisada la documentación y el formulario único de postulación, le estaremos informando por éste medio si fue aceptada o rechazada la solicitud
+        ///  &lt;/p&gt;
+        ///  
+        ///&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;/tbody&gt;
+        ///&lt;/table&gt;  
+        ///  &lt;/body&gt;
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BodiMailRequestSubsidy {
+            get {
+                return ResourceManager.GetString("BodiMailRequestSubsidy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
+        ///  &lt;head&gt;
+        ///		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
+        ///	&lt;/head&gt;	
+        ///  &lt;body&gt;
+        ///&lt;table&gt;
+        ///&lt;tbody&gt;
+        ///
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///
+        ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
+        ///  Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
+        ///  &lt;br /&gt;&lt;br /&gt;
+        ///  Recibe un Cordial Saludo:
+        ///  &lt;br /&gt;&lt;br /&gt;
+        ///  Tu solicitud de subsidio {3}, acaba de pasar al estado {4}.
+        ///  &lt;br /&gt;&lt;br /&gt;
+        ///  Observaciones de la gestión: {5}
+        ///  &lt;/p&gt; [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BodyMailNotificationSubsidy {
+            get {
+                return ResourceManager.GetString("BodyMailNotificationSubsidy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;table&gt;
         ///&lt;tbody&gt;
         ///&lt;tr&gt;
@@ -104,34 +163,76 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///&lt;tbody&gt;
         ///&lt;tr&gt;
         ///&lt;td style=&quot;text-align: center;&quot;&gt;
-        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;&lt;/p&gt;
         ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
         ///&lt;/tr&gt;
         ///&lt;tr&gt;
         ///&lt;td colspan=&quot;2&quot;&gt;
-        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenc [rest of string was truncated]&quot;;.
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: has actualizado tus datos con exito.&lt;/p&gt;
+        ///&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;/tbody&gt;
+        ///&lt;/table&gt;.
         /// </summary>
-        public static string BodyMailWelcome {
+        public static string BodyMailUpate {
             get {
-                return ResourceManager.GetString("BodyMailWelcome", resourceCulture);
+                return ResourceManager.GetString("BodyMailUpate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
+        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0}&lt;/span&gt;&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a &lt;a href=&quot;www. [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BodyMailWelcomeCompany {
+            get {
+                return ResourceManager.GetString("BodyMailWelcomeCompany", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
-        ///	&lt;head&gt;
-        ///		&lt;title&gt;Mail-Token&lt;/title&gt;
+        ///  &lt;head&gt;
+        ///		&lt;title&gt;Welcome-Mail&lt;/title&gt;
         ///		&lt;meta charset=&quot;utf-8&quot;&gt;
         ///	&lt;/head&gt;	
-        ///	&lt;body&gt;
-        ///		&lt;div&gt;
-        ///			&lt;h1 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
-        ///			&lt;h2 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0}&lt;/h2&gt;
-        ///		&lt;/div&gt;
-        ///		&lt;div style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
-        ///			&lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
-        ///			&lt;ol&gt;
-        ///				&lt;li [rest of string was truncated]&quot;;.
+        ///  &lt;body&gt;
+        ///&lt;table&gt;
+        ///&lt;tbody&gt;
+        ///&lt;tr&gt;
+        ///&lt;td style=&quot;text-align: center;&quot;&gt;
+        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
+        ///&lt;/td&gt;
+        ///&lt;/tr&gt;
+        ///&lt;tr&gt;
+        ///&lt;td colspan=&quot;2&quot;&gt;
+        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. &lt;br /&gt;&lt;br /&gt; Recibe un Cordial Salud [rest of string was truncated]&quot;;.
+        /// </summary>
+        public static string BodyMailWelcomePerson {
+            get {
+                return ResourceManager.GetString("BodyMailWelcomePerson", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;table border=&quot;0&quot; style=&quot;width: 900px&quot;&gt;
+        ///	&lt;tbody&gt;
+        ///		&lt;tr style=&quot;background:#00425f&quot;&gt;
+        ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: center&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/colsubsidio_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
+        ///		&lt;/tr&gt;
+        ///		&lt;tr style=&quot;background:#00597c; padding: 10px;&quot;&gt;
+        ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: left&quot;&gt;&lt;img src=&quot;https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/agencia_de_empleo_logo.png&quot; alt=&quot;&quot;&gt;&lt;/td&gt;
+        ///		&lt;/tr&gt;
+        ///		&lt;tr&gt;
+        ///			&lt;td colspan= [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ContentPDIPdf {
             get {
@@ -199,6 +300,24 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         public static string SubjectPDI {
             get {
                 return ResourceManager.GetString("SubjectPDI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Subsidio Colsubsidio.
+        /// </summary>
+        public static string SubjectSubsidyRequest {
+            get {
+                return ResourceManager.GetString("SubjectSubsidyRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Actualización Exitosa Agencia de Empleo Virtual Colsubsidio..
+        /// </summary>
+        public static string SubJectUpdate {
+            get {
+                return ResourceManager.GetString("SubJectUpdate", resourceCulture);
             }
         }
         

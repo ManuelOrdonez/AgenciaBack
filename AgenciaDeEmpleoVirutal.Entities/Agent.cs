@@ -2,6 +2,9 @@
 {
     using Microsoft.WindowsAzure.Storage.Table;
 
+    /// <summary>
+    /// Agent Table
+    /// </summary>
     public class Agent : TableEntity
     {
         /// <summary>

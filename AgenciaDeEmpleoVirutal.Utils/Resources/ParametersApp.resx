@@ -144,60 +144,110 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   &lt;/p&gt;
 &lt;/div&gt;</value>
   </data>
-  <data name="BodyMailWelcome" xml:space="preserve">
+  <data name="BodyMailWelcomeCompany" xml:space="preserve">
     <value>&lt;table&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td style="text-align: center;"&gt;
 &lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Bienvenido&lt;/p&gt;
-&lt;span style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+&lt;span style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0}&lt;/span&gt;&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td colspan="2"&gt;
-&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a www.agenciadeempleocolsubsidio.com.co con tu usuario y contrase&amp;ntilde;a para conocer de nuestros servicios. Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a &lt;a href="www.agenciadeempleocolsubsidio.com"&gt;www.agenciadeempleocolsubsidio.com &lt;/a&gt; con tu usuario y contrase&amp;ntilde;a para conocer de nuestros servicios. Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
 &lt;/table&gt;</value>
   </data>
   <data name="ContentPDIPdf" xml:space="preserve">
-    <value>&lt;html lang="es"&gt;
-	&lt;head&gt;
-		&lt;title&gt;Mail-Token&lt;/title&gt;
-		&lt;meta charset="utf-8"&gt;
-	&lt;/head&gt;	
-	&lt;body&gt;
-		&lt;div&gt;
-			&lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Mi Plan de Desarrollo Integral&lt;/h1&gt;
-			&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0}&lt;/h2&gt;
-		&lt;/div&gt;
-		&lt;div style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
-			&lt;p&gt;Fecha: {1} &lt;br /&gt; Ortientado Por: {2}&lt;/p&gt;
-			&lt;ol&gt;
-				&lt;li&gt;Mis Competencias
-					&lt;ul&gt;
-					&lt;li&gt;Mis Fortalezas: &lt;br /&gt; &lt;p&gt;{3}&lt;/p&gt;&lt;/li&gt;
-					&lt;li&gt;Mis debilidades: &lt;br /&gt; &lt;p&gt;{4}&lt;/p&gt;&lt;/li&gt;
-					&lt;li&gt;Debo potencializar: &lt;br /&gt; &lt;p&gt;{5}&lt;/p&gt;&lt;/li&gt;
-					&lt;/ul&gt;
-				&lt;/li&gt;
-				&lt;li&gt;Fortaleciendo mis competencias
-					&lt;ul&gt;
-					&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; &lt;p&gt;{6}&lt;/p&gt;&lt;/li&gt;
-					&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; &lt;p&gt;{7}&lt;/p&gt;&lt;/li&gt;
-					&lt;/ul&gt;
-				&lt;/li&gt;
-				&lt;li&gt;Mi plan de b&amp;uacute;squeda de empleo
-					&lt;ul&gt;
-					&lt;li&gt;&amp;iquest;Qu&amp;eacute; ?: &lt;br /&gt; &lt;p&gt;{8}&lt;/p&gt;&lt;/li&gt;
-					&lt;li&gt;&amp;iquest;Cu&amp;aacute;ndo ?: &lt;br /&gt; &lt;p&gt;{9}&lt;/p&gt;&lt;/li&gt;
-					&lt;/ul&gt;
-				&lt;/li&gt;
-				&lt;li&gt;Observaciones: &lt;br /&gt; {10}&lt;/li&gt;
-			&lt;/ol&gt;
-		&lt;/div&gt;
-	&lt;/body&gt;
-&lt;/html&gt;</value>
+    <value>&lt;table border="0" style="width: 900px"&gt;
+	&lt;tbody&gt;
+		&lt;tr style="background:#00425f"&gt;
+			&lt;td colspan="7" style="text-align: center"&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/colsubsidio_logo.png" alt=""&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr style="background:#00597c; padding: 10px;"&gt;
+			&lt;td colspan="7" style="text-align: left"&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/agencia_de_empleo_logo.png" alt=""&gt;&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="7" style="padding: 10px; text-align: center; color:#00425f; font-size: 18px; font-family: sans-serif; font-weight: bold;"&gt;MI PLAN DE DESARROLLO INTEGRAL&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#666666; font-size: 13px; font-family: sans-serif; width: 20%"&gt;Nombre:&lt;/td&gt;
+			&lt;td colspan="4" style="font-weight: bold; text-align: left; color:#00425f; font-size: 15px; font-family: sans-serif; width: 80%"&gt;{0}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#666666; font-size: 13px; font-family: sans-serif; width: 20%"&gt;Fecha:&lt;/td&gt;
+			&lt;td colspan="4" style="font-weight: bold; text-align: left; color:#00425f; font-size: 15px; font-family: sans-serif; width: 80%"&gt;{1}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#666666; font-size: 13px; font-family: sans-serif; width: 20%"&gt;Orientado por:&lt;/td&gt;
+			&lt;td colspan="4" style="font-weight: bold; text-align: left; color:#00425f; font-size: 15px; font-family: sans-serif; width: 80%"&gt;{2}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="7" style="padding:40px 10px 10px 10px; text-align: left; color:#00425f; font-size: 16px; font-family: sans-serif; font-weight: 100;"&gt;1- Mis Competencias&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;Mis Fortalezas:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{3}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;Mis Debilidades:&lt;/td&gt;
+			&lt;td colspan="4"  style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{4}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;Debo potencializar:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{5}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="7" style="padding:40px 10px 10px 10px; text-align: left; color:#00425f; font-size: 16px; font-family: sans-serif; font-weight: 100;"&gt;2. Fortaleciendo mis competencias&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;&amp;iquest;Qu&amp;eacute; ?:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{6}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;&amp;iquest;Cu&amp;aacute;ndo ?:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{7}.&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="7" style="padding:40px 10px 10px 10px; text-align: left; color:#00425f; font-size: 16px; font-family: sans-serif; font-weight: 100;"&gt;3. Mi plan de b&amp;uacute;squeda de empleo&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;&amp;iquest;Qu&amp;eacute; ?:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{8}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;&amp;iquest;Cu&amp;aacute;ndo ?:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{9}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+			&lt;td colspan="3" style="text-align:right; color:#00425f; font-size: 15px; font-family: sans-serif; width: 30%"&gt;Observaciones:&lt;/td&gt;
+			&lt;td colspan="4" style="padding: 10px; text-align: justify; color:#666666;  font-size: 13px; font-family: sans-serif; width: 70%"&gt;{10}&lt;/td&gt;
+		&lt;/tr&gt;
+		&lt;tr&gt;
+		    &lt;td&gt;
+			&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/supersubsidio_logo.png" alt=""&gt;
+			&lt;/td&gt;
+			&lt;td&gt;
+			&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/Ministerio-Trabajo-Colombia.png" alt=""&gt;
+			&lt;/td&gt;
+			&lt;td&gt;
+			&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/Logo-Servicio-Empleo.png" alt=""&gt;
+			&lt;/td&gt;
+            &lt;td&gt;
+                &lt;a href=""&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/iconmonstr-linkedin-3-32.png" alt=""&gt;&lt;/a&gt;
+				&lt;/td&gt;
+			&lt;td&gt;
+                &lt;a href=""&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/iconmonstr-facebook-6-32.png" alt=""&gt;&lt;/a&gt;
+				&lt;/td&gt;
+			&lt;td&gt;
+                &lt;a href=""&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/iconmonstr-twitter-3-32.png" alt=""&gt;&lt;/a&gt;
+            &lt;/td&gt;
+		    &lt;td style="text-align: right;"&gt;&lt;img src="https://colsagenciavirtualprodweb.azurewebsites.net/assets/images/images/proteccion_logo.png" alt=""&gt;&lt;/td&gt;
+        &lt;/tr&gt;
+	&lt;/tbody&gt;
+&lt;/table&gt;</value>
   </data>
   <data name="EmailAddressFrom" xml:space="preserve">
     <value>colsubsidioprueba@gmail.com</value>
@@ -222,5 +272,106 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   </data>
   <data name="SubJectWelcome" xml:space="preserve">
     <value>Registro Exitoso Agencia de Empleo Virtual Colsubsidio.</value>
+  </data>
+  <data name="BodyMailUpate" xml:space="preserve">
+    <value>&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: center;"&gt;
+&lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;&lt;/p&gt;
+&lt;span style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: has actualizado tus datos con exito.&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;</value>
+  </data>
+  <data name="SubJectUpdate" xml:space="preserve">
+    <value>Actualización Exitosa Agencia de Empleo Virtual Colsubsidio.</value>
+  </data>
+  <data name="BodyMailWelcomePerson" xml:space="preserve">
+    <value>&lt;html lang="es"&gt;
+  &lt;head&gt;
+		&lt;title&gt;Welcome-Mail&lt;/title&gt;
+		&lt;meta charset="utf-8"&gt;
+	&lt;/head&gt;	
+  &lt;body&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="text-align: center;"&gt;
+&lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Bienvenido&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. &lt;br /&gt;&lt;br /&gt; Recibe un Cordial Saludo:&lt;br /&gt;&lt;br /&gt; El d&amp;iacute;a de hoy te damos la m&amp;aacute;s cordial bienvenida a la primera agencia de Empleo de Virtual. &lt;br /&gt;&lt;br /&gt; A partir de la fecha, nuestro objetivo es que &amp;ldquo;juntos&amp;rdquo;, podamos conseguir un empleo que se adapte a tu perfil y cumpla tus expectativas.&lt;br /&gt;&lt;br /&gt; No esperes m&amp;aacute;s para continuar con tu proceso. Ingresa a nuestra plataforma y confirmar tu registro e iniciar tu proceso de Orientaci&amp;oacute;n Laboral. &lt;br /&gt;&lt;br /&gt; A continuaci&amp;oacute;n relacionamos tu usuario y contrase&amp;ntilde;a.&lt;br /&gt;&lt;br /&gt; Usuario: {3} n&amp;uacute;mero {4}&lt;br /&gt; Contrase&amp;ntilde;a: {5}&lt;br /&gt;&lt;br /&gt; Para ingresar a nuestra agencia virtual e iniciar una llamada de orientaci&amp;oacute;n debes hacer click en el siguiente enlace: 
+  &lt;a href="www.agenciadeempleocolsubsidio.com"&gt;www.agenciadeempleocolsubsidio.com &lt;/a&gt;&lt;br /&gt;&lt;br /&gt; Diligencia tu usuario y contrase&amp;ntilde;a y selecciona la opci&amp;oacute;n: Hacer llamada &lt;br /&gt;&lt;br /&gt; Para cualquier duda o inquietud te invitamos a ponerte en contacto con nosotros a trav&amp;eacute;s de xxxxx. Nuestro grupo de orientadores est&amp;aacute;n esperando tu llamada.&lt;br /&gt;&lt;br /&gt; Cordialmente!&lt;br /&gt;&lt;br /&gt; Agencia de Empleo Colsubsidio&lt;br /&gt; Lo conseguimos Juntos&lt;/p&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;  
+  &lt;/body&gt;
+  &lt;/html&gt;</value>
+  </data>
+  <data name="BodiMailRequestSubsidy" xml:space="preserve">
+    <value>&lt;html lang="es"&gt;
+  &lt;head&gt;
+		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+		&lt;meta charset="utf-8"&gt;
+	&lt;/head&gt;	
+  &lt;body&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+
+  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+ {0} {1} {2}: Su solicitud fue cargada exitosamente, una vez revisada la documentación y el formulario único de postulación, le estaremos informando por éste medio si fue aceptada o rechazada la solicitud
+  &lt;/p&gt;
+  
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;  
+  &lt;/body&gt;
+  &lt;/html&gt;</value>
+  </data>
+  <data name="BodyMailNotificationSubsidy" xml:space="preserve">
+    <value>&lt;html lang="es"&gt;
+  &lt;head&gt;
+		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+		&lt;meta charset="utf-8"&gt;
+	&lt;/head&gt;	
+  &lt;body&gt;
+&lt;table&gt;
+&lt;tbody&gt;
+
+&lt;tr&gt;
+&lt;td colspan="2"&gt;
+
+  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+  Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
+  &lt;br /&gt;&lt;br /&gt;
+  Recibe un Cordial Saludo:
+  &lt;br /&gt;&lt;br /&gt;
+  Tu solicitud de subsidio {3}, acaba de pasar al estado {4}.
+  &lt;br /&gt;&lt;br /&gt;
+  Observaciones de la gestión: {5}
+  &lt;/p&gt;
+  
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;  
+  &lt;/body&gt;
+  &lt;/html&gt;</value>
+  </data>
+  <data name="SubjectSubsidyRequest" xml:space="preserve">
+    <value>Subsidio Colsubsidio</value>
   </data>
 </root>

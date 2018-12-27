@@ -6,6 +6,9 @@
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Interface of Call history trace business logic
+    /// </summary>
     public interface ICallHistoryTrace
     {
 
@@ -37,5 +40,7 @@
         Response<CallerInfoResponse> GetCallerInfo(string OpenTokSessionId);
 
         Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest);
+
+        Response<ResponseUrlRecord> GetRecordUrl(string RecordId);
     }
 }

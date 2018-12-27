@@ -8,17 +8,13 @@
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
-    using DinkToPdf.Contracts;
+    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Moq;
     using System.Collections.Generic;
 
     public class UserBlTestBase : BusinessBase<User>
     {
-        protected Mock<IGenericQueue> QueueMock;
-
-        protected Mock<IConverter> ConverterInterface;
-
         protected Mock<IGenericRep<PDI>> PDIRepMoq;
 
         protected Mock<IGenericRep<User>> UserRepMoq;
@@ -29,7 +25,7 @@
 
         protected Mock<ISendGridExternalService> SendMailServiceMoq;
 
-        protected Mock<IOpenTokExternalService> _openTokExternalService;
+        protected Mock<IOpenTokExternalService> OpenTokExternalService;
 
         protected UserBl UserBusiness;
 
@@ -47,61 +43,72 @@
 
         protected LogOutRequest RequestLogOut;
 
+        protected BusyAgent BusyAgentMock;
+
         private IOptions<UserSecretSettings> options;
 
         protected readonly UserSecretSettings _settings;
 
         public UserBlTestBase()
         {
-            QueueMock = new Mock<IGenericQueue>();
-            ConverterInterface = new Mock<IConverter>();
             PDIRepMoq = new Mock<IGenericRep<PDI>>();
-            options = Options.Create(new UserSecretSettings());
+            options = Options.Create(new UserSecretSettings { LdapFlag = true });
             _settings = options.Value;
             UserRepMoq = new Mock<IGenericRep<User>>();
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
-            UserBusiness = new UserBl(UserRepMoq.Object,
+            OpenTokExternalService = new Mock<IOpenTokExternalService>();
+            UserBusiness = new UserBl(
+                UserRepMoq.Object,
                 LdapServicesMoq.Object, 
                 SendMailServiceMoq.Object, 
                 options, 
-                _openTokExternalService.Object,
-                PDIRepMoq.Object, 
-                ConverterInterface.Object,
-                QueueMock.Object,
+                OpenTokExternalService.Object,
+                PDIRepMoq.Object,
                 BusyRepMoq.Object);
             LoadEntitiesMock();
         }
 
         private void LoadEntitiesMock()
         {
+            BusyAgentMock = new BusyAgent()
+            {
+                AgentSession = "5145614561",
+                UserNameAgent = "6541561456_2"
+            };
+
             RequestUserAuthenticate = new AuthenticateUserRequest()
             {
                 UserType = "Cesante",
                 TypeDocument = "2",
                 NoDocument = "12334455",
-                Password = "12345678",
-                DeviceId = "abcdefghijk"
+                Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==",
+                DeviceId = "asdasdasdasdas",
+                DeviceType = "WEB"
             };
 
             UserInfoMock = new User()
             {
+                PartitionKey = "cesante",
                 LastName = "Gil Garnica",
                 Name = "Juan Sebastian",
                 Position = "Auxiliar",
                 Role = "Auxiliar",
                 State = "Enable",
                 Email = "jgilg@colsubsidio.com",
-                UserType = "Cesante"
+                UserType = "cesante",
+                UserName = "541564564_2"
             };
 
             LdapResult = new LdapServicesResult<AuthenticateLdapResult>()
             {
-                data = new List<AuthenticateLdapResult>()
+                Data = new List<AuthenticateLdapResult>()
                 {
-                    new AuthenticateLdapResult() { Successurl = "success"}
-                }
+                    new AuthenticateLdapResult() { successUrl = "success"}
+                },
+                Code = (int)ServiceResponseCode.Success,
+                Estado = "0000"
             };
 
             RequestRegisterUser = new RegisterUserRequest()
@@ -120,9 +127,13 @@
                 Name = "pepe",
                 NoDocument = "123345667899",
                 OnlyAzureRegister = false,
-                Password = "12345678",
+                Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==",
                 SocialReason = "Razon Social",
-                TypeDocument = "Cedula Ciudadania"
+                TypeDocument = "Cedula Ciudadania",
+                DegreeGeted = "Test",
+                EducationLevel = "Test",
+                PositionContact = "Test",
+                DeviceType = "WEB"
             };
 
             RequestIsAuthenticate = new IsAuthenticateRequest()

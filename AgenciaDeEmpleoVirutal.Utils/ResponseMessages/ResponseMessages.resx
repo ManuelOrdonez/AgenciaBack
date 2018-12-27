@@ -127,16 +127,22 @@
     <value>Error en los siguientes campos: {0}{1}</value>
   </data>
   <data name="DeviceNotFound" xml:space="preserve">
-    <value>El dispocitivo no se encuentra registrado</value>
+    <value>El dispositivo no se encuentra registrado</value>
   </data>
   <data name="EmailAddress_FormatEmail" xml:space="preserve">
     <value>El Correo no es valido</value>
+  </data>
+  <data name="ErrorRequest" xml:space="preserve">
+    <value>Error request.</value>
   </data>
   <data name="ErrorSendMail" xml:space="preserve">
     <value>Error enviando el correo</value>
   </data>
   <data name="ExpiredtokenRPassword" xml:space="preserve">
     <value>Token de recordación de contraseña expiro solicite uno nuevo</value>
+  </data>
+  <data name="HaveNotSubsidyRequest" xml:space="preserve">
+    <value>No hay solicitudes de subsidio activas</value>
   </data>
   <data name="IncorrectPassword" xml:space="preserve">
     <value>Contraseña Incorrecta</value>
@@ -156,6 +162,9 @@
   <data name="IsNotRegisterInLdap" xml:space="preserve">
     <value>Autenticación fallida</value>
   </data>
+  <data name="NotUpdate" xml:space="preserve">
+    <value>No realizaste alguna actualización en nuestro sistema</value>
+  </data>
   <data name="ParameterNotFound" xml:space="preserve">
     <value>Parametro no registrado.</value>
   </data>
@@ -167,6 +176,9 @@
   </data>
   <data name="ServiceExternalError" xml:space="preserve">
     <value>Error inesperado en un servicio externo, por favor intentar mas tarde.</value>
+  </data>
+  <data name="SubsidyInProcess" xml:space="preserve">
+    <value>El subsidio se encuentra en proceso</value>
   </data>
   <data name="Success" xml:space="preserve">
     <value>Operación realizada correctamente.</value>
@@ -192,10 +204,19 @@
   <data name="UserDoNotHaveCalls" xml:space="preserve">
     <value>El Usuario No tiene Llamadas Registradas</value>
   </data>
+  <data name="UserHaveNotSubsidyRequest" xml:space="preserve">
+    <value>Usuario no tiene solicitudes de subsidio.</value>
+  </data>
   <data name="UserIsNotVip" xml:space="preserve">
     <value>Usuario no autorizado.</value>
   </data>
   <data name="UserNotFound" xml:space="preserve">
     <value>Usuario no encontrado.</value>
+  </data>
+  <data name="UserOrEmailNotRepuest" xml:space="preserve">
+    <value>Nombre de usuario o correo electrónico no proporcionado en la petición.</value>
+  </data>
+  <data name="UserWithoutPDI" xml:space="preserve">
+    <value>El usuario no tiene PDI asociado</value>
   </data>
 </root>

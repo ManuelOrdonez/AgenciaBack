@@ -216,4 +216,34 @@
   <data name="PDIField_Required" xml:space="preserve">
     <value>Todos los campos del PDI son requeridos</value>
   </data>
+  <data name="Category_Required" xml:space="preserve">
+    <value>Categoria Requerida</value>
+  </data>
+  <data name="IdParameter__Required" xml:space="preserve">
+    <value>Id Parametro Requerido</value>
+  </data>
+  <data name="ValueParameter_Required" xml:space="preserve">
+    <value>Valor parametro rerquerido</value>
+  </data>
+  <data name="EndDate_Required" xml:space="preserve">
+    <value>Fecha fin requerida</value>
+  </data>
+  <data name="StartDate_Required" xml:space="preserve">
+    <value>Fecha Inicio requerida</value>
+  </data>
+  <data name="NoSubsidyRequest_Required" xml:space="preserve">
+    <value>El número de solicitud de subsidio es requerido</value>
+  </data>
+  <data name="Reviewer_Required" xml:space="preserve">
+    <value>El nombre de usuario del funcionario es requerido</value>
+  </data>
+  <data name="StateSubsid_Required" xml:space="preserve">
+    <value>El estado de la solicitud de subsidio es requerido</value>
+  </data>
+  <data name="ObservationsSubsidy_Request" xml:space="preserve">
+    <value>El campo observaciones es obligatorio</value>
+  </data>
+  <data name="NumberSapSubsidy_Request" xml:space="preserve">
+    <value>El campo número Sap es requerido</value>
+  </data>
 </root>

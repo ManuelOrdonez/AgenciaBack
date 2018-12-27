@@ -4,11 +4,9 @@
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils;
-    using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -24,8 +22,9 @@
                 UserType = "Cesante",
                 TypeDocument = "",
                 NoDocument = "",
-                Password = "12345678",                
-                DeviceId = "123"
+                Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==",                
+                DeviceId = "asdasdasdasdas",
+                DeviceType = "WEB"
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<AuthenticateUserResponse>(message);
@@ -47,7 +46,8 @@
                 TypeDocument = "2",
                 NoDocument = "12334455",
                 Password = "",
-                DeviceId = "123"
+                DeviceId = "asdasdasdasdas",
+                DeviceType = "WEB"
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<AuthenticateUserResponse>(message);
@@ -68,8 +68,9 @@
                 UserType = "Cesante",
                 TypeDocument = "",
                 NoDocument = "",
-                Password = "",
-                DeviceId = "123"
+                Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==",
+                DeviceId = "asdasdasdasdas",
+                DeviceType = "WEB"
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<AuthenticateUserResponse>(message);
@@ -90,8 +91,9 @@
                 UserType = "Cesante",
                 TypeDocument = "2",
                 NoDocument = "12334455",
-                Password = "123",
-                DeviceId = "123"
+                Password = "yGd",
+                DeviceId = "asdasdasdasdas",
+                DeviceType = "WEB"
             };
             var message = request.Validate().ToList();
             var expected = ResponseBadRequest<AuthenticateUserResponse>(message);
@@ -107,9 +109,8 @@
         public void AuthenticateUsersTest_WhenFuncionaryIsNotRegisterInTableStorage_ReturnError()
         {
             ///Arrange
-            UserInfoMock = null;
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
-            RequestUserAuthenticate.UserType = "Funcionario";
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
+            RequestUserAuthenticate.UserType = "funcionario";
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
@@ -124,7 +125,7 @@
         {
             ///Arrange
             UserInfoMock.State = "Disable";
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
             RequestUserAuthenticate.UserType = "Funcionario";
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
             ///Action
@@ -139,10 +140,12 @@
         public void AuthenticateUsersTest_WhenPassPfFuncionaryIsWorng_ReturnError()
         {
             ///Arrange
-            UserInfoMock.Password = "12345678";
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserInfoMock.Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==";
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
+            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
+            UserRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
             RequestUserAuthenticate.UserType = "Funcionario";
-            RequestUserAuthenticate.Password = "87654321";
+            RequestUserAuthenticate.Password = "raQT/6CDmpLR4LrJQ+JcDamqMRSWI4o2w3+rUbwEJe+PJmKb0+Xvc4ALrjkmdevM";
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
@@ -153,12 +156,13 @@
         }
 
         [TestMethod, TestCategory("UserBl")]
-        public void AuthenticateUsersTest_WhenUserIsNotRegisterInLdap_ReturnError()
+        public void AuthenticateUsersTest_WhenUserIsNotRegisterInAz_ReturnError()
         {
-            LdapResult.data.First().Successurl = "Error";
+            LdapResult.Code = (int)ServiceResponseCode.IsNotRegisterInAz;
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
-            var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInLdap);
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
+            /// BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
+            var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
             ///Assert
@@ -172,25 +176,8 @@
         {
             ///Arrange
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
-            UserInfoMock = null;
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-            ///Action
-            var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
-            ///Assert
-            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.IsFalse(result.TransactionMade);
-        }
-
-        [TestMethod, TestCategory("UserBl")]
-        public void AuthenticateUsersTest_WhenUserIsDisable_ReturnError()
-        {
-            ///Arrange
-            LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
-            UserInfoMock.State = "Disable";
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
-            var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
             ///Assert
@@ -204,7 +191,8 @@
         {
             ///Arrange
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
+            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             UserRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
             var expected = ResponseFail<AuthenticateUserResponse>();
             ///Action
@@ -220,7 +208,8 @@
         {
             ///Arrange
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
-            UserRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserInfoMock);
+            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
+            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             UserRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
 
             UserInfoMock.Authenticated = true;
@@ -231,7 +220,10 @@
             {
                 new AuthenticateUserResponse()
                 {
-                    UserInfo = UserInfoMock
+                    AuthInfo = UserBusiness.SetAuthenticationToken(UserInfoMock.UserName),
+                    UserInfo = UserInfoMock,
+                    OpenTokApiKey = _settings.OpenTokApiKey,
+                    OpenTokAccessToken = string.Empty,
                 }
             };
 
