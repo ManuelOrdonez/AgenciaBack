@@ -29,6 +29,11 @@
         protected Mock<ISendGridExternalService> _sendMailServiceMock;
 
         /// <summary>
+        /// Interface of ldap services
+        /// </summary>
+        protected Mock<ILdapServices> _LdapServices;
+
+        /// <summary>
         /// Subsidy Request Mock
         /// </summary>
         protected SubsidyRequest SubsidyRequestMock;
@@ -48,8 +53,9 @@
             _sendMailServiceMock = new Mock<ISendGridExternalService>();
             _subsidyRepMock = new Mock<IGenericRep<Subsidy>>();
             _userRepMock = new Mock<IGenericRep<User>>();
+            _LdapServices = new Mock<ILdapServices>();
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
-            subsidyBusinessLogic = new SubsidyBl(_subsidyRepMock.Object, _userRepMock.Object, options, _sendMailServiceMock.Object);
+            subsidyBusinessLogic = new SubsidyBl(_subsidyRepMock.Object, _userRepMock.Object, options, _sendMailServiceMock.Object, _LdapServices.Object);
             SetEntitiesMocks();
         }
 

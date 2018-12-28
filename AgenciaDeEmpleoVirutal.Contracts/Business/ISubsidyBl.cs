@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Contracts.Business
 {
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -41,8 +42,22 @@
         /// <summary>
         /// Get subsidies user.
         /// </summary>
-        /// <param name="userName"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request);
+
+        /// <summary>
+        /// Request status.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Response<RequestStatusResponse> RequestStatus(FosfecRequest request);
+
+        /// <summary>
+        /// Benefits Payable.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        Response<BenefitsPayableResponse> BenefitsPayable(FosfecRequest request);
     }
 }
