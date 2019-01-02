@@ -108,10 +108,11 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///  &lt;br /&gt;&lt;br /&gt;
         ///  Recibe un Cordial Saludo:
         ///  &lt;br /&gt;&lt;br /&gt;
-        ///  Tu solicitud de subsidio {3}, acaba de pasar al estado {4}.
+        ///  Tu solicitud de subsidio, acaba de pasar al estado {4}.
         ///  &lt;br /&gt;&lt;br /&gt;
         ///  Observaciones de la gestión: {5}
-        ///  &lt;/p&gt; [rest of string was truncated]&quot;;.
+        ///  &lt;/p&gt;
+        ///   [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailNotificationSubsidy {
             get {
