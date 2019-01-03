@@ -296,14 +296,13 @@
             };
             SetHeadersLdapService(webClient, requestAccessToken);
 
-            string parameters = JsonConvert.SerializeObject(request);
             RequestStatusResult result = new RequestStatusResult();
 
             using (WebClient context = webClient)
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<RequestStatusResult>(context.DownloadString(string.Format("{0}/empleo/fosfec/solicitud/estado?tipoId={1}&numId={2}",
+                    result = JsonConvert.DeserializeObject<RequestStatusResult>(context.DownloadString(string.Format("{0}/solicitud/estado?tipoId={1}&numId={2}",
                         _apigeeFosfec, request.CodTypeDocument, request.NoDocument)));
                     result.Code = (int)ServiceResponseCode.Success;
                 }
@@ -332,7 +331,6 @@
             };
             SetHeadersLdapService(webClient, requestAccessToken);
 
-            string parameters = JsonConvert.SerializeObject(request);
             BenefitsPayableResult result = new BenefitsPayableResult();
 
             using (WebClient context = webClient)
