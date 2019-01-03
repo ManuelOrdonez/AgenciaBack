@@ -50,6 +50,11 @@
         private readonly string _clientSecretLdapPass;
 
         /// <summary>
+        /// Api key of apigeeFosfec.
+        /// </summary>
+        private readonly string _apigeeFosfec;
+
+        /// <summary>
         /// Class Constructor
         /// </summary>
         /// <param name="options"></param>
@@ -61,6 +66,7 @@
             _urlAccessToken = options?.Value.UrlAccessToken;
             _clientIdLdapPass = options?.Value.ClientIdLdapPass;
             _clientSecretLdapPass = options?.Value.ClienteSecretoLdapPass;
+            _apigeeFosfec = options?.Value.UrlApigeeFosfec;
         }
 
         /// <summary>
@@ -140,7 +146,7 @@
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url, "POST", parameters));
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url, HttpPost, parameters));
                 }
                 catch (WebException ex)
                 {
@@ -192,7 +198,7 @@
             {
                 try
                 {
-                    var content = context.UploadString(Url + "/Forgot/Password", "PUT", parameters);
+                    var content = context.UploadString(Url + "/Forgot/Password", HttpPut, parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
                     result.Code = 200;
                 }
@@ -245,7 +251,7 @@
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/Forgot/PasswordReset", "PUT", parameters));
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/Forgot/PasswordReset", HttpPut, parameters));
                     result.Code = 200;
                 }
                 catch (WebException ex)
@@ -269,6 +275,78 @@
                         result.Code = (int)ServiceResponseCode.ServiceExternalError;
                         return result;
                     }
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Operation to Request Status in LDAP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public RequestStatusResult RequestStatus(FosfecRequest request)
+        {
+            var webClient = new WebClient();
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdapPass,
+                clienteSecreto = _clientSecretLdapPass
+            };
+            SetHeadersLdapService(webClient, requestAccessToken);
+
+            string parameters = JsonConvert.SerializeObject(request);
+            RequestStatusResult result = new RequestStatusResult();
+
+            using (WebClient context = webClient)
+            {
+                try
+                {
+                    result = JsonConvert.DeserializeObject<RequestStatusResult>(context.DownloadString(string.Format("{0}/empleo/fosfec/solicitud/estado?tipoId={1}&numId={2}",
+                        _apigeeFosfec, request.CodTypeDocument, request.NoDocument)));
+                    result.Code = (int)ServiceResponseCode.Success;
+                }
+                catch (WebException ex)
+                {
+                    result.Code = (int)ServiceResponseCode.ServiceExternalError;
+                    return result;
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Operation to Benefits Payable in LDAP
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public BenefitsPayableResult BenefitsPayable(FosfecRequest request)
+        {
+            var webClient = new WebClient();
+
+            var requestAccessToken = new AccessTokenRequest
+            {
+                clienteId = _clientIdLdapPass,
+                clienteSecreto = _clientSecretLdapPass
+            };
+            SetHeadersLdapService(webClient, requestAccessToken);
+
+            string parameters = JsonConvert.SerializeObject(request);
+            BenefitsPayableResult result = new BenefitsPayableResult();
+
+            using (WebClient context = webClient)
+            {
+                try
+                {
+                    result = JsonConvert.DeserializeObject<BenefitsPayableResult>(context.DownloadString(string.Format("{0}/beneficiosporpagar?tipoId={1}&numId={2}&codigoEstablecimiento={3}",
+                        _apigeeFosfec, request.CodTypeDocument, request.NoDocument, "1229")));
+                    result.Code = (int)ServiceResponseCode.Success;
+                }
+                catch (WebException ex)
+                {
+                    result.Code = (int)ServiceResponseCode.ServiceExternalError;
+                    return result;
                 }
             }
             return result;

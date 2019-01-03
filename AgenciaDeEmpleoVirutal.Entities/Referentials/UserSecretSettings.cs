@@ -78,5 +78,10 @@
         /// Gets or sets the ClienteSectretoLdap password.
         /// </summary>
         public string ClienteSecretoLdapPass { get; set; }
+
+        /// <summary>
+        /// Gets or sets the UrlApigeeFosfec.
+        /// </summary>
+        public string UrlApigeeFosfec { get; set; }
     }
 }

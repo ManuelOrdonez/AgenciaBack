@@ -5,6 +5,7 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -48,9 +49,16 @@
         private readonly ISendGridExternalService _sendMailService;
 
         /// <summary>
+        /// Interface of ldap services
+        /// </summary>
+        private readonly ILdapServices _LdapServices;
+
+        /// <summary>
         /// Constructor's Subsidy Business logic
         /// </summary>
-        public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep, IOptions<UserSecretSettings> options, ISendGridExternalService sendMailService)
+        public SubsidyBl(IGenericRep<Subsidy> subsidyRep, IGenericRep<User> userRep,
+            IOptions<UserSecretSettings> options, ISendGridExternalService sendMailService,
+            ILdapServices LdapServices)
         {
             if (options == null)
             {
@@ -61,6 +69,7 @@
             _subsidyRep = subsidyRep;
             _userRep = userRep;
             _UserSecretSettings = options.Value;
+            _LdapServices = LdapServices;
         }
 
         /// <summary>
@@ -334,7 +343,7 @@
                 };
                 query.Add(condition);
             }
-            
+
             if (!string.IsNullOrEmpty(request.UserName))
             {
                 var condition = new ConditionParameter
@@ -384,7 +393,7 @@
             if (subsidies.Count == 0 || subsidies is null)
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
-            }    
+            }
 
             var result = new List<GetSubsidyResponse>();
 
@@ -394,24 +403,99 @@
                 var agentSub = this.getUserActive(sub.Reviewer);
                 result.Add(new GetSubsidyResponse
                 {
-                    UserName=sub.UserName,
-                    Name = userSub.Name+" "+userSub.LastName,
+                    UserName = sub.UserName,
+                    Name = userSub.Name + " " + userSub.LastName,
                     TypeDoc = userSub.TypeDocument,
-                    NumberDoc= userSub.NoDocument,
+                    NumberDoc = userSub.NoDocument,
                     DateTime = sub.DateTime,
-                    DateChange=sub.Timestamp,
+                    DateChange = sub.Timestamp,
                     Observations = sub.Observations,
                     Reviewer = sub.Reviewer,
                     State = sub.State,
                     NoSubsidyRequest = sub.NoSubsidyRequest,
                     User = userSub,
                     NumberSap = sub.NumberSap,
-                    AgentName= agentSub?.Name + " " + agentSub?.LastName,
+                    AgentName = agentSub?.Name + " " + agentSub?.LastName,
                     FilesPhat = this.GetDocumentsByUser(sub.UserName, sub.NoSubsidyRequest)
                 });
             }
 
             return ResponseSuccess<GetSubsidyResponse>(result);
+        }
+
+        /// <summary>
+        /// Request Status.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Response<RequestStatusResponse> RequestStatus(FosfecRequest request)
+        {
+            var errorsMessage = request.Validate().ToList();
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<RequestStatusResponse>(errorsMessage);
+            }
+
+            //// Homologar tipo documento
+            request.CodTypeDocument = EnumValues.GetDescriptionFromValue((TypeDocumentLdap)int.Parse(request.CodTypeDocument));
+
+            var result = _LdapServices.RequestStatus(request);
+            if (result.Code != (int)ServiceResponseCode.Success)
+            {
+                return ResponseFail<RequestStatusResponse>(ServiceResponseCode.ServiceExternalError);
+            }
+
+            var response = new List<RequestStatusResponse>
+            {
+                new RequestStatusResponse
+                {
+                    causal = result.solicitud.FirstOrDefault().estadoSolicitud.causal,
+                    codigo = result.solicitud.FirstOrDefault().estadoSolicitud.codigo,
+                    descripcion = result.solicitud.FirstOrDefault().estadoSolicitud.descripcion,
+                    fecha = result.solicitud.FirstOrDefault().estadoSolicitud.fecha
+                }
+            };
+
+            return ResponseSuccess<RequestStatusResponse>(response);
+        }
+
+        /// <summary>
+        /// Benefits Payable.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public Response<BenefitsPayableResponse> BenefitsPayable(FosfecRequest request)
+        {
+            var errorsMessage = request.Validate().ToList();
+            if (errorsMessage.Count > 0)
+            {
+                return ResponseBadRequest<BenefitsPayableResponse>(errorsMessage);
+            }
+
+            //// Homologar tipo documento
+            request.CodTypeDocument = EnumValues.GetDescriptionFromValue((TypeDocumentLdap)int.Parse(request.CodTypeDocument));
+
+            var result = _LdapServices.BenefitsPayable(request);
+            if (result.Code != (int)ServiceResponseCode.Success)
+            {
+                return ResponseFail<BenefitsPayableResponse>(ServiceResponseCode.ServiceExternalError);
+            }
+
+            var response = new List<BenefitsPayableResponse>();
+           
+            foreach (var item in result.beneficio.FirstOrDefault().beneficioPorPagar)
+            {
+                response.Add(new BenefitsPayableResponse
+                {
+                    cuenta = item.cuenta,
+                    fechaVencimiento = item.fechaVencimiento,
+                    sucursal = item.sucursal,
+                    valorAlimentacion = item.valorAlimentacion,
+                    valorCuotaModeradora = item.valorCuotaModeradora
+                });
+            }
+
+            return ResponseSuccess<BenefitsPayableResponse>(response);
         }
     }
 }

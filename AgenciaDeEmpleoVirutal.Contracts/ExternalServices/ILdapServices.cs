@@ -36,5 +36,19 @@
         /// <param name="request"></param>
         /// <returns></returns>
         LdapServicesResult<AuthenticateLdapResult> PasswordChangeConfirm(PasswordChangeConfirmRequests request);
+
+        /// <summary>
+        /// Method to Request Status.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        RequestStatusResult RequestStatus(FosfecRequest request);
+
+        /// <summary>
+        /// Method to Benefits Payable.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        BenefitsPayableResult BenefitsPayable(FosfecRequest request);
     }
 }

@@ -2,6 +2,7 @@
 {
     using AgenciaDeEmpleoVirutal.Contracts.Business;
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -94,6 +95,32 @@
         public IActionResult GetSubsidiesUser([FromBody]  GetAllSubsidiesRequest request)
         {
             return Ok(_subsidyBussines.GetSubsidiesUser(request));
+        }
+
+        /// <summary>
+        /// Operation to Request Status.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("RequestStatus")]
+        [Produces(typeof(Response<RequestStatusResponse>))]
+        public IActionResult RequestStatus([FromBody]  FosfecRequest request)
+        {
+            return Ok(_subsidyBussines.RequestStatus(request));
+        }
+
+        /// <summary>
+        /// Operation to Benefits Payable.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route("BenefitsPayable")]
+        [Produces(typeof(Response<BenefitsPayableResponse>))]
+        public IActionResult BenefitsPayable([FromBody]  FosfecRequest request)
+        {
+            return Ok(_subsidyBussines.BenefitsPayable(request));
         }
     }
 }
