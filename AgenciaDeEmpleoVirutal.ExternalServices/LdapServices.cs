@@ -338,7 +338,7 @@
                 try
                 {
                     result = JsonConvert.DeserializeObject<BenefitsPayableResult>(context.DownloadString(string.Format("{0}/beneficiosporpagar?tipoId={1}&numId={2}&codigoEstablecimiento={3}",
-                        _apigeeFosfec, request.CodTypeDocument, request.NoDocument, "1229")));
+                        _apigeeFosfec, request.CodTypeDocument, request.NoDocument, string.Empty)));
                     result.Code = (int)ServiceResponseCode.Success;
                 }
                 catch (WebException ex)
