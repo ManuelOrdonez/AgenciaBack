@@ -13,7 +13,7 @@
     /// </summary>
     [Produces("application/json")]
     [Route("api/Log")]
-    [Authorize]
+    // [Authorize]
     [EnableCors("CorsPolitic")]
     public class LogController : Controller
     {
