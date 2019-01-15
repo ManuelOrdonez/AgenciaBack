@@ -755,7 +755,7 @@
             return new AuthenticationToken
             {
                 TokenType = "Bearer",
-                Expiration = DateTime.Now.AddMinutes(60),
+                Expiration = DateTime.Now.AddDays(1),
                 AccessToken = ManagerToken.GenerateToken(username),
             };
         }
