@@ -193,11 +193,12 @@
         private byte[] GenarateContentPdi(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert();
-            RequestPDF.ContentHtml = string.Format(CultureInfo.CurrentCulture, ParametersApp.ContentPDIPdf,
+            string html = string.Format(CultureInfo.CurrentCulture, ParametersApp.ContentPDIPdf,
                     pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
                     string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations);
+            RequestPDF.ContentHtml = html.Replace("\"", "'");
             byte[] result;                        
             try
             {
