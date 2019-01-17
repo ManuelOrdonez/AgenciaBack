@@ -238,11 +238,7 @@
                     user = item;
                 }
             }
-            if (lUser.Count > 0)
-            {
-                user = lUser[0];
-            }
-
+            
             var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);
 
             response = new List<AuthenticateUserResponse>
