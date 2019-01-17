@@ -5,7 +5,9 @@
     using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using Microsoft.Extensions.Options;
     using Moq;
 
     public class PdiBlTestBase : BusinessBase<PDI>
@@ -54,7 +56,8 @@
             _pdiRepMock = new Mock<IGenericRep<PDI>>();
             _userRepMock = new Mock<IGenericRep<User>>();
             _sendMailServiceMock = new Mock<ISendGridExternalService>();
-            pdiBusinessLogic = new PdiBl(_pdfConvertServiceMock.Object, _pdiRepMock.Object, _userRepMock.Object, _sendMailServiceMock.Object);
+            IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
+            pdiBusinessLogic = new PdiBl(_pdfConvertServiceMock.Object, _pdiRepMock.Object, _userRepMock.Object, _sendMailServiceMock.Object, options);
             SetEntitiesMocks();
         }
 
