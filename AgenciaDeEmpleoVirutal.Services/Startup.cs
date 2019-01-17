@@ -64,7 +64,7 @@
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("the secret code.")),
                     ValidateLifetime = true, /// validate the expiration and not before values in the token
-                    ClockSkew = TimeSpan.FromMinutes(15) /// 15 minute tolerance for the expiration date
+                    ClockSkew = TimeSpan.FromDays(1) /// 15 minute tolerance for the expiration date
                 };
             });
 
