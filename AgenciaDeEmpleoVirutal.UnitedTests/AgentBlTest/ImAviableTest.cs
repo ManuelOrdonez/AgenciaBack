@@ -1,6 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.AgentBlTest
 {
     using AgenciaDeEmpleoVirutal.Entities;
+    using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
@@ -42,10 +43,22 @@
         public void ImAviable_WhenAllFieldsAreSuccess_ReturnSuccess()
         {
             ///Arrange
-            AgentRepMoq.Setup(a => a.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
-            var expected = ResponseSuccess(new List<User> { UserMoq });
+            ///       
+            var response = new List<AuthenticateUserResponse>()
+            {
+                new AuthenticateUserResponse()
+                {
+                    UserInfo = UserMoq,
+                    OpenTokAccessToken = string.Empty,
+                }
+            };
+
+            AgentRepMoq.Setup(a => a.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(
+                new List<User> { UserMoq });
+            var expected = ResponseSuccess(response);
             ///Action
             var result = AgentBussinesLogic.ImAviable(AviableUserRequest);
+
             ///Assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
