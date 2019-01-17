@@ -83,5 +83,10 @@
         /// Gets or sets the UrlApigeeFosfec.
         /// </summary>
         public string UrlApigeeFosfec { get; set; }
+
+        /// <summary>
+        /// Gets or sets the URLFront.
+        /// </summary>
+        public string URLFront { get; set; }
     }
 }

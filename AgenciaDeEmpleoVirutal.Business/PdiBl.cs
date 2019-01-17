@@ -13,12 +13,15 @@
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.Resources;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
+    using Microsoft.Extensions.Options;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
     using System.Linq;
+    using System.Net.Http;
     using System.Net.Mail;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Pdi Business Logic
@@ -45,6 +48,12 @@
         /// </summary>
         private readonly ISendGridExternalService _sendMailService;
 
+
+        /// <summary>
+        /// User Secret Settings
+        /// </summary>
+        private readonly UserSecretSettings _UserSecretSettings;
+
         /// <summary>
         /// Class constructor
         /// </summary>
@@ -56,12 +65,19 @@
             IPdfConvertExternalService pdfConvertService,
             IGenericRep<PDI> pdiRep, 
             IGenericRep<User> userRep,
-            ISendGridExternalService sendMailService)
+            ISendGridExternalService sendMailService,
+            IOptions<UserSecretSettings> options)
         {
+            if (options == null)
+            {
+                throw new ArgumentNullException("options");
+            }
+
             _pdfConvertService = pdfConvertService;
             _pdiRep = pdiRep;
             _userRep = userRep;
             _sendMailService = sendMailService;
+            _UserSecretSettings = options.Value;
         }
 
         /// <summary>
@@ -193,11 +209,22 @@
         private byte[] GenarateContentPdi(PDI pdi)
         {
             var RequestPDF = new RequestPdfConvert();
+            var urlFront = _UserSecretSettings.URLFront;
             string html = string.Format(CultureInfo.CurrentCulture, ParametersApp.ContentPDIPdf,
                     pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
-                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations);
+                    string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations,
+                   this.GetImageAsBase64Url(urlFront+"/assets/images/images/colsubsidio_logo.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/agencia_de_empleo_logo.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/supersubsidio_logo.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/Ministerio-Trabajo-Colombia.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/Logo-Servicio-Empleo.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-linkedin-3-32.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-facebook-6-32.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-twitter-3-32.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/proteccion_logo.png").Result
+                   );
             RequestPDF.ContentHtml = html.Replace("\"", "'");
             byte[] result;                        
             try
@@ -216,6 +243,22 @@
             return result;
         }
 
+
+        /// <summary>
+        /// To base 64
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public async Task<string> GetImageAsBase64Url(string url)
+        {
+            using (var handler = new HttpClientHandler())
+            using (var client = new HttpClient(handler))
+            {
+                var bytes = await client.GetByteArrayAsync(url);
+                var image= "data:image/png;base64," + Convert.ToBase64String(bytes);
+                return image;
+            }
+        }
         /// <summary>
         /// Method to Set Fields Of PDI
         /// </summary>
