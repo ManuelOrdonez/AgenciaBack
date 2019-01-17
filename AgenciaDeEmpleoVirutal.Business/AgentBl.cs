@@ -213,22 +213,48 @@
         /// </summary>
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
-        public Response<User> ImAviable(AviableUserRequest RequestAviable)
+        public Response<AuthenticateUserResponse> ImAviable(AviableUserRequest RequestAviable)
         {
+            User user = null;
+            var response = new List<AuthenticateUserResponse>();
             if (RequestAviable == null)
             {
                 throw new ArgumentNullException("RequestAviable");
             }
             if (string.IsNullOrEmpty(RequestAviable.UserName))
             {
-                return ResponseFail<User>(ServiceResponseCode.BadRequest);
+                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
             }
-            var user = _agentRepository.GetAsync(RequestAviable.UserName).Result;
-            if(user is null)
+            var lUser = _agentRepository.GetAsyncAll(RequestAviable.UserName).Result;
+            if(lUser is null)
             {
-                return ResponseFail<User>();
+                return ResponseFail<AuthenticateUserResponse>();
             }
-            return ResponseSuccess(new List<User> { user });
+
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    user = item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                user = lUser[0];
+            }
+
+            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);
+
+            response = new List<AuthenticateUserResponse>
+                {
+                    new AuthenticateUserResponse
+                    {
+                        UserInfo = user,
+                        OpenTokAccessToken = token,
+                    }
+                };
+
+            return ResponseSuccess(response);
         }
 
         /// <summary>

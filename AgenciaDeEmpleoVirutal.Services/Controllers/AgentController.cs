@@ -57,7 +57,7 @@
         /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("ImAviable")]
-        [Produces(typeof(Response<GetAgentAvailableResponse>))]
+        [Produces(typeof(Response<AuthenticateUserResponse>))]
         public IActionResult ImAviable([FromBody] AviableUserRequest request)
         {
             return Ok(_agentBusiness.ImAviable(request));

@@ -24,7 +24,7 @@
         /// </summary>
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
-        Response<User> ImAviable(AviableUserRequest RequestAviable);
+        Response<AuthenticateUserResponse> ImAviable(AviableUserRequest RequestAviable);
 
         /// <summary>
         /// Get all agent fosfec.
