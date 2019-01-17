@@ -99,7 +99,7 @@
         /// <author>Juan Sebastián Gil Garnica.</author>
         [HttpPost]
         [Route("LogOut")]
-        [Authorize]
+        //[Authorize]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
         public IActionResult LogOut([FromBody] LogOutRequest logOutReq)
         {
