@@ -365,14 +365,14 @@
                      {
                          ColumnName = "DateCall",
                          Condition = QueryComparisons.GreaterThanOrEqual,
-                         ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                         ValueDateTime = getAllUserCallRequest.StartDate
                      },
 
                       new ConditionParameter
                      {
                          ColumnName = "DateCall",
                          Condition = QueryComparisons.LessThan,
-                         ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                         ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1)
                      },
                       new ConditionParameter
                       {
@@ -387,14 +387,14 @@
                      {
                          ColumnName = "DateCall",
                          Condition = QueryComparisons.GreaterThanOrEqual,
-                         ValueDateTime = getAllUserCallRequest.StartDate.AddHours(-5)
+                         ValueDateTime = getAllUserCallRequest.StartDate
                      },
 
                       new ConditionParameter
                      {
                          ColumnName = "DateCall",
                          Condition = QueryComparisons.LessThan,
-                         ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1).AddHours(-5)
+                         ValueDateTime = getAllUserCallRequest.EndDate.AddDays(1)
                      },
                  };
 

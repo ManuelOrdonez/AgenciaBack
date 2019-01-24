@@ -858,14 +858,14 @@
                     {
                         ColumnName = "RegisterDate",
                         Condition = QueryComparisons.GreaterThanOrEqual,
-                        ValueDateTime = request.StartDate.AddHours(-5)
+                        ValueDateTime = request.StartDate
                     },
 
                      new ConditionParameter
                     {
                         ColumnName = "RegisterDate",
                         Condition = QueryComparisons.LessThan,
-                        ValueDateTime = request.EndDate.AddDays(1).AddHours(-5)
+                        ValueDateTime = request.EndDate.AddDays(1)
                     }
                 };
             var users = _userRep.GetListQuery(query).Result;
