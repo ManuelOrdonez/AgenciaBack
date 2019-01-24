@@ -328,7 +328,7 @@
                 {
                     ColumnName = "DateTime",
                     Condition = QueryComparisons.GreaterThanOrEqual,
-                    ValueDateTime = request.StartDate.AddHours(-5)
+                    ValueDateTime = request.StartDate
                 };
                 query.Add(condition);
             }
@@ -339,7 +339,7 @@
                 {
                     ColumnName = "DateTime",
                     Condition = QueryComparisons.LessThan,
-                    ValueDateTime = request.EndDate.AddDays(1).AddHours(-5)
+                    ValueDateTime = request.EndDate.AddDays(1)
                 };
                 query.Add(condition);
             }
