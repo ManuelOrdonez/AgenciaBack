@@ -65,6 +65,7 @@
         /// <returns></returns>
         public EmailResponse SendMail(SendMailWelcomeRequest sendMailRequest)
         {
+            var urlFront = _userSecretOptions.URLFront;
             if (sendMailRequest == null)
             {
                 throw new ArgumentNullException("sendMailRequest");
@@ -80,13 +81,13 @@
             {
 
                 _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcomeCompany;
-                _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, sendMailRequest.Name);
+                _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, sendMailRequest.Name, urlFront);
             }
             else
             {
                 _sendMailOptions.BodyMail = ParametersApp.BodyMailWelcomePerson;
                 _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, sendMailRequest.IsMale, sendMailRequest.Name, sendMailRequest.LastName,
-                    sendMailRequest.DocType, sendMailRequest.DocNum, sendMailRequest.Pass);
+                    sendMailRequest.DocType, sendMailRequest.DocNum, sendMailRequest.Pass, urlFront);
             }
             return SendMail();
         }
@@ -98,6 +99,7 @@
         /// <returns></returns>
         public EmailResponse SendMailUpdate(User userInfo)
         {
+            var urlFront = _userSecretOptions.URLFront;
             if (userInfo == null)
             {
                 throw new ArgumentNullException("userInfo");
@@ -111,7 +113,7 @@
             _sendMailOptions.SubJect = ParametersApp.SubJectUpdate;
             _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Name,
                                                         userInfo.UserType.Equals(UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture) ?
-                                                        string.Empty : userInfo.LastName);
+                                                        string.Empty : userInfo.LastName, urlFront);
             return SendMail();
         }
 
@@ -148,6 +150,7 @@
         /// <returns></returns>
         public EmailResponse SendMailPdi(User userInfo, IList<Attachment> attachments)
         {
+            var urlFront = _userSecretOptions.URLFront;
             if (userInfo == null)
             {
                 throw new ArgumentNullException("userInfo");
@@ -159,12 +162,13 @@
             _sendMailOptions.EmailAddressFrom = _userSecretOptions.EmailAddressFrom;
             _sendMailOptions.BodyMail = ParametersApp.BodyMailPDI;
             _sendMailOptions.SubJect = ParametersApp.SubjectPDI;
-            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName);
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Name, userInfo.LastName, urlFront);
             return SendGridHelper.SenMailRelay(_sendMailOptions, attachments);
         }
 
         public EmailResponse SendMailNotificationSubsidy(User userInfo, Subsidy subsidyInfo)
         {
+            var urlFront = _userSecretOptions.URLFront;
             if (userInfo == null)
             {
                 throw new ArgumentNullException("userInfo");
@@ -182,7 +186,7 @@
             _sendMailOptions.BodyMail = ParametersApp.BodyMailNotificationSubsidy;
             _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
             _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "o" : "a",
-                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State, subsidyInfo.Observations);
+                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, subsidyInfo.State, subsidyInfo.Observations, urlFront);
 
             return SendMail(true);
         }
@@ -197,6 +201,7 @@
             {
                 throw new ArgumentNullException("subsidyInfo");
             }
+            var urlFront = _userSecretOptions.URLFront;
             _sendMailOptions.EmailHost = _userSecretOptions.EmailHost;
             _sendMailOptions.EmailHostPort = _userSecretOptions.EmailHostPort;
             _sendMailOptions.SendMailApiKey = _userSecretOptions.SendMailApiKey;
@@ -205,8 +210,8 @@
 
             _sendMailOptions.BodyMail = ParametersApp.BodiMailRequestSubsidy;
             _sendMailOptions.SubJect = ParametersApp.SubjectSubsidyRequest;
-            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "Señor" : "Señora",
-                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest);
+            _sendMailOptions.BodyMail = string.Format(CultureInfo.CurrentCulture, _sendMailOptions.BodyMail, userInfo.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "Estimado" : "Estimada",
+                userInfo.Name, userInfo.LastName, subsidyInfo.NoSubsidyRequest, urlFront);
 
             return SendMail(true);
         }
