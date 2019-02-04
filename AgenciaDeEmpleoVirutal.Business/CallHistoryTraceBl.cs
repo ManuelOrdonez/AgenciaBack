@@ -242,6 +242,7 @@
                     callInfo.Observations = callRequest.Trace;
                     callInfo.State = stateInput.ToString();
                     callInfo.CallType = callRequest.CallType;
+                    callInfo.UserAnswerCall = callRequest.UserName;
                     break;
                 default:
                     callInfo.State = CallStates.Unknown.ToString();
@@ -411,22 +412,23 @@
             foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
             {
                 cll.RecordUrl = cll.RecordId;
-                if (string.IsNullOrEmpty(cll.UserAnswerCall))
-                {
-                    continue;
-                }
+
                 if (!string.IsNullOrEmpty(cll.UserAnswerCall))
                 {
-                    var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), 
+                    var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
                         cll.UserAnswerCall.ToLower(new CultureInfo("es-CO"))).Result.First();
                     if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
                     {
-                        continue;
+                        cll.AgentName = string.Empty;
                     }
                     else
                     {
                         cll.AgentName = agentInfo.Name + " " + agentInfo.LastName;
                     }
+                }
+                else
+                {
+                    cll.AgentName = string.Empty;
                 }
                 string typeU = string.Empty;
 

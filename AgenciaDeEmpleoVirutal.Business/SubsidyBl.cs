@@ -91,7 +91,7 @@
             }
             var subsidyRequest = new Subsidy
             {
-                DateTime = DateTime.UtcNow.AddHours(-5),
+                DateTime = DateTime.Now,
                 NoSubsidyRequest = request.NoSubsidyRequest,
                 Reviewer = string.Empty,
                 State = SubsidyStates.Active.ToString(),
