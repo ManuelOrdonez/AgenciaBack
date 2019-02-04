@@ -61,28 +61,23 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
-        ///  &lt;head&gt;
-        ///		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
-        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
-        ///	&lt;/head&gt;	
-        ///  &lt;body&gt;
-        ///&lt;table&gt;
-        ///&lt;tbody&gt;
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta charset=&apos;utf-8&apos;&gt;
+        ///&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+        ///&lt;/head&gt;
         ///
-        ///&lt;tr&gt;
-        ///&lt;td colspan=&quot;2&quot;&gt;
-        ///
-        ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
-        /// {0} {1} {2}: Su solicitud fue cargada exitosamente, una vez revisada la documentación y el formulario único de postulación, le estaremos informando por éste medio si fue aceptada o rechazada la solicitud
-        ///  &lt;/p&gt;
-        ///  
-        ///&lt;/td&gt;
-        ///&lt;/tr&gt;
-        ///&lt;/tbody&gt;
-        ///&lt;/table&gt;  
-        ///  &lt;/body&gt;
-        ///   [rest of string was truncated]&quot;;.
+        ///&lt;body&gt;
+        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
+        ///  &lt;tbody&gt;
+        ///    &lt;tr&gt;
+        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
+        ///        &lt;tbody &gt;
+        ///          &lt;tr&gt;
+        ///            &lt;td&gt;&lt;img src=&apos;{4}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
+        ///          &lt;/tr&gt;
+        ///          &lt;tr&gt;
+        ///&lt;td co [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodiMailRequestSubsidy {
             get {
@@ -91,28 +86,23 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
-        ///  &lt;head&gt;
-        ///		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
-        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
-        ///	&lt;/head&gt;	
-        ///  &lt;body&gt;
-        ///&lt;table&gt;
-        ///&lt;tbody&gt;
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta charset=&apos;utf-8&apos;&gt;
+        ///&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+        ///&lt;/head&gt;
         ///
+        ///&lt;body&gt;
+        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
+        ///  &lt;tbody&gt;
+        ///    &lt;tr&gt;
+        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
+        ///        &lt;tbody &gt;
+        ///          &lt;tr&gt;
+        ///            &lt;td&gt;&lt;img src=&apos;{6}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
+        ///          &lt;/tr&gt;
         ///&lt;tr&gt;
-        ///&lt;td colspan=&quot;2&quot;&gt;
-        ///
-        ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
-        ///  Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. 
-        ///  &lt;br /&gt;&lt;br /&gt;
-        ///  Recibe un Cordial Saludo:
-        ///  &lt;br /&gt;&lt;br /&gt;
-        ///  Tu solicitud de subsidio, acaba de pasar al estado {4}.
-        ///  &lt;br /&gt;&lt;br /&gt;
-        ///  Observaciones de la gestión: {5}
-        ///  &lt;/p&gt;
-        ///   [rest of string was truncated]&quot;;.
+        ///&lt;td colspan=&quot;2&quot;&gt; [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailNotificationSubsidy {
             get {
@@ -182,16 +172,23 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;table&gt;
-        ///&lt;tbody&gt;
-        ///&lt;tr&gt;
-        ///&lt;td style=&quot;text-align: center;&quot;&gt;
-        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
-        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0}&lt;/span&gt;&lt;/td&gt;
-        ///&lt;/tr&gt;
-        ///&lt;tr&gt;
-        ///&lt;td colspan=&quot;2&quot;&gt;
-        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a &lt;a href=&quot;www. [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta charset=&apos;utf-8&apos;&gt;
+        ///&lt;title&gt;Untitled Document&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body&gt;
+        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
+        ///  &lt;tbody&gt;
+        ///    &lt;tr&gt;
+        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
+        ///        &lt;tbody &gt;
+        ///          &lt;tr&gt;
+        ///            &lt;td&gt;&lt;img src=&apos;{1}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
+        ///          &lt;/tr&gt;
+        ///           
+        ///		   [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailWelcomeCompany {
             get {
@@ -200,22 +197,23 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;html lang=&quot;es&quot;&gt;
-        ///  &lt;head&gt;
-        ///		&lt;title&gt;Welcome-Mail&lt;/title&gt;
-        ///		&lt;meta charset=&quot;utf-8&quot;&gt;
-        ///	&lt;/head&gt;	
-        ///  &lt;body&gt;
-        ///&lt;table&gt;
-        ///&lt;tbody&gt;
-        ///&lt;tr&gt;
-        ///&lt;td style=&quot;text-align: center;&quot;&gt;
-        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Bienvenido&lt;/p&gt;
-        ///&lt;/td&gt;
-        ///&lt;/tr&gt;
-        ///&lt;tr&gt;
-        ///&lt;td colspan=&quot;2&quot;&gt;
-        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. &lt;br /&gt;&lt;br /&gt; Recibe un Cordial Salud [rest of string was truncated]&quot;;.
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta charset=&apos;utf-8&apos;&gt;
+        ///&lt;title&gt;Untitled Document&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body&gt;
+        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
+        ///  &lt;tbody&gt;
+        ///    &lt;tr&gt;
+        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
+        ///        &lt;tbody &gt;
+        ///          &lt;tr&gt;
+        ///            &lt;td&gt;&lt;img src=&apos;{6}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
+        ///          &lt;/tr&gt;
+        ///          &lt;tr&gt;
+        ///  [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailWelcomePerson {
             get {

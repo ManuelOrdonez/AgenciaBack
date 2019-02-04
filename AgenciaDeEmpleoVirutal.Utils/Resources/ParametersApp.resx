@@ -145,8 +145,24 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/div&gt;</value>
   </data>
   <data name="BodyMailWelcomeCompany" xml:space="preserve">
-    <value>&lt;table&gt;
-&lt;tbody&gt;
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+&lt;title&gt;Untitled Document&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #F4F4F4;'&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;table  width='700' max-width: 650px; min-width: 320px; border='0' cellspacing='0' cellpadding='0' style='margin: 0 auto; background-color:white;' &gt;
+        &lt;tbody &gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;img src='{1}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+           
+		  
+		  
 &lt;tr&gt;
 &lt;td style="text-align: center;"&gt;
 &lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Bienvenido&lt;/p&gt;
@@ -154,11 +170,39 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td colspan="2"&gt;
-&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a &lt;a href="www.agenciadeempleocolsubsidio.com"&gt;www.agenciadeempleocolsubsidio.com &lt;/a&gt; con tu usuario y contrase&amp;ntilde;a para conocer de nuestros servicios. Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
+Buen d&amp;iacute;a: Agradecemos por haberte registrado en la Agencia de Empleo Colsubsidio. Recuerda ingresar a 
+&lt;a href="www.agenciadeempleocolsubsidio.com"&gt;www.agenciadeempleocolsubsidio.com &lt;/a&gt; con tu usuario y contrase&amp;ntilde;a para conocer de nuestros servicios. 
+Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;</value>
+		  
+		  
+		  
+            &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;img src='{1}/assets/images/images/supersubsidio_logo.png' width='150' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{1}/assets/images/images/Ministerio-Trabajo-Colombia.png' width='120' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{1}/assets/images/images/Logo-Servicio-Empleo.png' width='100' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://es-la.facebook.com/AgenciadeEmpleoColsubsidio/'&gt;&lt;img src='{1}/assets/images/images/iconmonstr-facebook-6-32.png' style='padding: 0px 10px 0px 20px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://twitter.com/col_empleo?lang=es'&gt;&lt;img src='{1}/assets/images/images/iconmonstr-twitter-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://www.linkedin.com/company/agencia-de-empleo-colsubsidio'&gt;&lt;img src='{1}/assets/images/images/iconmonstr-linkedin-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{1}/assets/images/images/proteccion_logo.png' width='170' height='40px'&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="ContentPDIPdf" xml:space="preserve">
     <value>&lt;table border="0" style="width: 900px"&gt;
@@ -293,64 +337,138 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
     <value>Actualización Exitosa Agencia de Empleo Virtual Colsubsidio.</value>
   </data>
   <data name="BodyMailWelcomePerson" xml:space="preserve">
-    <value>&lt;html lang="es"&gt;
-  &lt;head&gt;
-		&lt;title&gt;Welcome-Mail&lt;/title&gt;
-		&lt;meta charset="utf-8"&gt;
-	&lt;/head&gt;	
-  &lt;body&gt;
-&lt;table&gt;
-&lt;tbody&gt;
-&lt;tr&gt;
-&lt;td style="text-align: center;"&gt;
-&lt;p style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Bienvenido&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;tr&gt;
-&lt;td colspan="2"&gt;
-&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Estimad{0}. {1} {2}, nos da much&amp;iacute;simo gusto escribirte el d&amp;iacute;a hoy. &lt;br /&gt;&lt;br /&gt; Recibe un Cordial Saludo:&lt;br /&gt;&lt;br /&gt; El d&amp;iacute;a de hoy te damos la m&amp;aacute;s cordial bienvenida a la primera agencia de Empleo de Virtual. &lt;br /&gt;&lt;br /&gt; A partir de la fecha, nuestro objetivo es que &amp;ldquo;juntos&amp;rdquo;, podamos conseguir un empleo que se adapte a tu perfil y cumpla tus expectativas.&lt;br /&gt;&lt;br /&gt; No esperes m&amp;aacute;s para continuar con tu proceso. Ingresa a nuestra plataforma y confirmar tu registro e iniciar tu proceso de Orientaci&amp;oacute;n Laboral. &lt;br /&gt;&lt;br /&gt; A continuaci&amp;oacute;n relacionamos tu usuario y contrase&amp;ntilde;a.&lt;br /&gt;&lt;br /&gt; Usuario: {3} n&amp;uacute;mero {4}&lt;br /&gt; Contrase&amp;ntilde;a: {5}&lt;br /&gt;&lt;br /&gt; Para ingresar a nuestra agencia virtual e iniciar una llamada de orientaci&amp;oacute;n debes hacer click en el siguiente enlace: 
-  &lt;a href="www.agenciadeempleocolsubsidio.com"&gt;www.agenciadeempleocolsubsidio.com &lt;/a&gt;&lt;br /&gt;&lt;br /&gt; Diligencia tu usuario y contrase&amp;ntilde;a y selecciona la opci&amp;oacute;n: Hacer llamada &lt;br /&gt;&lt;br /&gt; Para cualquier duda o inquietud te invitamos a ponerte en contacto con nosotros a trav&amp;eacute;s de xxxxx. Nuestro grupo de orientadores est&amp;aacute;n esperando tu llamada.&lt;br /&gt;&lt;br /&gt; Cordialmente!&lt;br /&gt;&lt;br /&gt; Agencia de Empleo Colsubsidio&lt;br /&gt; Lo conseguimos Juntos&lt;/p&gt;
-&lt;/td&gt;
-&lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;  
-  &lt;/body&gt;
-  &lt;/html&gt;</value>
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+&lt;title&gt;Untitled Document&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #F4F4F4;'&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;table  width='700' max-width: 650px; min-width: 320px; border='0' cellspacing='0' cellpadding='0' style='margin: 0 auto; background-color:white;' &gt;
+        &lt;tbody &gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;img src='{6}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td style='padding: 70px 50px 70px 50px; font-family:open sans; color: #727272; font-size: 15px;'&gt;Estimad{0} . {1} {2},&lt;br&gt;
+nos da muchísimo gusto escribirte el día hoy. 
+&lt;br&gt;&lt;br&gt;
+Cordial saludo:
+&lt;br&gt;&lt;br&gt;
+Te damos la bienvenida a la primera Agencia de Empleo Virtual. A partir de la fecha, nuestro objetivo es que “juntos”, 
+podamos conseguir un empleo que se adapte a tu perfil y cumpla tus expectativas.
+&lt;br&gt;&lt;br&gt;
+No esperes más para continuar con tu proceso. Ingresa a nuestra plataforma y confirmar tu registro para iniciar tu proceso de Orientación Laboral. 
+&lt;br&gt;&lt;br&gt;
+Estos son tu usuario y contraseña para acceder a la plataforma:
+&lt;br&gt;&lt;br&gt;
+Usuario: 		&lt;span style='color:#00597c;'&gt;&amp;nbsp &amp;nbsp &amp;nbsp &amp;nbsp &amp;nbsp {3} número {4}&lt;/span&gt;&lt;br&gt;
+Contraseña: 	&lt;span style='color:#00597c;'&gt;&amp;nbsp &amp;nbsp{5}&lt;/span&gt;
+&lt;br&gt;&lt;br&gt;
+Para entrar a nuestra agencia virtual e iniciar una llamada de orientación debes hacer click en el siguiente enlace: 
+&lt;br&gt;&lt;br&gt;
+&lt;a href='http://www.agenciadeempleocolsubsidio.com' style='text-decoration: none;'&gt;&lt;span style='color:#00597c;' &gt;www.agenciadeempleocolsubsidio.com&lt;/span&gt;&lt;/a&gt; &lt;br&gt;&lt;br&gt;
+
+Ingresa tu usuario y contraseña y selecciona la opción: “Hacer llamada” 
+Para cualquier duda o inquietud te invitamos a ponerte en contacto con nosotros a través de la línea de audio servicios: 7457900 opción 2 - 4 – 4 . Nuestro grupo de orientadores están esperando tu llamada.&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/supersubsidio_logo.png' width='150' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/Ministerio-Trabajo-Colombia.png' width='120' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/Logo-Servicio-Empleo.png' width='100' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://es-la.facebook.com/AgenciadeEmpleoColsubsidio/'&gt;&lt;img src='{6}/assets/images/images/iconmonstr-facebook-6-32.png' style='padding: 0px 10px 0px 20px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://twitter.com/col_empleo?lang=es'&gt;&lt;img src='{6}/assets/images/images/iconmonstr-twitter-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://www.linkedin.com/company/agencia-de-empleo-colsubsidio'&gt;&lt;img src='{6}/assets/images/images/iconmonstr-linkedin-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/proteccion_logo.png' width='170' height='40px'&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="BodiMailRequestSubsidy" xml:space="preserve">
-    <value>&lt;html lang="es"&gt;
-  &lt;head&gt;
-		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
-		&lt;meta charset="utf-8"&gt;
-	&lt;/head&gt;	
-  &lt;body&gt;
-&lt;table&gt;
-&lt;tbody&gt;
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+&lt;/head&gt;
 
-&lt;tr&gt;
+&lt;body&gt;
+&lt;table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #F4F4F4;'&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;table  width='700' max-width: 650px; min-width: 320px; border='0' cellspacing='0' cellpadding='0' style='margin: 0 auto; background-color:white;' &gt;
+        &lt;tbody &gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;img src='{4}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
 &lt;td colspan="2"&gt;
 
-  &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
- {0} {1} {2}: Su solicitud fue cargada exitosamente, una vez revisada la documentación y el formulario único de postulación, le estaremos informando por éste medio si fue aceptada o rechazada la solicitud
+{0} {1} {2}: tu solicitud fue cargada exitosamente, una vez revisada la documentación y el 
+formulario único de postulación, te informaremos por este medio si fue aceptada o rechazada la solicitud.
+
   &lt;/p&gt;
   
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;  
-  &lt;/body&gt;
-  &lt;/html&gt;</value>
+          &lt;tr&gt;
+            &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;img src='{4}/assets/images/images/supersubsidio_logo.png' width='150' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{4}/assets/images/images/Ministerio-Trabajo-Colombia.png' width='120' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{4}/assets/images/images/Logo-Servicio-Empleo.png' width='100' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://es-la.facebook.com/AgenciadeEmpleoColsubsidio/'&gt;&lt;img src='{4}/assets/images/images/iconmonstr-facebook-6-32.png' style='padding: 0px 10px 0px 20px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://twitter.com/col_empleo?lang=es'&gt;&lt;img src='{4}/assets/images/images/iconmonstr-twitter-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://www.linkedin.com/company/agencia-de-empleo-colsubsidio'&gt;&lt;img src='{4}/assets/images/images/iconmonstr-linkedin-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{4}/assets/images/images/proteccion_logo.png' width='170' height='40px'&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="BodyMailNotificationSubsidy" xml:space="preserve">
-    <value>&lt;html lang="es"&gt;
-  &lt;head&gt;
-		&lt;title&gt;Subsidy-Mail&lt;/title&gt;
-		&lt;meta charset="utf-8"&gt;
-	&lt;/head&gt;	
-  &lt;body&gt;
-&lt;table&gt;
-&lt;tbody&gt;
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+&lt;/head&gt;
 
+&lt;body&gt;
+&lt;table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #F4F4F4;'&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;table  width='700' max-width: 650px; min-width: 320px; border='0' cellspacing='0' cellpadding='0' style='margin: 0 auto; background-color:white;' &gt;
+        &lt;tbody &gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;img src='{6}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
+          &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td colspan="2"&gt;
 
@@ -366,10 +484,31 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
   
 &lt;/td&gt;
 &lt;/tr&gt;
-&lt;/tbody&gt;
-&lt;/table&gt;  
-  &lt;/body&gt;
-  &lt;/html&gt;</value>
+          &lt;tr&gt;
+            &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/supersubsidio_logo.png' width='150' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/Ministerio-Trabajo-Colombia.png' width='120' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/Logo-Servicio-Empleo.png' width='100' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://es-la.facebook.com/AgenciadeEmpleoColsubsidio/'&gt;&lt;img src='{6}/assets/images/images/iconmonstr-facebook-6-32.png' style='padding: 0px 10px 0px 20px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://twitter.com/col_empleo?lang=es'&gt;&lt;img src='{6}/assets/images/images/iconmonstr-twitter-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://www.linkedin.com/company/agencia-de-empleo-colsubsidio'&gt;&lt;img src='{6}/assets/images/images/iconmonstr-linkedin-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{6}/assets/images/images/proteccion_logo.png' width='170' height='40px'&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="SubjectSubsidyRequest" xml:space="preserve">
     <value>Subsidio Colsubsidio</value>
