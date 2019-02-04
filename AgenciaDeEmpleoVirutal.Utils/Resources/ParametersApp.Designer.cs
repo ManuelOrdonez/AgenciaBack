@@ -132,16 +132,23 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;div&gt;
-        ///	&lt;h1 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;Correo PDI&lt;/h1&gt;
-        ///	&lt;h2 style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/h2&gt;
-        ///&lt;/div&gt;
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta charset=&apos;utf-8&apos;&gt;
+        ///&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+        ///&lt;/head&gt;
         ///
-        ///&lt;div&gt;
-        ///  &lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;
-        ///    Buen d&amp;iacute;a: En el presente correo se adjunta el documento PDI en formato PDF.
-        ///  &lt;/p&gt;
-        ///&lt;/div&gt;.
+        ///&lt;body&gt;
+        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
+        ///  &lt;tbody&gt;
+        ///    &lt;tr&gt;
+        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
+        ///        &lt;tbody &gt;
+        ///          &lt;tr&gt;
+        ///            &lt;td&gt;&lt;img src=&apos;{2}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
+        ///          &lt;/tr&gt;
+        ///          &lt;tr&gt;
+        ///&lt;td co [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailPDI {
             get {
@@ -150,20 +157,23 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;table&gt;
-        ///&lt;tbody&gt;
-        ///&lt;tr&gt;
-        ///&lt;td style=&quot;text-align: center;&quot;&gt;
-        ///&lt;p style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;&lt;/p&gt;
-        ///&lt;span style=&quot;text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;&quot;&gt;{0} {1}&lt;/span&gt;&lt;/td&gt;
-        ///&lt;/tr&gt;
-        ///&lt;tr&gt;
-        ///&lt;td colspan=&quot;2&quot;&gt;
-        ///&lt;p style=&quot;text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;&quot;&gt;Buen d&amp;iacute;a: has actualizado tus datos con exito.&lt;/p&gt;
-        ///&lt;/td&gt;
-        ///&lt;/tr&gt;
-        ///&lt;/tbody&gt;
-        ///&lt;/table&gt;.
+        ///   Looks up a localized string similar to &lt;html&gt;
+        ///&lt;head&gt;
+        ///&lt;meta charset=&apos;utf-8&apos;&gt;
+        ///&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+        ///&lt;/head&gt;
+        ///
+        ///&lt;body&gt;
+        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
+        ///  &lt;tbody&gt;
+        ///    &lt;tr&gt;
+        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
+        ///        &lt;tbody &gt;
+        ///          &lt;tr&gt;
+        ///            &lt;td&gt;&lt;img src=&apos;{2}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
+        ///          &lt;/tr&gt;
+        ///          &lt;tr&gt;
+        ///&lt;td co [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailUpate {
             get {
@@ -212,8 +222,8 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///          &lt;tr&gt;
         ///            &lt;td&gt;&lt;img src=&apos;{6}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
         ///          &lt;/tr&gt;
-        ///          &lt;tr&gt;
-        ///  [rest of string was truncated]&quot;;.
+        ///          
+        ///		          /// [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailWelcomePerson {
             get {

@@ -133,16 +133,63 @@ Por favor ingrese al siguiente link para completar el proceso de cambio de clave
 &lt;/table&gt;</value>
   </data>
   <data name="BodyMailPDI" xml:space="preserve">
-    <value>&lt;div&gt;
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #F4F4F4;'&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;table  width='700' max-width: 650px; min-width: 320px; border='0' cellspacing='0' cellpadding='0' style='margin: 0 auto; background-color:white;' &gt;
+        &lt;tbody &gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;img src='{2}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+&lt;td colspan="2"&gt;
+
+&lt;div&gt;
 	&lt;h1 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;Correo PDI&lt;/h1&gt;
 	&lt;h2 style="text-align: center; font-family: Helvetica; font-size: 24px; color: #605e5e;"&gt;{0} {1}&lt;/h2&gt;
 &lt;/div&gt;
 
 &lt;div&gt;
   &lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;
-    Buen d&amp;iacute;a: En el presente correo se adjunta el documento PDI en formato PDF.
+
+	¡Hola! Adjunto encuentras el documento PDI en formato PDF para descargar.
   &lt;/p&gt;
-&lt;/div&gt;</value>
+&lt;/div&gt;
+  
+&lt;/td&gt;
+&lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/supersubsidio_logo.png' width='150' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/Ministerio-Trabajo-Colombia.png' width='120' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/Logo-Servicio-Empleo.png' width='100' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://es-la.facebook.com/AgenciadeEmpleoColsubsidio/'&gt;&lt;img src='{2}/assets/images/images/iconmonstr-facebook-6-32.png' style='padding: 0px 10px 0px 20px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://twitter.com/col_empleo?lang=es'&gt;&lt;img src='{2}/assets/images/images/iconmonstr-twitter-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://www.linkedin.com/company/agencia-de-empleo-colsubsidio'&gt;&lt;img src='{2}/assets/images/images/iconmonstr-linkedin-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/proteccion_logo.png' width='170' height='40px'&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="BodyMailWelcomeCompany" xml:space="preserve">
     <value>&lt;html&gt;
@@ -318,7 +365,25 @@ Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
     <value>Registro Exitoso Agencia de Empleo Virtual Colsubsidio.</value>
   </data>
   <data name="BodyMailUpate" xml:space="preserve">
-    <value>&lt;table&gt;
+    <value>&lt;html&gt;
+&lt;head&gt;
+&lt;meta charset='utf-8'&gt;
+&lt;title&gt;Subsidy-Mail&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+&lt;table width='100%' border='0' cellspacing='0' cellpadding='0' style='background-color: #F4F4F4;'&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;table  width='700' max-width: 650px; min-width: 320px; border='0' cellspacing='0' cellpadding='0' style='margin: 0 auto; background-color:white;' &gt;
+        &lt;tbody &gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;img src='{2}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+          &lt;tr&gt;
+&lt;td colspan="2"&gt;
+
+&lt;table&gt;
 &lt;tbody&gt;
 &lt;tr&gt;
 &lt;td style="text-align: center;"&gt;
@@ -327,11 +392,39 @@ Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td colspan="2"&gt;
-&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Buen d&amp;iacute;a: has actualizado tus datos con exito.&lt;/p&gt;
+&lt;p style="text-align: justify; font-family: Helvetica; font-size: 15px; color: #605e5e;"&gt;Hola, tus datos se han actualizado con éxito.&lt;/p&gt;
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;/tbody&gt;
-&lt;/table&gt;</value>
+&lt;/table&gt;
+
+&lt;/td&gt;
+&lt;/tr&gt;
+          &lt;tr&gt;
+            &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
+              &lt;tbody&gt;
+                &lt;tr&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/supersubsidio_logo.png' width='150' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/Ministerio-Trabajo-Colombia.png' width='120' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/Logo-Servicio-Empleo.png' width='100' height='40px'&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://es-la.facebook.com/AgenciadeEmpleoColsubsidio/'&gt;&lt;img src='{2}/assets/images/images/iconmonstr-facebook-6-32.png' style='padding: 0px 10px 0px 20px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://twitter.com/col_empleo?lang=es'&gt;&lt;img src='{2}/assets/images/images/iconmonstr-twitter-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&lt;a href='https://www.linkedin.com/company/agencia-de-empleo-colsubsidio'&gt;&lt;img src='{2}/assets/images/images/iconmonstr-linkedin-3-32.png' style='padding: 0px 8px 0px 8px;' width='30' height='30px'&gt;&lt;/a&gt;&lt;/td&gt;
+                  &lt;td&gt;&amp;nbsp;&lt;/td&gt;
+                  &lt;td&gt;&lt;img src='{2}/assets/images/images/proteccion_logo.png' width='170' height='40px'&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+              &lt;/tbody&gt;
+            &lt;/table&gt;&lt;/td&gt;
+          &lt;/tr&gt;
+        &lt;/tbody&gt;
+      &lt;/table&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</value>
   </data>
   <data name="SubJectUpdate" xml:space="preserve">
     <value>Actualización Exitosa Agencia de Empleo Virtual Colsubsidio.</value>
@@ -352,29 +445,86 @@ Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
           &lt;tr&gt;
             &lt;td&gt;&lt;img src='{6}/assets/images/images/header.jpg'&gt;&lt;/td&gt;
           &lt;/tr&gt;
-          &lt;tr&gt;
-            &lt;td style='padding: 70px 50px 70px 50px; font-family:open sans; color: #727272; font-size: 15px;'&gt;Estimad{0} . {1} {2},&lt;br&gt;
-nos da muchísimo gusto escribirte el día hoy. 
-&lt;br&gt;&lt;br&gt;
-Cordial saludo:
-&lt;br&gt;&lt;br&gt;
-Te damos la bienvenida a la primera Agencia de Empleo Virtual. A partir de la fecha, nuestro objetivo es que “juntos”, 
-podamos conseguir un empleo que se adapte a tu perfil y cumpla tus expectativas.
-&lt;br&gt;&lt;br&gt;
-No esperes más para continuar con tu proceso. Ingresa a nuestra plataforma y confirmar tu registro para iniciar tu proceso de Orientación Laboral. 
-&lt;br&gt;&lt;br&gt;
-Estos son tu usuario y contraseña para acceder a la plataforma:
-&lt;br&gt;&lt;br&gt;
-Usuario: 		&lt;span style='color:#00597c;'&gt;&amp;nbsp &amp;nbsp &amp;nbsp &amp;nbsp &amp;nbsp {3} número {4}&lt;/span&gt;&lt;br&gt;
-Contraseña: 	&lt;span style='color:#00597c;'&gt;&amp;nbsp &amp;nbsp{5}&lt;/span&gt;
-&lt;br&gt;&lt;br&gt;
-Para entrar a nuestra agencia virtual e iniciar una llamada de orientación debes hacer click en el siguiente enlace: 
-&lt;br&gt;&lt;br&gt;
-&lt;a href='http://www.agenciadeempleocolsubsidio.com' style='text-decoration: none;'&gt;&lt;span style='color:#00597c;' &gt;www.agenciadeempleocolsubsidio.com&lt;/span&gt;&lt;/a&gt; &lt;br&gt;&lt;br&gt;
-
-Ingresa tu usuario y contraseña y selecciona la opción: “Hacer llamada” 
-Para cualquier duda o inquietud te invitamos a ponerte en contacto con nosotros a través de la línea de audio servicios: 7457900 opción 2 - 4 – 4 . Nuestro grupo de orientadores están esperando tu llamada.&lt;/td&gt;
-          &lt;/tr&gt;
+          
+		  
+		  
+		   &lt;tr&gt;
+  &lt;td colspan=2 style='padding:.75pt .75pt .75pt .75pt'&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;Estimad{0} . {1} {2}, recibe un
+  Cordial Saludo:&lt;br&gt;
+  &lt;br&gt;
+  &lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;El día de hoy te damos la  bienvenida
+  a la primera Agencia de Empleo de Virtual de Colsubsidio.&amp;nbsp;&lt;br&gt;
+  &lt;br&gt;
+  A partir de hoy,  nuestro objetivo es que “juntos”, podamos conseguir un
+  empleo que se adapte a tu perfil y cumpla tus expectativas.&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;Para acceder a los beneficios de la
+  Agencia de Empleo Virtual debes realizar los siguientes pasos:&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpFirst style='text-indent:-.25in;line-height:
+  normal'&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;1.&lt;span
+  style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &lt;/span&gt;&lt;/span&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;Ingresa a &lt;/span&gt;&lt;span
+  lang=ES-CO&gt;&lt;a href="{6}"&gt;&lt;span
+  style='font-size:12.0pt'&gt;{6}&lt;/span&gt;&lt;/a&gt;&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in;line-height:
+  normal'&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;2.&lt;span
+  style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &lt;/span&gt;&lt;/span&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;Inicia sesión con tu &lt;/span&gt;&lt;b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;usuario y contraseña&lt;/span&gt;&lt;/b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt; &lt;/span&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;el cual relacionamos a continuación:&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpMiddle style='margin-left:1.0in;text-indent:
+  -.25in;line-height:normal'&gt;&lt;span lang=ES-CO style='font-size:12.0pt;
+  font-family:Symbol;color:#605E5E'&gt;·&lt;span style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+  &lt;/span&gt;&lt;/span&gt;&lt;b&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;Usuario&lt;/span&gt;&lt;/b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;: {3} número {4}&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpMiddle style='margin-left:1.0in;text-indent:
+  -.25in;line-height:normal'&gt;&lt;span lang=ES-CO style='font-size:12.0pt;
+  font-family:Symbol;color:#605E5E'&gt;·&lt;span style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+  &lt;/span&gt;&lt;/span&gt;&lt;b&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;Contraseña&lt;/span&gt;&lt;/b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;: {5}&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in;line-height:
+  normal'&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;3.&lt;span
+  style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &lt;/span&gt;&lt;/span&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;Da clic al botón &lt;/span&gt;&lt;b&gt;&lt;u&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;Llamar&lt;/span&gt;&lt;/u&gt;&lt;/b&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpMiddle style='text-indent:-.25in;line-height:
+  normal'&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;4.&lt;span
+  style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &lt;/span&gt;&lt;/span&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;Selecciona la opción que
+  más se adapte a tus necesidades y nuevamente da clic al botón &lt;/span&gt;&lt;b&gt;&lt;u&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;Llamar&lt;/span&gt;&lt;/u&gt;&lt;/b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;.&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoListParagraphCxSpLast style='text-indent:-.25in;line-height:normal'&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;5.&lt;span style='font:7.0pt "Times New Roman"'&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+  &lt;/span&gt;&lt;/span&gt;&lt;span lang=ES-CO style='font-size:12.0pt;color:#605E5E'&gt;Espera
+  a ser atendido por uno de nuestros orientadores.&lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;b&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;INFORMACIÓN IMPORTANTE:&lt;/span&gt;&lt;/b&gt;&lt;/p&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;Recuerda que para acceder a los
+  beneficios de la Agencia de Empleo Virtual, debes contar con una &lt;/span&gt;&lt;b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;Cámara&lt;/span&gt;&lt;/b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt; &lt;/span&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;e internet estable. Adicionalmente
+  asegúrate de ingresar en nuestro horario de atención: &lt;/span&gt;&lt;b&gt;&lt;span
+  lang=ES-CO style='font-size:12.0pt;color:#0070C0'&gt;Lunes a Viernes de 8:00 am
+  a 5:00 pm.&lt;/span&gt;&lt;/b&gt;&lt;/p&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;Para cualquier duda o inquietud te
+  invitamos a ponerte en contacto con nosotros a través de nuestra línea de
+  atención 7457900 Opc 2-4-4. &lt;/span&gt;&lt;/p&gt;
+  &lt;p class=MsoNormal style='line-height:normal'&gt;&lt;span lang=ES-CO
+  style='font-size:12.0pt;color:#605E5E'&gt;Cordialmente!&lt;br&gt;
+  &lt;br&gt;
+  Agencia de Empleo Colsubsidio&lt;br&gt;
+  Lo conseguimos Juntos&lt;/span&gt;&lt;/p&gt;
+  &lt;/td&gt;
+ &lt;/tr&gt;
           &lt;tr&gt;
             &lt;td&gt;&lt;table width='650' border='0' cellspacing='0' cellpadding='0' style='background-color:white;'&gt;
               &lt;tbody&gt;
