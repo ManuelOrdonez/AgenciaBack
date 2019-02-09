@@ -208,22 +208,22 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;html&gt;
+        ///
         ///&lt;head&gt;
         ///&lt;meta charset=&apos;utf-8&apos;&gt;
-        ///&lt;title&gt;Untitled Document&lt;/title&gt;
+        ///&lt;meta http-equiv=Content-Type content=&apos;text/html; charset=windows-1252&apos;&gt;
+        ///&lt;meta name=ProgId content=Word.Document&gt;
+        ///&lt;meta name=Generator content=&apos;Microsoft Word 15&apos;&gt;
+        ///&lt;meta name=Originator content=&apos;Microsoft Word 15&apos;&gt;
+        ///&lt;link rel=File-List href=&apos;ini_files/filelist.xml&apos;&gt;
+        ///&lt;link rel=themeData href=&apos;ini_files/themedata.thmx&apos;&gt;
+        ///&lt;link rel=colorSchemeMapping href=&apos;ini_files/colorschememapping.xml&apos;&gt;
+        ///
+        ///&lt;/style&gt;
+        ///
         ///&lt;/head&gt;
         ///
-        ///&lt;body&gt;
-        ///&lt;table width=&apos;100%&apos; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;background-color: #F4F4F4;&apos;&gt;
-        ///  &lt;tbody&gt;
-        ///    &lt;tr&gt;
-        ///      &lt;td&gt;&lt;table  width=&apos;700&apos; max-width: 650px; min-width: 320px; border=&apos;0&apos; cellspacing=&apos;0&apos; cellpadding=&apos;0&apos; style=&apos;margin: 0 auto; background-color:white;&apos; &gt;
-        ///        &lt;tbody &gt;
-        ///          &lt;tr&gt;
-        ///            &lt;td&gt;&lt;img src=&apos;{6}/assets/images/images/header.jpg&apos;&gt;&lt;/td&gt;
-        ///          &lt;/tr&gt;
-        ///          
-        ///		          /// [rest of string was truncated]&quot;;.
+        ///&lt;body lang=EN-US link=blue vlink=&apos;#954F72&apos; style= [rest of string was truncated]&quot;;.
         /// </summary>
         public static string BodyMailWelcomePerson {
             get {
