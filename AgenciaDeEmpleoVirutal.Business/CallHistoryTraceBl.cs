@@ -451,7 +451,15 @@
                 }
 
                 cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
-                callsList.Add(cll);
+                if ((string.IsNullOrEmpty(cll.UserAnswerCall) || string.IsNullOrEmpty(cll.UserCall) ) && cll.State == CallStates.Lost.ToString())
+                {
+                    continue;
+                }
+                else
+                {
+                    callsList.Add(cll);
+                }
+
             }
 
             response.Add(new GetAllUserCallResponse
