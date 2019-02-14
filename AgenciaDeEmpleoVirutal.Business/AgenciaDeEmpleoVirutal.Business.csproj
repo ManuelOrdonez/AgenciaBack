@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <DebugType>full</DebugType>
-	<ProjectGuid>{6224c484-3e23-4f06-a749-195c1e478110}</ProjectGuid>
+	<ProjectGuid>{f84f36df-dcac-46d9-a2a3-ad12822a1d43}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
