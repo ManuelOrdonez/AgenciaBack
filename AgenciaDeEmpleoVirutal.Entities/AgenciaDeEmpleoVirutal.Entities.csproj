@@ -4,6 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;Test</Configurations>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+	<ProjectGuid>{f9098ad8-eb53-49c5-ad81-4f65f4e3e595}</ProjectGuid>
   </PropertyGroup>
 
   <ItemGroup>
