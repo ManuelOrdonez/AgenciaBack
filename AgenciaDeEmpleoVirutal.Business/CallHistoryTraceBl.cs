@@ -45,7 +45,14 @@
         /// </summary>
         private readonly IGenericRep<User> _agentRepository;
 
+        /// <summary>
+        /// The open tok service
+        /// </summary>
         private readonly IOpenTokExternalService _openTokService;
+
+        /// <summary>
+        /// The user secret settings
+        /// </summary>
         private readonly UserSecretSettings _UserSecretSettings;
 
         /// <summary>
@@ -184,7 +191,6 @@
             var callInfo = existsCall == null || string.IsNullOrWhiteSpace(existsCall.UserCall) ?
                 GetDefaultCallHistoryTrace(callRequest) : existsCall;
 
-            /// ver Row Key de agentes
             var agent = _agentRepository.GetAsync(callRequest.UserName).Result;
 
             if (agent?.OpenTokSessionId == null)

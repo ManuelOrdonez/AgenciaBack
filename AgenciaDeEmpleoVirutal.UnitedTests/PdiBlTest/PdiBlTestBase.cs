@@ -45,7 +45,12 @@
         /// <summary>
         /// user Mock
         /// </summary>
-        protected User userMock;
+        protected User UserMock;
+
+        /// <summary>
+        /// The agent Mock
+        /// </summary>
+        protected User AgentMock;
 
         /// <summary>
         /// Constructor's Pdi Business logic Test Base
@@ -56,7 +61,7 @@
             _pdiRepMock = new Mock<IGenericRep<PDI>>();
             _userRepMock = new Mock<IGenericRep<User>>();
             _sendMailServiceMock = new Mock<ISendGridExternalService>();
-            IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
+            IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings() { URLFront = "urlTest" });
             pdiBusinessLogic = new PdiBl(_pdfConvertServiceMock.Object, _pdiRepMock.Object, _userRepMock.Object, _sendMailServiceMock.Object, options);
             SetEntitiesMocks();
         }
@@ -81,9 +86,23 @@
                 WhenJob = "WhenJob "
             };
 
-            userMock = new User()
+            UserMock = new User()
             {
                 PartitionKey = "cesante",
+                LastName = "Gil Garnica",
+                Name = "Juan Sebastian",
+                Position = "",
+                Role = "",
+                State = "Enable",
+                Email = "test@colsubsidio.com",
+                UserType = "cesante",
+                UserName = "12345678_2",
+                OpenTokSessionId = "sessionot",
+            };
+
+            AgentMock = new User
+            {
+                PartitionKey = "funcionario",
                 LastName = "Gil Garnica",
                 Name = "Juan Sebastian",
                 Position = "Auxiliar",

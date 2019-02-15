@@ -7,9 +7,16 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Get All Calls Not Managed Test
+    /// </summary>
+    /// <seealso cref="AgenciaDeEmpleoVirutal.UnitedTests.CallHistoryTraceBlTest.CallHistoryTraceBlTestBase" />
     [TestClass]
     public class GetAllCallsNotManagedTest : CallHistoryTraceBlTestBase
     {
+        /// <summary>
+        /// Gets all calls not managed when open tok session identifier is null or empty return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetAllCallsNotManaged_WhenOpenTokSessionIdIsNullOrEmpty_ReturnError()
         {
@@ -24,6 +31,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets all calls not managed when open state is null or empty return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetAllCallsNotManaged_WhenOpenStateIsNullOrEmpty_ReturnError()
         {
@@ -38,6 +48,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets all calls not managed when table storage feild return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetAllCallsNotManaged_WhenTableStorageFeild_ReturnError()
         {
@@ -53,6 +66,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets all calls not managed when when all fields are success and services found return success.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetAllCallsNotManaged_WhenWhenAllFieldsAreSuccessAndServicesFound_ReturnSuccess()
         {

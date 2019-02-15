@@ -58,8 +58,15 @@
         /// </summary>
         protected GetCallRequest GetCallRequestMoq;
 
-
+        /// <summary>
+        /// The open tok external service
+        /// </summary>
         protected Mock<IOpenTokExternalService> OpenTokExternalService;
+
+        /// <summary>
+        /// The set call trace request mock
+        /// </summary>
+        protected SetCallTraceRequest SetCallTraceRequestMock;
 
         /// <summary>
         /// Class Constructor
@@ -128,6 +135,16 @@
                 Caller = CallerMoq,
                 CallInfo = CallTraceMoq,
                 OpenTokAccessToken = "OpenTokSessionId"
+            };
+
+            SetCallTraceRequestMock = new SetCallTraceRequest
+            {
+                CallType = "callTest",
+                OpenTokAccessToken = "OpenTokAccessTokenTest",
+                OpenTokSessionId = "OpenTokSessionIdTest",
+                State = 1,
+                Trace = "TraceTest",
+                UserName = "UserNameTest"
             };
         }
     }
