@@ -45,7 +45,7 @@
         {
             if(logRequest is null)
             {
-                throw new ArgumentNullException("logRequest", nameof(logRequest));
+                throw new ArgumentNullException(nameof(logRequest));
             }
 
             var errorsMessage = logRequest.Validate().ToList();

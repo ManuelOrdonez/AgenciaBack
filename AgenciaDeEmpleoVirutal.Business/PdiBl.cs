@@ -75,7 +75,7 @@
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options", nameof(options));
+                throw new ArgumentNullException(nameof(options));
             }
 
             _webPageService = webPageService;
@@ -95,7 +95,7 @@
         {
             if (PDIRequest == null)
             {
-                throw new ArgumentNullException("PDIRequest", nameof(PDIRequest));
+                throw new ArgumentNullException(ameof(PDIRequest));
             }
 
             var errorsMessage = PDIRequest.Validate().ToList();
