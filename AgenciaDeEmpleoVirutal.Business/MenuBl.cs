@@ -1,5 +1,4 @@
-﻿
-namespace AgenciaDeEmpleoVirutal.Business
+﻿namespace AgenciaDeEmpleoVirutal.Business
 {
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
@@ -18,8 +17,19 @@ namespace AgenciaDeEmpleoVirutal.Business
     /// </summary>
     public class MenuBl : BusinessBase<ParametersResponse>, IMenuBl
     {
+        /// <summary>
+        /// The menu rep
+        /// </summary>
         private readonly IGenericRep<Menu> _menuRep;
+
+        /// <summary>
+        /// The parament rep
+        /// </summary>
         private readonly IGenericRep<Parameters> _paramentRep;
+
+        /// <summary>
+        /// The user secret settings
+        /// </summary>
         private readonly IOptions<UserSecretSettings> _UserSecretSettings;
 
         /// <summary>

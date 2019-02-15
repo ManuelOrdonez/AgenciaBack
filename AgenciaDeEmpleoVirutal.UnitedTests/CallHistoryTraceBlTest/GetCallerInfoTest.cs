@@ -7,9 +7,16 @@
     using Moq;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Get Caller Info Test
+    /// </summary>
+    /// <seealso cref="AgenciaDeEmpleoVirutal.UnitedTests.CallHistoryTraceBlTest.CallHistoryTraceBlTestBase" />
     [TestClass]
     public class GetCallerInfoTest : CallHistoryTraceBlTestBase
     {
+        /// <summary>
+        /// Gets the caller information when open tok session identifier in null or empty return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetCallerInfo_WhenOpenTokSessionIdInNullOrEmpty_ReturnError()
         {
@@ -23,6 +30,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the caller information when table storage fail return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetCallerInfo_WhenTableStorageFail_ReturnError()
         {
@@ -39,6 +49,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the caller information when when all fields are success and services found return success.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void GetCallerInfo_WhenWhenAllFieldsAreSuccessAndServicesFound_ReturnSuccess()
         {

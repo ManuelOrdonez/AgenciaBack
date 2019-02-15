@@ -1,12 +1,17 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.MenuBITest
 {
-    using AgenciaDeEmpleoVirutal.Entities;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Collections.Generic;
 
+    /// <summary>
+    /// Get Menu Test
+    /// </summary>
+    /// <seealso cref="AgenciaDeEmpleoVirutal.UnitedTests.MenuBITest.MenuBITestBase" />
     [TestClass]
     public class GetMenuTest : MenuBITestBase
     {
+        /// <summary>
+        /// Gets the menu request is null return error.
+        /// </summary>
         [TestMethod, TestCategory("MenuBI")]
         public void GetMenu_RequestIsNull_ReturnError()
         {

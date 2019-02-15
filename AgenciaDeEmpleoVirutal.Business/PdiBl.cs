@@ -215,7 +215,7 @@
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
                     string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations,
-                   this.GetImageAsBase64Url(urlFront+"/assets/images/images/colsubsidio_logo.png").Result,
+                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/colsubsidio_logo.png").Result,
                    this.GetImageAsBase64Url(urlFront + "/assets/images/images/agencia_de_empleo_logo.png").Result,
                    this.GetImageAsBase64Url(urlFront + "/assets/images/images/supersubsidio_logo.png").Result,
                    this.GetImageAsBase64Url(urlFront + "/assets/images/images/Ministerio-Trabajo-Colombia.png").Result,
@@ -243,22 +243,22 @@
             return result;
         }
 
-
         /// <summary>
         /// To base 64
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public async Task<string> GetImageAsBase64Url(string url)
+        private async Task<string> GetImageAsBase64Url(string url)
         {
             using (var handler = new HttpClientHandler())
             using (var client = new HttpClient(handler))
             {
                 var bytes = await client.GetByteArrayAsync(url);
-                var image= "data:image/png;base64," + Convert.ToBase64String(bytes);
+                var image = "data:image/png;base64," + Convert.ToBase64String(bytes);
                 return image;
             }
         }
+
         /// <summary>
         /// Method to Set Fields Of PDI
         /// </summary>

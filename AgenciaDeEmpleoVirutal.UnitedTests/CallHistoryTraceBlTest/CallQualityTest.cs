@@ -1,17 +1,21 @@
 ﻿namespace AgenciaDeEmpleoVirutal.UnitedTests.CallHistoryTraceBlTest
 {
     using AgenciaDeEmpleoVirutal.Entities;
-    using AgenciaDeEmpleoVirutal.Entities.Responses;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
-    using System;
     using System.Collections.Generic;
-    using System.Text;
 
+    /// <summary>
+    /// Call Quality Test
+    /// </summary>
+    /// <seealso cref="AgenciaDeEmpleoVirutal.UnitedTests.CallHistoryTraceBlTest.CallHistoryTraceBlTestBase" />
     [TestClass]
     public class CallQualityTest : CallHistoryTraceBlTestBase
     {
+        /// <summary>
+        /// Calls the quality when session identifier is null or empty return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void CallQuality_WhenSessionIdIsNullOrEmpty_ReturnError()
         {
@@ -26,6 +30,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Calls the quality when token identifier is null or empty return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void CallQuality_WhenTokenIdIsNullOrEmpty_ReturnError()
         {
@@ -40,6 +47,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Calls the quality when table storage fail geting row return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void CallQuality_WhenTableStorageFailGetingRow_ReturnError()
         {
@@ -54,6 +64,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Calls the quality when table storage fail adding row return error.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void CallQuality_WhenTableStorageFailAddingRow_ReturnError()
         {
@@ -69,6 +82,9 @@
             Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Calls the quality when when all fields are success and services found return success.
+        /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
         public void CallQuality_WhenWhenAllFieldsAreSuccessAndServicesFound_ReturnSuccess()
         {
