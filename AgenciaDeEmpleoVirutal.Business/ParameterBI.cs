@@ -35,7 +35,7 @@
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException("options", nameof(options));
             }
 
             _paramentRep = paramentRep;
@@ -75,7 +75,7 @@
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException("request", nameof(request));
             }
 
             var response = new List<ResponseUrlRecord>();
@@ -204,7 +204,7 @@
         {
             if (type == null)
             {
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException("type", nameof(type));
             }
             if (type.Count == 0)
             {
@@ -262,7 +262,7 @@
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException("request", nameof(request));
             }
 
             var result = _paramentRep.GetByPartitionKeyAndRowKeyAsync(request.Category, request.ParameterId).Result;

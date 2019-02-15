@@ -53,7 +53,7 @@
             var parameter = string.Empty;
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException("request", nameof(request));
             }
             
             var role = request.Replace(" ", "_");
