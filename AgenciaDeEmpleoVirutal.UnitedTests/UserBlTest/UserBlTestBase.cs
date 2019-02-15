@@ -8,6 +8,7 @@
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
+    using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Moq;
@@ -15,40 +16,119 @@
 
     public class UserBlTestBase : BusinessBase<User>
     {
+        /// <summary>
+        /// The pdi rep moq
+        /// </summary>
         protected Mock<IGenericRep<PDI>> PDIRepMoq;
 
+        /// <summary>
+        /// The user rep moq
+        /// </summary>
         protected Mock<IGenericRep<User>> UserRepMoq;
 
+        /// <summary>
+        /// The busy rep moq
+        /// </summary>
         protected Mock<IGenericRep<BusyAgent>> BusyRepMoq;
 
+        /// <summary>
+        /// The LDAP services moq
+        /// </summary>
         protected Mock<ILdapServices> LdapServicesMoq;
 
+        /// <summary>
+        /// The send mail service moq
+        /// </summary>
         protected Mock<ISendGridExternalService> SendMailServiceMoq;
 
+        /// <summary>
+        /// The open tok external service
+        /// </summary>
         protected Mock<IOpenTokExternalService> OpenTokExternalService;
 
+        /// <summary>
+        /// The user business
+        /// </summary>
         protected UserBl UserBusiness;
 
+        /// <summary>
+        /// The request user authenticate
+        /// </summary>
         protected AuthenticateUserRequest RequestUserAuthenticate;
 
+        /// <summary>
+        /// The user information mock
+        /// </summary>
         protected User UserInfoMock;
 
+        /// <summary>
+        /// The LDAP result
+        /// </summary>
         protected LdapServicesResult<AuthenticateLdapResult> LdapResult;
 
+        /// <summary>
+        /// The request register user
+        /// </summary>
         protected RegisterUserRequest RequestRegisterUser;
 
+        /// <summary>
+        /// The request is authenticate
+        /// </summary>
         protected IsAuthenticateRequest RequestIsAuthenticate;
 
+        /// <summary>
+        /// The request is register
+        /// </summary>
         protected IsRegisterUserRequest RequestIsRegister;
 
+        /// <summary>
+        /// The request log out
+        /// </summary>
         protected LogOutRequest RequestLogOut;
 
+        /// <summary>
+        /// The busy agent mock
+        /// </summary>
         protected BusyAgent BusyAgentMock;
 
+        /// <summary>
+        /// The options
+        /// </summary>
         private IOptions<UserSecretSettings> options;
 
+        /// <summary>
+        /// The settings
+        /// </summary>
         protected readonly UserSecretSettings _settings;
 
+        /// <summary>
+        /// The updateser request
+        /// </summary>
+        protected UserUdateRequest UpdateUserRequest;
+
+        /// <summary>
+        /// The user to update
+        /// </summary>
+        protected User UserToUpdate;
+
+        /// <summary>
+        /// The get user active recuest
+        /// </summary>
+        protected string GetUserActiveRecuest;
+
+        /// <summary>
+        /// The get all users data request
+        /// </summary>
+        protected UsersDataRequest GetAllUsersDataRequest;
+
+        /// <summary>
+        /// The user type filters request
+        /// </summary>
+        protected UserTypeFilters UserTypeFiltersRequest;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserBlTestBase"/> class.
+        /// </summary>
         public UserBlTestBase()
         {
             PDIRepMoq = new Mock<IGenericRep<PDI>>();
@@ -70,8 +150,18 @@
             LoadEntitiesMock();
         }
 
+        /// <summary>
+        /// Loads the entities mock.
+        /// </summary>
         private void LoadEntitiesMock()
         {
+            UserTypeFiltersRequest = new UserTypeFilters
+            {
+                UserType = "UserType"
+            };
+
+            GetUserActiveRecuest = "GetUserActiveRecuest";
+
             BusyAgentMock = new BusyAgent()
             {
                 AgentSession = "5145614561",
@@ -151,6 +241,53 @@
             {
                 NoDocument = "123345667899",
                 TypeDocument = "2"
+            };
+
+            UpdateUserRequest = new UserUdateRequest
+            {
+                Address = "Address",
+                Cellphon1 = "Cellphon1",
+                Cellphon2 = "Cellphon2",
+                City = "City",
+                ContactName = "ContactName",
+                DegreeGeted = "DegreeGeted",
+                Departament = "Departament",
+                EducationLevel = "EducationLevel",
+                Genre = "Genre",
+                IsCesante = default(bool),
+                LastNames = "LastNames",
+                Mail = "test@ig.com",
+                Name = "Name",
+                PositionContact = "PositionContact",
+                SocialReason = "SocialReason",
+                UserName = "UserName"
+            };
+
+            UserToUpdate = new User
+            {
+                Addrerss = "dataUpdate",
+                CellPhone1 = "dataUpdate",
+                CellPhone2 = "dataUpdate",
+                City = "dataUpdate",
+                ContactName = "dataUpdate",
+                DegreeGeted = "dataUpdate",
+                Departament = "dataUpdate",
+                EducationLevel = "dataUpdate",
+                Genre = "dataUpdate",
+                LastName = "dataUpdate",
+                Email = "dataUpdate@ig.com",
+                Name = "dataUpdate",
+                PositionContact = "dataUpdate",
+                SocialReason = "dataUpdate",
+                UserName = "dataUpdate",
+                State = UserStates.Enable.ToString()
+            };
+
+            GetAllUsersDataRequest = new UsersDataRequest
+            {
+                EndDate = default(System.DateTime),
+                StartDate = default(System.DateTime),
+                UserType = "UserType"
             };
         }
     }

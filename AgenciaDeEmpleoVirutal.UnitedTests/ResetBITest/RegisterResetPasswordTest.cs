@@ -8,9 +8,16 @@
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Register Reset Password Test
+    /// </summary>
+    /// <seealso cref="AgenciaDeEmpleoVirutal.UnitedTests.ResetBITest.ResetBITestBase" />
     [TestClass]
     public class RegisterResetPasswordTest : ResetBITestBase
     {
+        /// <summary>
+        /// Registers the reset password when identifier is empty return bad request.
+        /// </summary>
         [TestMethod, TestCategory("ResetBI")]
         public void RegisterResetPassword_WhenIdIsEmpty_ReturnBadRequest()
         {
@@ -26,6 +33,9 @@
             Assert.IsNull(result.Data);
         }
 
+        /// <summary>
+        /// Registers the reset password when identifier user is not found return fail.
+        /// </summary>
         [TestMethod, TestCategory("ResetBI")]
         public void RegisterResetPassword_WhenIdUserIsNotFound_ReturnFail()
         {
