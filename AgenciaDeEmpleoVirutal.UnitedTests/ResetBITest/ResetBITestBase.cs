@@ -40,6 +40,9 @@
         /// </summary>
         protected ResetBI resetBusinessLogic;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ResetBITestBase"/> class.
+        /// </summary>
         public ResetBITestBase()
         {
             _sendMailServiceMock = new Mock<ISendGridExternalService>();

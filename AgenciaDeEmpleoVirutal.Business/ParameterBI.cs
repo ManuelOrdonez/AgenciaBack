@@ -242,6 +242,10 @@
             return ResponseSuccess(parametsList);
         }
 
+        /// <summary>
+        /// Gets the categories.
+        /// </summary>
+        /// <returns></returns>
         public Response<List<string>> GetCategories()
         {
             var DistinctItems = _paramentRep.GetList().Result.GroupBy(x => x.PartitionKey).Select(y => y.First());
@@ -258,6 +262,12 @@
             return ResponseSuccessList(listList);
         }
 
+        /// <summary>
+        /// Sets the parameter value.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException">request</exception>
         public Response<ParametersResponse> SetParameterValue(SetParameterValueRequest request)
         {
             if (request == null)

@@ -21,7 +21,7 @@
             var message = RequestRegisterUser.Validate().ToList();
             var expected = ResponseBadRequest<RegisterUserResponse>(message);
             ///Action
-            var result = base.UserBusiness.RegisterUser(RequestRegisterUser);
+            var result = UserBusiness.RegisterUser(RequestRegisterUser);
             ///Assert
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.AreEqual(expected.Message.Count, result.Message.Count);

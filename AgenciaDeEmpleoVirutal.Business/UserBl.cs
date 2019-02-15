@@ -718,7 +718,7 @@
             var result = _userRep.AddOrUpdate(userUpdate).Result;
             if (!result)
             {
-                ResponseFail();
+                return ResponseFail();
             }
             var userMail = new User
             {
