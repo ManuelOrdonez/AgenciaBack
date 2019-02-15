@@ -168,8 +168,9 @@
             {
                 stream.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.Write(ex);
             }
             if (rta.Ok)
             {
