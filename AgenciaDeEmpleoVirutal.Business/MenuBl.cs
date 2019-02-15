@@ -110,6 +110,10 @@
         {
             List<string> menuIds = new List<string>();
             List<Menu> optionsMenu = new List<Menu>();
+            if (menuRol is null)
+            {
+                return optionsMenu;
+            }
 
             foreach (var param in menuRol)
             {
