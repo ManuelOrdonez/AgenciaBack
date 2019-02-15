@@ -274,6 +274,12 @@
             }
             return ResponseSuccess<GetSubsidyResponse>(result);
         }
+
+        /// <summary>
+        /// Gets the user active.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <returns></returns>
         private User getUserActive(string username)
         {
             User user = null;
