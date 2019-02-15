@@ -215,7 +215,7 @@
         /// <returns></returns>
         public Response<AuthenticateUserResponse> ImAviable(AviableUserRequest RequestAviable)
         {
-            User user = null;
+            User user = new User();
             var response = new List<AuthenticateUserResponse>();
             if (RequestAviable == null)
             {

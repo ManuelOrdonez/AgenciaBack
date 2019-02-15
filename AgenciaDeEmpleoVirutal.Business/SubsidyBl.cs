@@ -396,7 +396,7 @@
 
             var subsidies = _subsidyRep.GetListQuery(query).Result;
 
-            if (subsidies is null || subsidies.Count == 0)
+            if (subsidies?.Count == 0)
             {
                 return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
             }

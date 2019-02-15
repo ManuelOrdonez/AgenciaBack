@@ -252,27 +252,30 @@
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
             var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))).Result;
-            if (funcionaries.Count == 0 || funcionaries is null)
+            if (funcionaries?.Count == 0)
             {
                 return ResponseFail<FuncionaryInfoResponse>();
             }
-            var funcionariesInfo = new List<FuncionaryInfoResponse>();
-            funcionaries?.ForEach(f =>
+            else
             {
-                funcionariesInfo.Add(new FuncionaryInfoResponse
+                var funcionariesInfo = new List<FuncionaryInfoResponse>();
+                funcionaries?.ForEach(f =>
                 {
-                    Position = f.Position,
-                    Role = f.Role,
-                    Mail = f.Email,
-                    State = f.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture),
-                    Name = f.Name,
-                    LastName = f.LastName,
-                    TypeDocument = f.TypeDocument,
-                    NoDocument = f.NoDocument,
-                    CodTypeDocument = f.CodTypeDocument
+                    funcionariesInfo.Add(new FuncionaryInfoResponse
+                    {
+                        Position = f.Position,
+                        Role = f.Role,
+                        Mail = f.Email,
+                        State = f.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture),
+                        Name = f.Name,
+                        LastName = f.LastName,
+                        TypeDocument = f.TypeDocument,
+                        NoDocument = f.NoDocument,
+                        CodTypeDocument = f.CodTypeDocument
+                    });
                 });
-            });
-            return ResponseSuccess(funcionariesInfo);
+                return ResponseSuccess(funcionariesInfo);
+            }
         }
     }
 }

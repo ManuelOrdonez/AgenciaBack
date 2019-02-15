@@ -280,9 +280,9 @@
                 {
                     _openTokService.StopRecord(callInfo.RecordId);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-
+                    throw new Exception(ex.Message);
                 }
             }
             callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?

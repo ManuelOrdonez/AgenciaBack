@@ -174,8 +174,9 @@
             {
                 stream.Close();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                throw new Exception(ex.Message);
             }
             if (rta.Ok)
             {

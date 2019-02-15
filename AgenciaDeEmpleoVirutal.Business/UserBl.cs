@@ -80,7 +80,7 @@
             }
 
             var result = _userRep.GetSomeAsync("DeviceId", deviceId.DeviceId).Result;
-            if (result.Count == 0 || result is null)
+            if (result?.Count == 0)
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.DeviceNotFound);
             }
