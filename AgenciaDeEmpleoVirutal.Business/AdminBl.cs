@@ -252,7 +252,7 @@
         public Response<FuncionaryInfoResponse> GetAllFuncionaries()
         {
             var funcionaries = _usersRepo.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO"))).Result;
-            if (funcionaries.Count == 0 || funcionaries is null)
+            if (funcionaries?.Count == 0)
             {
                 return ResponseFail<FuncionaryInfoResponse>();
             }
