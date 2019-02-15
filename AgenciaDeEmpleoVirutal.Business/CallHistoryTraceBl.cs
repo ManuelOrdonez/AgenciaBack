@@ -282,7 +282,7 @@
                 }
                 catch (Exception ex)
                 {
-                    Console.Write(ex);
+                    throw new Exception(ex.Message);
                 }
             }
             callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?

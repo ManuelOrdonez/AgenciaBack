@@ -170,7 +170,7 @@
             }
             catch (Exception ex)
             {
-                Console.Write(ex);
+                throw new Exception(ex.Message);
             }
             if (rta.Ok)
             {
