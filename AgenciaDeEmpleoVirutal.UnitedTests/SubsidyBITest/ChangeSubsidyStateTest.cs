@@ -58,7 +58,7 @@
             var errorsMessage = ChangeSubsidyRequestMock.Validate().ToList();
             var expected = ResponseFail(ServiceResponseCode.AgentNotFound);
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
 
             /// Act
             var result = subsidyBusinessLogic.ChangeSubsidyState(ChangeSubsidyRequestMock);
@@ -77,8 +77,8 @@
             var errorsMessage = ChangeSubsidyRequestMock.Validate().ToList();
             var expected = ResponseFail();
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.Reviewer)).Returns(Task.FromResult(resultTS));
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.Reviewer)).Returns(Task.FromResult(resultTS));
 
             /// Act
             var result = subsidyBusinessLogic.ChangeSubsidyState(ChangeSubsidyRequestMock);
@@ -98,9 +98,9 @@
             var errorsMessage = ChangeSubsidyRequestMock.Validate().ToList();
             var expected = ResponseFail();
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.Reviewer)).Returns(Task.FromResult(resultTS));
-            _subsidyRepMock.Setup(s => s.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.Reviewer)).Returns(Task.FromResult(resultTS));
+            SubsidyRepMock.Setup(s => s.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
 
             /// Act
             var result = subsidyBusinessLogic.ChangeSubsidyState(ChangeSubsidyRequestMock);
@@ -120,10 +120,10 @@
             var errorsMessage = ChangeSubsidyRequestMock.Validate().ToList();
             var expected = ResponseSuccess();
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _userRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.Reviewer)).Returns(Task.FromResult(resultTS));
-            _subsidyRepMock.Setup(s => s.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
-            _subsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(true);
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            UserRepMock.Setup(u => u.GetAsync(ChangeSubsidyRequestMock.Reviewer)).Returns(Task.FromResult(resultTS));
+            SubsidyRepMock.Setup(s => s.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
+            SubsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(true);
 
             /// Act
             var result = subsidyBusinessLogic.ChangeSubsidyState(ChangeSubsidyRequestMock);

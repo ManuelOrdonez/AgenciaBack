@@ -32,8 +32,8 @@
         {
             /// Arrange
             var expected = ResponseFail<GetSubsidyResponse>(ServiceResponseCode.HaveNotSubsidyRequest);
-            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(new User()));
-            _subsidyRepMock.Setup(s => s.GetListQuery(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<Subsidy>());
+            UserRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(new User()));
+            SubsidyRepMock.Setup(s => s.GetListQuery(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<Subsidy>());
             /// Act
             var result = subsidyBusinessLogic.GetSubsidyRequests(SubsidyRequestMock.UserName);
             /// Assert

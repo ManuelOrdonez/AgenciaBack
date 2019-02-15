@@ -149,6 +149,7 @@
             services.AddTransient<IOpenTokExternalService, OpenTokExternalService>();
             services.AddTransient<ILdapServices, LdapServices>();
             services.AddTransient<IPdfConvertExternalService, PDFConvertExternalService>();
+            services.AddTransient<IWebPageService, WebPageService>();
         }
 
         /// <summary>

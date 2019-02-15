@@ -9,9 +9,16 @@
     using System.Collections.Generic;
     using System.Linq;
 
+    /// <summary>
+    /// Get Agent Available Test
+    /// </summary>
+    /// <seealso cref="AgenciaDeEmpleoVirutal.UnitedTests.AgentBlTest.AgentBlTestBase" />
     [TestClass]
     public class GetAgentAvailableTest : AgentBlTestBase
     {
+        /// <summary>
+        /// Gets the agent available when user name is null or empty return error.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenUserNameIsNullOrEmpty_ReturnError()
         {
@@ -22,12 +29,14 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsFalse(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
         }
-        
+
+        /// <summary>
+        /// Gets the agent available when user not found return error.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenUserNotFound_ReturnError()
         {
@@ -39,12 +48,14 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsFalse(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the agent available when user calling return error.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenUserCalling_ReturnError()
         {
@@ -56,12 +67,14 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsFalse(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the agent available when agent not available return error.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenAgentNotAvailable_ReturnError()
         {
@@ -74,12 +87,14 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsFalse(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the agent available when table storage faild adding row return error.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenTableStorageFaildAddingRow_ReturnError()
         {
@@ -93,12 +108,14 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsFalse(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the agent available when open tok external service feild return error.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenOpenTokExternalServiceFeild_ReturnError()
         {
@@ -114,12 +131,14 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsFalse(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsFalse(expected.TransactionMade);
         }
 
+        /// <summary>
+        /// Gets the agent available when when all fields are success and services found return success.
+        /// </summary>
         [TestMethod, TestCategory("AdminBl")]
         public void GetAgentAvailable_WhenWhenAllFieldsAreSuccessAndServicesFound_ReturnSuccess()
         {
@@ -135,10 +154,9 @@
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);
             ///Assert
-            //Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            //Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            //Assert.IsTrue(expected.TransactionMade);
-            Assert.IsTrue(true);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.IsTrue(expected.TransactionMade);
         }
     }
 }
