@@ -55,6 +55,16 @@
         /// </summary>
         private readonly UserSecretSettings _settings;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserBl"/> class.
+        /// </summary>
+        /// <param name="userRep">The user rep.</param>
+        /// <param name="LdapServices">The LDAP services.</param>
+        /// <param name="sendMailService">The send mail service.</param>
+        /// <param name="options">The options.</param>
+        /// <param name="_openTokExternalService">The open tok external service.</param>
+        /// <param name="pdiRep">The pdi rep.</param>
+        /// <param name="busyAgentRepository">The busy agent repository.</param>
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
                         IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository)
@@ -180,15 +190,12 @@
         /// <returns></returns>
         private ServiceResponseCode AuthenticateFuncionary(User user, string passwordDecrypt)
         {
-            if (user == null)
-            {
-                return ServiceResponseCode.IsNotRegisterInAz;
-            }
             if (user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture) /*&& user.IntentsLogin == 5*/)
             {
                 return ServiceResponseCode.UserDesable;
             }
-            if (user.IntentsLogin > 4 && user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture))
+            const int intentsToBlockUser = 4;
+            if (user.IntentsLogin > intentsToBlockUser && user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture))
             {
                 return ServiceResponseCode.UserBlock;
             }
@@ -202,7 +209,8 @@
             if (!passwordUserDecrypt.Equals(passwordDecrypt, StringComparison.CurrentCulture))
             {
                 user.IntentsLogin = user.IntentsLogin + 1;
-                user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                const int maxIntentsToBlockUser = 5;
+                user.State = (user.IntentsLogin == maxIntentsToBlockUser) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                 var resultUpt = _userRep.AddOrUpdate(user).Result;
                 if (!resultUpt)
                 {
@@ -267,18 +275,16 @@
                 {
                     return ServiceResponseCode.IsNotRegisterInLdap;
                 }
-                if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
-                {
-                    return ServiceResponseCode.ServiceExternalError;
-                }
-                if (user != null && user?.IntentsLogin > 4) /// intentos maximos
+                const int intentsToBlockUser = 4;
+                if (user != null && user?.IntentsLogin > intentsToBlockUser) /// intentos maximos
                 {
                     return ServiceResponseCode.UserBlock;
                 }
                 if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
                 {
-                    //user.IntentsLogin = user.IntentsLogin + 1;
-                    user.State = (user.IntentsLogin == 5) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                    /// user.IntentsLogin = user.IntentsLogin + 1;
+                    const int maxIntentsToBlockUser = 5;
+                    user.State = (user.IntentsLogin == maxIntentsToBlockUser) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                     var resultUpt = _userRep.AddOrUpdate(user).Result;
                     if (!resultUpt)
                     {
