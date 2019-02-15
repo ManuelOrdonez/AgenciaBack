@@ -155,7 +155,13 @@
             {
                 return ResponseFail<List<CallHistoryTrace>>();
             }
+
             callTrace.First().Score = request.Score;
+            if (callTrace.First().State == CallStates.Lost.ToString())
+            {
+                callTrace.First().Score = 0;
+            }
+
             if (!_callHistoryRepository.AddOrUpdate(callTrace.First()).Result)
             {
                 return ResponseFail<List<CallHistoryTrace>>();
@@ -298,7 +304,7 @@
         {
             string type = string.Empty;
             var user = _agentRepository.GetAsync(UserName).Result;
-            type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture) 
+            type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
                 ? "UserNameAgent" : "UserNameCaller";
 
             var busy = _busyAgentRepository.GetSomeAsync(type, UserName).Result;
@@ -340,12 +346,12 @@
         {
             var response = new List<ResponseUrlRecord>();
 
-            var blobContainer = _UserSecretSettings.BlobContainer;            
-            var openTokApiKey = _UserSecretSettings.OpenTokApiKey;           
+            var blobContainer = _UserSecretSettings.BlobContainer;
+            var openTokApiKey = _UserSecretSettings.OpenTokApiKey;
 
             response.Add(new ResponseUrlRecord
             {
-                URL = this.GetContainerSasUri(blobContainer, openTokApiKey + "/" +RecordId + "/archive.zip")
+                URL = this.GetContainerSasUri(blobContainer, openTokApiKey + "/" + RecordId + "/archive.zip")
 
             });
             return ResponseSuccess(response);
@@ -457,14 +463,15 @@
                 }
 
                 cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
-                if ((string.IsNullOrEmpty(cll.UserAnswerCall) || string.IsNullOrEmpty(cll.UserCall) ) && cll.State == CallStates.Lost.ToString())
-                {
-                    continue;
-                }
-                else
-                {
-                    callsList.Add(cll);
-                }
+                /*  if ((string.IsNullOrEmpty(cll.UserAnswerCall) || string.IsNullOrEmpty(cll.UserCall) ) && cll.State == CallStates.Lost.ToString())
+                  {
+                      continue;
+                  }
+                  else
+                  {
+                      callsList.Add(cll);
+                  }*/
+                callsList.Add(cll);
 
             }
 
