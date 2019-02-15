@@ -10,9 +10,7 @@
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using Microsoft.WindowsAzure.Storage.Table;
     using Moq;
-    using System;
     using System.Collections.Generic;
-    using System.Text;
 
     public class AgentBlTestBase : BusinessBase<User>
     {

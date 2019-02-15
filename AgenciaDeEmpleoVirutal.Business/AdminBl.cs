@@ -257,7 +257,7 @@
                 return ResponseFail<FuncionaryInfoResponse>();
             }
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
-            funcionaries.ForEach(f =>
+            funcionaries?.ForEach(f =>
             {
                 funcionariesInfo.Add(new FuncionaryInfoResponse
                 {

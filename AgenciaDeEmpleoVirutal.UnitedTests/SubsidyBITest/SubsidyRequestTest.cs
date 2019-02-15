@@ -50,8 +50,8 @@
             /// Arrange
             var expected = ResponseFail();
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _subsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(false);
+            UserRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            SubsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(false);
 
             /// Act
             var result = subsidyBusinessLogic.SubsidyRequest(SubsidyRequestMock);
@@ -67,8 +67,8 @@
             /// Arrange
             var expected = ResponseSuccess();
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _subsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(true);
+            UserRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            SubsidyRepMock.Setup(s => s.AddOrUpdate(It.IsAny<Subsidy>())).ReturnsAsync(true);
 
             /// Act
             var result = subsidyBusinessLogic.SubsidyRequest(SubsidyRequestMock);

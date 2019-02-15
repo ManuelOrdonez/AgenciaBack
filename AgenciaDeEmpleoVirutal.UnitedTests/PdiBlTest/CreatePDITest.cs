@@ -3,6 +3,7 @@
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
+    using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
@@ -10,6 +11,7 @@
     using Moq;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Net.Mail;
 
     [TestClass]
     public class CreatePDITest : PdiBlTestBase
@@ -91,7 +93,7 @@
         {
             /// Arrange
             List<User> resultTableStorage = null; 
-            _userRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorage);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorage);
             var expected = ResponseFail<PDI>(ServiceResponseCode.UserNotFound);
             /// Action
             var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
@@ -100,6 +102,7 @@
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
             Assert.IsNull(result.Data);
+            UserRepMock.VerifyAll();
         }
 
         /// <summary>
@@ -111,8 +114,8 @@
             /// Arrange
             List<User> resultTableStorageUser = new List<User>() { UserMock };
             List<User> resultTableStorageAgent = null;
-            _userRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
-            _userRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
             var expected = ResponseFail<PDI>(ServiceResponseCode.UserNotFound);
             /// Action
             var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
@@ -121,6 +124,7 @@
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
             Assert.IsNull(result.Data);
+            UserRepMock.VerifyAll();
         }
 
         /// <summary>
@@ -134,10 +138,10 @@
             List<User> resultTableStorageUser = new List<User>() { UserMock };
             List<User> resultTableStorageAgent = new List<User>() { AgentMock };
             var resultTSPdi = new List<PDI>();
-            _userRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
-            _userRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
-            _pdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
-            _pdiRepMock.Setup(pdi => pdi.AddOrUpdate(It.IsAny<PDI>())).ReturnsAsync(false);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
+            PdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
+            PdiRepMock.Setup(pdi => pdi.AddOrUpdate(It.IsAny<PDI>())).ReturnsAsync(false);
             var expected = ResponseFail<PDI>();
             /// Action
             var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
@@ -146,6 +150,8 @@
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
             Assert.IsNull(result.Data);
+            UserRepMock.VerifyAll();
+            PdiRepMock.VerifyAll();
         }
 
         /// <summary>
@@ -159,10 +165,10 @@
             List<User> resultTableStorageUser = new List<User>() { UserMock };
             List<User> resultTableStorageAgent = new List<User>() { AgentMock };
             var resultTSPdi = new List<PDI>();
-            _userRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
-            _userRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
-            _pdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
-            _pdiRepMock.Setup(pdi => pdi.AddOrUpdate(It.IsAny<PDI>())).ReturnsAsync(true);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
+            PdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
+            PdiRepMock.Setup(pdi => pdi.AddOrUpdate(It.IsAny<PDI>())).ReturnsAsync(true);
             var expected = ResponseSuccess(ServiceResponseCode.SavePDI);
             /// Action
             var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
@@ -170,10 +176,10 @@
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsTrue(result.TransactionMade);
+            UserRepMock.VerifyAll();
+            PdiRepMock.VerifyAll();
         }
 
-        /*
-         Refactorizar codigo
 
         /// <summary>
         /// Creates the pdi when pdi convert service fail retun error.
@@ -186,19 +192,103 @@
             List<User> resultTableStorageAgent = new List<User>() { AgentMock };
             ResultPdfConvert resultConvertService = null;
             var resultTSPdi = new List<PDI>();
-            _userRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
-            _userRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
-            _pdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
-            _pdfConvertServiceMock.Setup(pdiService => pdiService.GenaratePdfContent(It.IsAny<RequestPdfConvert>())).Returns(resultConvertService);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
+            PdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
+            WebPageServiceMock.Setup(webService => webService.GetImageAsBase64Url(It.IsAny<string>())).ReturnsAsync("imageTest");
+            PdfConvertServiceMock.Setup(pdiService => pdiService.GenaratePdfContent(It.IsAny<RequestPdfConvert>())).Returns(resultConvertService);
+
             var expected = ResponseFail<PDI>((int)ServiceResponseCode.ErrorSendMail, "Error generando PDI");
+            
             /// Action
             var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
+            
             /// Assert
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
             Assert.IsNull(result.Data);
+            UserRepMock.VerifyAll();
+            PdiRepMock.VerifyAll();
+            WebPageServiceMock.VerifyAll();
+            PdfConvertServiceMock.VerifyAll();
         }
-        */
+
+        /// <summary>
+        /// Creates the pdi when pdi convert service return secces but save pdi fail retun error.
+        /// </summary>
+        [TestMethod, TestCategory("PdiBI")]
+        public void CreatePDI_WhenPdiConvertServiceReturnSeccesButSavePDIFail_RetunError()
+        {
+            /// Arrange
+            var emailResponse = new EmailResponse
+            {
+                Ok = true,
+            };
+            List <User> resultTableStorageUser = new List<User>() { UserMock };
+            List<User> resultTableStorageAgent = new List<User>() { AgentMock };
+            ResultPdfConvert resultConvertService = new ResultPdfConvert { ContentPdf = new byte[546]};
+            var resultTSPdi = new List<PDI>();
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
+            PdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
+            WebPageServiceMock.Setup(webService => webService.GetImageAsBase64Url(It.IsAny<string>())).ReturnsAsync("imageTest");
+            PdfConvertServiceMock.Setup(pdiService => pdiService.GenaratePdfContent(It.IsAny<RequestPdfConvert>())).Returns(resultConvertService);
+            SendMailServiceMock.Setup(send => send.SendMailPdi(It.IsAny<User>(), It.IsAny<List<Attachment>>())).Returns(emailResponse);
+            PdiRepMock.Setup(pdi => pdi.AddOrUpdate(It.IsAny<PDI>())).ReturnsAsync(false);
+
+            var expected = ResponseFail<PDI>((int)ServiceResponseCode.ErrorSendMail, "Error guardando PDI");
+
+            /// Action
+            var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
+
+            /// Assert
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsFalse(result.TransactionMade);
+            Assert.IsNull(result.Data);
+            UserRepMock.VerifyAll();
+            PdiRepMock.VerifyAll();
+            WebPageServiceMock.VerifyAll();
+            PdfConvertServiceMock.VerifyAll();
+            SendMailServiceMock.VerifyAll();
+        }
+
+        /// <summary>
+        /// Creates the pdi when pdi convert service return secces and save pdi retun success.
+        /// </summary>
+        [TestMethod, TestCategory("PdiBI")]
+        public void CreatePDI_WhenPdiConvertServiceReturnSeccesAndSavePDI_RetunSuccess()
+        {
+            /// Arrange
+            var emailResponse = new EmailResponse {  Ok = true };
+            List<User> resultTableStorageUser = new List<User>() { UserMock };
+            List<User> resultTableStorageAgent = new List<User>() { AgentMock };
+            ResultPdfConvert resultConvertService = new ResultPdfConvert { ContentPdf = new byte[546] };
+            var resultTSPdi = new List<PDI>();
+            UserRepMock.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(resultTableStorageUser);
+            UserRepMock.Setup(ur => ur.GetAsyncAll(PdiRequestMock.AgentUserName)).ReturnsAsync(resultTableStorageAgent);
+            PdiRepMock.Setup(pdi => pdi.GetByPatitionKeyAsync(UserMock.UserName)).ReturnsAsync(resultTSPdi);
+            WebPageServiceMock.Setup(webService => webService.GetImageAsBase64Url(It.IsAny<string>())).ReturnsAsync("imageTest");
+            PdfConvertServiceMock.Setup(pdiService => pdiService.GenaratePdfContent(It.IsAny<RequestPdfConvert>())).Returns(resultConvertService);
+            SendMailServiceMock.Setup(send => send.SendMailPdi(It.IsAny<User>(), It.IsAny<List<Attachment>>())).Returns(emailResponse);
+            PdiRepMock.Setup(pdi => pdi.AddOrUpdate(It.IsAny<PDI>())).ReturnsAsync(true);
+
+            var expected = ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
+
+            /// Action
+            var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
+
+            /// Assert
+            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsTrue(result.TransactionMade);
+            Assert.IsNotNull(result.Data);
+            UserRepMock.VerifyAll();
+            PdiRepMock.VerifyAll();
+            WebPageServiceMock.VerifyAll();
+            PdfConvertServiceMock.VerifyAll();
+            SendMailServiceMock.VerifyAll();
+        }
     }
 }
