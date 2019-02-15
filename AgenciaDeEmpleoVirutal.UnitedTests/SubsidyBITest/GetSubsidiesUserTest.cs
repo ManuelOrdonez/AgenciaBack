@@ -46,7 +46,7 @@
         public void WhenRequestIsNotEmpyButSubsidyRepFail_ReturnUserHaveNotSubsidyRequest()
         {
             ///Arrange
-            List<Subsidy> subsidyRepResponse = null;
+            List<Subsidy> subsidyRepResponse = new List<Subsidy>();
             GetAllSubsidiesRequest request = new GetAllSubsidiesRequest()
             {
                 StartDate = DateTime.Now,
