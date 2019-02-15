@@ -95,7 +95,7 @@
         {
             if (PDIRequest == null)
             {
-                throw new ArgumentNullException(ameof(PDIRequest));
+                throw new ArgumentNullException(nameof(PDIRequest));
             }
 
             var errorsMessage = PDIRequest.Validate().ToList();
