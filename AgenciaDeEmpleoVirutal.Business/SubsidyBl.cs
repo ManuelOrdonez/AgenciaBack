@@ -62,7 +62,7 @@
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException(nameof(options));
             }
 
             _sendMailService = sendMailService;

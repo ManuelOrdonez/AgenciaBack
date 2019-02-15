@@ -219,7 +219,7 @@
             var response = new List<AuthenticateUserResponse>();
             if (RequestAviable == null)
             {
-                throw new ArgumentNullException("RequestAviable");
+                throw new ArgumentNullException(nameof(RequestAviable));
             }
             if (string.IsNullOrEmpty(RequestAviable.UserName))
             {

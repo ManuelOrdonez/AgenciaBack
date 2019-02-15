@@ -126,7 +126,7 @@
         {
             if (userReq == null)
             {
-                throw new ArgumentNullException("userReq");
+                throw new ArgumentNullException(nameof(userReq));
             }
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
@@ -313,7 +313,7 @@
         {
             if (userReq == null)
             {
-                throw new ArgumentNullException("userReq");
+                throw new ArgumentNullException(nameof(userReq));
             }
             var errorsMessage = userReq.Validate().ToList();
             if (errorsMessage.Count > 0)
@@ -547,7 +547,7 @@
         {
             if (RequestAviable == null)
             {
-                throw new ArgumentNullException("RequestAviable");
+                throw new ArgumentNullException(nameof(RequestAviable));
             }
             String[] user = RequestAviable.UserName.Split('_');
             AuthenticateUserRequest request = new AuthenticateUserRequest
@@ -620,7 +620,7 @@
         {
             if (logOurReq == null)
             {
-                throw new ArgumentNullException("logOurReq");
+                throw new ArgumentNullException(nameof(logOurReq));
             }
             var errorsMessage = logOurReq.Validate().ToList();
             if (errorsMessage.Count > 0)
@@ -652,7 +652,7 @@
         {
             if (userRequest == null)
             {
-                throw new ArgumentNullException("userRequest");
+                throw new ArgumentNullException(nameof(userRequest));
             }
 
             var errorsMessage = userRequest.Validate().ToList();
@@ -843,7 +843,7 @@
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             }
             var messagesValidationEntity = request.Validate().ToList();
             
@@ -903,7 +903,7 @@
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             }
 
             var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
