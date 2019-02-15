@@ -244,7 +244,7 @@
         /// Whens the state request is end by web and call history rep response success stop record and update agent response success return success.
         /// </summary>
         [TestMethod, TestCategory("CallHistoryTraceBl")]
-        public void WhenStateRequestIsEndByWebAndCallHistoryRepResponseSuccess_StopRecordAndUpdateAgentResponseSuccess_ReturnSuccess()
+        public void WhenStateRequestIsEndByWebAndCallHistoryRepResponseSuccessStopRecordAndUpdateAgentResponseSuccess_ReturnSuccess()
         {
             ///Arrange
             SetCallTraceRequestMock.State = (int)CallStates.EndByWeb;
@@ -285,5 +285,125 @@
             BusyAgentRepositoryMoq.VerifyAll();
         }
 
+        /// <summary>
+        /// Whens the state request is end by mobile and call history rep response success stop record and update agent response fail return false.
+        /// </summary>
+        [TestMethod, TestCategory("CallHistoryTraceBl")]
+        public void WhenStateRequestIsEndByMobileAndCallHistoryRepResponseSuccessStopRecordAndUpdateAgentResponseFail_ReturnFalse()
+        {
+            ///Arrange
+            SetCallTraceRequestMock.State = (int)CallStates.EndByMobile;
+            var BusyAgentRepResponse = new List<BusyAgent>();
+            var StopRecordResponse = "StopRecordTest";
+            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>()
+            {
+                new CallHistoryTrace
+                {
+                    State = ((int)CallStates.Begun).ToString(),
+                    UserCall = "UserCallTest",
+                    OpenTokSessionId = "OpenTokSessionIdToken"
+                }
+            };
+            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
+            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+
+            responseAgentRep.Available = false;
+            OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
+            BusyAgentRepositoryMoq.Setup(bs => bs.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(BusyAgentRepResponse);
+            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(false);
+
+            var expected = ResponseFail();
+            ///Action
+            var result = CallHistoryTraceBusinessLogic.SetCallTrace(SetCallTraceRequestMock);
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsFalse(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            CallHistoryRepositoryMoq.VerifyAll();
+            UserRepositoryMoq.VerifyAll();
+            OpenTokExternalService.VerifyAll();
+            BusyAgentRepositoryMoq.VerifyAll();
+        }
+
+        /// <summary>
+        /// Whens the state request is end by mobile and call history rep response success stop record and update agent response success return success.
+        /// </summary>
+        [TestMethod, TestCategory("CallHistoryTraceBl")]
+        public void WhenStateRequestIsEndByMobileAndCallHistoryRepResponseSuccessStopRecordAndUpdateAgentResponseSuccess_ReturnSuccess()
+        {
+            ///Arrange
+            SetCallTraceRequestMock.State = (int)CallStates.EndByMobile;
+            var BusyAgentRepResponse = new List<BusyAgent>();
+            var StopRecordResponse = "StopRecordTest";
+            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>()
+            {
+                new CallHistoryTrace
+                {
+                    State = ((int)CallStates.Begun).ToString(),
+                    UserCall = "UserCallTest",
+                    OpenTokSessionId = "OpenTokSessionIdToken"
+                }
+            };
+            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
+            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+
+            responseAgentRep.Available = false;
+            OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
+            BusyAgentRepositoryMoq.Setup(bs => bs.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(BusyAgentRepResponse);
+            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(true);
+
+            CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
+            var expected = ResponseSuccess();
+            ///Action
+            var result = CallHistoryTraceBusinessLogic.SetCallTrace(SetCallTraceRequestMock);
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            CallHistoryRepositoryMoq.VerifyAll();
+            UserRepositoryMoq.VerifyAll();
+            OpenTokExternalService.VerifyAll();
+        }
+
+        /// <summary>
+        /// Whens the state request is managed all repositories response success return success.
+        /// </summary>
+        [TestMethod, TestCategory("CallHistoryTraceBl")]
+        public void WhenStateRequestIsManagedAllRepositoriesResponseSuccess_ReturnSuccess()
+        {
+            ///Arrange
+            SetCallTraceRequestMock.State = (int)CallStates.Managed;
+            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>()
+            {
+                new CallHistoryTrace
+                {
+                    State = ((int)CallStates.Begun).ToString(),
+                    UserCall = "UserCallTest",
+                    OpenTokSessionId = "OpenTokSessionIdToken"
+                }
+            };
+            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+
+            CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
+            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
+            var expected = ResponseSuccess();
+
+            ///Action
+            var result = CallHistoryTraceBusinessLogic.SetCallTrace(SetCallTraceRequestMock);
+            
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            CallHistoryRepositoryMoq.VerifyAll();
+            UserRepositoryMoq.VerifyAll();
+            OpenTokExternalService.VerifyAll();
+        }
     }
 }

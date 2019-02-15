@@ -86,9 +86,7 @@
             ParameterBI parameterBl = new ParameterBI(_paramentRep, _UserSecretSettings);
             var menuRol = parameterBl.GetParametersByType(parameter).Data;
 
-            List<Menu> optionsMenu = new List<Menu>();
-
-            optionsMenu = ListsMenus(menuRol);
+            var optionsMenu = ListsMenus(menuRol);
 
             if (optionsMenu == null || optionsMenu.Count == 0)
             {

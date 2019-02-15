@@ -62,40 +62,119 @@
         /// Whens the parameter da response success return success.
         /// </summary>
         [TestMethod, TestCategory("MenuBI")]
-        public void WhenParameterDAResponseSuccess_ReturnSuccess()
+        public void WhenParameterDAResponseSuccessAndParameterRequestIsAdmini_ReturnSuccess()
         {
             ///Arrange
-            var parameterRepResult = new List<Parameters>
-            {
-                new Parameters
-                {
-                    State = true,
-                    Description = "Description",
-                    ImageFile = "ImageFile",
-                    Required = true,
-                    Value ="Value",
-                    Id ="Id"
-                }
-            };
-            var menuRepResult = new List<Menu>
-            {
-                new Menu
-                {
-                    Click = "Click",
-                    Html = "Html",
-                    Value = "Value",
-                    Id = "Id"
-                }
-            };
-            var response = new List<List<Menu>>
-            {
-                menuRepResult
-            };
-            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(parameterRepResult);
-            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(menuRepResult);
-            var expected = ResponseSuccess(response);
+            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParameterRepResult);
+            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(MenuRepResult);
+            var expected = ResponseSuccess(ResponseOperation);
             ///Action
             var result = menuBusinessLogic.GetMenu(Roles.Administrador.ToString());
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Any());
+        }
+
+        /// <summary>
+        /// Whens the parameter da response success and parameter request is analist fosfec return success.
+        /// </summary>
+        [TestMethod, TestCategory("MenuBI")]
+        public void WhenParameterDAResponseSuccessAndParameterRequestIsAnalistFOSFEC_ReturnSuccess()
+        {
+            ///Arrange
+            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParameterRepResult);
+            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(MenuRepResult);
+            var expected = ResponseSuccess(ResponseOperation);
+            ///Action
+            var result = menuBusinessLogic.GetMenu(Roles.Analista_Revisor_FOSFEC.ToString());
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Any());
+        }
+
+        /// <summary>
+        /// Whens the parameter da response success and parameter request is asesor return success.
+        /// </summary>
+        [TestMethod, TestCategory("MenuBI")]
+        public void WhenParameterDAResponseSuccessAndParameterRequestIsAsesor_ReturnSuccess()
+        {
+            ///Arrange
+            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParameterRepResult);
+            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(MenuRepResult);
+            var expected = ResponseSuccess(ResponseOperation);
+            ///Action
+            var result = menuBusinessLogic.GetMenu(Roles.Orientador_Laboral.ToString());
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Any());
+        }
+
+        /// <summary>
+        /// Whens the parameter da response success and parameter request is supervisor return success.
+        /// </summary>
+        [TestMethod, TestCategory("MenuBI")]
+        public void WhenParameterDAResponseSuccessAndParameterRequestIsSupervisor_ReturnSuccess()
+        {
+            ///Arrange
+            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParameterRepResult);
+            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(MenuRepResult);
+            var expected = ResponseSuccess(ResponseOperation);
+            ///Action
+            var result = menuBusinessLogic.GetMenu(Roles.Supervisor_de_Agencia.ToString());
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Any());
+        }
+
+        /// <summary>
+        /// Whens the parameter da response success and parameter request is offerer return success.
+        /// </summary>
+        [TestMethod, TestCategory("MenuBI")]
+        public void WhenParameterDAResponseSuccessAndParameterRequestIsOfferer_ReturnSuccess()
+        {
+            ///Arrange
+            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParameterRepResult);
+            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(MenuRepResult);
+            var expected = ResponseSuccess(ResponseOperation);
+            ///Action
+            var result = menuBusinessLogic.GetMenu(Roles.Oferente.ToString());
+            ///Assert
+            Assert.AreEqual(expected.Message.Count, result.Message.Count);
+            expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));
+            Assert.IsTrue(result.TransactionMade);
+            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
+            Assert.IsNotNull(result.Data);
+            Assert.IsTrue(result.Data.Any());
+        }
+
+        /// <summary>
+        /// Whens the parameter da response success and parameter request is company return success.
+        /// </summary>
+        [TestMethod, TestCategory("MenuBI")]
+        public void WhenParameterDAResponseSuccessAndParameterRequestIsCompany_ReturnSuccess()
+        {
+            ///Arrange
+            _paramentRepMock.Setup(pm => pm.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParameterRepResult);
+            _menuRepMock.Setup(mRep => mRep.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(MenuRepResult);
+            var expected = ResponseSuccess(ResponseOperation);
+            ///Action
+            var result = menuBusinessLogic.GetMenu("empresa");
             ///Assert
             Assert.AreEqual(expected.Message.Count, result.Message.Count);
             expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));

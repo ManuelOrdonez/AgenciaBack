@@ -177,6 +177,7 @@
         public Response<CallHistoryTrace> SetCallTrace(SetCallTraceRequest callRequest)
         {
             if (callRequest == null)
+            { 
             
                 throw new ArgumentNullException(nameof(callRequest));
             }
