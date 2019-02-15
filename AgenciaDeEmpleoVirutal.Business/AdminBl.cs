@@ -46,7 +46,7 @@
         {
             if (funcionary == null)
             {
-                throw new ArgumentNullException("funcionary");
+                throw new ArgumentNullException("funcionary", nameof(funcionary));
             }
             string message = string.Empty;
             var errorsMesage = funcionary.Validate().ToList();
@@ -169,7 +169,7 @@
         {
             if (funcionaryReq == null)
             {
-                throw new ArgumentNullException("funcionaryReq");
+                throw new ArgumentNullException("funcionaryReq", nameof(funcionaryReq));
             }
             var errorsMesage = funcionaryReq.Validate().ToList();
             if (errorsMesage.Count > 0)
