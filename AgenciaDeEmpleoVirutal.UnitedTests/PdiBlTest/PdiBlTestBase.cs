@@ -15,22 +15,27 @@
         /// <summary>
         /// Interface to Convert PDF Mock
         /// </summary>
-        protected Mock<IPdfConvertExternalService> _pdfConvertServiceMock;
+        protected Mock<IPdfConvertExternalService> PdfConvertServiceMock;
+
+        /// <summary>
+        /// The web page service Mock
+        /// </summary>
+        protected Mock<IWebPageService> WebPageServiceMock;
 
         /// <summary>
         /// PDI Repository Mock
         /// </summary>
-        protected Mock<IGenericRep<PDI>> _pdiRepMock;
+        protected Mock<IGenericRep<PDI>> PdiRepMock;
 
         /// <summary>
         /// User Repository Mock
         /// </summary>
-        protected Mock<IGenericRep<User>> _userRepMock;
+        protected Mock<IGenericRep<User>> UserRepMock;
 
         /// <summary>
         /// Interface to Send Mails Mock
         /// </summary>
-        protected Mock<ISendGridExternalService> _sendMailServiceMock;
+        protected Mock<ISendGridExternalService> SendMailServiceMock;
 
         /// <summary>
         /// pdi Business Logic
@@ -57,12 +62,13 @@
         /// </summary>
         public PdiBlTestBase()
         {
-            _pdfConvertServiceMock = new Mock<IPdfConvertExternalService>();
-            _pdiRepMock = new Mock<IGenericRep<PDI>>();
-            _userRepMock = new Mock<IGenericRep<User>>();
-            _sendMailServiceMock = new Mock<ISendGridExternalService>();
+            WebPageServiceMock = new Mock<IWebPageService>();
+            PdfConvertServiceMock = new Mock<IPdfConvertExternalService>();
+            PdiRepMock = new Mock<IGenericRep<PDI>>();
+            UserRepMock = new Mock<IGenericRep<User>>();
+            SendMailServiceMock = new Mock<ISendGridExternalService>();
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings() { URLFront = "urlTest" });
-            pdiBusinessLogic = new PdiBl(_pdfConvertServiceMock.Object, _pdiRepMock.Object, _userRepMock.Object, _sendMailServiceMock.Object, options);
+            pdiBusinessLogic = new PdiBl(PdfConvertServiceMock.Object, PdiRepMock.Object, UserRepMock.Object, SendMailServiceMock.Object, options, WebPageServiceMock.Object);
             SetEntitiesMocks();
         }
 

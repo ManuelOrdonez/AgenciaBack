@@ -16,12 +16,12 @@
         /// <summary>
         /// Subsidy reppository mock
         /// </summary>
-        protected Mock<IGenericRep<Subsidy>> _subsidyRepMock;
+        protected Mock<IGenericRep<Subsidy>> SubsidyRepMock;
 
         /// <summary>
         /// User Repository mock
         /// </summary>
-        protected Mock<IGenericRep<User>> _userRepMock;
+        protected Mock<IGenericRep<User>> UserRepMock;
 
         /// <summary>
         /// Interface to Send Mails
@@ -51,11 +51,11 @@
         public SubsidyBITestBase()
         {
             _sendMailServiceMock = new Mock<ISendGridExternalService>();
-            _subsidyRepMock = new Mock<IGenericRep<Subsidy>>();
-            _userRepMock = new Mock<IGenericRep<User>>();
+            SubsidyRepMock = new Mock<IGenericRep<Subsidy>>();
+            UserRepMock = new Mock<IGenericRep<User>>();
             _LdapServices = new Mock<ILdapServices>();
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
-            subsidyBusinessLogic = new SubsidyBl(_subsidyRepMock.Object, _userRepMock.Object, options, _sendMailServiceMock.Object, _LdapServices.Object);
+            subsidyBusinessLogic = new SubsidyBl(SubsidyRepMock.Object, UserRepMock.Object, options, _sendMailServiceMock.Object, _LdapServices.Object);
             SetEntitiesMocks();
         }
 

@@ -2,7 +2,6 @@
 {
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
-    using AgenciaDeEmpleoVirutal.Utils;
     using AgenciaDeEmpleoVirutal.Utils.Enum;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
@@ -11,7 +10,6 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
     using System.Threading.Tasks;
 
     [TestClass]
@@ -51,7 +49,7 @@
             /// Arrange
             var expected = ResponseFail<CheckSubsidyStateResponse>();
             var resultTS = new User();
-            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            UserRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
 
             /// Act
             var result = subsidyBusinessLogic.CheckSubsidyState(SubsidyRequestMock.UserName);
@@ -78,8 +76,8 @@
                     }
                 };
             var expected = ResponseSuccess(response);
-            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _subsidyRepMock.Setup(s => s.GetByPatitionKeyAsync(It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
+            UserRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            SubsidyRepMock.Setup(s => s.GetByPatitionKeyAsync(It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
 
             /// Act
             var result = subsidyBusinessLogic.CheckSubsidyState(SubsidyRequestMock.UserName);
@@ -113,8 +111,8 @@
                 }
             };
             var expected = ResponseSuccess(response);
-            _userRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
-            _subsidyRepMock.Setup(s => s.GetByPatitionKeyAsync(It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
+            UserRepMock.Setup(u => u.GetAsync(SubsidyRequestMock.UserName)).Returns(Task.FromResult(resultTS));
+            SubsidyRepMock.Setup(s => s.GetByPatitionKeyAsync(It.IsAny<string>())).Returns(Task.FromResult(resultSubsidy));
 
             /// Act
             var result = subsidyBusinessLogic.CheckSubsidyState(SubsidyRequestMock.UserName);

@@ -48,6 +48,10 @@
         /// </summary>
         private readonly ISendGridExternalService _sendMailService;
 
+        /// <summary>
+        /// The web page service
+        /// </summary>
+        private readonly IWebPageService _webPageService;
 
         /// <summary>
         /// User Secret Settings
@@ -66,13 +70,15 @@
             IGenericRep<PDI> pdiRep, 
             IGenericRep<User> userRep,
             ISendGridExternalService sendMailService,
-            IOptions<UserSecretSettings> options)
+            IOptions<UserSecretSettings> options,
+            IWebPageService webPageService)
         {
             if (options == null)
             {
                 throw new ArgumentNullException("options");
             }
 
+            _webPageService = webPageService;
             _pdfConvertService = pdfConvertService;
             _pdiRep = pdiRep;
             _userRep = userRep;
@@ -216,26 +222,38 @@
                     pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
                     pdi.WhatJob, pdi.WhenJob,
                     string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/colsubsidio_logo.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/agencia_de_empleo_logo.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/supersubsidio_logo.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/Ministerio-Trabajo-Colombia.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/Logo-Servicio-Empleo.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-linkedin-3-32.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-facebook-6-32.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-twitter-3-32.png").Result,
-                   this.GetImageAsBase64Url(urlFront + "/assets/images/images/proteccion_logo.png").Result
+                    this.GetImageAsBase64Url("assets/images/images/colsubsidio_logo.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/agencia_de_empleo_logo.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/supersubsidio_logo.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/Ministerio-Trabajo-Colombia.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/Logo-Servicio-Empleo.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/iconmonstr-linkedin-3-32.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/iconmonstr-facebook-6-32.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/iconmonstr-twitter-3-32.png").Result,
+                   this.GetImageAsBase64Url("assets/images/images/proteccion_logo.png").Result
+                   /*
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/colsubsidio_logo.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/agencia_de_empleo_logo.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/supersubsidio_logo.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/Ministerio-Trabajo-Colombia.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/Logo-Servicio-Empleo.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-linkedin-3-32.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-facebook-6-32.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/iconmonstr-twitter-3-32.png").Result,
+                  this.GetImageAsBase64Url(urlFront + "/assets/images/images/proteccion_logo.png").Result
+                  */
+
                    );
             RequestPDF.ContentHtml = html.Replace("\"", "'");
             byte[] result;                        
             try
             {
-                var content = _pdfConvertService.GenaratePdfContent(RequestPDF).ContentPdf;
-                if(content is null)
+                var resultConverted = _pdfConvertService.GenaratePdfContent(RequestPDF);
+                if( resultConverted is null || resultConverted.ContentPdf is null || !resultConverted.ContentPdf.Any())
                 {
                     return null;
                 }
-                result = content;
+                result = resultConverted.ContentPdf;
             }
             catch (Exception)
             {
@@ -249,8 +267,10 @@
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        private async Task<string> GetImageAsBase64Url(string url)
+        private async Task<string> GetImageAsBase64Url(string path)
         {
+            return await _webPageService.GetImageAsBase64Url(path);
+            /*
             using (var handler = new HttpClientHandler())
             using (var client = new HttpClient(handler))
             {
@@ -258,6 +278,7 @@
                 var image = "data:image/png;base64," + Convert.ToBase64String(bytes);
                 return image;
             }
+            */
         }
 
         /// <summary>
