@@ -243,7 +243,7 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     break;
             }
-            if (callInfo.Trace != "Logout" && (!_callHistoryRepository.AddOrUpdate(callInfo).Result || !validateAgent))
+            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
             {
                 return ResponseFail();
             }
