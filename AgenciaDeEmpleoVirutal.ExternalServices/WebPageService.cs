@@ -43,7 +43,7 @@
             using (var handler = new HttpClientHandler())
             using (var client = new HttpClient(handler))
             {
-                var bytes = await client.GetByteArrayAsync($"{_url}/{path}");
+                var bytes = await client.GetByteArrayAsync($"{_url}/{path}").ConfigureAwait(false);
                 var image = "data:image/png;base64," + Convert.ToBase64String(bytes);
                 return image;
             }
