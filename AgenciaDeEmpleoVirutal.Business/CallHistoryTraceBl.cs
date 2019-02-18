@@ -205,6 +205,24 @@
                 agent = null;
             }
             bool validateAgent = true;
+            SetCallState(callRequest, stateInput, ref callInfo, agent, ref validateAgent);
+            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
+            {
+                return ResponseFail();
+            }
+            return ResponseSuccess();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callRequest"></param>
+        /// <param name="stateInput"></param>
+        /// <param name="callInfo"></param>
+        /// <param name="agent"></param>
+        /// <param name="validateAgent"></param>
+        private void SetCallState(SetCallTraceRequest callRequest, CallStates stateInput, ref CallHistoryTrace callInfo, User agent, ref bool validateAgent)
+        {
             switch (stateInput)
             {
                 case CallStates.Begun:
@@ -243,12 +261,9 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     break;
             }
-            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
-            {
-                return ResponseFail();
-            }
-            return ResponseSuccess();
         }
+
+
 
         /// <summary>
         /// Validate Agent to answered call
