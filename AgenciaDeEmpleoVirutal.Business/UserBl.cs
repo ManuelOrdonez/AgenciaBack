@@ -6,6 +6,7 @@
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
+    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -139,7 +140,7 @@
             passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
                 Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
             User user = GetUserActive(userReq);
-            if(user is null)
+            if (user is null)
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             }
@@ -263,45 +264,38 @@
         /// <returns></returns>
         private ServiceResponseCode AuthenticateCompanyOrPersonInLdap(User user, AuthenticateUserRequest userRequest, string passwordDecrypt)
         {
-            if (_settings.LdapFlag)
-            {
-                /// Authenticate in LDAP Service
-                var result = _LdapServices.Authenticate(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
-                if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
-                {
-                    return ServiceResponseCode.ServiceExternalError;
-                }
-                if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user == null) /// no esta en ldap o la contraseña de ldap no coinside yyy no esta en az
-                {
-                    return ServiceResponseCode.IsNotRegisterInLdap;
-                }
-                const int intentsToBlockUser = 4;
-                if (user != null && user?.IntentsLogin > intentsToBlockUser) /// intentos maximos
-                {
-                    return ServiceResponseCode.UserBlock;
-                }
-                if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
-                {
-                    /// user.IntentsLogin = user.IntentsLogin + 1;
-                    const int maxIntentsToBlockUser = 5;
-                    user.State = (user.IntentsLogin == maxIntentsToBlockUser) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                    var resultUpt = _userRep.AddOrUpdate(user).Result;
-                    if (!resultUpt)
-                    {
-                        return ServiceResponseCode.InternalError;
-                    }
-                    return ServiceResponseCode.IncorrectPassword;
-                }
-                if (user == null && result.Estado.Equals("0000", StringComparison.CurrentCulture))
-                {
-                    return ServiceResponseCode.IsNotRegisterInAz;
-                }
-                return ServiceResponseCode.Success;
-            }
-            else
+            if (!_settings.LdapFlag)
             {
                 return ServiceResponseCode.Success;
             }
+
+            var result = _LdapServices.Authenticate(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+
+
+            if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
+            {
+                return ServiceResponseCode.ServiceExternalError;
+            }
+            
+            const int intentsToBlockUser = 4;
+            if (user != null && user?.IntentsLogin > intentsToBlockUser) /// intentos maximos
+            {
+                return ServiceResponseCode.UserBlock;
+            }
+
+            if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
+            {
+                /// user.IntentsLogin = user.IntentsLogin + 1;
+                const int maxIntentsToBlockUser = 5;
+                user.State = (user.IntentsLogin == maxIntentsToBlockUser) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
+                var resultUpt = _userRep.AddOrUpdate(user).Result;
+                if (!resultUpt)
+                {
+                    return ServiceResponseCode.InternalError;
+                }
+                return ServiceResponseCode.IncorrectPassword;
+            }
+            return ServiceResponseCode.Success;
         }
 
         /// <summary>
@@ -372,7 +366,7 @@
                 else
                 {
                     return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
-                } 
+                }
             }
 
             string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
@@ -381,7 +375,6 @@
             var user = LoadRegisterRequest(userReq);
             if (string.IsNullOrEmpty(user.UserName))
             {
-
                 return ResponseFail<RegisterUserResponse>();
             }
 
@@ -389,18 +382,7 @@
             {
                 new RegisterUserResponse { IsRegister = true, State = true, User = user }
             };
-
-            SendMailWelcomeRequest sendMailRequest = new SendMailWelcomeRequest
-            {
-                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "o" : "a",
-                IsCesante = userReq.IsCesante,
-                DocNum = userReq.NoDocument,
-                LastName = string.IsNullOrEmpty(userReq.LastNames) ? string.Empty : UString.UppercaseWords(userReq.LastNames),
-                Name = UString.UppercaseWords(userReq.Name),
-                DocType = userReq.TypeDocument,
-                Pass = passwordDecrypt,
-                Mail = userReq.Mail
-            };
+            SendMailWelcomeRequest sendMailRequest = GetSendMailRequest(userReq, passwordDecrypt);
 
             if (userReq.OnlyAzureRegister)
             {
@@ -420,6 +402,27 @@
             /// if (resultLdap.code == (int)ServiceResponseCode.UserAlreadyExist) return ResponseSuccess(response);            
             _sendMailService.SendMail(sendMailRequest);
             return ResponseSuccess(response);
+        }
+
+        /// <summary>
+        /// Get Email Register Info
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <param name="passwordDecrypt"></param>
+        /// <returns></returns>
+        private static SendMailWelcomeRequest GetSendMailRequest(RegisterUserRequest userReq, string passwordDecrypt)
+        {
+            return new SendMailWelcomeRequest
+            {
+                IsMale = string.IsNullOrEmpty(userReq.Genre) || userReq.Genre.Equals("Masculino", StringComparison.CurrentCulture) ? "o" : "a",
+                IsCesante = userReq.IsCesante,
+                DocNum = userReq.NoDocument,
+                LastName = string.IsNullOrEmpty(userReq.LastNames) ? string.Empty : UString.UppercaseWords(userReq.LastNames),
+                Name = UString.UppercaseWords(userReq.Name),
+                DocType = userReq.TypeDocument,
+                Pass = passwordDecrypt,
+                Mail = userReq.Mail
+            };
         }
 
         /// <summary>
@@ -556,33 +559,11 @@
                 TypeDocument = user[1],
             };
             var userAviable = this.GetAgentActive(request);
-            string token = string.Empty;
             var response = new List<AuthenticateUserResponse>();
+
             if (userAviable != null)
             {
-                userAviable.Available = RequestAviable.State;
-                if (RequestAviable.State)
-                {
-                    userAviable.OpenTokSessionId = _openTokService.CreateSession();
-                    token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
-                }
-                _userRep.AddOrUpdate(userAviable);
-
-                var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
-                if (busy.Any())
-                {
-                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
-                }
-                response = new List<AuthenticateUserResponse>
-                {
-                    new AuthenticateUserResponse
-                    {
-                        AuthInfo = SetAuthenticationToken(userAviable.UserName),
-                        UserInfo = userAviable,
-                        OpenTokApiKey = _settings?.OpenTokApiKey,
-                        OpenTokAccessToken = token,
-                    }
-                };
+                response = GetAuthenticateUserResponse(RequestAviable, userAviable);
             }
             var usercall = this.GetUserActive(request);
 
@@ -600,7 +581,7 @@
                         AuthInfo = SetAuthenticationToken(usercall.UserName),
                         UserInfo = usercall,
                         OpenTokApiKey = _settings?.OpenTokApiKey,
-                        OpenTokAccessToken = token,
+                        OpenTokAccessToken = string.Empty
                     }
                 };
             }
@@ -609,6 +590,42 @@
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
             }
             return ResponseSuccess(response);
+        }
+
+        /// <summary>
+        /// Get user authenticate
+        /// </summary>
+        /// <param name="RequestAviable"></param>
+        /// <param name="userAviable"></param>
+        /// <returns></returns>
+        private List<AuthenticateUserResponse> GetAuthenticateUserResponse(AviableUserRequest RequestAviable, User userAviable)
+        {
+            List<AuthenticateUserResponse> response;
+            var token = string.Empty;
+            userAviable.Available = RequestAviable.State;
+            if (RequestAviable.State)
+            {
+                userAviable.OpenTokSessionId = _openTokService.CreateSession();
+                token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
+            }
+            _userRep.AddOrUpdate(userAviable);
+
+            var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
+            if (busy.Any())
+            {
+                _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+            }
+            response = new List<AuthenticateUserResponse>
+                {
+                    new AuthenticateUserResponse
+                    {
+                        AuthInfo = SetAuthenticationToken(userAviable.UserName),
+                        UserInfo = userAviable,
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
+                        OpenTokAccessToken = token,
+                    }
+                };
+            return response;
         }
 
         /// <summary>
@@ -797,7 +814,7 @@
         {
             const User user = null;
             List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
-            if(!lUser.Any() || lUser is null)
+            if (!lUser.Any() || lUser is null)
             {
                 return user;
             }
@@ -846,7 +863,7 @@
                 throw new ArgumentNullException(nameof(request));
             }
             var messagesValidationEntity = request.Validate().ToList();
-            
+
             if (messagesValidationEntity.Count > 0)
             {
                 return ResponseBadRequest<UsersDataResponse>(messagesValidationEntity);
@@ -921,6 +938,6 @@
             var listList = new List<List<string>>();
             listList.Add(result);
             return ResponseSuccessList(listList);
-        }            
+        }
     }
 }

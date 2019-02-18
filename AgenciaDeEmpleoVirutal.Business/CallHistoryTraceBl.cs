@@ -178,7 +178,6 @@
         {
             if (callRequest == null)
             {
-
                 throw new ArgumentNullException(nameof(callRequest));
             }
             var messagesValidationEntity = callRequest.Validate().ToList();
@@ -191,7 +190,7 @@
 
             var existsCall = GetCallInfo(new GetCallRequest
             {
-                OpenTokSessionId = callRequest?.OpenTokSessionId,
+                OpenTokSessionId = callRequest.OpenTokSessionId,
                 State = CallStates.Begun.ToString()
             }).Data.FirstOrDefault();
 
@@ -206,7 +205,7 @@
             }
             bool validateAgent = true;
             SetCallState(callRequest, stateInput, ref callInfo, agent, ref validateAgent);
-            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
+            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).GetAwaiter().GetResult())
             {
                 return ResponseFail();
             }
@@ -445,6 +444,22 @@
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
 
+            List<CallHistoryTrace> callsList = this.GetListAllCallUser(calls);
+
+            response.Add(new GetAllUserCallResponse
+            {
+                CallInfo = callsList,
+            });
+            return ResponseSuccess(response);
+        }
+
+        /// <summary>
+        /// Get all calls
+        /// </summary>
+        /// <param name="calls"></param>
+        /// <returns></returns>
+        private List<CallHistoryTrace> GetListAllCallUser(List<CallHistoryTrace> calls)
+        {
             List<CallHistoryTrace> callsList = new List<CallHistoryTrace>();
 
             foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
@@ -498,23 +513,16 @@
                       callsList.Add(cll);
                   }*/
                 callsList.Add(cll);
-
             }
-
-            response.Add(new GetAllUserCallResponse
-            {
-                CallInfo = callsList,
-            });
-            return ResponseSuccess(response);
+            return callsList;
         }
-
 
         /// <summary>
         /// Get secure Url Blob
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        public string GetContainerSasUri(string containerName, string BlobName)
+        private string GetContainerSasUri(string containerName, string BlobName)
         {
             var StorageConnectionString = _UserSecretSettings.TableStorage;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);

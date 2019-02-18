@@ -116,10 +116,9 @@
             }
             var agent = agentStorage.FirstOrDefault(u => u.State.Equals(UserStates.Enable.ToString(), StringComparison.CurrentCulture));
 
-            string pdiName; 
+            string pdiName;
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
-            pdiName = userPDI.Any() ? string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count) :
-                string.Format(CultureInfo.CurrentCulture, "PDI-{0}.pdf", user.NoDocument);
+            pdiName = GetPDIName(user, userPDI);
 
             var pdi = new PDI
             {
@@ -152,6 +151,12 @@
                 return ResponseFail<PDI>((int)ServiceResponseCode.ErrorSendMail, sendPdi.Message);
             }
             return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
+        }
+
+        private static string GetPDIName(User user, List<PDI> userPDI)
+        {
+            return userPDI.Any() ? string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count) :
+                string.Format(CultureInfo.CurrentCulture, "PDI-{0}.pdf", user.NoDocument);
         }
 
         /// <summary>
@@ -269,16 +274,8 @@
         /// <returns></returns>
         private async Task<string> GetImageAsBase64Url(string path)
         {
-            return await _webPageService.GetImageAsBase64Url(path);
-            /*
-            using (var handler = new HttpClientHandler())
-            using (var client = new HttpClient(handler))
-            {
-                var bytes = await client.GetByteArrayAsync(url);
-                var image = "data:image/png;base64," + Convert.ToBase64String(bytes);
-                return image;
-            }
-            */
+            return await _webPageService.GetImageAsBase64Url(path).ConfigureAwait(false);
+
         }
 
         /// <summary>

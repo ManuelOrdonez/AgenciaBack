@@ -280,7 +280,7 @@
                 {
                     return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
                 }
-                else if (resultt.Code != 200)
+                if (resultt.Code != 200)
                 {
                     return ResponseFail<ResetResponse>((ServiceResponseCode)resultt.Code);
                 }
