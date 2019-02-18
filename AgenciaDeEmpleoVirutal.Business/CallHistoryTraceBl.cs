@@ -177,8 +177,8 @@
         public Response<CallHistoryTrace> SetCallTrace(SetCallTraceRequest callRequest)
         {
             if (callRequest == null)
-            { 
-            
+            {
+
                 throw new ArgumentNullException(nameof(callRequest));
             }
             var messagesValidationEntity = callRequest.Validate().ToList();
@@ -204,6 +204,7 @@
             {
                 agent = null;
             }
+            bool validateAgent = true;
             switch (stateInput)
             {
                 case CallStates.Begun:
@@ -219,36 +220,16 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     callInfo.State = stateInput.ToString();
                     callInfo.RecordId = recordId;
-                    if (agent != null)
-                    {
-                        agent.Available = false;
-                        agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString(new CultureInfo("es-CO")), new CultureInfo("es-CO")) + 1;
-                        _agentRepository.AddOrUpdate(agent);
-                    }
+                    validateAgent = this.ValidateCallAgent(agent, CallStates.Answered);
                     break;
                 case CallStates.EndByWeb:
                     callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
-                    if (agent != null)
-                    {
-                        agent.Available = false;
-                        if (!_agentRepository.AddOrUpdate(agent).Result)
-                        {
-                            return ResponseFail();
-                        }
-                    }
+                    validateAgent = this.ValidateCallAgent(agent, CallStates.EndByWeb);
                     this.Aviable(callRequest.UserName);
                     break;
                 case CallStates.EndByMobile:
                     callInfo = this.CallEnded(CallStates.EndByMobile, callInfo, callRequest, stateInput);
-                    if (agent != null)
-                    {
-                        agent.Available = false;
-                        this.Aviable(agent.UserName);
-                        if (!_agentRepository.AddOrUpdate(agent).Result)
-                        {
-                            return ResponseFail();
-                        }
-                    }
+                    validateAgent = this.ValidateCallAgent(agent, CallStates.EndByMobile);
                     break;
                 case CallStates.Managed:
                     callInfo.DateFinishCall = DateTime.Now;
@@ -262,12 +243,38 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     break;
             }
-            if (callInfo.Trace != "Logout" && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
+            if (callInfo.Trace != "Logout" && !_callHistoryRepository.AddOrUpdate(callInfo).Result && !validateAgent)
             {
                 return ResponseFail();
             }
             return ResponseSuccess();
         }
+
+        /// <summary>
+        /// Validate Agent to answered call
+        /// </summary>
+        /// <param name="agent"></param>
+        private bool ValidateCallAgent(User agent, CallStates state)
+        {
+            if (agent != null)
+            {
+                agent.Available = false;
+                if (state == CallStates.Answered)
+                {
+                    agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString(new CultureInfo("es-CO")), new CultureInfo("es-CO")) + 1;
+                }
+                if (state == CallStates.EndByMobile)
+                {
+                    this.Aviable(agent.UserName);
+                }
+                if (!_agentRepository.AddOrUpdate(agent).Result)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         /// <summary>
         /// Method to trace Call Ended

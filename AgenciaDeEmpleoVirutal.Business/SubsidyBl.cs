@@ -282,7 +282,7 @@
         /// <returns></returns>
         private User getUserActive(string username)
         {
-            User user = null;
+            const User user = null;
             List<User> lUser = _userRep.GetAsyncAll(username).Result;
             if (!lUser.Any() || lUser is null)
             {

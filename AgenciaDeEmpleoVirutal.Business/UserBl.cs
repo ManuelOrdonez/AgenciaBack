@@ -795,7 +795,7 @@
         /// <returns></returns>
         private User GetUserActive(AuthenticateUserRequest userReq)
         {
-            User user = null;
+            const User user = null;
             List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             if(!lUser.Any() || lUser is null)
             {
@@ -822,7 +822,7 @@
         /// <returns></returns>
         private User GetAgentActive(AuthenticateUserRequest userReq)
         {
-            User user = null;
+            const User user = null;
             List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {

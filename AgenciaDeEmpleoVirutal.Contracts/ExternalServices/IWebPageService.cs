@@ -10,8 +10,8 @@
         /// <summary>
         /// Gets the image as base64 URL.
         /// </summary>
-        /// <param name="url">The URL.</param>
+        /// <param name="path">The URL.</param>
         /// <returns></returns>
-        Task<string> GetImageAsBase64Url(string url);
+        Task<string> GetImageAsBase64Url(string path);
     }
 }
