@@ -225,7 +225,7 @@
                 case CallStates.EndByWeb:
                     callInfo = this.CallEnded(CallStates.EndByWeb, callInfo, callRequest, stateInput);
                     validateAgent = this.ValidateCallAgent(agent, CallStates.EndByWeb);
-                    this.Aviable(callRequest.UserName);
+                    this.Aviable(callRequest.UserName, validateAgent);
                     break;
                 case CallStates.EndByMobile:
                     callInfo = this.CallEnded(CallStates.EndByMobile, callInfo, callRequest, stateInput);
@@ -243,7 +243,7 @@
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     break;
             }
-            if (callInfo.Trace != "Logout" && !_callHistoryRepository.AddOrUpdate(callInfo).Result && !validateAgent)
+            if (callInfo.Trace != "Logout" && (!_callHistoryRepository.AddOrUpdate(callInfo).Result || !validateAgent))
             {
                 return ResponseFail();
             }
@@ -265,7 +265,7 @@
                 }
                 if (state == CallStates.EndByMobile)
                 {
-                    this.Aviable(agent.UserName);
+                    this.Aviable(agent.UserName, true);
                 }
                 if (!_agentRepository.AddOrUpdate(agent).Result)
                 {
@@ -308,17 +308,20 @@
         /// Methos to vacate agent
         /// </summary>
         /// <param name="UserName"></param>
-        private void Aviable(string UserName)
+        private void Aviable(string UserName, bool Validate)
         {
             string type = string.Empty;
-            var user = _agentRepository.GetAsync(UserName).Result;
-            type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
-                ? "UserNameAgent" : "UserNameCaller";
-
-            var busy = _busyAgentRepository.GetSomeAsync(type, UserName).Result;
-            if (busy.Any())
+            if (Validate)
             {
-                _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+                var user = _agentRepository.GetAsync(UserName).Result;
+                type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
+                    ? "UserNameAgent" : "UserNameCaller";
+
+                var busy = _busyAgentRepository.GetSomeAsync(type, UserName).Result;
+                if (busy.Any())
+                {
+                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+                }
             }
         }
 
