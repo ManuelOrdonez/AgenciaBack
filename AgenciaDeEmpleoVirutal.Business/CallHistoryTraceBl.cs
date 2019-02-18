@@ -205,7 +205,7 @@
             }
             bool validateAgent = true;
             SetCallState(callRequest, stateInput, ref callInfo, agent, ref validateAgent);
-            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).GetAwaiter().GetResult())
+            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
             {
                 return ResponseFail();
             }
@@ -438,8 +438,7 @@
 
             var calls = _callHistoryRepository.GetListQuery(query).Result;
 
-
-            if (calls.Count == 0 || calls is null)
+            if (calls.Count == 0 )
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
@@ -465,26 +464,8 @@
             foreach (var cll in calls.OrderByDescending(cll => cll.Timestamp).ToList())
             {
                 cll.RecordUrl = cll.RecordId;
-
-                if (!string.IsNullOrEmpty(cll.UserAnswerCall))
-                {
-                    var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
-                        cll.UserAnswerCall.ToLower(new CultureInfo("es-CO"))).Result.First();
-                    if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
-                    {
-                        cll.AgentName = string.Empty;
-                    }
-                    else
-                    {
-                        cll.AgentName = agentInfo.Name + " " + agentInfo.LastName;
-                    }
-                }
-                else
-                {
-                    cll.AgentName = string.Empty;
-                }
+                GetNameAgent(cll);
                 string typeU = string.Empty;
-
 
                 if (!string.IsNullOrEmpty(cll.UserCall))
                 {
@@ -492,11 +473,7 @@
                         UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
 
                     var callerInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(typeU, cll.UserCall.ToLower(new CultureInfo("es-CO"))).Result.First();
-                    if (callerInfo is null || string.IsNullOrEmpty(callerInfo.Name))
-                    {
-                        continue;
-                    }
-                    else
+                    if (!string.IsNullOrEmpty(callerInfo?.Name))
                     {
                         cll.CallerName = typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) ?
                             callerInfo.Name + " " + callerInfo.LastName : callerInfo.ContactName + "-" + callerInfo.SocialReason;
@@ -504,6 +481,7 @@
                 }
 
                 cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
+
                 /*  if ((string.IsNullOrEmpty(cll.UserAnswerCall) || string.IsNullOrEmpty(cll.UserCall) ) && cll.State == CallStates.Lost.ToString())
                   {
                       continue;
@@ -515,6 +493,27 @@
                 callsList.Add(cll);
             }
             return callsList;
+        }
+
+        private void GetNameAgent(CallHistoryTrace cll)
+        {
+            if (!string.IsNullOrEmpty(cll.UserAnswerCall))
+            {
+                var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
+                    cll.UserAnswerCall.ToLower(new CultureInfo("es-CO"))).Result.First();
+                if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
+                {
+                    cll.AgentName = string.Empty;
+                }
+                else
+                {
+                    cll.AgentName = agentInfo.Name + " " + agentInfo.LastName;
+                }
+            }
+            else
+            {
+                cll.AgentName = string.Empty;
+            }
         }
 
         /// <summary>
