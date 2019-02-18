@@ -326,6 +326,23 @@
         /// <returns></returns>
         public Response<GetSubsidyResponse> GetSubsidiesUser(GetAllSubsidiesRequest request)
         {
+            List<Subsidy> subsidies = GetSubsidies(request);
+
+            if (subsidies?.Count == 0)
+            {
+                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
+            }
+
+            return GetSubsidiesResponse(subsidies);
+        }
+
+        /// <summary>
+        /// Get all Subsidies by filters
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private List<Subsidy> GetSubsidies(GetAllSubsidiesRequest request)
+        {
             var query = new List<ConditionParameter>();
 
             if (request.StartDate != null && request.StartDate.Year != default(DateTime).Year)
@@ -395,12 +412,16 @@
             }
 
             var subsidies = _subsidyRep.GetListQuery(query).Result;
+            return subsidies;
+        }
 
-            if (subsidies?.Count == 0)
-            {
-                return ResponseFail<GetSubsidyResponse>(ServiceResponseCode.UserHaveNotSubsidyRequest);
-            }
-
+        /// <summary>
+        /// Get all Subsidies user
+        /// </summary>
+        /// <param name="subsidies"></param>
+        /// <returns></returns>
+        private Response<GetSubsidyResponse> GetSubsidiesResponse(List<Subsidy> subsidies)
+        {
             var result = new List<GetSubsidyResponse>();
 
             foreach (var sub in subsidies.OrderByDescending(sub => sub.DateTime).ToList())
@@ -426,7 +447,7 @@
                 });
             }
 
-            return ResponseSuccess<GetSubsidyResponse>(result);
+            return ResponseSuccess(result);
         }
 
         /// <summary>
