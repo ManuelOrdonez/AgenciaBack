@@ -276,7 +276,7 @@
             {
                 return ServiceResponseCode.ServiceExternalError;
             }
-            
+
             const int intentsToBlockUser = 4;
             if (user != null && user?.IntentsLogin > intentsToBlockUser) /// intentos maximos
             {
@@ -565,16 +565,17 @@
             {
                 response = GetAuthenticateUserResponse(RequestAviable, userAviable);
             }
-            var usercall = this.GetUserActive(request);
-
-            if (usercall != null)
+            else
             {
-                var busy = _busyAgentRepository.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
-                if (busy.Any())
+                var usercall = this.GetUserActive(request);
+                if (userAviable == null && usercall != null)
                 {
-                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
-                }
-                response = new List<AuthenticateUserResponse>
+                    var busy = _busyAgentRepository.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
+                    if (busy.Any())
+                    {
+                        _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+                    }
+                    response = new List<AuthenticateUserResponse>
                 {
                     new AuthenticateUserResponse
                     {
@@ -584,10 +585,12 @@
                         OpenTokAccessToken = string.Empty
                     }
                 };
-            }
-            if (usercall == null && userAviable == null)
-            {
-                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
+                }
+
+                if (usercall == null && userAviable == null)
+                {
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
+                }
             }
             return ResponseSuccess(response);
         }
