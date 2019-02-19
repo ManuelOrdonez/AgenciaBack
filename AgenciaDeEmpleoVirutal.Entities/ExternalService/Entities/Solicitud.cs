@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
 {
+    using Newtonsoft.Json;
     /// <summary>
     /// Class Solicitud.
     /// </summary>
@@ -8,36 +9,43 @@
         /// <summary>
         /// Gets or sets the cesante.
         /// </summary>
-        public string cesante { get; set; }
+        [JsonProperty(PropertyName = "cesante")]
+        public string Cesante { get; set; }
 
         /// <summary>
         /// Gets or sets the documento.
         /// </summary>
-        public Documento documento { get; set; }
+        [JsonProperty(PropertyName = "documento")]
+        public Documento Documento { get; set; }
 
         /// <summary>
         /// Gets or sets the Solformularioicitud.
         /// </summary>
-        public Formulario formulario { get; set; }
+        [JsonProperty(PropertyName = "formulario")]
+        public Formulario Formulario { get; set; }
 
         /// <summary>
         /// Gets or sets the nombre.
         /// </summary>
-        public Nombre nombre { get; set; }
+        [JsonProperty(PropertyName = "nombre")]
+        public Nombre Nombre { get; set; }
 
         /// <summary>
         /// Gets or sets the radicacion.
         /// </summary>
-        public Radicacion radicacion { get; set; }
+        [JsonProperty(PropertyName = "radicacion")]
+        public Radicacion Radicacion { get; set; }
 
         /// <summary>
         /// Gets or sets the estadoSolicitud.
         /// </summary>
-        public Estadosolicitud estadoSolicitud { get; set; }
+        [JsonProperty(PropertyName = "estadoSolicitud")]
+        public Estadosolicitud EstadoSolicitud { get; set; }
 
         /// <summary>
         /// Gets or sets the postulacion.
         /// </summary>
-        public Postulacion postulacion { get; set; }
+        [JsonProperty(PropertyName = "postulacion")]
+        public Postulacion Postulacion { get; set; }
     }
 }

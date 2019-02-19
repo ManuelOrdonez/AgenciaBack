@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
 {
+    using Newtonsoft.Json;
     /// <summary>
     /// Class Postulacion.
     /// </summary>
@@ -7,7 +8,8 @@
     {
         /// <summary>
         /// Gets or sets the fecha.
-        /// </summary>
-        public string fecha { get; set; }
+        /// </summary>        
+        [JsonProperty(PropertyName = "fecha")]
+        public string Fecha { get; set; }
     }
 }

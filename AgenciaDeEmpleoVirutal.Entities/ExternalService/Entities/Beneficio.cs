@@ -8,11 +8,11 @@
         /// <summary>
         /// Gets or sets the interlocutor.
         /// </summary>
-        public Interlocutor interlocutor { get; set; }
+        public Interlocutor Interlocutor { get; set; }
 
         /// <summary>
         /// Gets or sets the beneficioPorPagar.
         /// </summary>
-        public Beneficioporpagar[] beneficioPorPagar { get; set; }
+        public Beneficioporpagar[] BeneficioPorPagar { get; set; }
     }
 }

@@ -1,5 +1,7 @@
-﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
+﻿
+namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
 {
+    using Newtonsoft.Json;
     /// <summary>
     /// Class Estadosolicitud.
     /// </summary>
@@ -8,21 +10,25 @@
         /// <summary>
         /// Gets or sets the codigo.
         /// </summary>
-        public string codigo { get; set; }
+        [JsonProperty(PropertyName = "codigo")]
+        public string Codigo { get; set; }
 
         /// <summary>
         /// Gets or sets the descripcion.
         /// </summary>
-        public string descripcion { get; set; }
+        [JsonProperty(PropertyName = "descripcion")]
+        public string Descripcion { get; set; }
 
         /// <summary>
         /// Gets or sets the fecha.
         /// </summary>
-        public string fecha { get; set; }
+        [JsonProperty(PropertyName = "fecha")]
+        public string Fecha { get; set; }
 
         /// <summary>
         /// Gets or sets the causal.
         /// </summary>
-        public string causal { get; set; }
+        [JsonProperty(PropertyName = "causal")]
+        public string Causal { get; set; }
     }
 }
