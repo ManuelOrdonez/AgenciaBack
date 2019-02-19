@@ -82,7 +82,7 @@
 
             response.Add(new ResponseUrlRecord
             {
-                URL = this.GetContainerSasUri(request.ContainerName, request.FileName)
+                URL = this.GetContainerSasUri(request.ContainerName, request.FileName).ToString()
 
             });
             return ResponseSuccess(response);
@@ -94,7 +94,7 @@
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        public string GetContainerSasUri(string containerName, string BlobName)
+        public Uri GetContainerSasUri(string containerName, string BlobName)
         {
             var StorageConnectionString = _UserSecretSettings.TableStorage;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
@@ -110,16 +110,18 @@
             //Set the expiry time and permissions for the blob.
             //In this case, the start time is specified as a few minutes in the past, to mitigate clock skew.
             //The shared access signature will be valid immediately.
+            const int hour = -5;
+            const int addHour = 1;
             SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
-            sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5);
-            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(1);
+            sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(hour);
+            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(addHour);
             sasConstraints.Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write;
 
             //Generate the shared access signature on the blob, setting the constraints directly on the signature.
             string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
 
             //Return the URI string for the container, including the SAS token.
-            return blob.Uri + sasBlobToken;
+            return new Uri(blob.Uri + sasBlobToken);
         }
 
         /// <summary>

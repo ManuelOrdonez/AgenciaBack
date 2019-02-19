@@ -138,7 +138,7 @@
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
             }
             var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", userInfo.UserName).Result;
-            if (!(userCalling.Count == 0 || userCalling is null))
+            if (!(userCalling?.Count == 0))
             {
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserCalling);
             }
@@ -216,7 +216,7 @@
         public Response<AuthenticateUserResponse> ImAviable(AviableUserRequest RequestAviable)
         {
             User user = new User();
-            var response = new List<AuthenticateUserResponse>();
+            
             if (RequestAviable == null)
             {
                 throw new ArgumentNullException(nameof(RequestAviable));
@@ -239,9 +239,8 @@
                 }
             }
             
-            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);
-
-            response = new List<AuthenticateUserResponse>
+            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);            
+            var response = new List<AuthenticateUserResponse>
                 {
                     new AuthenticateUserResponse
                     {
