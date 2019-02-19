@@ -57,6 +57,21 @@
         private readonly UserSecretSettings _settings;
 
         /// <summary>
+        /// Culture info
+        /// </summary>
+        private const string cultureInfo = "es-CO";
+
+        /// <summary>
+        /// FormatString
+        /// </summary>
+        const string formatString = "{0}_{1}";
+
+        /// <summary>
+        /// passPhrase
+        /// </summary>
+        const string passPhrase = "ColsubsidioAPP";
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="UserBl"/> class.
         /// </summary>
         /// <param name="userRep">The user rep.</param>
@@ -138,13 +153,13 @@
             string passwordDecrypt = string.Empty;
 
             passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
-                Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
+                Crypto.DecryptWeb(userReq.Password, passPhrase) : Crypto.DecryptPhone(userReq.Password, passPhrase);
             User user = GetUserActive(userReq);
             if (user is null)
             {
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             }
-            else if (userReq.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
+            else if (userReq.UserType.ToLower(new CultureInfo(cultureInfo)).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
             {
                 var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
                 if (AutenticateFunc != ServiceResponseCode.Success)
@@ -206,7 +221,7 @@
                 return ServiceResponseCode.UserCalling;
             }
 
-            var passwordUserDecrypt = Crypto.DecryptWeb(user.Password, "ColsubsidioAPP");
+            var passwordUserDecrypt = Crypto.DecryptWeb(user.Password, passPhrase);
             if (!passwordUserDecrypt.Equals(passwordDecrypt, StringComparison.CurrentCulture))
             {
                 user.IntentsLogin = user.IntentsLogin + 1;
@@ -268,8 +283,9 @@
             {
                 return ServiceResponseCode.Success;
             }
+            
 
-            var result = _LdapServices.Authenticate(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
+            var result = _LdapServices.Authenticate(string.Format(new CultureInfo(cultureInfo), formatString, userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
 
 
             if (result.Code == (int)ServiceResponseCode.ServiceExternalError)
@@ -314,7 +330,7 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var lResult = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            var lResult = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
 
             if (lResult.Count == 0)
             {
@@ -356,21 +372,15 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var users = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)).Result;
+            var users = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.CodTypeDocument)).Result;
             if (!ValRegistriesUser(users, out int pos))
             {
-                if (pos == 0)
-                {
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF);
-                }
-                else
-                {
-                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
-                }
+                return  pos == 0 ?  ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF):
+                 ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
             string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
-                Crypto.DecryptWeb(userReq.Password, "ColsubsidioAPP") : Crypto.DecryptPhone(userReq.Password, "ColsubsidioAPP");
+                Crypto.DecryptWeb(userReq.Password, passPhrase) : Crypto.DecryptPhone(userReq.Password, passPhrase);
 
             var user = LoadRegisterRequest(userReq);
             if (string.IsNullOrEmpty(user.UserName))
@@ -393,7 +403,7 @@
             var registerUser = RegisterInLdap(userReq, passwordDecrypt);
             if (registerUser != ServiceResponseCode.Success)
             {
-                var userCreated = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", user.NoDocument, user.CodTypeDocument)).Result.FirstOrDefault();
+                var userCreated = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, user.NoDocument, user.CodTypeDocument)).Result.FirstOrDefault();
                 _userRep.DeleteRowAsync(userCreated);
                 return ResponseFail<RegisterUserResponse>(registerUser);
             }
@@ -444,8 +454,8 @@
                     surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
                     mail = userReq.Mail,
                     userId = userReq.NoDocument,
-                    userIdType = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
-                    username = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    userIdType = userReq.CodTypeDocument.ToString(new CultureInfo(cultureInfo)),
+                    username = string.Format(new CultureInfo(cultureInfo), string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.CodTypeDocument)),
                     userpassword = passwordDecrypt
                 };
                 var resultLdap = _LdapServices.Register(regLdap);
@@ -474,9 +484,9 @@
                 {
                     Name = userReq.Name,
                     LastName = "Empresa",
-                    CodTypeDocument = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
+                    CodTypeDocument = userReq.CodTypeDocument.ToString(new CultureInfo(cultureInfo)),
                     TypeDocument = userReq.TypeDocument,
-                    UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    UserName = string.Format(new CultureInfo(cultureInfo), string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.CodTypeDocument)),
                     Email = userReq.Mail,
                     SocialReason = userReq.SocialReason,
                     ContactName = UString.UppercaseWords(userReq.ContactName),
@@ -512,9 +522,9 @@
                     LastName = UString.UppercaseWords(userReq.LastNames),
                     DegreeGeted = UString.UppercaseWords(userReq.DegreeGeted),
                     EducationLevel = userReq.EducationLevel,
-                    CodTypeDocument = userReq.CodTypeDocument.ToString(new CultureInfo("es-CO")),
+                    CodTypeDocument = userReq.CodTypeDocument.ToString(new CultureInfo(cultureInfo)),
                     TypeDocument = userReq.TypeDocument,
-                    UserName = string.Format(new CultureInfo("es-CO"), string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.CodTypeDocument)),
+                    UserName = string.Format(new CultureInfo(cultureInfo), string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.CodTypeDocument)),
                     NoDocument = userReq.NoDocument,
                     CellPhone1 = userReq.Cellphon1,
                     CellPhone2 = userReq.Cellphon2 ?? string.Empty,
@@ -647,14 +657,14 @@
             {
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
-            var user = _userRep.GetAsync(string.Format(new CultureInfo("es-CO"), "{0}_{1}", logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
+            var user = _userRep.GetAsync(string.Format(new CultureInfo(cultureInfo), formatString, logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
             if (user == null)
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
             user.Authenticated = false;
             user.Available = false;
-            var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower(new CultureInfo("es-CO"))).Result;
+            var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower(new CultureInfo(cultureInfo))).Result;
             if (busy.Any())
             {
                 _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
@@ -745,7 +755,7 @@
                 Email = userRequest.Mail,
                 Name = userRequest.Name,
                 LastName = userRequest.LastNames ?? string.Empty,
-                UserType = userRequest.IsCesante ? UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO"))
+                UserType = userRequest.IsCesante ? UsersTypes.Cesante.ToString().ToLower(new CultureInfo(cultureInfo)) : UsersTypes.Empresa.ToString().ToLower(new CultureInfo(cultureInfo))
             };
             _sendMailService.SendMailUpdate(userMail);
             return ResponseSuccess();
@@ -767,7 +777,7 @@
             {
                 return ResponseFail();
             }
-            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString(new CultureInfo("es-CO")), StringComparison.CurrentCulture));
+            var user = result.FirstOrDefault(r => r.State.Equals(UserStates.Enable.ToString(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture));
             return ResponseSuccess(new List<User> { user == null || string.IsNullOrWhiteSpace(user.UserName) ? null : user });
         }
 
@@ -816,7 +826,7 @@
         private User GetUserActive(AuthenticateUserRequest userReq)
         {
             const User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
             if (!lUser.Any() || lUser is null)
             {
                 return user;
@@ -843,10 +853,10 @@
         private User GetAgentActive(AuthenticateUserRequest userReq)
         {
             const User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", userReq.NoDocument, userReq.TypeDocument)).Result;
+            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
+                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
                 {
                     return item;
                 }
@@ -926,7 +936,7 @@
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
+            var Items = _userRep.GetByPatitionKeyAsync(request.UserType.ToLower(new CultureInfo(cultureInfo))).Result.FirstOrDefault();
 
             var Allitems = Items.GetType().GetProperties()
                 .Select(x => new { property = x.Name, value = x.GetValue(Items) })
