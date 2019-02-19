@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
 {
+    using Newtonsoft.Json;
     /// <summary>
     /// Class Documento.
     /// </summary>
@@ -8,11 +9,13 @@
         /// <summary>
         /// Gets or sets the tipo.
         /// </summary>
-        public string tipo { get; set; }
+        [JsonProperty(PropertyName = "tipo")]
+        public string Tipo { get; set; }
 
         /// <summary>
         /// Gets or sets the numero.
         /// </summary>
-        public string numero { get; set; }
+        [JsonProperty(PropertyName = "numero")]
+        public string Numero { get; set; }
     }
 }

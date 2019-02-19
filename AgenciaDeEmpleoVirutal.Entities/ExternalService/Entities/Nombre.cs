@@ -1,5 +1,6 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
 {
+    using Newtonsoft.Json;
     /// <summary>
     /// Class Nombre.
     /// </summary>
@@ -8,11 +9,13 @@
         /// <summary>
         /// Gets or sets the primero.
         /// </summary>
-        public string primero { get; set; }
+        [JsonProperty(PropertyName = "primero")]
+        public string Primero { get; set; }
 
         /// <summary>
         /// Gets or sets the primerApellido.
         /// </summary>
-        public string primerApellido { get; set; }
+        [JsonProperty(PropertyName = "primerApellido")]
+        public string PrimerApellido { get; set; }
     }
 }

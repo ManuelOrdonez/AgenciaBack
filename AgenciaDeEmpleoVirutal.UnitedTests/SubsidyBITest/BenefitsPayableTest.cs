@@ -82,19 +82,19 @@
             var resultLdapService = new BenefitsPayableResult
             {
                 Code = (int)ServiceResponseCode.Success,
-                beneficio = new Beneficio[]
+                Beneficio = new Beneficio[]
                 {
                     new Beneficio
                     {
-                        beneficioPorPagar = new Beneficioporpagar[]
+                        BeneficioPorPagar = new Beneficioporpagar[]
                         {
                             new Beneficioporpagar
                             {
-                                cuenta = new Cuenta { numero = "numero" },
-                                fechaVencimiento = "fechaVencimiento",
-                                sucursal = "sucursal",
-                                valorAlimentacion = "valorAlimentacion",
-                                valorCuotaModeradora = "valorCuotaModeradora"
+                                NumeroCuenta = new Cuenta { Numero = "numero" },
+                                FechaVencimiento = "fechaVencimiento",
+                                Sucursal = "sucursal",
+                                ValorAlimentacion = "valorAlimentacion",
+                                ValorCuotaModeradora = "valorCuotaModeradora"
                             }
                         }
                     }
@@ -103,15 +103,15 @@
 
             var response = new List<BenefitsPayableResponse>();
 
-            foreach (var item in resultLdapService.beneficio.FirstOrDefault().beneficioPorPagar)
+            foreach (var item in resultLdapService.Beneficio.FirstOrDefault().BeneficioPorPagar)
             {
                 response.Add(new BenefitsPayableResponse
                 {
-                    cuenta = item.cuenta,
-                    fechaVencimiento = item.fechaVencimiento,
-                    sucursal = item.sucursal,
-                    valorAlimentacion = item.valorAlimentacion,
-                    valorCuotaModeradora = item.valorCuotaModeradora
+                    cuenta = item.NumeroCuenta,
+                    fechaVencimiento = item.FechaVencimiento,
+                    sucursal = item.Sucursal,
+                    valorAlimentacion = item.ValorAlimentacion,
+                    valorCuotaModeradora = item.ValorCuotaModeradora
                 });
             }
 

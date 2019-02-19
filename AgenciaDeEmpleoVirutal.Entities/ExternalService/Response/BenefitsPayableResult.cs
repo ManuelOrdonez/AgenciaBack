@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets or sets the beneficio.
         /// </summary>
-        public Beneficio[] beneficio { get; set; }
+        public Beneficio[] Beneficio { get; set; }
 
         /// <summary>
         /// Code of result.

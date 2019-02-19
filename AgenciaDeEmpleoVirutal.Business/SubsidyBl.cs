@@ -476,10 +476,10 @@
             {
                 new RequestStatusResponse
                 {
-                    causal = result.solicitud.FirstOrDefault().estadoSolicitud.causal,
-                    codigo = result.solicitud.FirstOrDefault().estadoSolicitud.codigo,
-                    descripcion = result.solicitud.FirstOrDefault().estadoSolicitud.descripcion,
-                    fecha = result.solicitud.FirstOrDefault().estadoSolicitud.fecha
+                    causal = result.solicitud.FirstOrDefault().EstadoSolicitud.Causal,
+                    codigo = result.solicitud.FirstOrDefault().EstadoSolicitud.Codigo,
+                    descripcion = result.solicitud.FirstOrDefault().EstadoSolicitud.Descripcion,
+                    fecha = result.solicitud.FirstOrDefault().EstadoSolicitud.Fecha
                 }
             };
 
@@ -510,15 +510,15 @@
 
             var response = new List<BenefitsPayableResponse>();
            
-            foreach (var item in result.beneficio.FirstOrDefault().beneficioPorPagar)
+            foreach (var item in result.Beneficio.FirstOrDefault().BeneficioPorPagar)
             {
                 response.Add(new BenefitsPayableResponse
                 {
-                    cuenta = item.cuenta,
-                    fechaVencimiento = item.fechaVencimiento,
-                    sucursal = item.sucursal,
-                    valorAlimentacion = item.valorAlimentacion,
-                    valorCuotaModeradora = item.valorCuotaModeradora
+                    cuenta = item.NumeroCuenta,
+                    fechaVencimiento = item.FechaVencimiento,
+                    sucursal = item.Sucursal,
+                    valorAlimentacion = item.ValorAlimentacion,
+                    valorCuotaModeradora = item.ValorCuotaModeradora
                 });
             }
 

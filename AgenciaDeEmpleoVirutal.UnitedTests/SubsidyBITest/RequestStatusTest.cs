@@ -83,19 +83,19 @@
             {
                 new Solicitud
                 {
-                    cesante = "cesante",
-                    documento = new Documento{ numero = "numero", tipo = "tipo"},
-                    estadoSolicitud = new Estadosolicitud
+                    Cesante = "cesante",
+                    Documento = new Documento{ Numero = "numero", Tipo = "tipo"},
+                    EstadoSolicitud = new Estadosolicitud
                     {
-                        causal = "causal",
-                        codigo = "codigo",
-                        descripcion = "descripcion",
-                        fecha = "fecha"
+                        Causal = "causal",
+                        Codigo = "codigo",
+                        Descripcion = "descripcion",
+                        Fecha = "fecha"
                     },
-                    formulario = new Formulario { numero = "numero" },
-                    nombre = new Nombre { primerApellido = "primerApellido", primero = "primero"},
-                    postulacion = new Postulacion { fecha = "fecha" },
-                    radicacion = new Radicacion { numero ="numero" }
+                    Formulario = new Formulario { Numero = "numero" },
+                    Nombre = new Nombre { PrimerApellido = "primerApellido", Primero = "primero"},
+                    Postulacion = new Postulacion { Fecha = "fecha" },
+                    Radicacion = new Radicacion { Numero ="numero" }
                 }
             };
             var resultLdapService = new RequestStatusResult
@@ -108,10 +108,10 @@
             {
                 new RequestStatusResponse
                 {
-                    causal = resultLdapService.solicitud.FirstOrDefault().estadoSolicitud.causal,
-                    codigo = resultLdapService.solicitud.FirstOrDefault().estadoSolicitud.codigo,
-                    descripcion = resultLdapService.solicitud.FirstOrDefault().estadoSolicitud.descripcion,
-                    fecha = resultLdapService.solicitud.FirstOrDefault().estadoSolicitud.fecha
+                    causal = resultLdapService.solicitud.FirstOrDefault().EstadoSolicitud.Causal,
+                    codigo = resultLdapService.solicitud.FirstOrDefault().EstadoSolicitud.Codigo,
+                    descripcion = resultLdapService.solicitud.FirstOrDefault().EstadoSolicitud.Descripcion,
+                    fecha = resultLdapService.solicitud.FirstOrDefault().EstadoSolicitud.Fecha
                 }
             };
 

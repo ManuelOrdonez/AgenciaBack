@@ -1,5 +1,7 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Entities.ExternalService.Entities
 {
+    using Newtonsoft.Json;
+
     /// <summary>
     /// Class request status result.
     /// </summary>
@@ -8,26 +10,31 @@
         /// <summary>
         /// Gets or sets the valorCuotaModeradora.
         /// </summary>
-        public string valorCuotaModeradora { get; set; }
+        [JsonProperty(PropertyName = "valorCuotaModeradora")]
+        public string ValorCuotaModeradora { get; set; }
 
         /// <summary>
         /// Gets or sets the sucursal.
         /// </summary>
-        public string sucursal { get; set; }
+        [JsonProperty(PropertyName = "sucursal")]
+        public string Sucursal { get; set; }
 
         /// <summary>
         /// Gets or sets the fechaVencimiento.
         /// </summary>
-        public string fechaVencimiento { get; set; }
+        [JsonProperty(PropertyName = "fechaVencimiento")]
+        public string FechaVencimiento { get; set; }
 
         /// <summary>
         /// Gets or sets the interlocutor.
         /// </summary>
-        public Cuenta cuenta { get; set; }
+        [JsonProperty(PropertyName = "cuenta")]
+        public Cuenta NumeroCuenta { get; set; }
 
         /// <summary>
         /// Gets or sets the valorAlimentacion.
         /// </summary>
-        public string valorAlimentacion { get; set; }
+        [JsonProperty(PropertyName = "valorAlimentacion")]
+        public string ValorAlimentacion { get; set; }
     }
 }
