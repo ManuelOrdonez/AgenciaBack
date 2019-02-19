@@ -568,7 +568,7 @@
             else
             {
                 var usercall = this.GetUserActive(request);
-                if (userAviable == null && usercall != null)
+                if (usercall != null)
                 {
                     var busy = _busyAgentRepository.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
                     if (busy.Any())
@@ -576,22 +576,22 @@
                         _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
                     }
                     response = new List<AuthenticateUserResponse>
-                {
-                    new AuthenticateUserResponse
                     {
-                        AuthInfo = SetAuthenticationToken(usercall.UserName),
-                        UserInfo = usercall,
-                        OpenTokApiKey = _settings?.OpenTokApiKey,
-                        OpenTokAccessToken = string.Empty
-                    }
-                };
+                        new AuthenticateUserResponse
+                        {
+                            AuthInfo = SetAuthenticationToken(usercall.UserName),
+                            UserInfo = usercall,
+                            OpenTokApiKey = _settings?.OpenTokApiKey,
+                            OpenTokAccessToken = string.Empty
+                        }
+                    };
                 }
-
-                if (usercall == null && userAviable == null)
+                else
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.AgentNotFound);
                 }
             }
+
             return ResponseSuccess(response);
         }
 
