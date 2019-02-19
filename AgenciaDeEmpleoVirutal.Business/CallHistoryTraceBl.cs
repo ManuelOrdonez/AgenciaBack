@@ -304,14 +304,7 @@
             {
                 callInfo.DateFinishCall = DateTime.Now;
                 callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
-                try
-                {
-                    _openTokService.StopRecord(callInfo.RecordId);
-                }
-                catch (Exception ex)
-                {
-                    throw new Exception(ex.Message);
-                }
+                _openTokService.StopRecord(callInfo.RecordId);
             }
             callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
@@ -369,6 +362,7 @@
 
         public Response<ResponseUrlRecord> GetRecordUrl(string RecordId)
         {
+            const string nameRecord = "archive.zip";
             var response = new List<ResponseUrlRecord>();
 
             var blobContainer = _UserSecretSettings.BlobContainer;
@@ -376,7 +370,7 @@
 
             response.Add(new ResponseUrlRecord
             {
-                URL = this.GetContainerSasUri(blobContainer, openTokApiKey + "/" + RecordId + "/archive.zip")
+                URL = this.GetContainerSasUri(blobContainer, openTokApiKey + "/" + RecordId + "/" + nameRecord).ToString()
 
             });
             return ResponseSuccess(response);
@@ -391,12 +385,10 @@
         public Response<GetAllUserCallResponse> GetAllUserCall(GetAllUserCallRequest getAllUserCallRequest)
         {
             var response = new List<GetAllUserCallResponse>();
-            string type = string.Empty;
-            type = getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
+            string type = getAllUserCallRequest.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
                 ? "UserAnswerCall" : "UserCall";
 
-            var query = new List<ConditionParameter>();
-            query = !string.IsNullOrEmpty(getAllUserCallRequest.UserName) ?
+            var query = !string.IsNullOrEmpty(getAllUserCallRequest.UserName) ?
                 new List<ConditionParameter>
                 {
                      new ConditionParameter
@@ -438,7 +430,7 @@
 
             var calls = _callHistoryRepository.GetListQuery(query).Result;
 
-            if (calls.Count == 0 )
+            if (calls.Count == 0)
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
@@ -481,15 +473,6 @@
                 }
 
                 cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
-
-                /*  if ((string.IsNullOrEmpty(cll.UserAnswerCall) || string.IsNullOrEmpty(cll.UserCall) ) && cll.State == CallStates.Lost.ToString())
-                  {
-                      continue;
-                  }
-                  else
-                  {
-                      callsList.Add(cll);
-                  }*/
                 callsList.Add(cll);
             }
             return callsList;
@@ -521,7 +504,7 @@
         /// </summary>
         /// <param name="container"></param>
         /// <returns></returns>
-        private string GetContainerSasUri(string containerName, string BlobName)
+        private Uri GetContainerSasUri(string containerName, string BlobName)
         {
             var StorageConnectionString = _UserSecretSettings.TableStorage;
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
@@ -547,7 +530,7 @@
             string sasBlobToken = blob.GetSharedAccessSignature(sasConstraints);
 
             //Return the URI string for the container, including the SAS token.
-            return blob.Uri + sasBlobToken;
+            return new Uri(blob.Uri + sasBlobToken);
         }
 
         /// <summary>

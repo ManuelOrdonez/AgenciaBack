@@ -63,7 +63,8 @@
                 /// the rest is encrypted data
                 var encrypted = cipherBytes.Skip(32).ToArray();
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(password, salt, 100);
-                encryptor.Key = pdb.GetBytes(32);
+                const int bytes32= 32;
+                encryptor.Key = pdb.GetBytes(bytes32);
                 encryptor.Padding = PaddingMode.PKCS7;
                 encryptor.Mode = CipherMode.CBC;
                 encryptor.IV = iv;
