@@ -29,6 +29,9 @@
         /// </summary>
         private readonly UserSecretSettings _tableStorageSettings;
 
+        private const int SuccessValidate= 100;
+        private const int SuccessValidateOk = 2;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="TableStorageBase{T}"/> class.
         /// </summary>
@@ -98,7 +101,7 @@
             entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.InsertOrMerge(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
-            return result.Equals(ServiceResponseCode.Success);
+            return (result / SuccessValidate).Equals(SuccessValidateOk);
         }
 
         /// <summary>
@@ -117,7 +120,7 @@
             entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.Insert(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
-            return result.Equals(ServiceResponseCode.Success);
+            return (result / SuccessValidate).Equals(SuccessValidateOk);
         }
 
         /// <summary>
@@ -129,7 +132,7 @@
         {
             var operation = TableOperation.Delete(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
-            return result.Equals(ServiceResponseCode.Success);
+            return (result / SuccessValidate).Equals(SuccessValidateOk);
         }
 
         /// <inheritdoc />
