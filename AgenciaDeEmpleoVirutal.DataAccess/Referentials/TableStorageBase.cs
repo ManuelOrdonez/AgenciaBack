@@ -11,6 +11,7 @@
     using Entities;
     using System.Globalization;
     using System;
+    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
 
     /// <summary>
     /// Table Storage Base
@@ -93,12 +94,11 @@
             {
                 throw new ArgumentNullException("entity");
             }
-
             entity.PartitionKey = entity?.PartitionKey.ToLower(new CultureInfo("es-CO"));
             entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.InsertOrMerge(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
-            return (result / 100).Equals(2);
+            return result.Equals(ServiceResponseCode.Success);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@
             entity.RowKey = entity.RowKey.ToLower(new CultureInfo("es-CO"));
             var operation = TableOperation.Insert(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
-            return (result / 100).Equals(2);
+            return result.Equals(ServiceResponseCode.Success);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@
         {
             var operation = TableOperation.Delete(entity);
             int result = (await Table.ExecuteAsync(operation).ConfigureAwait(false)).HttpStatusCode;
-            return (result / 100).Equals(2);
+            return result.Equals(ServiceResponseCode.Success);
         }
 
         /// <inheritdoc />
