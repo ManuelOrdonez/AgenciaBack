@@ -183,7 +183,7 @@
                     username = result.UserName
                 };
                 var responseService = _ldapServices.PasswordChangeRequest(request);
-                if (responseService.Code != 200)
+                if (responseService.Code != (int)ServiceResponseCode.Success)
                 {
                     return ResponseFail<ResetResponse>((ServiceResponseCode)responseService.Code);
                 }
@@ -280,7 +280,7 @@
                 {
                     return ResponseFail<ResetResponse>(ServiceResponseCode.InternalError);
                 }
-                if (resultt.Code != 200)
+                if (resultt.Code != (int)ServiceResponseCode.Success)
                 {
                     return ResponseFail<ResetResponse>((ServiceResponseCode)resultt.Code);
                 }

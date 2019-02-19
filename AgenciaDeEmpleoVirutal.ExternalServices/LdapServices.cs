@@ -102,7 +102,7 @@
                     if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
                         var response = ex.Response as HttpWebResponse;
-                        if (response != null && (int)response.StatusCode == 401)
+                        if (response != null && response.StatusCode.Equals(HttpStatusCode.Unauthorized))
                         {
                             result.Code = (int)ServiceResponseCode.IsNotRegisterInLdap;
                             return result;
@@ -153,7 +153,7 @@
                     if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
                         var response = ex.Response as HttpWebResponse;
-                        if (response != null && (int)response.StatusCode == 409)
+                        if (response != null && response.StatusCode.Equals(HttpStatusCode.Conflict))
                         {
                             result.Code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;
@@ -200,14 +200,14 @@
                 {
                     var content = context.UploadString(Url + "/Forgot/Password", HttpPut, parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
-                    result.Code = 200;
+                    result.Code =(int) HttpStatusCode.OK;
                 }
                 catch (WebException ex)
                 {
                     if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
                         var response = ex.Response as HttpWebResponse;
-                        if (response != null && (int)response.StatusCode == 400)
+                        if (response != null && response.StatusCode.Equals(HttpStatusCode.BadRequest))
                         {
                             result.Code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;
@@ -252,14 +252,14 @@
                 try
                 {
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/Forgot/PasswordReset", HttpPut, parameters));
-                    result.Code = 200;
+                    result.Code = (int)HttpStatusCode.OK; ;
                 }
                 catch (WebException ex)
                 {
                     if (ex.Status == WebExceptionStatus.ProtocolError)
                     {
                         var response = ex.Response as HttpWebResponse;
-                        if (response != null && (int)response.StatusCode == 400)
+                        if (response != null && response.StatusCode.Equals(HttpStatusCode.BadRequest))
                         {
                             result.Code = (int)ServiceResponseCode.UserAlreadyExist;
                             return result;

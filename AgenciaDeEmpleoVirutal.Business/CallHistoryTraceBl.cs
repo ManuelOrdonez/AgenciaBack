@@ -532,14 +532,15 @@
             //Get a reference to a container to use for the sample code, and create it if it does not exist.
             CloudBlobContainer container = blobClient.GetContainerReference(containerName);
             CloudBlockBlob blob = container.GetBlockBlobReference(BlobName);
-
+            const int hours = -5;
+            const int addHours = 1;
 
             //Set the expiry time and permissions for the blob.
             //In this case, the start time is specified as a few minutes in the past, to mitigate clock skew.
             //The shared access signature will be valid immediately.
             SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
-            sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5);
-            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(1);
+            sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(hours);
+            sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddHours(addHours);
             sasConstraints.Permissions = SharedAccessBlobPermissions.Read | SharedAccessBlobPermissions.Write;
 
             //Generate the shared access signature on the blob, setting the constraints directly on the signature.
