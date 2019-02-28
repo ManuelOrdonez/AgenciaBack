@@ -9,11 +9,8 @@
     using Microsoft.Extensions.Options;
     using Newtonsoft.Json;
     using RestSharp;
-    using System;
     using System.Net;
-    using System.Net.Http;
-    using System.Text;
-
+    
     /// <summary>
     /// Ldap Services Class
     /// </summary>
@@ -58,7 +55,7 @@
         /// Class Constructor
         /// </summary>
         /// <param name="options"></param>
-        public LdapServices(IOptions<UserSecretSettings> options) : base(options, "LdapServices", "autenticacion/usuarios")
+        public LdapServices(IOptions<UserSecretSettings> options) : base(options, "LdapServices", "")
         {
             _ldapAíKey = options?.Value.LdapServiceApiKey;
             _clientIdLdap = options?.Value.ClientIdLdap;
@@ -95,7 +92,7 @@
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.DownloadString(Url));
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.DownloadString(Url + "autenticacion/usuarios"));
                 }
                 catch (WebException ex)
                 {
@@ -146,7 +143,7 @@
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url, HttpPost, parameters));
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "autenticacion/usuarios", HttpPost, parameters));
                 }
                 catch (WebException ex)
                 {
@@ -198,7 +195,7 @@
             {
                 try
                 {
-                    var content = context.UploadString(Url + "/Forgot/Password", HttpPut, parameters);
+                    var content = context.UploadString(Url + "Forgot/Password", HttpPut, parameters);
                     result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(content);
                     result.Code =(int) HttpStatusCode.OK;
                 }
@@ -251,7 +248,7 @@
             {
                 try
                 {
-                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "/Forgot/PasswordReset", HttpPut, parameters));
+                    result = JsonConvert.DeserializeObject<LdapServicesResult<AuthenticateLdapResult>>(context.UploadString(Url + "Forgot/PasswordReset", HttpPut, parameters));
                     result.Code = (int)HttpStatusCode.OK; ;
                 }
                 catch (WebException ex)

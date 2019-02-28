@@ -464,7 +464,7 @@
                     typeU = cll.UserCall.Substring(cll.UserCall.Length - 1) == "1" ?
                         UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
 
-                    var callerInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(typeU, cll.UserCall.ToLower(new CultureInfo("es-CO"))).Result.First();
+                    var callerInfo = _agentRepository.GetAsyncAll(cll.UserCall.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
                     if (!string.IsNullOrEmpty(callerInfo?.Name))
                     {
                         cll.CallerName = typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) ?

@@ -379,8 +379,9 @@
                  ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
-            string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
-                Crypto.DecryptWeb(userReq.Password, passPhrase) : Crypto.DecryptPhone(userReq.Password, passPhrase);
+            //string passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
+            //  Crypto.DecryptWeb(userReq.Password, passPhrase) : Crypto.DecryptPhone(userReq.Password, passPhrase);
+            string passwordDecrypt = userReq.Password;
 
             var user = LoadRegisterRequest(userReq);
             if (string.IsNullOrEmpty(user.UserName))
