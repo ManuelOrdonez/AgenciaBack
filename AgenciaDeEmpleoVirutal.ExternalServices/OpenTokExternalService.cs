@@ -9,6 +9,7 @@
     using System.Net;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using System;
+    using AgenciaDeEmpleoVirutal.Business;
 
     /// <summary>
     /// OpenTok External Service Class
@@ -102,7 +103,8 @@
                 catch(Exception e)
                 {
                     context.Dispose();
-                    throw;
+                    entidad.Data = e.Message;
+                    return entidad;                     
                 }
             }
 
@@ -143,6 +145,10 @@
             var data = new Dictionary<string, string>();
             data.Add(nameof(sessionId), sessionId);
             data.Add(nameof(user), user);
+            if (string.IsNullOrEmpty(sessionId) || string.IsNullOrEmpty(user) )
+            {
+                return string.Empty;
+            }
             return GetArchive(data, "StartRecord").Data;
         }
 
@@ -154,6 +160,10 @@
         public string StopRecord(string RecordId)
         {
             var data = new Dictionary<string,string>();
+            if(string.IsNullOrEmpty(RecordId))
+            {
+                return string.Empty;
+            }
             data.Add(nameof(RecordId), RecordId);            
             return GetArchive(data, "StopRecord").Data;
         }

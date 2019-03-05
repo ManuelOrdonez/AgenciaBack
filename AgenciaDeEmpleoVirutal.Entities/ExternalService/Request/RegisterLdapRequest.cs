@@ -35,6 +35,14 @@
         /// </summary>
         public string userIdType { get; set; }
 
+
+
+        /// <summary>
+        /// User' telephoneNumber
+        /// </summary>
+        public string telephoneNumber { get; set; }
+        
+
         /// <summary>
         /// User's ID
         /// </summary>

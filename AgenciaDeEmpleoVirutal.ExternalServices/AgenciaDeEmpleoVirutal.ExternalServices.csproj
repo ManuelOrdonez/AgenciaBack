@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AgenciaDeEmpleoVirutal.Business\AgenciaDeEmpleoVirutal.Business.csproj" />
     <ProjectReference Include="..\AgenciaDeEmpleoVirutal.Contracts\AgenciaDeEmpleoVirutal.Contracts.csproj" />
     <ProjectReference Include="..\AgenciaDeEmpleoVirutal.Entities\AgenciaDeEmpleoVirutal.Entities.csproj" />
     <ProjectReference Include="..\AgenciaDeEmpleoVirutal.Utils\AgenciaDeEmpleoVirutal.Utils.csproj" />
