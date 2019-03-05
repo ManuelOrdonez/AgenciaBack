@@ -180,6 +180,7 @@
             {
                 throw new ArgumentNullException(nameof(callRequest));
             }
+
             var messagesValidationEntity = callRequest.Validate().ToList();
             var stateInput = (CallStates)callRequest.State;
 
@@ -194,7 +195,7 @@
                 State = CallStates.Begun.ToString()
             }).Data.FirstOrDefault();
 
-            var callInfo = existsCall == null || string.IsNullOrWhiteSpace(existsCall.UserCall) ?
+            var callInfo = existsCall == null || string.IsNullOrEmpty(existsCall.UserCall) ?
                 GetDefaultCallHistoryTrace(callRequest) : existsCall;
 
             var agent = _agentRepository.GetAsync(callRequest.UserName).Result;
@@ -203,12 +204,15 @@
             {
                 agent = null;
             }
+
             bool validateAgent = true;
             SetCallState(callRequest, stateInput, ref callInfo, agent, ref validateAgent);
-            if ((callInfo.Trace != "Logout" || !validateAgent) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
+            if ((callInfo.Trace != "Logout" || !validateAgent) &&
+                !string.IsNullOrEmpty(callInfo.UserCall) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
             {
                 return ResponseFail();
             }
+
             return ResponseSuccess();
         }
 
@@ -220,15 +224,28 @@
         /// <param name="callInfo"></param>
         /// <param name="agent"></param>
         /// <param name="validateAgent"></param>
-        private void SetCallState(SetCallTraceRequest callRequest, CallStates stateInput, ref CallHistoryTrace callInfo, User agent, ref bool validateAgent)
+        private void SetCallState(SetCallTraceRequest callRequest, CallStates stateInput,
+            ref CallHistoryTrace callInfo, User agent, ref bool validateAgent)
         {
             switch (stateInput)
             {
                 case CallStates.Begun:
-                    callInfo.DateCall = DateTime.Now;
-                    callInfo.UserCall = callRequest.UserName;
+                    if (agent == null)
+                    {
+                        callInfo.DateCall = DateTime.Now;
+                        callInfo.UserCall = callRequest.UserName;
+                    }
+                    else
+                    {
+                        callInfo.UserAnswerCall = callRequest.UserName;
+                    }
+
                     callInfo.State = stateInput.ToString();
+                    callInfo.Trace = string.IsNullOrEmpty(callInfo.Trace) ? callRequest.Trace :
+                        callInfo.Trace + " - " + callRequest.Trace;
+
                     callInfo.CallType = callRequest.CallType;
+
                     break;
                 case CallStates.Answered:
                     var recordId = _openTokService.StartRecord(callRequest.OpenTokSessionId, callRequest.UserName);
@@ -306,7 +323,8 @@
                 callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                 _openTokService.StopRecord(callInfo.RecordId);
             }
-            callInfo.State = callInfo.State != (CallStates.Answered.ToString()) ?
+            callInfo.State = callInfo.State != (CallStates.Answered.ToString()) &&
+                !(string.IsNullOrEmpty(callInfo.UserAnswerCall)) ?
                            CallStates.Lost.ToString() : stateInput.ToString();
             return callInfo;
         }
@@ -348,15 +366,15 @@
             var stateInput = (CallStates)callRequest.State;
             return new CallHistoryTrace
             {
-                Trace = callRequest.Trace,
+                Trace = string.Empty,
                 State = stateInput.ToString(),
                 PartitionKey = callRequest.OpenTokSessionId,
                 RowKey = callRequest.OpenTokAccessToken,
-                DateAnswerCall = DateTime.Now,
                 DateCall = DateTime.Now,
                 UserCall = string.Empty,
+                DateAnswerCall = DateTime.MaxValue,
                 UserAnswerCall = string.Empty,
-                DateFinishCall = DateTime.Now
+                DateFinishCall = DateTime.  MaxValue
             };
         }
 
@@ -472,7 +490,8 @@
                     }
                 }
 
-                cll.Minutes = (cll.DateFinishCall - cll.DateAnswerCall);
+                cll.Minutes = cll.DateAnswerCall != null ? 
+                    (cll.DateFinishCall - cll.DateAnswerCall):(cll.DateFinishCall- cll.DateFinishCall);
                 callsList.Add(cll);
             }
             return callsList;

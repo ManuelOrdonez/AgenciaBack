@@ -283,7 +283,7 @@
             {
                 return ServiceResponseCode.Success;
             }
-            
+
 
             var result = _LdapServices.Authenticate(string.Format(new CultureInfo(cultureInfo), formatString, userRequest.NoDocument, userRequest.TypeDocument), passwordDecrypt);
 
@@ -375,7 +375,7 @@
             var users = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.CodTypeDocument)).Result;
             if (!ValRegistriesUser(users, out int pos))
             {
-                return  pos == 0 ?  ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF):
+                return pos == 0 ? ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlredyExistF) :
                  ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserAlreadyExist);
             }
 
@@ -454,6 +454,7 @@
                     surname = string.IsNullOrEmpty(userReq.LastNames) ? "Empresa" : UString.UppercaseWords(userReq.LastNames),
                     mail = userReq.Mail,
                     userId = userReq.NoDocument,
+                    telephoneNumber = userReq.Cellphon1,
                     userIdType = userReq.CodTypeDocument.ToString(new CultureInfo(cultureInfo)),
                     username = string.Format(new CultureInfo(cultureInfo), string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.CodTypeDocument)),
                     userpassword = passwordDecrypt
