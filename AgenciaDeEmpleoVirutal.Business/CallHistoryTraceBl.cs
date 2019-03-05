@@ -490,7 +490,7 @@
                     }
                 }
 
-                cll.Minutes = cll.DateAnswerCall != null ? 
+                cll.Minutes = cll.DateAnswerCall != DateTime.MaxValue ? 
                     (cll.DateFinishCall - cll.DateAnswerCall):(cll.DateFinishCall- cll.DateFinishCall);
                 callsList.Add(cll);
             }

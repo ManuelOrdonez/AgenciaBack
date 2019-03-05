@@ -117,7 +117,9 @@
             };
             CallHistoryRepositoryMoq.Setup(cll => cll.GetListQuery(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(responseCallHistoryRep);
             UserRepositoryMoq.Setup(us => us.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(responseUserRep);
-            
+            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, PartitionKey = "algo", RowKey = "111111_1" };
+            List<User> userList = new List<User>() { responseAgentRep };
+            UserRepositoryMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(userList);
             ///Action
             var result = CallHistoryTraceBusinessLogic.GetAllUserCall(request);
 
