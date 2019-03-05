@@ -123,7 +123,8 @@
         {
             ///Arrange
             SetCallTraceRequestMock.State = (int)CallStates.Begun;
-            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>();
+            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>(){new CallHistoryTrace()
+            { RowKey = "wwwww2w", Observations = "", UserCall = "Username" } }; ;
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
@@ -149,7 +150,8 @@
         {
             ///Arrange
             SetCallTraceRequestMock.State = (int)CallStates.Begun;
-            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>();
+            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>(){new CallHistoryTrace()
+            { RowKey = "wwwww2w", Observations = "", UserCall = "Username" } }; ;
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
@@ -176,8 +178,9 @@
             ///Arrange
             SetCallTraceRequestMock.State = (int)CallStates.Answered;
             var recordId = "recordIdTest";
-            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>();
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0 };
+            List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>(){new CallHistoryTrace()
+            { RowKey = "wwwww2w", Observations = "", UserCall = "Username" } };
+            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0,PartitionKey="algo",RowKey="111111_1" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
