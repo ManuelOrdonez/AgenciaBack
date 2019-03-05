@@ -491,7 +491,7 @@
                 }
 
                 cll.Minutes = cll.DateAnswerCall != DateTime.MaxValue ? 
-                    (cll.DateFinishCall - cll.DateAnswerCall):(cll.DateFinishCall- cll.DateFinishCall);
+                    (cll.DateFinishCall - cll.DateAnswerCall):TimeSpan.Zero;
                 callsList.Add(cll);
             }
             return callsList;
