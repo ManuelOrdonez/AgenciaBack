@@ -15,6 +15,7 @@
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Utils.Helpers;
     using System.Globalization;
+    using System.Linq;
 
     /// <summary>
     /// Reset Business Iogic
@@ -47,6 +48,17 @@
         private readonly IGenericRep<Parameters> _parametersRep;
 
         /// <summary>
+        /// Culture info
+        /// </summary>
+        private const string cultureInfo = "es-CO";
+
+        /// <summary>
+        /// FormatString
+        /// </summary>
+        const string formatString = "{0}_{1}";
+
+
+        /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="userRep"></param>
@@ -68,6 +80,33 @@
         }
 
         /// <summary>
+        /// Method to Get User Active
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
+        private User GetUserActive(string id)
+        {
+            const User user = null;
+            List<User> lUser = _userRep.GetAsyncAll(id).Result;
+            if (!lUser.Any() || lUser is null)
+            {
+                return user;
+            }
+            foreach (var item in lUser)
+            {
+                if (item.State == UserStates.Enable.ToString())
+                {
+                    return item;
+                }
+            }
+            if (lUser.Count > 0)
+            {
+                return lUser[0];
+            }
+            return user;
+        }
+
+        /// <summary>
         /// Method to GetInfoUser
         /// </summary>
         /// <param name="user"></param>
@@ -84,28 +123,26 @@
                 state = UsersTypes.Cesante.ToString();
                 userAux = userAux.Replace("_cesante", "");
             }
-            else if (userAux.IndexOf("_empresa", StringComparison.CurrentCulture) > -1)
+
+            if (userAux.IndexOf("_empresa", StringComparison.CurrentCulture) > -1)
             {
                 state = UsersTypes.Empresa.ToString();
                 userAux = userAux.Replace("_empresa", "");
             }
-            else
+
+            if (userAux.IndexOf("_funcionario", StringComparison.CurrentCulture) > -1)
             {
                 state = UsersTypes.Funcionario.ToString();
                 userAux = userAux.Replace("_funcionario", "");
             }
-            List<User> lUser = _userRep.GetAsyncAll(userAux).Result;
+
+            User lUser = GetUserActive(userAux);
             idUser = userAux;
-            foreach (var item in lUser)
+            
+            if (lUser != null)
             {
-                if (state.ToLower(new CultureInfo("es-CO")) == item.UserType.ToLower(new CultureInfo("es-CO")))
-                {
-                    return item;
-                }
-            }
-            if (lUser.Count > 0)
-            {
-                return lUser[0];
+                state = lUser.UserType.ToLower(new CultureInfo("es-CO"));
+                return lUser;
             }
             return null;
         }
