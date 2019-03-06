@@ -301,7 +301,7 @@
 
             if (result.Code == (int)ServiceResponseCode.IsNotRegisterInLdap && user != null) /// contraseña mal  aumenta intento, si esta en az y no pasa en ldap
             {
-                /// user.IntentsLogin = user.IntentsLogin + 1;
+                user.IntentsLogin = user.IntentsLogin + 1;
                 const int maxIntentsToBlockUser = 5;
                 user.State = (user.IntentsLogin == maxIntentsToBlockUser) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
                 var resultUpt = _userRep.AddOrUpdate(user).Result;
