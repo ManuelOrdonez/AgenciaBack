@@ -40,6 +40,12 @@
         /// </summary>
         private readonly IGenericRep<User> _callerRepository;
 
+
+        /// <summary>
+        /// ReportCall Repository
+        /// </summary>
+        private readonly IGenericRep<ReportCall> _reportCaller;
+
         /// <summary>
         /// Agents Repository
         /// </summary>
@@ -63,7 +69,8 @@
         /// <param name="busyAgentRepository"></param>
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
-            IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options)
+            IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options,
+            IGenericRep<ReportCall> reportCallRepository)
         {
             if (options != null)
             {
@@ -73,6 +80,7 @@
                 _busyAgentRepository = busyAgentRepository;
                 _openTokService = openTokService;
                 _UserSecretSettings = options.Value;
+                _reportCaller = reportCallRepository;
             }
         }
 
@@ -162,7 +170,7 @@
                 callTrace.First().Score = 0;
             }
 
-            if (!_callHistoryRepository.AddOrUpdate(callTrace.First()).Result)
+            if (!SetUpdateCall(callTrace.First()))
             {
                 return ResponseFail<List<CallHistoryTrace>>();
             }
@@ -208,7 +216,7 @@
             bool validateAgent = true;
             SetCallState(callRequest, stateInput, ref callInfo, agent, ref validateAgent);
             if ((callInfo.Trace != "Logout" || !validateAgent) &&
-                !string.IsNullOrEmpty(callInfo.UserCall) && !_callHistoryRepository.AddOrUpdate(callInfo).Result)
+                !string.IsNullOrEmpty(callInfo.UserCall) && !SetUpdateCall(callInfo))
             {
                 return ResponseFail();
             }
@@ -234,6 +242,9 @@
                     {
                         callInfo.DateCall = DateTime.Now;
                         callInfo.UserCall = callRequest.UserName;
+                        var user = UserName(callRequest.UserName);
+                        callInfo.CallerName = user.CallerName;
+                        callInfo.CallerPhone = user.CallerPhone;
                     }
                     else
                     {
@@ -253,7 +264,9 @@
                     callInfo.UserAnswerCall = callRequest.UserName;
                     callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                     callInfo.State = stateInput.ToString();
+                    callInfo.AgentName = GetAgentName(callInfo.UserAnswerCall);
                     callInfo.RecordId = recordId;
+                    callInfo.RecordUrl = recordId;
                     validateAgent = this.ValidateCallAgent(agent, CallStates.Answered);
                     break;
                 case CallStates.EndByWeb:
@@ -265,8 +278,13 @@
                     callInfo = this.CallEnded(CallStates.EndByMobile, callInfo, callRequest, stateInput);
                     validateAgent = this.ValidateCallAgent(agent, CallStates.EndByMobile);
                     break;
+                case CallStates.Redirected:
+                    callInfo = this.CallEnded(CallStates.Redirected, callInfo, callRequest, stateInput);
+                    validateAgent = this.ValidateCallAgent(agent, CallStates.Redirected);
+                    break;
                 case CallStates.Managed:
                     callInfo.DateFinishCall = DateTime.Now;
+                    callInfo.AgentName = GetAgentName(callInfo.UserAnswerCall);
                     callInfo.Observations = callRequest.Trace;
                     callInfo.State = stateInput.ToString();
                     callInfo.CallType = callRequest.CallType;
@@ -280,6 +298,74 @@
         }
 
 
+        /// <summary>
+        /// Register report call
+        /// </summary>
+        /// <param name="call"></param>
+        private bool SetUpdateCall(CallHistoryTrace call)
+        {
+            call.Minutes = call.DateAnswerCall != DateTime.MaxValue ?
+                (call.DateFinishCall - call.DateAnswerCall) : TimeSpan.Zero;
+            bool responseCall = _callHistoryRepository.AddOrUpdate(call).Result;
+            var reportCall = _reportCaller.GetByPartitionKeyAndRowKeyAsync(
+                call.DateCall.Date.ToString("yyyyMMdd"), call.RowKey).Result.FirstOrDefault();
+
+            reportCall = reportCall == null || string.IsNullOrWhiteSpace(reportCall.DateFilter) ?
+                SetReportCall(call) : reportCall;
+
+            reportCall.AgentName = call.AgentName;
+            reportCall.CallerName = call.CallerName;
+            reportCall.CallerPhone = call.CallerPhone;
+            reportCall.CallType = call.CallType;
+            reportCall.DateAnswerCall = call.DateAnswerCall;
+            reportCall.DateCall = call.DateCall;
+            reportCall.DateFinishCall = call.DateFinishCall;
+            reportCall.Minutes = call.Minutes;
+            reportCall.Observations = call.Observations;
+            reportCall.OpenTokAccessToken = call.OpenTokAccessToken;
+            reportCall.OpenTokSessionId = call.OpenTokSessionId;
+            reportCall.RecordId = call.RecordId;
+            reportCall.RecordUrl = call.RecordUrl;
+            reportCall.Score = call.Score;
+            reportCall.State = call.State;
+            reportCall.Trace = call.Trace;
+            reportCall.UserAnswerCall = call.UserAnswerCall;
+            reportCall.UserCall = call.UserCall;
+
+            return responseCall && _reportCaller.AddOrUpdate(reportCall).Result;
+
+        }
+
+        /// <summary>
+        /// new report call
+        /// </summary>
+        /// <param name="call"></param>
+        /// <returns></returns>
+        private ReportCall SetReportCall(CallHistoryTrace call)
+        {
+            return new ReportCall()
+            {
+                PartitionKey = call.DateCall.Date.ToString("yyyyMMdd"),
+                RowKey = call.OpenTokAccessToken,
+                AgentName = call.AgentName,
+                CallerName = call.CallerName,
+                CallerPhone = call.CallerPhone,
+                CallType = call.CallType,
+                DateAnswerCall = call.DateAnswerCall,
+                DateCall = call.DateCall,
+                DateFinishCall = call.DateFinishCall,
+                Minutes = call.Minutes,
+                Observations = call.Observations,
+                OpenTokAccessToken = call.OpenTokAccessToken,
+                OpenTokSessionId = call.OpenTokSessionId,
+                RecordId = call.RecordId,
+                RecordUrl = call.RecordUrl,
+                Score = call.Score,
+                State = call.State,
+                UserAnswerCall = call.UserAnswerCall,
+                UserCall = call.UserCall,
+            };
+        }
 
         /// <summary>
         /// Validate Agent to answered call
@@ -323,9 +409,19 @@
                 callInfo.Trace = callInfo.Trace + " - " + callRequest.Trace;
                 _openTokService.StopRecord(callInfo.RecordId);
             }
-            callInfo.State = callInfo.State != (CallStates.Answered.ToString()) &&
-                !(string.IsNullOrEmpty(callInfo.UserAnswerCall)) ?
-                           CallStates.Lost.ToString() : stateInput.ToString();
+            if (callInfo.State != CallStates.Managed.ToString())
+            {
+                callInfo.State = callInfo.State != (CallStates.Answered.ToString()) &&
+                    !(string.IsNullOrEmpty(callInfo.UserAnswerCall)) ?
+                               CallStates.Lost.ToString() : stateInput.ToString();
+            }
+            if (callInfo.State == (CallStates.Lost.ToString()))
+            {
+                callInfo.AgentName = GetAgentName(callInfo.UserAnswerCall);
+            }
+            callInfo.Minutes = callInfo.DateAnswerCall != DateTime.MaxValue ?
+                (callInfo.DateFinishCall - callInfo.DateAnswerCall) : TimeSpan.Zero;
+
             return callInfo;
         }
 
@@ -374,7 +470,7 @@
                 UserCall = string.Empty,
                 DateAnswerCall = DateTime.MaxValue,
                 UserAnswerCall = string.Empty,
-                DateFinishCall = DateTime.  MaxValue
+                DateFinishCall = DateTime.MaxValue
             };
         }
 
@@ -448,16 +544,29 @@
 
             var calls = _callHistoryRepository.GetListQuery(query).Result;
 
+
             if (calls.Count == 0)
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
 
-            List<CallHistoryTrace> callsList = this.GetListAllCallUser(calls);
+            foreach (var call in calls)
+            {
+                call.Minutes = call.DateAnswerCall != DateTime.MaxValue ?
+                    (call.DateFinishCall - call.DateAnswerCall) : TimeSpan.Zero;
+
+                if (string.IsNullOrEmpty(call.CallerName))
+                {
+                    var user = UserName(call.UserCall);                
+                    call.CallerName = user.CallerName;
+                    call.CallerPhone = user.CallerPhone;
+                    SetUpdateCall(call);
+                }
+            }
 
             response.Add(new GetAllUserCallResponse
             {
-                CallInfo = callsList,
+                CallInfo = calls,
             });
             return ResponseSuccess(response);
         }
@@ -475,46 +584,65 @@
             {
                 cll.RecordUrl = cll.RecordId;
                 GetNameAgent(cll);
-                string typeU = string.Empty;
 
                 if (!string.IsNullOrEmpty(cll.UserCall))
                 {
-                    typeU = cll.UserCall.Substring(cll.UserCall.Length - 1) == "1" ?
-                        UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
-
-                    var callerInfo = _agentRepository.GetAsyncAll(cll.UserCall.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
-                    if (!string.IsNullOrEmpty(callerInfo?.Name))
-                    {
-                        cll.CallerName = typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) ?
-                            callerInfo.Name + " " + callerInfo.LastName : callerInfo.ContactName + "-" + callerInfo.SocialReason;
-                    }
+                    var callAux = UserName(cll.UserCall);
+                    cll.CallerName = callAux.CallerName;
+                    cll.CallerPhone = callAux.CallerPhone;
                 }
 
-                cll.Minutes = cll.DateAnswerCall != DateTime.MaxValue ? 
-                    (cll.DateFinishCall - cll.DateAnswerCall):TimeSpan.Zero;
+                cll.Minutes = cll.DateAnswerCall != DateTime.MaxValue ?
+                    (cll.DateFinishCall - cll.DateAnswerCall) : TimeSpan.Zero;
                 callsList.Add(cll);
             }
             return callsList;
         }
 
+        private CallHistoryTrace UserName(string userCall)
+        {
+            CallHistoryTrace call = new CallHistoryTrace();
+            string typeU = string.Empty;
+
+            typeU = userCall.Substring(userCall.Length - 1) == "1" ?
+                  UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
+
+            var callerInfo = _agentRepository.GetAsyncAll(userCall.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
+            if (!string.IsNullOrEmpty(callerInfo?.Name))
+            {
+                call.CallerName = typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) ?
+                    callerInfo.Name + " " + callerInfo.LastName : callerInfo.ContactName + "-" + callerInfo.SocialReason;
+                call.CallerPhone = !string.IsNullOrEmpty(callerInfo?.CellPhone1) ?
+               callerInfo?.CellPhone1 : string.Empty;
+            }
+            return call;
+        }
+
+
+
         private void GetNameAgent(CallHistoryTrace cll)
         {
             if (!string.IsNullOrEmpty(cll.UserAnswerCall))
             {
-                var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
-                    cll.UserAnswerCall.ToLower(new CultureInfo("es-CO"))).Result.First();
-                if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
-                {
-                    cll.AgentName = string.Empty;
-                }
-                else
-                {
-                    cll.AgentName = agentInfo.Name + " " + agentInfo.LastName;
-                }
+                cll.AgentName = GetAgentName(cll.UserAnswerCall);
             }
             else
             {
                 cll.AgentName = string.Empty;
+            }
+        }
+
+        private string GetAgentName(string userName)
+        {
+             var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
+                    userName?.ToLower(new CultureInfo("es-CO"))).Result?.First();
+            if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
+            {
+                return string.Empty;
+            }
+            else
+            {
+                return agentInfo.Name + " " + agentInfo.LastName;
             }
         }
 

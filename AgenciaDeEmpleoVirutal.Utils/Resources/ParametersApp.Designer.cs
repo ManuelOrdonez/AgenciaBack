@@ -233,6 +233,9 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;table border=&quot;0&quot; style=&quot;width: 900px&quot;&gt;
+        ///&lt;head&gt;
+        ///	&lt;meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″ /&gt;
+        ///&lt;/head&gt;
         ///	&lt;tbody&gt;
         ///		&lt;tr style=&quot;background:#00425f&quot;&gt;
         ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: center&quot;&gt;&lt;img src={11} alt=&quot;&quot;&gt;&lt;/td&gt;
@@ -241,10 +244,7 @@ namespace AgenciaDeEmpleoVirutal.Utils.Resources {
         ///			&lt;td colspan=&quot;7&quot; style=&quot;text-align: left&quot;&gt;&lt;img src={12} alt=&quot;&quot;&gt;&lt;/td&gt;
         ///		&lt;/tr&gt;
         ///		&lt;tr&gt;
-        ///			&lt;td colspan=&quot;7&quot; style=&quot;padding: 10px; text-align: center; color:#00425f; font-size: 18px; font-family: sans-serif; font-weight: bold;&quot;&gt;MI PLAN DE DESARROLLO INTEGRAL&lt;/td&gt;
-        ///		&lt;/tr&gt;
-        ///		&lt;tr&gt;
-        ///			&lt;td cols [rest of string was truncated]&quot;;.
+        ///			&lt;td colspan=&quot;7&quot; style=&quot;padding: 10px; text-align: center; color:#00425f; font-size: 18px; font-family: sans-ser [rest of string was truncated]&quot;;.
         /// </summary>
         public static string ContentPDIPdf {
             get {

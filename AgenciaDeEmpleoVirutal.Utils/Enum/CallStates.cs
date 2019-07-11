@@ -39,6 +39,11 @@
         /// <summary>
         /// Call Managed
         /// </summary>
-        Managed = 60
+        Managed = 60,
+
+        /// <summary>
+        /// Call Redirected
+        /// </summary>
+        Redirected = 70,
     }
 }

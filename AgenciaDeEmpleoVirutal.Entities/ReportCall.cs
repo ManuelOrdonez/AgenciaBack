@@ -6,19 +6,24 @@
     /// <summary>
     /// Call History Trace Table
     /// </summary>
-    public class CallHistoryTrace : TableEntity
+    public class ReportCall : TableEntity
     {
         /// <summary>
-        /// Get or Sets OpenTok Session Id
+        /// Get or Sets Date Filter
         /// </summary>
         [IgnoreProperty]
-        public string OpenTokSessionId { get => PartitionKey; set => PartitionKey = value; }
+        public string DateFilter { get => PartitionKey; set => PartitionKey = value; }
 
         /// <summary>
         /// Get or Sets OpenTok Access Token
         /// </summary>
         [IgnoreProperty]
         public string OpenTokAccessToken { get => RowKey; set => RowKey = value; }
+
+        /// <summary>
+        /// Get or Sets OpenTok Session Id
+        /// </summary>
+        public string OpenTokSessionId { get; set; }
 
         /// <summary>
         /// Get or Sets User Call

@@ -253,6 +253,9 @@ Haz parte de los que encuentran una oportunidad.&lt;/p&gt;
   </data>
   <data name="ContentPDIPdf" xml:space="preserve">
     <value>&lt;table border="0" style="width: 900px"&gt;
+&lt;head&gt;
+	&lt;meta http-equiv=”Content-Type” content=”text/html; charset=UTF-8″ /&gt;
+&lt;/head&gt;
 	&lt;tbody&gt;
 		&lt;tr style="background:#00425f"&gt;
 			&lt;td colspan="7" style="text-align: center"&gt;&lt;img src={11} alt=""&gt;&lt;/td&gt;

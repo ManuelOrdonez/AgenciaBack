@@ -223,9 +223,16 @@
             var RequestPDF = new RequestPdfConvert();
             var urlFront = _UserSecretSettings.URLFront;
             string html = string.Format(CultureInfo.CurrentCulture, ParametersApp.ContentPDIPdf,
-                    pdi.CallerName, pdi.PDIDate, pdi.AgentName, pdi.MyStrengths,
-                    pdi.MyWeaknesses, pdi.MustPotentiate, pdi.WhatAbilities, pdi.WhenAbilities,
-                    pdi.WhatJob, pdi.WhenJob,
+                    this.replaceAccents(pdi.CallerName),
+                    this.replaceAccents(pdi.PDIDate),
+                    this.replaceAccents(pdi.AgentName),
+                    this.replaceAccents(pdi.MyStrengths),
+                    this.replaceAccents(pdi.MyWeaknesses),
+                    this.replaceAccents(pdi.MustPotentiate),
+                    this.replaceAccents(pdi.WhatAbilities),
+                    this.replaceAccents(pdi.WhenAbilities),
+                    this.replaceAccents(pdi.WhatJob),
+                    this.replaceAccents(pdi.WhenJob),
                     string.IsNullOrEmpty(pdi.Observations) ? "Ninguna" : pdi.Observations,
                     this.GetImageAsBase64Url("assets/images/images/colsubsidio_logo.png").Result,
                    this.GetImageAsBase64Url("assets/images/images/agencia_de_empleo_logo.png").Result,
@@ -249,7 +256,7 @@
                   */
 
                    );
-            RequestPDF.ContentHtml = html.Replace("\"", "'");
+            RequestPDF.ContentHtml = this.replaceAccents(html);
             byte[] result;                        
             try
             {
@@ -265,6 +272,27 @@
                 return null;
             }
             return result;
+        }
+
+        private string replaceAccents(string texto)
+        {
+            texto = texto.Replace("á", "&aacute;");
+            texto = texto.Replace("é", "&eacute;");
+            texto = texto.Replace("í", "&iacute;");
+            texto = texto.Replace("ó", "&oacute;");
+            texto = texto.Replace("ú", "&uacute;");
+            texto = texto.Replace("ñ", "&ntilde;");
+            texto = texto.Replace("à", "&agrave;");
+            texto = texto.Replace("è", "&egrave;");
+            texto = texto.Replace("ò", "&ograve;");
+            texto = texto.Replace("Á", "&Aacute;");
+            texto = texto.Replace("É", "&Eacute;");
+            texto = texto.Replace("Í", "&Iacute;");
+            texto = texto.Replace("Ó", "&Oacute;");
+            texto = texto.Replace("Ú", "&Uacute;");
+            texto = texto.Replace("Ñ", "&Ntilde;");
+            texto = texto.Replace("\"", "'");
+            return texto;
         }
 
         /// <summary>

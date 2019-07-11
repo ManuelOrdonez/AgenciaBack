@@ -137,6 +137,7 @@
             services.AddSingleton<IGenericRep<Menu>, TableStorageBase<Menu>>();
             services.AddSingleton<IGenericRep<Subsidy>, TableStorageBase<Subsidy>>();
             services.AddSingleton<IGenericRep<Log>, TableStorageBase<Log>>();
+            services.AddSingleton<IGenericRep<ReportCall>, TableStorageBase<ReportCall>>();
         }
 
         /// <summary>

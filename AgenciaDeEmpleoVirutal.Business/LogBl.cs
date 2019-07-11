@@ -1,23 +1,14 @@
 ﻿namespace AgenciaDeEmpleoVirutal.Business
 {
+    using System;
+    using System.Linq;
     using AgenciaDeEmpleoVirutal.Business.Referentials;
     using AgenciaDeEmpleoVirutal.Contracts.Business;
-    using AgenciaDeEmpleoVirutal.Contracts.ExternalServices;
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
-    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Utils;
-    using AgenciaDeEmpleoVirutal.Utils.Enum;
-    using AgenciaDeEmpleoVirutal.Utils.Helpers;
-    using AgenciaDeEmpleoVirutal.Utils.Resources;
-    using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Net.Mail;
 
     /// <summary>
     /// Pdi Business Logic
