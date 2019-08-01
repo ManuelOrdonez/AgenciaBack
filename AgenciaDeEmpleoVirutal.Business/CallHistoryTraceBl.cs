@@ -46,6 +46,12 @@
         /// </summary>
         private readonly IGenericRep<ReportCall> _reportCaller;
 
+
+        /// <summary>
+        /// PreCallResult Repository
+        /// </summary>
+        private readonly IGenericRep<PreCallResult> _preCallResult;
+
         /// <summary>
         /// Agents Repository
         /// </summary>
@@ -70,7 +76,7 @@
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
             IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options,
-            IGenericRep<ReportCall> reportCallRepository)
+            IGenericRep<ReportCall> reportCallRepository, IGenericRep<PreCallResult> preCallResultRepository)
         {
             if (options != null)
             {
@@ -81,6 +87,7 @@
                 _openTokService = openTokService;
                 _UserSecretSettings = options.Value;
                 _reportCaller = reportCallRepository;
+                _preCallResult = preCallResultRepository;
             }
         }
 
@@ -176,6 +183,29 @@
             }
             return ResponseSuccess(new List<List<CallHistoryTrace>>());
         }
+
+
+        public Response<CallHistoryTrace> SetPreCallResult(SetPreCallResult preCallRequest)
+        {
+            var user = UserName(preCallRequest.UserName);
+            PreCallResult preCallResult = new PreCallResult()
+            {
+                CallerPhone = user.CallerPhone,
+                DateCall = DateTime.Now,
+                OpenTokAccessToken = preCallRequest.OpenTokAccessToken,
+                Result = preCallRequest.Result,
+                Username = preCallRequest.UserName
+            };
+
+            bool responseCall = _preCallResult.AddOrUpdate(preCallResult).Result;
+
+            if (!responseCall)
+            {
+                return ResponseFail<CallHistoryTrace>();
+            }
+            return ResponseSuccess();
+        }
+
 
         /// <summary>
         /// Register call date and  trace 
@@ -557,7 +587,7 @@
 
                 if (string.IsNullOrEmpty(call.CallerName))
                 {
-                    var user = UserName(call.UserCall);                
+                    var user = UserName(call.UserCall);
                     call.CallerName = user.CallerName;
                     call.CallerPhone = user.CallerPhone;
                     SetUpdateCall(call);
@@ -634,8 +664,8 @@
 
         private string GetAgentName(string userName)
         {
-             var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
-                    userName?.ToLower(new CultureInfo("es-CO"))).Result?.First();
+            var agentInfo = _agentRepository.GetByPartitionKeyAndRowKeyAsync(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")),
+                   userName?.ToLower(new CultureInfo("es-CO"))).Result?.First();
             if (agentInfo is null || string.IsNullOrEmpty(agentInfo.Name))
             {
                 return string.Empty;

@@ -20,6 +20,13 @@
         Response<CallHistoryTrace> SetCallTrace(SetCallTraceRequest callRequest);
 
         /// <summary>
+        /// Set date call
+        /// </summary>
+        /// <param name="callRequest"></param>
+        /// <returns></returns>
+        Response<CallHistoryTrace> SetPreCallResult(SetPreCallResult preCallRequest);
+
+        /// <summary>
         /// get call info
         /// </summary>
         /// <param name="OpenTokSessionId"></param>

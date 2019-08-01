@@ -23,7 +23,7 @@
             {
                 new Claim(ClaimTypes.NameIdentifier, username),
                 new Claim(JwtRegisteredClaimNames.Nbf, new DateTimeOffset(DateTime.Now).ToUnixTimeSeconds().ToString(CultureInfo.CurrentCulture)),
-                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddMinutes(60)).ToUnixTimeSeconds().ToString(CultureInfo.CurrentCulture))
+                new Claim(JwtRegisteredClaimNames.Exp, new DateTimeOffset(DateTime.Now.AddDays(1)).ToUnixTimeSeconds().ToString(CultureInfo.CurrentCulture))
             };
 
             var token = new JwtSecurityToken(

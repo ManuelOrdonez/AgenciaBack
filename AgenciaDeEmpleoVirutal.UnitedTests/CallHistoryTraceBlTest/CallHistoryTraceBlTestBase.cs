@@ -27,8 +27,13 @@
         /// <summary>
         /// Report Call History Trace Repository Mock
         /// </summary>
-        protected readonly Mock<IGenericRep<ReportCall>> ReportCallRepositoryMoq;        
+        protected readonly Mock<IGenericRep<ReportCall>> ReportCallRepositoryMoq;
 
+
+        /// <summary>
+        /// Report Call History Trace Repository Mock
+        /// </summary>
+        protected readonly Mock<IGenericRep<PreCallResult>> PreCallResultRepositoryMoq;
         /// <summary>
         /// Agents Repository Mock
         /// </summary>
@@ -87,7 +92,13 @@
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
 
             CallHistoryTraceBusinessLogic = new CallHistoryTraceBl(
-                CallHistoryRepositoryMoq.Object, UserRepositoryMoq.Object, BusyAgentRepositoryMoq.Object, OpenTokExternalService.Object, options, ReportCallRepositoryMoq.Object);
+                CallHistoryRepositoryMoq.Object,
+                UserRepositoryMoq.Object,
+                BusyAgentRepositoryMoq.Object,
+                OpenTokExternalService.Object,
+                options,
+                ReportCallRepositoryMoq.Object,
+                PreCallResultRepositoryMoq.Object);
             LoadMoqsEntities();
 
         }

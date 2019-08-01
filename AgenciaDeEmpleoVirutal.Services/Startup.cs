@@ -138,6 +138,7 @@
             services.AddSingleton<IGenericRep<Subsidy>, TableStorageBase<Subsidy>>();
             services.AddSingleton<IGenericRep<Log>, TableStorageBase<Log>>();
             services.AddSingleton<IGenericRep<ReportCall>, TableStorageBase<ReportCall>>();
+            services.AddSingleton<IGenericRep<PreCallResult>, TableStorageBase<PreCallResult>>();
         }
 
         /// <summary>

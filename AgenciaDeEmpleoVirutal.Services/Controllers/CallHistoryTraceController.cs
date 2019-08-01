@@ -47,6 +47,21 @@
             return Ok(_callHistoryBusiness.SetCallTrace(call));
         }
 
+
+        /// <summary>
+        /// Oparation to Trace Call in Table Storage
+        /// </summary>
+        /// <param name="call"></param>
+        /// <returns></returns>
+        /// <author>Juan Sebastián Gil Garnica.</author>
+        [HttpPost]
+        [Route("SetPreCallResult")]
+        public IActionResult SetPreCall([FromBody] SetPreCallResult preCall)
+        {
+            return Ok(_callHistoryBusiness.SetPreCallResult(preCall));
+        }
+
+
         /// <summary>
         /// Operation to Get Call Info
         /// </summary>
@@ -126,5 +141,6 @@
         {
             return Ok(_callHistoryBusiness.GetRecordUrl(request));
         }
+
     }
 }
