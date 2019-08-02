@@ -117,6 +117,8 @@
             };
             CallHistoryRepositoryMoq.Setup(cll => cll.GetListQuery(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(responseCallHistoryRep);
             UserRepositoryMoq.Setup(us => us.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(responseUserRep);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, PartitionKey = "algo", RowKey = "111111_1" };
             List<User> userList = new List<User>() { responseAgentRep };
             UserRepositoryMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(userList);
@@ -129,7 +131,6 @@
             Assert.IsTrue(result.TransactionMade);
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             CallHistoryRepositoryMoq.VerifyAll();
-            UserRepositoryMoq.VerifyAll();
         }
     }
 }

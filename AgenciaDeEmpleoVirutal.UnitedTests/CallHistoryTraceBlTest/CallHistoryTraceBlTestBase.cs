@@ -50,6 +50,11 @@
         protected CallHistoryTrace CallTraceMoq;
 
         /// <summary>
+        /// ReportCall Moq
+        /// </summary>
+        protected ReportCall ReportCallMoq;
+
+        /// <summary>
         /// Caller Moq
         /// </summary>
         protected User CallerMoq;
@@ -86,6 +91,7 @@
         {
             BusyAgentRepositoryMoq = new Mock<IGenericRep<BusyAgent>>();
             ReportCallRepositoryMoq = new Mock<IGenericRep<ReportCall>>();
+            PreCallResultRepositoryMoq = new Mock<IGenericRep<PreCallResult>>();
             CallHistoryRepositoryMoq = new Mock<IGenericRep<CallHistoryTrace>>();
             UserRepositoryMoq = new Mock<IGenericRep<User>>();
             OpenTokExternalService = new Mock<IOpenTokExternalService>();

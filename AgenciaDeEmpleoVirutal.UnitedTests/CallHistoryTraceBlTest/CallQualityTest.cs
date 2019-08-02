@@ -74,6 +74,8 @@
             var expected = ResponseFail<List<CallHistoryTrace>>();
             CallHistoryRepositoryMoq.Setup(cll => cll.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<CallHistoryTrace>() { CallTraceMoq });
             CallHistoryRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(false);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            
             ///Action
             var result = CallHistoryTraceBusinessLogic.CallQuality(QualityCallRequestMoq);
             ///Result
@@ -92,6 +94,8 @@
             var expected = ResponseSuccess();
             CallHistoryRepositoryMoq.Setup(cll => cll.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<CallHistoryTrace>() { CallTraceMoq });
             CallHistoryRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
             ///Action
             var result = CallHistoryTraceBusinessLogic.CallQuality(QualityCallRequestMoq);
             ///Result

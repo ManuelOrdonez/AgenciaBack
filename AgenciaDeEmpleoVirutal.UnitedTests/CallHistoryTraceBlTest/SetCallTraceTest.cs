@@ -130,6 +130,8 @@
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(usR => usR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(false);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
             var expected = ResponseFail();
             ///Action
             var result = CallHistoryTraceBusinessLogic.SetCallTrace(SetCallTraceRequestMock);
@@ -157,6 +159,8 @@
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(usR => usR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
             var expected = ResponseSuccess();
             ///Action
             var result = CallHistoryTraceBusinessLogic.SetCallTrace(SetCallTraceRequestMock);
@@ -183,6 +187,8 @@
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0,PartitionKey="algo",RowKey="111111_1" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
 
             responseAgentRep.CountCallAttended++;
@@ -225,6 +231,8 @@
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0 };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
             responseAgentRep.Available = false;
             OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
@@ -266,6 +274,8 @@
             User responseUser = new User { UserType = "cesante" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
             responseAgentRep.Available = false;
             responseUser.Available = false;
@@ -315,6 +325,8 @@
             OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
             BusyAgentRepositoryMoq.Setup(bs => bs.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(BusyAgentRepResponse);
             UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(false);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
             var expected = ResponseFail();
             ///Action
@@ -352,6 +364,8 @@
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
             responseAgentRep.Available = false;
             OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
@@ -394,6 +408,8 @@
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
+            ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
+            ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
             var expected = ResponseSuccess();
 
             ///Action
