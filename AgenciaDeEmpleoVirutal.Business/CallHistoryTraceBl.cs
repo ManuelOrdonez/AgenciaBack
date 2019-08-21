@@ -194,7 +194,9 @@
                 DateCall = DateTime.Now,
                 OpenTokAccessToken = preCallRequest.OpenTokAccessToken,
                 Result = preCallRequest.Result,
-                Username = preCallRequest.UserName
+                UserCallPK = preCallRequest.UserName,
+                UserCall = preCallRequest.UserName,
+                Name = user.CallerName, 
             };
 
             bool responseCall = _preCallResult.AddOrUpdate(preCallResult).Result;
@@ -573,6 +575,7 @@
                  };
 
             var calls = _callHistoryRepository.GetListQuery(query).Result;
+            var qCalls = _preCallResult.GetListQuery(query).Result;
 
 
             if (calls.Count == 0)
@@ -597,6 +600,7 @@
             response.Add(new GetAllUserCallResponse
             {
                 CallInfo = calls,
+                PreCallInfo = qCalls
             });
             return ResponseSuccess(response);
         }

@@ -12,7 +12,7 @@
         /// Get or Sets Date Filter
         /// </summary>
         [IgnoreProperty]
-        public string Username { get => PartitionKey; set => PartitionKey = value; }
+        public string UserCallPK { get => PartitionKey; set => PartitionKey = value; }
 
         /// <summary>
         /// Get or Sets OpenTok Access Token
@@ -26,6 +26,11 @@
         public string Result { get; set; }
 
         /// <summary>
+        /// Get or Sets OpenTok Session Id
+        /// </summary>
+        public string UserCall { get; set; }
+
+        /// <summary>
         /// Get or Sets Date Call
         /// </summary>
         public DateTime DateCall { get; set; }
@@ -35,6 +40,11 @@
         /// </summary>
         public string CallerPhone { get; set; }
 
-      
+
+        /// <summary>
+        /// Name
+        /// </summary>
+        public string Name { get; set; }
+
     }
 }
