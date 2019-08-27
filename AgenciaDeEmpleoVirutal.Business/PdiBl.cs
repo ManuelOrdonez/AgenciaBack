@@ -119,11 +119,12 @@
             string pdiName;
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
             pdiName = GetPDIName(user, userPDI,PDIRequest.OnlySave);
-
+            var now = DateTime.Now;
             var pdi = new PDI
             {
                 CallerUserName = user.UserName,
                 PDIName = pdiName,
+                PDINameUnique = user.UserName + now.Year + now.Month + now.Day,
                 MyStrengths = SetFieldOfPdi(PDIRequest.MyStrengths),
                 MustPotentiate = SetFieldOfPdi(PDIRequest.MustPotentiate),
                 MyWeaknesses = SetFieldOfPdi(PDIRequest.MyWeaknesses),
