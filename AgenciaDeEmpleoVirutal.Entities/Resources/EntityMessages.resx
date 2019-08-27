@@ -246,4 +246,7 @@
   <data name="NumberSapSubsidy_Request" xml:space="preserve">
     <value>El campo número Sap es requerido</value>
   </data>
+  <data name="UserName_Required" xml:space="preserve">
+    <value>El nombre de usuario es obligatorio</value>
+  </data>
 </root>
