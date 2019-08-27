@@ -54,6 +54,8 @@
 
         public bool LdapFlag { get; set; }
 
+        public bool CreateTable { get; set; }
+
         /// <summary>
         /// Gets or sets the ClientIdLdap.
         /// </summary>

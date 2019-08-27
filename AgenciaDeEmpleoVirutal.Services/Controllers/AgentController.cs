@@ -16,8 +16,7 @@
     [Produces("application/json")]
     [Route("api/Agent")]
     [EnableCors("CorsPolitic")]
-    [Authorize]
-    public class AgentController : Controller
+      public class AgentController : Controller
     {
         /// <summary>
         /// Interface of agent business
@@ -44,6 +43,7 @@
         [HttpPost]
         [Route("GetAgentAvailable")]
         [Produces(typeof(Response<GetAgentAvailableResponse>))]
+        [Authorize]
         public IActionResult GetAgentAvailable([FromBody] GetAgentAvailableRequest request)
         {
             return Ok(_agentBusiness.GetAgentAvailable(request));
@@ -58,6 +58,7 @@
         [HttpPost]
         [Route("ImAviable")]
         [Produces(typeof(Response<AuthenticateUserResponse>))]
+        [Authorize]
         public IActionResult ImAviable([FromBody] AviableUserRequest request)
         {
             return Ok(_agentBusiness.ImAviable(request));
@@ -70,9 +71,22 @@
         [HttpPost]
         [Route("GetAllAgentByRole")]
         [Produces(typeof(Response<GetAllAgentByRoleResponse>))]
+        [Authorize]
         public IActionResult GetAllAgentByRole([FromBody] int role)
         {
             return Ok(_agentBusiness.GetAllAgentByRole(role));
+        }
+
+        /// <summary>
+        /// Reset Count Daily Calls
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ResetCountDailyCalls")]
+        [Produces(typeof(Response<GetAllAgentByRoleResponse>))]
+        public IActionResult ResetCountDailyCalls()
+        {
+            return Ok(_agentBusiness.ResetCountDailyCalls());
         }
     }
 }

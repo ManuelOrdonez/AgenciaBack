@@ -29,6 +29,7 @@
         /// </summary>
         private readonly UserSecretSettings _tableStorageSettings;
 
+
         private const int SuccessValidate= 100;
         private const int SuccessValidateOk = 2;
 
@@ -82,7 +83,10 @@
         /// <returns></returns>
         public async Task CreateTableInStorage()
         {
-            await Table.CreateIfNotExistsAsync().ConfigureAwait(false);
+            if (_tableStorageSettings.CreateTable)
+            {
+                await Table.CreateIfNotExistsAsync().ConfigureAwait(false);
+            }
         }
 
         /// <inheritdoc />

@@ -31,5 +31,11 @@
         /// </summary>
         /// <returns></returns>
         Response<GetAllAgentByRoleResponse> GetAllAgentByRole(int role);
+
+        /// <summary>
+        /// Reset Count Daily Calls
+        /// </summary>
+        /// <returns></returns>
+        bool ResetCountDailyCalls();
     }
 }

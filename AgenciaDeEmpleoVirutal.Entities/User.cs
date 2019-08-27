@@ -154,6 +154,11 @@
         public int CountCallAttended { get; set; }
 
         /// <summary>
+        /// Get or Sets User Count Call Attended Daily
+        /// </summary>
+        public int CountCallAttendedDaily { get; set; }
+
+        /// <summary>
         /// Get or Sets User is Available
         /// </summary>
         public bool Available { get; set; }

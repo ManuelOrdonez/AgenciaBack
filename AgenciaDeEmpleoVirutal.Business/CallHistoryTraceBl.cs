@@ -411,6 +411,7 @@
                 if (state == CallStates.Answered)
                 {
                     agent.CountCallAttended = Int32.Parse(agent.CountCallAttended.ToString(new CultureInfo("es-CO")), new CultureInfo("es-CO")) + 1;
+                    agent.CountCallAttendedDaily = Int32.Parse(agent.CountCallAttendedDaily.ToString(new CultureInfo("es-CO")), new CultureInfo("es-CO")) + 1;
                 }
                 if (state == CallStates.EndByMobile)
                 {

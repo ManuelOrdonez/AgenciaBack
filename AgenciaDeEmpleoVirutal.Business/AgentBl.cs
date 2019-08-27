@@ -172,7 +172,7 @@
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
-                var Agent = advisors.OrderBy(x => x.CountCallAttended).FirstOrDefault();
+                var Agent = advisors.OrderBy(x => x.CountCallAttendedDaily).FirstOrDefault();
                 try
                 {
                     if(!_busyAgentRepository.Add(new BusyAgent {
@@ -250,6 +250,26 @@
                 };
 
             return ResponseSuccess(response);
+        }
+
+        public bool ResetCountDailyCalls()
+        {
+            bool result = false;
+            try
+            {
+                var agents = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
+                foreach(var agent in agents)
+                {
+                    agent.CountCallAttendedDaily = default(int);
+                    result = _agentRepository.AddOrUpdate(agent).Result;                    
+                }
+
+                return result;
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
         }
 
         /// <summary>

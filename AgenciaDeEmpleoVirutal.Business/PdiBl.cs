@@ -118,7 +118,7 @@
 
             string pdiName;
             var userPDI = _pdiRep.GetByPatitionKeyAsync(user.UserName).Result;
-            pdiName = GetPDIName(user, userPDI);
+            pdiName = GetPDIName(user, userPDI,PDIRequest.OnlySave);
 
             var pdi = new PDI
             {
@@ -145,17 +145,21 @@
                 }
                 return ResponseSuccess(ServiceResponseCode.SavePDI);
             }
-            var sendPdi = SendPdi(pdi, user);
-            if (!sendPdi.Ok)
+            else
             {
-                return ResponseFail<PDI>((int)ServiceResponseCode.ErrorSendMail, sendPdi.Message);
+                var sendPdi = SendPdi(pdi, user);
+                if (!sendPdi.Ok)
+                {
+                    return ResponseFail<PDI>((int)ServiceResponseCode.ErrorSendMail, sendPdi.Message);
+                }
+                return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
             }
-            return ResponseSuccess(ServiceResponseCode.SendAndSavePDI);
         }
 
-        private static string GetPDIName(User user, List<PDI> userPDI)
+        private static string GetPDIName(User user, List<PDI> userPDI, bool onlySave)
         {
-            return userPDI.Any() ? string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, userPDI.Count) :
+            int numberPDF = onlySave ? userPDI.Count - 1 : userPDI.Count;
+            return userPDI.Any() ? string.Format(CultureInfo.CurrentCulture, "PDI-{0}-{1}.pdf", user.NoDocument, numberPDF) :
                 string.Format(CultureInfo.CurrentCulture, "PDI-{0}.pdf", user.NoDocument);
         }
 

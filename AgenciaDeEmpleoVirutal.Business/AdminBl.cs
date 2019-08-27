@@ -93,8 +93,9 @@
                 Email = string.Format(new CultureInfo("es-CO"), "{0}@colsubsidio.com", funcionary.InternalMail),
                 UserType = UsersTypes.Funcionario.ToString(),
                 CountCallAttended = 0,
+                CountCallAttendedDaily = 0,
                 Available = false,
-                RegisterDate = DateTimeOffset.UtcNow.AddHours(-5)                
+                RegisterDate = DateTimeOffset.UtcNow.AddHours(-5)
             };
             var result = _usersRepo.AddOrUpdate(funcionaryEntity).Result;
 
