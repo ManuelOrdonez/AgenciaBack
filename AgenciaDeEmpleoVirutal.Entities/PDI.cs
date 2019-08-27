@@ -25,12 +25,20 @@
         /// <value>
         /// Field of PDI
         /// </value>
-        public string PDIName
+        public string PDINameUnique
         {
             get => RowKey;
             set => RowKey = value;
         }
 
+
+        /// <summary>
+        /// Get or Sets PDI Name
+        /// </summary>
+        /// <value>
+        /// Field of PDI
+        /// </value>
+        public string PDIName { get; set; }
         /// <summary>
         /// Get or Sets Caller Name
         /// </summary>

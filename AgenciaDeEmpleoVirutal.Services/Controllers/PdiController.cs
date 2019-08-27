@@ -13,7 +13,7 @@
     /// </summary>
     [Produces("application/json")]
     [Route("api/PDI")]
-    [Authorize]
+    ///[Authorize]
     [EnableCors("CorsPolitic")]
     public class PdiController : Controller
     {
