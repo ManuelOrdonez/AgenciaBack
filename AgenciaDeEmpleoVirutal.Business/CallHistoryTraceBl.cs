@@ -579,7 +579,7 @@
             var qCalls = _preCallResult.GetListQuery(query).Result;
 
 
-            if (calls.Count == 0)
+            if (calls.Count == 0 && qCalls.Count == 0)
             {
                 return ResponseFail<GetAllUserCallResponse>(ServiceResponseCode.UserDoNotHaveCalls);
             }
