@@ -6,7 +6,6 @@
     using AgenciaDeEmpleoVirutal.Contracts.Referentials;
     using AgenciaDeEmpleoVirutal.Entities;
     using AgenciaDeEmpleoVirutal.Entities.ExternalService.Request;
-    using AgenciaDeEmpleoVirutal.Entities.ExternalService.Response;
     using AgenciaDeEmpleoVirutal.Entities.Referentials;
     using AgenciaDeEmpleoVirutal.Entities.Requests;
     using AgenciaDeEmpleoVirutal.Entities.Responses;
@@ -16,6 +15,7 @@
     using AgenciaDeEmpleoVirutal.Utils.ResponseMessages;
     using Microsoft.Extensions.Options;
     using Microsoft.WindowsAzure.Storage.Table;
+    using Newtonsoft.Json;
     using System;
     using System.Collections.Generic;
     using System.Globalization;
@@ -35,6 +35,11 @@
         /// User repository
         /// </summary>
         private readonly IGenericRep<User> _userRep;
+
+        /// <summary>
+        /// Agent repository
+        /// </summary>
+        private readonly IGenericRep<Agent> _agentRep;
 
         /// <summary>
         /// Interface of ldap services
@@ -81,12 +86,13 @@
         /// <param name="_openTokExternalService">The open tok external service.</param>
         /// <param name="pdiRep">The pdi rep.</param>
         /// <param name="busyAgentRepository">The busy agent repository.</param>
-        public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
+        public UserBl(IGenericRep<User> userRep, IGenericRep<Agent> agentRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
                         IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
+            _agentRep = agentRep;
             _LdapServices = LdapServices;
             _settings = options?.Value;
             _openTokService = _openTokExternalService;
@@ -140,6 +146,7 @@
         /// <returns></returns>
         public Response<AuthenticateUserResponse> AuthenticateUser(AuthenticateUserRequest userReq)
         {
+            bool resultUptade = false;
             if (userReq == null)
             {
                 throw new ArgumentNullException(nameof(userReq));
@@ -151,50 +158,80 @@
             }
             string token = string.Empty;
             string passwordDecrypt = string.Empty;
+            var response = new List<AuthenticateUserResponse>();
 
             passwordDecrypt = userReq.DeviceType.Equals("WEB", StringComparison.CurrentCulture) ?
-                Crypto.DecryptWeb(userReq.Password, passPhrase) : Crypto.DecryptPhone(userReq.Password, passPhrase);
-            User user = GetUserActive(userReq);
-            if (user is null)
+            Crypto.DecryptWeb(userReq.Password, passPhrase) : Crypto.DecryptPhone(userReq.Password, passPhrase);
+            if (userReq.UserType.ToLower(new CultureInfo(cultureInfo)).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
             {
-                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-            }
-            else if (userReq.UserType.ToLower(new CultureInfo(cultureInfo)).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
-            {
-                var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
-                if (AutenticateFunc != ServiceResponseCode.Success)
+                var user = new Agent();
+                user = GetAgentActive(userReq);
+                if (user is null)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(AutenticateFunc);
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 }
+                else
+                {
+                    var AutenticateFunc = AuthenticateFuncionary(user, passwordDecrypt);
+                    if (AutenticateFunc != ServiceResponseCode.Success)
+                    {
+                        return ResponseFail<AuthenticateUserResponse>(AutenticateFunc);
+                    }
+                }
+                user.Authenticated = true;
+                user.DeviceId = userReq.DeviceId;
+                user.Password = userReq.Password;
+                user.IntentsLogin = 0;
+                response = new List<AuthenticateUserResponse>
+                {
+                    new AuthenticateUserResponse
+                    {
+                        AuthInfo = SetAuthenticationToken(user.UserName),
+                        UserInfo = this.AgentToUser(user),
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
+                        OpenTokAccessToken = token,
+                    }
+                };
+                resultUptade = _agentRep.AddOrUpdate(user).Result;
             }
             else
             {
-                var AutenticateCompOrPerson = AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt);
-                if (AutenticateCompOrPerson != ServiceResponseCode.Success)
+                var user = new User();
+                user = GetUserActive(userReq);
+                if (user is null)
                 {
-                    return ResponseFail<AuthenticateUserResponse>(AutenticateCompOrPerson);
+                    return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
                 }
+                else
+                {
+                    var AutenticateCompOrPerson = AuthenticateCompanyOrPerson(user, userReq, passwordDecrypt);
+                    if (AutenticateCompOrPerson != ServiceResponseCode.Success)
+                    {
+                        return ResponseFail<AuthenticateUserResponse>(AutenticateCompOrPerson);
+                    }
+                }
+                user.Authenticated = true;
+                user.DeviceId = userReq.DeviceId;
+                user.Password = userReq.Password;
+                user.IntentsLogin = 0;
+                resultUptade = _userRep.AddOrUpdate(user).Result;
+                response = new List<AuthenticateUserResponse>
+                {
+                    new AuthenticateUserResponse
+                    {
+                        AuthInfo = SetAuthenticationToken(user.UserName),
+                        UserInfo = user,
+                        OpenTokApiKey = _settings?.OpenTokApiKey,
+                        OpenTokAccessToken = token,
+                    }
+                };
             }
 
-            user.Authenticated = true;
-            user.DeviceId = userReq.DeviceId;
-            user.Password = userReq.Password;
-            user.IntentsLogin = 0;
-            var resultUptade = _userRep.AddOrUpdate(user).Result;
             if (!resultUptade)
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
-            var response = new List<AuthenticateUserResponse>
-            {
-                new AuthenticateUserResponse
-                {
-                    AuthInfo = SetAuthenticationToken(user.UserName),
-                    UserInfo = user,
-                    OpenTokApiKey = _settings?.OpenTokApiKey,
-                    OpenTokAccessToken = token,
-                }
-            };
+
             return ResponseSuccess(response);
         }
 
@@ -204,7 +241,7 @@
         /// <param name="user"></param>
         /// <param name="passwordDecrypt"></param>
         /// <returns></returns>
-        private ServiceResponseCode AuthenticateFuncionary(User user, string passwordDecrypt)
+        private ServiceResponseCode AuthenticateFuncionary(Agent user, string passwordDecrypt)
         {
             if (user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture) /*&& user.IntentsLogin == 5*/)
             {
@@ -215,8 +252,9 @@
             {
                 return ServiceResponseCode.UserBlock;
             }
-            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
-            if (!(userCalling.Count == 0 || userCalling is null))
+            //var userCalling = _busyAgentRepository.GetSomeAsync("UserNameAgent", user.UserName).Result;
+            //if (!(userCalling.Count == 0 || userCalling is null))
+            if (user.Calling)
             {
                 return ServiceResponseCode.UserCalling;
             }
@@ -227,7 +265,7 @@
                 user.IntentsLogin = user.IntentsLogin + 1;
                 const int maxIntentsToBlockUser = 5;
                 user.State = (user.IntentsLogin == maxIntentsToBlockUser) ? UserStates.Disable.ToString() : UserStates.Enable.ToString();
-                var resultUpt = _userRep.AddOrUpdate(user).Result;
+                var resultUpt = _agentRep.AddOrUpdate(user).Result;
                 if (!resultUpt)
                 {
                     return ServiceResponseCode.InternalError;
@@ -253,15 +291,20 @@
                 {
                     return AutenticateLDAP;
                 }
+
                 if (user.State.Equals(UserStates.Disable.ToString(), StringComparison.CurrentCulture))
                 {
                     return ServiceResponseCode.UserDesable;
                 }
-                var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
-                if (!(userCalling.Count == 0 || userCalling is null))
+
+                /* var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", user.UserName).Result;
+                 if (!(userCalling.Count == 0 || userCalling is null))*/
+
+                if (user.Calling)
                 {
                     return ServiceResponseCode.UserCalling;
                 }
+
                 return ServiceResponseCode.Success;
             }
             else
@@ -330,21 +373,41 @@
             {
                 return ResponseBadRequest<RegisterUserResponse>(errorsMessage);
             }
-            var lResult = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
 
-            if (lResult.Count == 0)
-            {
-                return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
-            }
+            var lResultAgent = _agentRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
+
             User result = null;
-            foreach (var item in lResult)
+            if (lResultAgent.Count == 0)
             {
-                if (item.State == UserStates.Enable.ToString())
+                var lResult = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
+                if (lResult.Count == 0)
                 {
-                    result = item;
-                    break;
+                    return ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
+                }
+                else
+                {
+                    foreach (var user in lResult)
+                    {
+                        if (user.State == UserStates.Enable.ToString())
+                        {
+                            result = user;
+                            break;
+                        }
+                    }
                 }
             }
+            else
+            {
+                foreach (var agent in lResultAgent)
+                {
+                    if (agent.State == UserStates.Enable.ToString())
+                    {
+                        result = this.AgentToUser(agent);
+                        break;
+                    }
+                }
+            }
+
             if (result == null)
             {
                 return ResponseFail<RegisterUserResponse>(ServiceResponseCode.UserDesable);
@@ -569,23 +632,29 @@
                 NoDocument = user[0],
                 TypeDocument = user[1],
             };
-            var userAviable = this.GetAgentActive(request);
+            var agentAviable = this.GetAgentActive(request);
+
             var response = new List<AuthenticateUserResponse>();
 
-            if (userAviable != null)
+            if (agentAviable != null)
             {
-                response = GetAuthenticateUserResponse(RequestAviable, userAviable);
+                response = GetAuthenticateUserResponse(RequestAviable, agentAviable);
+                agentAviable.Calling = false;
+                _agentRep.AddOrUpdate(agentAviable);
             }
             else
             {
                 var usercall = this.GetUserActive(request);
                 if (usercall != null)
                 {
-                    var busy = _busyAgentRepository.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
+                    /* var busy = _agentRep.GetSomeAsync("UserNameCaller", usercall.UserName).Result;
                     if (busy.Any())
                     {
-                        _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
-                    }
+                        _agentRep.AddOrUpdate(busy.FirstOrDefault());
+                    }*/
+                    usercall.Calling = false;
+                    _userRep.AddOrUpdate(usercall);
+
                     response = new List<AuthenticateUserResponse>
                     {
                         new AuthenticateUserResponse
@@ -612,7 +681,7 @@
         /// <param name="RequestAviable"></param>
         /// <param name="userAviable"></param>
         /// <returns></returns>
-        private List<AuthenticateUserResponse> GetAuthenticateUserResponse(AviableUserRequest RequestAviable, User userAviable)
+        private List<AuthenticateUserResponse> GetAuthenticateUserResponse(AviableUserRequest RequestAviable, Agent userAviable)
         {
             List<AuthenticateUserResponse> response;
             var token = string.Empty;
@@ -622,19 +691,14 @@
                 userAviable.OpenTokSessionId = _openTokService.CreateSession();
                 token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
             }
-            _userRep.AddOrUpdate(userAviable);
+            _agentRep.AddOrUpdate(userAviable);
 
-            var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
-            if (busy.Any())
-            {
-                _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
-            }
             response = new List<AuthenticateUserResponse>
                 {
                     new AuthenticateUserResponse
                     {
                         AuthInfo = SetAuthenticationToken(userAviable.UserName),
-                        UserInfo = userAviable,
+                        UserInfo = this.AgentToUser(userAviable),
                         OpenTokApiKey = _settings?.OpenTokApiKey,
                         OpenTokAccessToken = token,
                     }
@@ -654,23 +718,38 @@
                 throw new ArgumentNullException(nameof(logOurReq));
             }
             var errorsMessage = logOurReq.Validate().ToList();
+            User user = new User();
             if (errorsMessage.Count > 0)
             {
                 return ResponseBadRequest<AuthenticateUserResponse>(errorsMessage);
             }
-            var user = _userRep.GetAsync(string.Format(new CultureInfo(cultureInfo), formatString, logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
-            if (user == null)
+            var agent = _agentRep.GetAsync(string.Format(new CultureInfo(cultureInfo), formatString, logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
+            if (agent == null)
             {
-                return ResponseFail<AuthenticateUserResponse>();
+                user = _userRep.GetAsync(string.Format(new CultureInfo(cultureInfo), formatString, logOurReq.NoDocument, logOurReq.TypeDocument)).Result;
+                if (user == null)
+                {
+                    return ResponseFail<AuthenticateUserResponse>();
+                }
+                user.Authenticated = false;
+                user.Available = false;
             }
-            user.Authenticated = false;
-            user.Available = false;
-            var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower(new CultureInfo(cultureInfo))).Result;
-            if (busy.Any())
+            else
             {
-                _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+                agent.Authenticated = false;
+                agent.Available = false;
+                agent.Calling = false;
+
+                /*var busy = _busyAgentRepository.GetByPatitionKeyAsync(user.OpenTokSessionId?.ToLower(new CultureInfo(cultureInfo))).Result;
+                if (busy.Any())
+                {
+                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+                }
+                */
             }
-            var result = _userRep.AddOrUpdate(user).Result;
+            var result = agent == null ? _userRep.AddOrUpdate(user).Result :
+                _agentRep.AddOrUpdate(agent).Result;
+
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
 
@@ -846,15 +925,53 @@
             return user;
         }
 
+
+        /// <summary>
+        /// convert User To Agent
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private Agent UserToAgent(User user)
+        {
+            Agent agente = new Agent();
+            var serializedParent = JsonConvert.SerializeObject(user);
+            agente = JsonConvert.DeserializeObject<Agent>(serializedParent);
+            return agente;
+        }
+
+
+        /// <summary>
+        /// convert Agent to User
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        private User AgentToUser(Agent agent)
+        {
+            User user = new User();
+            var serializedParent = JsonConvert.SerializeObject(agent);
+            user = JsonConvert.DeserializeObject<User>(serializedParent);
+            return user;
+        }
+
         /// <summary>
         /// Method to Get Agent Active
         /// </summary>
         /// <param name="userReq"></param>
         /// <returns></returns>
-        private User GetAgentActive(AuthenticateUserRequest userReq)
+        private Agent GetAgentActive(AuthenticateUserRequest userReq)
         {
-            const User user = null;
-            List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
+            const Agent user = null;
+            /* List<User> luser = _userRep.GetByPatitionKeyAsync("funcionario").Result;
+
+             foreach(var agent in luser)
+             {
+                 Agent agente = new Agent();
+                 var serializedParent = JsonConvert.SerializeObject(agent);
+                 agente  = JsonConvert.DeserializeObject<Agent>(serializedParent);
+                 _agentRep.AddOrUpdate(agente);
+             }
+             */
+            List<Agent> lUser = _agentRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
                 if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))

@@ -34,10 +34,15 @@
         /// Report Call History Trace Repository Mock
         /// </summary>
         protected readonly Mock<IGenericRep<PreCallResult>> PreCallResultRepositoryMoq;
+
         /// <summary>
         /// Agents Repository Mock
         /// </summary>
         protected readonly Mock<IGenericRep<User>> UserRepositoryMoq;
+        /// <summary>
+        /// Agents Repository Mock
+        /// </summary>
+        protected readonly Mock<IGenericRep<Agent>> AgentRepositoryMoq;        
 
         /// <summary>
         /// Call History Trace Business logic
@@ -99,6 +104,7 @@
 
             CallHistoryTraceBusinessLogic = new CallHistoryTraceBl(
                 CallHistoryRepositoryMoq.Object,
+                AgentRepositoryMoq.Object,
                 UserRepositoryMoq.Object,
                 BusyAgentRepositoryMoq.Object,
                 OpenTokExternalService.Object,

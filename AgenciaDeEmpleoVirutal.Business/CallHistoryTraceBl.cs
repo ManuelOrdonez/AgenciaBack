@@ -55,8 +55,16 @@
         /// <summary>
         /// Agents Repository
         /// </summary>
-        private readonly IGenericRep<User> _agentRepository;
+        private readonly IGenericRep<Agent> _agentRepository;
+        /// <summary>
+        /// Culture info
+        /// </summary>
+        private const string cultureInfo = "es-CO";
 
+        /// <summary>
+        /// FormatString
+        /// </summary>
+        const string formatString = "{0}_{1}";
         /// <summary>
         /// The open tok service
         /// </summary>
@@ -74,7 +82,7 @@
         /// <param name="agentRepository"></param>
         /// <param name="busyAgentRepository"></param>
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
-            IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
+            IGenericRep<Agent> agentRepository, IGenericRep<User> callerRepository, IGenericRep<BusyAgent> busyAgentRepository,
             IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options,
             IGenericRep<ReportCall> reportCallRepository, IGenericRep<PreCallResult> preCallResultRepository)
         {
@@ -82,7 +90,7 @@
             {
                 _callHistoryRepository = callHistoryRepository;
                 _agentRepository = agentRepository;
-                _callerRepository = agentRepository;
+                _callerRepository = callerRepository;
                 _busyAgentRepository = busyAgentRepository;
                 _openTokService = openTokService;
                 _UserSecretSettings = options.Value;
@@ -196,7 +204,7 @@
                 Result = preCallRequest.Result,
                 UserCallPK = preCallRequest.UserName,
                 UserCall = preCallRequest.UserName,
-                Name = user.CallerName, 
+                Name = user.CallerName,
             };
 
             bool responseCall = _preCallResult.AddOrUpdate(preCallResult).Result;
@@ -265,7 +273,7 @@
         /// <param name="agent"></param>
         /// <param name="validateAgent"></param>
         private void SetCallState(SetCallTraceRequest callRequest, CallStates stateInput,
-            ref CallHistoryTrace callInfo, User agent, ref bool validateAgent)
+            ref CallHistoryTrace callInfo, Agent agent, ref bool validateAgent)
         {
             switch (stateInput)
             {
@@ -403,7 +411,7 @@
         /// Validate Agent to answered call
         /// </summary>
         /// <param name="agent"></param>
-        private bool ValidateCallAgent(User agent, CallStates state)
+        private bool ValidateCallAgent(Agent agent, CallStates state)
         {
             if (agent != null)
             {
@@ -467,15 +475,42 @@
             string type = string.Empty;
             if (Validate)
             {
-                var user = _agentRepository.GetAsync(UserName).Result;
-                type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
-                    ? "UserNameAgent" : "UserNameCaller";
+                var agent = _agentRepository.GetAsync(UserName).Result;
 
-                var busy = _busyAgentRepository.GetSomeAsync(type, UserName).Result;
-                if (busy.Any())
+                if (agent == null)
                 {
-                    _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
+                    var user = _callerRepository.GetAsync(UserName).Result;
+                    type = user.UserType.ToLower(new CultureInfo("es-CO"));
                 }
+                else
+                {
+                    type = agent.UserType.ToLower(new CultureInfo("es-CO"));
+                }
+              //  type = user.UserType.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture)
+              //      ? "UserNameAgent" : "UserNameCaller";
+               
+                
+
+                if (type.ToLower(new CultureInfo("es-CO")).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo("es-CO")), StringComparison.CurrentCulture))
+                {
+                    var busy = _agentRepository.GetByPartitionKeyAndRowKeyAsync(type, UserName).Result.FirstOrDefault();
+                    if(busy != null)
+                    {
+                        busy.Calling = false;
+                        _agentRepository.AddOrUpdate(busy);
+                    }
+
+                }
+                else
+                {
+                    var busy = _callerRepository.GetByPartitionKeyAndRowKeyAsync(type, UserName).Result.FirstOrDefault();
+                    if (busy != null)
+                    {
+                        busy.Calling = false;
+                        _callerRepository.AddOrUpdate(busy);
+                    }
+                }
+
             }
         }
 
@@ -642,7 +677,7 @@
             typeU = userCall.Substring(userCall.Length - 1) == "1" ?
                   UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) : UsersTypes.Cesante.ToString().ToLower(new CultureInfo("es-CO"));
 
-            var callerInfo = _agentRepository.GetAsyncAll(userCall.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
+            var callerInfo = _callerRepository.GetAsyncAll(userCall.ToLower(new CultureInfo("es-CO"))).Result.FirstOrDefault();
             if (!string.IsNullOrEmpty(callerInfo?.Name))
             {
                 call.CallerName = typeU != UsersTypes.Empresa.ToString().ToLower(new CultureInfo("es-CO")) ?

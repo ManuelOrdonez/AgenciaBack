@@ -108,6 +108,13 @@
         /// </summary>
         public bool Authenticated { get; set; }
 
+
+        /// <summary>
+        /// Get or Sets User is Calling
+        /// </summary>
+        public bool Calling { get; set; }
+
+
         /// <summary>
         /// Get or Sets User Role
         /// </summary>

@@ -27,6 +27,12 @@
         protected Mock<IGenericRep<User>> UserRepMoq;
 
         /// <summary>
+        /// The user rep moq
+        /// </summary>
+        protected Mock<IGenericRep<Agent>> AgentRepMoq;
+        
+
+        /// <summary>
         /// The busy rep moq
         /// </summary>
         protected Mock<IGenericRep<BusyAgent>> BusyRepMoq;
@@ -135,12 +141,14 @@
             options = Options.Create(new UserSecretSettings { LdapFlag = true });
             _settings = options.Value;
             UserRepMoq = new Mock<IGenericRep<User>>();
+            AgentRepMoq = new Mock<IGenericRep<Agent>>();
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
             OpenTokExternalService = new Mock<IOpenTokExternalService>();
             UserBusiness = new UserBl(
                 UserRepMoq.Object,
+                AgentRepMoq.Object,
                 LdapServicesMoq.Object, 
                 SendMailServiceMoq.Object, 
                 options, 

@@ -56,9 +56,9 @@
             });
             var expected = ResponseSuccess(agentFosfec);
             
-            AgentRepMoq.Setup(p => p.GetListQuery(It.IsAny<List<ConditionParameter>>())).Returns(Task.FromResult(new List<User>
+            AgentRepMoq.Setup(p => p.GetListQuery(It.IsAny<List<ConditionParameter>>())).Returns(Task.FromResult(new List<Agent>
             {
-                new User
+                new Agent
                 {
                     Name ="Orientador",
                     LastName="Col",

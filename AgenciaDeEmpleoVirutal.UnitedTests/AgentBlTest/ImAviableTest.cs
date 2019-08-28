@@ -44,9 +44,9 @@
         {
             ///Arrange
             ///       
-            var response = new List<AuthenticateUserResponse>()
+            var response = new List<AuthenticateAgentResponse>()
             {
-                new AuthenticateUserResponse()
+                new AuthenticateAgentResponse()
                 {
                     UserInfo = UserMoq,
                     OpenTokAccessToken = string.Empty,
@@ -54,7 +54,7 @@
             };
 
             AgentRepMoq.Setup(a => a.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(
-                new List<User> { UserMoq });
+                new List<Agent> { UserMoq });
             var expected = ResponseSuccess(response);
             ///Action
             var result = AgentBussinesLogic.ImAviable(AviableUserRequest);

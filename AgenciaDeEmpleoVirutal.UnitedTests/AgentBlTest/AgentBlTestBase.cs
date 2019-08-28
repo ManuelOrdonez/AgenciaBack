@@ -22,7 +22,7 @@
 
         protected Mock<IGenericRep<User>> UserRepMoq;
 
-        protected Mock<IGenericRep<User>> AgentRepMoq;
+        protected Mock<IGenericRep<Agent>> AgentRepMoq;
 
         protected Mock<IOpenTokExternalService> OpenTokExternalServiceMoq;
 
@@ -30,7 +30,7 @@
 
         protected Mock<IGenericRep<Parameters>> ParametersRepMock;
 
-        protected User UserMoq;
+        protected Agent UserMoq;
 
         protected BusyAgent BusyAgentMoq;
 
@@ -41,7 +41,7 @@
         protected List<Parameters> ParametersMock;
         public AgentBlTestBase()
         {
-            AgentRepMoq = new Mock<IGenericRep<User>>();
+            AgentRepMoq = new Mock<IGenericRep<Agent>>();
             UserRepMoq = new Mock<IGenericRep<User>>();
             ParametersRepMock = new Mock<IGenericRep<Parameters>>();
             OpenTokExternalServiceMoq = new Mock<IOpenTokExternalService>();
@@ -131,7 +131,7 @@
                 UserName = "12345678_2"
             };
 
-            UserMoq = new User()
+            UserMoq = new Agent()
             {
                 PartitionKey = "cesante",
                 LastName = "Gil Garnica",

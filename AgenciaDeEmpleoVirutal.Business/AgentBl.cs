@@ -36,7 +36,7 @@
         /// <summary>
         /// Agents Repository
         /// </summary>
-        private readonly IGenericRep<User> _agentRepository;
+        private readonly IGenericRep<Agent> _agentRepository;
 
         /// <summary>
         /// Agents Repository
@@ -55,11 +55,11 @@
         /// <param name="userRepository"></param>
         /// <param name="openTokService"></param>
         /// <param name="busyAgentRepository"></param>
-        public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
+        public AgentBl(IGenericRep<Agent> AgentRepository, IGenericRep<User> UserRepository, IOpenTokExternalService openTokService,
             IGenericRep<BusyAgent> busyAgentRepository, IGenericRep<Parameters> parametersRepository)
         {
-            _userRepository = userRepository;
             _agentRepository = AgentRepository;
+            _userRepository = UserRepository;
             _openTokExternalService = openTokService;
             _busyAgentRepository = busyAgentRepository;
             _parametersRepository = parametersRepository;
@@ -74,8 +74,8 @@
         private Response<GetAgentAvailableResponse> ValidateShedule()
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
-            string[] days = {  "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" };
-            string dayIni = parameters.FirstOrDefault(x => x.RowKey == "diainicio").Value.Replace("á","a").Replace("é", "e");
+            string[] days = { "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" };
+            string dayIni = parameters.FirstOrDefault(x => x.RowKey == "diainicio").Value.Replace("á", "a").Replace("é", "e");
             string dayEnd = parameters.FirstOrDefault(x => x.RowKey == "diafin").Value.Replace("á", "a").Replace("é", "e");
             string hourIni = parameters.FirstOrDefault(x => x.RowKey == "horainicio").Value;
             string hourEnd = parameters.FirstOrDefault(x => x.RowKey == "horafin").Value;
@@ -127,18 +127,22 @@
             {
                 return validateShedule;
             }
+
             var errorMessages = agentAvailableRequest.Validate().ToList();
             if (errorMessages.Count > 0)
             {
                 return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
             }
+
             var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
             if (userInfo == null)
             {
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);
             }
-            var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", userInfo.UserName).Result;
-            if (!(userCalling?.Count == 0))
+
+            /*var userCalling = _busyAgentRepository.GetSomeAsync("UserNameCaller", userInfo.UserName).Result;
+            if (!(userCalling?.Count == 0))*/
+            if(userInfo.Calling)
             {
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserCalling);
             }
@@ -165,7 +169,14 @@
                         ColumnName = "Authenticated",
                         Condition = QueryComparisons.Equal,
                         ValueBool = true
+                    },
+                     new ConditionParameter
+                    {
+                        ColumnName = "Calling",
+                        Condition = QueryComparisons.Equal,
+                        ValueBool = false
                     }
+
                 };
                 var advisors = _agentRepository.GetSomeAsync(query).Result;
                 if (advisors.Count.Equals(0))
@@ -175,11 +186,18 @@
                 var Agent = advisors.OrderBy(x => x.CountCallAttendedDaily).FirstOrDefault();
                 try
                 {
-                    if(!_busyAgentRepository.Add(new BusyAgent {
+                    /*if (!_busyAgentRepository.Add(new BusyAgent
+                    {
                         PartitionKey = Agent.OpenTokSessionId.ToLower(new CultureInfo("es-CO")),
                         RowKey = Agent.UserName,
                         UserNameAgent = Agent.UserName,
-                        UserNameCaller = agentAvailableRequest.UserName}).Result)
+                        UserNameCaller = agentAvailableRequest.UserName
+                    }).Result)*/
+
+                    Agent.Calling = true;
+                    /// Disabled Agent
+                    Agent.Available = false;
+                    if (!_agentRepository.AddOrUpdate(Agent).Result)
                     {
                         return ResponseFail<GetAgentAvailableResponse>();
                     }
@@ -188,12 +206,7 @@
                 {
                     return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
                 }
-                /// Disabled Agent
-                Agent.Available = false;
-                if (!_agentRepository.AddOrUpdate(Agent).Result)
-                {
-                    return ResponseFail<GetAgentAvailableResponse>();
-                }
+                
                 var response = new GetAgentAvailableResponse();
                 response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
                 if (string.IsNullOrEmpty(response.IDToken))
@@ -213,22 +226,22 @@
         /// </summary>
         /// <param name="RequestAviable"></param>
         /// <returns></returns>
-        public Response<AuthenticateUserResponse> ImAviable(AviableUserRequest RequestAviable)
+        public Response<AuthenticateAgentResponse> ImAviable(AviableUserRequest RequestAviable)
         {
-            User user = new User();
-            
+            Agent user = new Agent();
+
             if (RequestAviable == null)
             {
                 throw new ArgumentNullException(nameof(RequestAviable));
             }
             if (string.IsNullOrEmpty(RequestAviable.UserName))
             {
-                return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
+                return ResponseFail<AuthenticateAgentResponse>(ServiceResponseCode.BadRequest);
             }
             var lUser = _agentRepository.GetAsyncAll(RequestAviable.UserName).Result;
-            if(lUser is null)
+            if (lUser is null)
             {
-                return ResponseFail<AuthenticateUserResponse>();
+                return ResponseFail<AuthenticateAgentResponse>();
             }
 
             foreach (var item in lUser)
@@ -238,11 +251,11 @@
                     user = item;
                 }
             }
-            
-            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);            
-            var response = new List<AuthenticateUserResponse>
+
+            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);
+            var response = new List<AuthenticateAgentResponse>
                 {
-                    new AuthenticateUserResponse
+                    new AuthenticateAgentResponse
                     {
                         UserInfo = user,
                         OpenTokAccessToken = token,
@@ -258,15 +271,15 @@
             try
             {
                 var agents = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
-                foreach(var agent in agents)
+                foreach (var agent in agents)
                 {
                     agent.CountCallAttendedDaily = default(int);
-                    result = _agentRepository.AddOrUpdate(agent).Result;                    
+                    result = _agentRepository.AddOrUpdate(agent).Result;
                 }
 
                 return result;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
