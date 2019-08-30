@@ -98,6 +98,7 @@
             ReportCallRepositoryMoq = new Mock<IGenericRep<ReportCall>>();
             PreCallResultRepositoryMoq = new Mock<IGenericRep<PreCallResult>>();
             CallHistoryRepositoryMoq = new Mock<IGenericRep<CallHistoryTrace>>();
+            AgentRepositoryMoq = new Mock<IGenericRep<Agent>>();
             UserRepositoryMoq = new Mock<IGenericRep<User>>();
             OpenTokExternalService = new Mock<IOpenTokExternalService>();
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());

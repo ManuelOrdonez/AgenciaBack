@@ -25,14 +25,14 @@
         /// <summary>
         /// User Repository
         /// </summary>
-        private readonly IGenericRep<User> _usersRepo;
+        private readonly IGenericRep<Agent> _usersRepo;
 
         /// <summary>
         /// Class constructor
         /// </summary>
         /// <param name="usersRepo"></param>
         /// <param name="openTokService"></param>
-        public AdminBl(IGenericRep<User> usersRepo, IOpenTokExternalService openTokService)
+        public AdminBl(IGenericRep<Agent> usersRepo, IOpenTokExternalService openTokService)
         {
             _usersRepo = usersRepo;
         }
@@ -77,7 +77,7 @@
                 message = "Usuario creado exitosamente.";
             }
 
-            var funcionaryEntity = new User
+            var funcionaryEntity = new Agent
             {
                 Position = funcionary.Position,
                 State = funcionary.State ? UserStates.Enable.ToString() : UserStates.Disable.ToString(),
@@ -94,6 +94,7 @@
                 UserType = UsersTypes.Funcionario.ToString(),
                 CountCallAttended = 0,
                 CountCallAttendedDaily = 0,
+                Calling = false,
                 Available = false,
                 RegisterDate = DateTimeOffset.UtcNow.AddHours(-5)
             };
@@ -112,7 +113,7 @@
         /// <param name="lUser">Lista de usuarios registrados</param>
         /// <param name="position">posición que se encuentra el registro de persona</param>
         /// <returns></returns>
-        private static bool ValRegistriesUser(List<User> lUser, out int position)
+        private static bool ValRegistriesUser(List<Agent> lUser, out int position)
         {
             bool eRta = true;
             position = -1;
@@ -135,7 +136,7 @@
         /// <param name="lUser"></param>
         /// <param name="funtionary"></param>
         /// <param name="people"></param>
-        private static void GetUserFuncionary(List<User> lUser, out User funtionary, out User people)
+        private static void GetUserFuncionary(List<Agent> lUser, out Agent funtionary, out Agent people)
         {
             funtionary = null;
             people = null;
@@ -178,9 +179,9 @@
                 return ResponseBadRequest<CreateOrUpdateFuncionaryResponse>(errorsMesage);
             }
 
-            List<User> funcionaries = _usersRepo.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
-            User funcionary = null;
-            User people = null;
+            List<Agent> funcionaries = _usersRepo.GetAsyncAll(string.Format(new CultureInfo("es-CO"), "{0}_{1}", funcionaryReq.NoDocument, funcionaryReq.TypeDocument)).Result;
+            Agent funcionary = null;
+            Agent people = null;
             GetUserFuncionary(funcionaries, out funcionary, out people);
             if (funcionary == null)
             {

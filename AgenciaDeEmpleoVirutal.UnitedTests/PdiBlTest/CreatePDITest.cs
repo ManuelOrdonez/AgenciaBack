@@ -35,7 +35,7 @@
             Assert.IsNull(result.Data);
         }
 
-        /// <summary>
+        /*/// <summary>
         /// Creates the pdi when my weaknesses field have more than200 character retun error.
         /// </summary>
         [TestMethod, TestCategory("PdiBI")]
@@ -84,7 +84,7 @@
             Assert.IsFalse(result.TransactionMade);
             Assert.IsNull(result.Data);
         }
-
+        */
         /// <summary>
         /// Creates the pdi when pdi user not exist retun error.
         /// </summary>

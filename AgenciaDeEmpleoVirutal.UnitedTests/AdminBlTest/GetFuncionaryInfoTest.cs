@@ -30,7 +30,7 @@
         public void GetFuncionaryInfo_WhenTableStorageFeild_returnFail()
         {
             ///Arrange
-            FuncionaryRepMock.Setup(f => f.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(new List<User>()));
+            FuncionaryRepMock.Setup(f => f.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(new List<Agent>()));
             var expected = ResponseFail<FuncionaryInfoResponse>();
             ///Action
             var result = base.AdminBusinessLogic.GetFuncionaryInfo("pepe");
@@ -44,7 +44,7 @@
         public void GetFuncionaryInfo_WhenAllFieldsAreSuccess_ReturnSuccess()
         {
             ///Arrange
-            var users = new List<User>() { MockInfoUser };
+            var users = new List<Agent>() { MockInfoAgent };
             FuncionaryRepMock.Setup(f => f.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).Returns(Task.FromResult(users));
             var expected = ResponseSuccess(new List<FuncionaryInfoResponse>()
             {

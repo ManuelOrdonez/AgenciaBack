@@ -50,6 +50,7 @@
         {
             ///Arrage
             UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
+            AgentRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<Agent>());
             var expected = ResponseFail<RegisterUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             ///Action
             var result = UserBusiness.IsRegister(RequestIsRegister);
@@ -74,6 +75,7 @@
                 }
             };
             UserRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
+            AgentRepMoq.Setup(ur => ur.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<Agent>() { AgentInfoMock });
             var expected = ResponseSuccess(response);
             ///Action
             var result = UserBusiness.IsRegister(RequestIsRegister);

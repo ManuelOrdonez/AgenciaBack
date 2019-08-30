@@ -165,7 +165,7 @@
             if (userReq.UserType.ToLower(new CultureInfo(cultureInfo)).Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
             {
                 var user = new Agent();
-                user = GetAgentActive(userReq);
+                user = GetAgent(userReq);
                 if (user is null)
                 {
                     return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
@@ -377,7 +377,7 @@
             var lResultAgent = _agentRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
 
             User result = null;
-            if (lResultAgent.Count == 0)
+            if (lResultAgent?.Count == 0)
             {
                 var lResult = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
                 if (lResult.Count == 0)
@@ -961,26 +961,40 @@
         private Agent GetAgentActive(AuthenticateUserRequest userReq)
         {
             const Agent user = null;
-            /* List<User> luser = _userRep.GetByPatitionKeyAsync("funcionario").Result;
 
-             foreach(var agent in luser)
-             {
-                 Agent agente = new Agent();
-                 var serializedParent = JsonConvert.SerializeObject(agent);
-                 agente  = JsonConvert.DeserializeObject<Agent>(serializedParent);
-                 _agentRep.AddOrUpdate(agente);
-             }
-             */
             List<Agent> lUser = _agentRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
+                if (item.State == UserStates.Enable.ToString() && item.UserType.ToLower()
+                    .Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
                 {
                     return item;
                 }
             }
             return user;
         }
+
+
+        /// <summary>
+        /// Method to Get Agent Active
+        /// </summary>
+        /// <param name="userReq"></param>
+        /// <returns></returns>
+        private Agent GetAgent(AuthenticateUserRequest userReq)
+        {
+            const Agent user = null;
+
+            List<Agent> lUser = _agentRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
+            foreach (var item in lUser)
+            {
+                if (item.UserType.ToLower(new CultureInfo(cultureInfo))
+                    .Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
+                {
+                    return item;
+                }
+            }
+            return user;
+        } 
 
         /// <summary>
         /// Method to Get All Users Data

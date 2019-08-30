@@ -129,7 +129,7 @@
         public void AuthenticateUsersTest_WhenFuncionaryIsNotRegisterInTableStorage_ReturnError()
         {
             ///Arrange
-            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>());
+            AgentRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<Agent>());
             RequestUserAuthenticate.UserType = "funcionario";
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IsNotRegisterInAz);
             ///Action
@@ -138,7 +138,7 @@
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
-            UserRepMoq.VerifyAll();
+            AgentRepMoq.VerifyAll();
         }
 
         /// <summary>
@@ -148,9 +148,10 @@
         public void AuthenticateUsersTest_WhenFuncionaryIsDisable_ReturnError()
         {
             ///Arrange
-            UserInfoMock.State = "Disable";
-            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
+            AgentInfoMock.State = "Disable";
+            AgentInfoMock.UserType = "Funcionario";
             RequestUserAuthenticate.UserType = "Funcionario";
+            AgentRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<Agent>() { AgentInfoMock });
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserDesable);
             ///Action
             var result = UserBusiness.AuthenticateUser(RequestUserAuthenticate);
@@ -158,7 +159,7 @@
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
-            UserRepMoq.VerifyAll();
+            AgentRepMoq.VerifyAll();
         }
 
         /// <summary>
@@ -168,10 +169,10 @@
         public void AuthenticateUsersTest_WhenPassPfFuncionaryIsWorng_ReturnError()
         {
             ///Arrange
-            UserInfoMock.Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==";
-            UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
-            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
-            UserRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
+            AgentInfoMock.Password = "yGd6bFfUBC3K6Nz91QVhJUsR4CKx9Uf7MjHnJ5hym0P/P4wqyIrB7eHWq83I8UVL9dkjMmHM4jbOEFAVvX2QhA==";
+            AgentInfoMock.UserType =  "Funcionario";
+            AgentRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<Agent>() { AgentInfoMock });
+            AgentRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<Agent>())).ReturnsAsync(true);
             RequestUserAuthenticate.UserType = "Funcionario";
             RequestUserAuthenticate.Password = "raQT/6CDmpLR4LrJQ+JcDamqMRSWI4o2w3+rUbwEJe+PJmKb0+Xvc4ALrjkmdevM";
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.IncorrectPassword);
@@ -181,8 +182,7 @@
             Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             Assert.IsFalse(result.TransactionMade);
-            UserRepMoq.VerifyAll();
-            BusyRepMoq.VerifyAll();
+            AgentRepMoq.VerifyAll();
         }
 
         /// <summary>
@@ -230,7 +230,6 @@
             ///Arrange
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
-            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             UserRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(false);
             var expected = ResponseFail<AuthenticateUserResponse>();
             ///Action
@@ -241,7 +240,6 @@
             Assert.IsFalse(result.TransactionMade);
             LdapServicesMoq.VerifyAll();
             UserRepMoq.VerifyAll();
-            BusyRepMoq.VerifyAll();
         }
 
         /// <summary>
@@ -253,7 +251,6 @@
             ///Arrange
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
-            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             UserRepMoq.Setup(u => u.AddOrUpdate(It.IsAny<User>())).ReturnsAsync(true);
 
             UserInfoMock.Authenticated = true;
@@ -280,7 +277,6 @@
             Assert.IsTrue(result.TransactionMade);
             LdapServicesMoq.VerifyAll();
             UserRepMoq.VerifyAll();
-            BusyRepMoq.VerifyAll();
         }
 
         /// <summary>
@@ -417,9 +413,9 @@
         public void AuthenticateUsersTest_WhenUserAuthenticateSuccessButIsInCall_ReturnError()
         {
             ///Arrange
+            UserInfoMock.Calling = true;
             LdapServicesMoq.Setup(l => l.Authenticate(It.IsAny<string>(), It.IsAny<string>())).Returns(LdapResult);
             UserRepMoq.Setup(u => u.GetAsyncAll(It.IsAny<string>())).ReturnsAsync(new List<User>() { UserInfoMock });
-            BusyRepMoq.Setup(bA => bA.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>() { new BusyAgent { AgentSession = "AgentSession" } });
             var expected = ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.UserCalling);
 
             ///Action
@@ -431,7 +427,6 @@
             Assert.IsFalse(result.TransactionMade);
             LdapServicesMoq.VerifyAll();
             UserRepMoq.VerifyAll();
-            BusyRepMoq.VerifyAll();
         }
     }
 }

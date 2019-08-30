@@ -60,8 +60,9 @@
         public void GetAgentAvailable_WhenUserCalling_ReturnError()
         {
             ///Arrange
+            UserMoq.Calling = true;
             ParametersRepMock.Setup(p => p.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(ParametersMock);
-            AgentRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
+            AgentRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);            
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>() { BusyAgentMoq });
             var expected = ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserCalling);
             ///Action
@@ -83,6 +84,7 @@
             AgentRepMoq.Setup(u => u.GetAsync(It.IsAny<string>())).ReturnsAsync(UserMoq);
             BusyRepMoq.Setup(ba => ba.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<BusyAgent>());
             AgentRepMoq.Setup(a => a.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(new List<Agent>());
+            UserRepMoq.Setup(a => a.GetAsync(It.IsAny<string>())).ReturnsAsync(UserCesMoq);
             var expected = ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.AgentNotAvailable);
             ///Action
             var result = AgentBussinesLogic.GetAgentAvailable(GetAgentAvailableRequest);

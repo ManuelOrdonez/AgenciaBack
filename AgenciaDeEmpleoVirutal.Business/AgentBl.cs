@@ -134,7 +134,7 @@
                 return ResponseBadRequest<GetAgentAvailableResponse>(errorMessages);
             }
 
-            var userInfo = _userRepository.GetAsync(agentAvailableRequest.UserName).Result;
+            var userInfo = _agentRepository.GetAsync(agentAvailableRequest.UserName).Result;
             if (userInfo == null)
             {
                 return ResponseFail<GetAgentAvailableResponse>(ServiceResponseCode.UserNotFound);

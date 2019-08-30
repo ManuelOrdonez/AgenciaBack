@@ -34,7 +34,7 @@
         public void UpdateFuncionaryInfo_WhenTableStorageFaildOrUserToUpdateNotExist_ReturnBadRequest()
         {
             ///arrange
-            var responseTS = new List<User>();
+            var responseTS = new List<Agent>();
             FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(responseTS));
             var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>(); 
             ///action
@@ -50,8 +50,9 @@
         {
             ///arrange
             MockInfoUser.UserType = "funcionario";
-            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
-            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(false));
+            //UserRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
+            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<Agent>() { MockInfoAgent }));
+            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<Agent>())).Returns(Task.FromResult(false));
             var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>();
             ///action
             var result = AdminBusinessLogic.UpdateFuncionaryInfo(FuncionatyUpdateRequest);
@@ -65,9 +66,9 @@
         public void UpdateFuncionaryInfo_WhenUpdateFuncionarySuccess_ReturnSuccess()
         {
             ///arrange
-            MockInfoUser.UserType = "funcionario";
-            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
-            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(true));
+            MockInfoAgent.UserType = "funcionario";
+            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<Agent>() { MockInfoAgent }));
+            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<Agent>())).Returns(Task.FromResult(true));
             var expected = ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
             ///action
             var result = AdminBusinessLogic.UpdateFuncionaryInfo(FuncionatyUpdateRequest);

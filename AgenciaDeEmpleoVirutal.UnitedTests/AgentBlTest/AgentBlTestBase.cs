@@ -31,6 +31,7 @@
         protected Mock<IGenericRep<Parameters>> ParametersRepMock;
 
         protected Agent UserMoq;
+        protected User UserCesMoq;
 
         protected BusyAgent BusyAgentMoq;
 
@@ -141,6 +142,20 @@
                 State = "Enable",
                 Email = "test@colsubsidio.com",
                 UserType = "funcionario",
+                UserName = "12345678_2",
+                OpenTokSessionId = "sessionot",
+            };
+
+            UserCesMoq = new User()
+            {
+                PartitionKey = "cesante",
+                LastName = "Gil Garnica",
+                Name = "Juan Sebastian",
+                Position = "Auxiliar",
+                Role = "Auxiliar",
+                State = "Enable",
+                Email = "test@colsubsidio.com",
+                UserType = "cesante",
                 UserName = "12345678_2",
                 OpenTokSessionId = "sessionot",
             };

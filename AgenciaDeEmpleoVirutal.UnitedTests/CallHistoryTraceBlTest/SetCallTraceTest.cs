@@ -36,7 +36,7 @@
             catch (System.Exception ex)
             {
                 errorExpected = true;
-                paramError = ((System.ArgumentException) ex).ParamName;
+                paramError = ((System.ArgumentException)ex).ParamName;
             }
             ///Assert
             Assert.IsTrue(errorExpected);
@@ -125,10 +125,10 @@
             SetCallTraceRequestMock.State = (int)CallStates.Begun;
             List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>(){new CallHistoryTrace()
             { RowKey = "wwwww2w", Observations = "", UserCall = "Username" } }; ;
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest" };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
-            UserRepositoryMoq.Setup(usR => usR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            AgentRepositoryMoq.Setup(usR => usR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(false);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
@@ -141,7 +141,7 @@
             Assert.IsFalse(result.TransactionMade);
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             CallHistoryRepositoryMoq.VerifyAll();
-            UserRepositoryMoq.VerifyAll();
+            AgentRepositoryMoq.VerifyAll();
         }
 
         /// <summary>
@@ -154,10 +154,10 @@
             SetCallTraceRequestMock.State = (int)CallStates.Begun;
             List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>(){new CallHistoryTrace()
             { RowKey = "wwwww2w", Observations = "", UserCall = "Username" } }; ;
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest" };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
-            UserRepositoryMoq.Setup(usR => usR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            AgentRepositoryMoq.Setup(usR => usR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
@@ -170,7 +170,7 @@
             Assert.IsTrue(result.TransactionMade);
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             CallHistoryRepositoryMoq.VerifyAll();
-            UserRepositoryMoq.VerifyAll();
+            AgentRepositoryMoq.VerifyAll();
         }
 
         /// <summary>
@@ -184,17 +184,17 @@
             var recordId = "recordIdTest";
             List<CallHistoryTrace> resultCallHistoryRep = new List<CallHistoryTrace>(){new CallHistoryTrace()
             { RowKey = "wwwww2w", Observations = "", UserCall = "Username" } };
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0,PartitionKey="algo",RowKey="111111_1" };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, PartitionKey = "algo", RowKey = "111111_1" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
             CallHistoryRepositoryMoq.Setup(callH => callH.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(resultCallHistoryRep);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
-            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            AgentRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
 
             responseAgentRep.CountCallAttended++;
             responseAgentRep.Available = false;
             OpenTokExternalService.Setup(ot => ot.StartRecord(It.IsAny<string>(), It.IsAny<string>())).Returns(recordId);
-            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(true);
+            AgentRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(true);
 
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
             var expected = ResponseSuccess();
@@ -206,7 +206,7 @@
             Assert.IsTrue(result.TransactionMade);
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             CallHistoryRepositoryMoq.VerifyAll();
-            UserRepositoryMoq.VerifyAll();
+            AgentRepositoryMoq.VerifyAll();
             OpenTokExternalService.VerifyAll();
         }
 
@@ -228,15 +228,15 @@
                     OpenTokSessionId = "OpenTokSessionIdToken"
                 }
             };
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0 };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0 };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
-            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            AgentRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
             responseAgentRep.Available = false;
             OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
-            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(false);
+            AgentRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(false);
 
             var expected = ResponseFail();
             ///Action
@@ -247,7 +247,7 @@
             Assert.IsFalse(result.TransactionMade);
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             CallHistoryRepositoryMoq.VerifyAll();
-            UserRepositoryMoq.VerifyAll();
+            AgentRepositoryMoq.VerifyAll();
             OpenTokExternalService.VerifyAll();
         }
 
@@ -273,6 +273,8 @@
             User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0 };
             User responseUser = new User { UserType = "cesante" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
+            UserRepositoryMoq.Setup(agR => agR.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(
+                new List<User>() { responseAgentRep });
             UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
@@ -295,7 +297,6 @@
             Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
             CallHistoryRepositoryMoq.VerifyAll();
             OpenTokExternalService.VerifyAll();
-            BusyAgentRepositoryMoq.VerifyAll();
         }
 
         /// <summary>
@@ -317,14 +318,17 @@
                     OpenTokSessionId = "OpenTokSessionIdToken"
                 }
             };
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            User responseUserRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
-            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            // UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseUserRep);
+            UserRepositoryMoq.Setup(agR => agR.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(
+                new List<User>() { responseUserRep });
+            AgentRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
 
-            responseAgentRep.Available = false;
+            responseUserRep.Available = false;
             OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
-            BusyAgentRepositoryMoq.Setup(bs => bs.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(BusyAgentRepResponse);
-            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(false);
+            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseUserRep)).ReturnsAsync(false);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
@@ -339,7 +343,6 @@
             CallHistoryRepositoryMoq.VerifyAll();
             UserRepositoryMoq.VerifyAll();
             OpenTokExternalService.VerifyAll();
-            BusyAgentRepositoryMoq.VerifyAll();
         }
 
         /// <summary>
@@ -361,16 +364,19 @@
                     OpenTokSessionId = "OpenTokSessionIdToken"
                 }
             };
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            User responseUserRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
-            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            UserRepositoryMoq.Setup(agR => agR.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(
+                new List<User>() { responseUserRep });
+            AgentRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
 
             responseAgentRep.Available = false;
             OpenTokExternalService.Setup(ot => ot.StopRecord(It.IsAny<string>())).Returns(StopRecordResponse);
             BusyAgentRepositoryMoq.Setup(bs => bs.GetSomeAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(BusyAgentRepResponse);
-            UserRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(true);
+            AgentRepositoryMoq.Setup(agR => agR.AddOrUpdate(responseAgentRep)).ReturnsAsync(true);
 
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
             var expected = ResponseSuccess();
@@ -403,10 +409,12 @@
                     OpenTokSessionId = "OpenTokSessionIdToken"
                 }
             };
-            User responseAgentRep = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
-
+            User responseUserRep  = new User { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            Agent responseAgentRep = new Agent { OpenTokSessionId = "OpenTokSessionIdTest", CountCallAttended = 0, UserName = "UserName", UserType = "UserType" };
+            AgentRepositoryMoq.Setup(agR => agR.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(
+                new List<Agent>() { responseAgentRep });
             CallHistoryRepositoryMoq.Setup(callH => callH.GetSomeAsync(It.IsAny<List<ConditionParameter>>())).ReturnsAsync(resultCallHistoryRep);
-            UserRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
+            AgentRepositoryMoq.Setup(agR => agR.GetAsync(It.IsAny<string>())).ReturnsAsync(responseAgentRep);
             CallHistoryRepositoryMoq.Setup(cllH => cllH.AddOrUpdate(It.IsAny<CallHistoryTrace>())).ReturnsAsync(true);
             ReportCallRepositoryMoq.Setup(rpt => rpt.GetByPartitionKeyAndRowKeyAsync(It.IsAny<string>(), It.IsAny<string>())).ReturnsAsync(new List<ReportCall>() { new ReportCall() });
             ReportCallRepositoryMoq.Setup(cll => cll.AddOrUpdate(It.IsAny<ReportCall>())).ReturnsAsync(true);
@@ -414,7 +422,7 @@
 
             ///Action
             var result = CallHistoryTraceBusinessLogic.SetCallTrace(SetCallTraceRequestMock);
-            
+
             ///Assert
             Assert.AreEqual(expected.Message.Count, result.Message.Count);
             expected.Message.ToList().ForEach(msEx => Assert.IsTrue(result.Message.ToList().Any(resMs => resMs.Equals(msEx))));

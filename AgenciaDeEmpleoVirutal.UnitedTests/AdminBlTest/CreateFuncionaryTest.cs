@@ -45,8 +45,10 @@
         public void CreateFuncionary_whenUserAlredyExist_ReturnError()
         {
             ///arrange
-            MockInfoUser.UserType = "funcionario";
-            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
+            MockInfoUser.UserType = "cesante";
+            MockInfoAgent.UserType = "funcionario";
+            //UserRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
+            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<Agent>() { MockInfoAgent }));
             var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>(ServiceResponseCode.UserAlreadyExist);
             ///action
             var result = AdminBusinessLogic.CreateFuncionary(FuncionatyGodrequest);
@@ -60,8 +62,9 @@
         public void CreateFuncionary_whenTableStorageFeild_ReturnInternalError()
         {
             ///arrange
-            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
-            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(false));
+            // UserRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
+            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<Agent>() { MockInfoAgent }));
+            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<Agent>())).Returns(Task.FromResult(false));
             var expected = ResponseFail<CreateOrUpdateFuncionaryResponse>();
             ///action
             var result = AdminBusinessLogic.CreateFuncionary(FuncionatyGodrequest);
@@ -75,8 +78,9 @@
         public void CreateFuncionary_WhenAllFieldsAreSuccess_ReturnSuccess()
         {
             ///arrange
-            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
-            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<User>())).Returns(Task.FromResult(true));
+            FuncionaryRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<Agent>() { MockInfoAgent }));
+            // UserRepMock.Setup(f => f.GetAsyncAll(It.IsAny<string>())).Returns(Task.FromResult(new List<User>() { MockInfoUser }));
+            FuncionaryRepMock.Setup(f => f.AddOrUpdate(It.IsAny<Agent>())).Returns(Task.FromResult(true));
             var expected = ResponseSuccess(new List<CreateOrUpdateFuncionaryResponse>());
             ///action
             var result = AdminBusinessLogic.CreateFuncionary(FuncionatyGodrequest);

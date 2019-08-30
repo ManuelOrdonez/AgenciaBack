@@ -67,6 +67,12 @@
         /// </summary>
         protected User UserInfoMock;
 
+
+        /// <summary>
+        /// The user information mock
+        /// </summary>
+        protected Agent AgentInfoMock;
+
         /// <summary>
         /// The LDAP result
         /// </summary>
@@ -187,6 +193,19 @@
             };
 
             UserInfoMock = new User()
+            {
+                PartitionKey = "cesante",
+                LastName = "Gil Garnica",
+                Name = "Juan Sebastian",
+                Position = "Auxiliar",
+                Role = "Auxiliar",
+                State = "Enable",
+                Email = "jgilg@colsubsidio.com",
+                UserType = "cesante",
+                UserName = "541564564_2"
+            };
+
+            AgentInfoMock = new Agent()
             {
                 PartitionKey = "cesante",
                 LastName = "Gil Garnica",

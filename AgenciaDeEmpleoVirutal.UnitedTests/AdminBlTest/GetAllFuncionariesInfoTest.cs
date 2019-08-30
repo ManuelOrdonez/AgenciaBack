@@ -14,7 +14,7 @@
         public void GetAllFuncionariesInfoTest_WhenTableStorageFaild_ReturnError()
         {
             ///Arrange
-            FuncionaryRepMock.Setup(f => f.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(new List<User>());
+            FuncionaryRepMock.Setup(f => f.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(new List<Agent>());
             var expected = ResponseFail<FuncionaryInfoResponse>();
             ///Action
             var result = AdminBusinessLogic.GetAllFuncionaries();
@@ -28,8 +28,9 @@
         public void GetAllFuncionariesInfoTest_WhenTableStorageResponseSuccess_ReturnError()
         {
             ///Arrange
-            MockInfoUser.UserType = "Funcionario";
-            var responseTS = new List<User>() { MockInfoUser, MockInfoUser, MockInfoUser };
+            MockInfoUser.UserType = "cesante";
+            MockInfoAgent.UserType = "Funcionario";
+            var responseTS = new List<Agent>() { MockInfoAgent, MockInfoAgent, MockInfoAgent };
             FuncionaryRepMock.Setup(f => f.GetByPatitionKeyAsync(It.IsAny<string>())).ReturnsAsync(responseTS);
             var funcionariesInfo = new List<FuncionaryInfoResponse>();
             responseTS.ForEach(f => {

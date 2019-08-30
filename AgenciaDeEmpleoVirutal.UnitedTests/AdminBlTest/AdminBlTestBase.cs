@@ -10,8 +10,9 @@
 
     public class AdminBlTestBase : BusinessBase<User>
     {
-        protected Mock<IGenericRep<User>> FuncionaryRepMock;
-        
+        protected Mock<IGenericRep<User>> UserRepMock;
+        protected Mock<IGenericRep<Agent>> FuncionaryRepMock;
+
         protected Mock<IOpenTokExternalService> _openTokExternalService;
 
         protected AdminBl AdminBusinessLogic;
@@ -24,9 +25,11 @@
 
         protected User MockInfoUser;
 
+        protected Agent MockInfoAgent;
+
         public AdminBlTestBase()
         {
-            FuncionaryRepMock = new Mock<IGenericRep<User>>();
+            FuncionaryRepMock = new Mock<IGenericRep<Agent>>();
             _openTokExternalService = new Mock<IOpenTokExternalService>();
             AdminBusinessLogic = new AdminBl(FuncionaryRepMock.Object, _openTokExternalService.Object);
             LoadMoqs();
@@ -42,6 +45,21 @@
                 Role = "Auxiliar",
                 State = "Enable",
                 Email = "jgilg@colsubsidio.com", 
+                TypeDocument = "Cedula de ciudadania",
+                NoDocument = "123345667899",
+                CodTypeDocument = "2",
+                UserName = "123345667899_2",
+                UserType = "cesante"
+            };
+
+            MockInfoAgent = new Agent()
+            {
+                LastName = "Gil Garnica",
+                Name = "Juan Sebastian",
+                Position = "Auxiliar",
+                Role = "Auxiliar",
+                State = "Enable",
+                Email = "jgilg@colsubsidio.com",
                 TypeDocument = "Cedula de ciudadania",
                 NoDocument = "123345667899",
                 CodTypeDocument = "2",
