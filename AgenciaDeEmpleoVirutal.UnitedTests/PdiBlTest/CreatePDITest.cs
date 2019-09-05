@@ -35,55 +35,8 @@
             Assert.IsNull(result.Data);
         }
 
-        /// <summary>
-        /// Creates the pdi when my weaknesses field have more than200 character retun error.
-        /// </summary>
-        [TestMethod, TestCategory("PdiBI")]
-        public void CreatePDI_WhenMyWeaknessesFieldHaveMoreThan200Char_RetunError()
-        {
-            /// Arrange
-            PdiRequestMock.MyWeaknesses = "1234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890";
-            var errorsMessage = PdiRequestMock.Validate().ToList();
-            var expected = ResponseBadRequest<PDI>(errorsMessage);
-            /// Action
-            var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
-            /// Assert
-            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.IsFalse(result.TransactionMade);
-            Assert.IsNull(result.Data);
-        }
-
-        /// <summary>
-        /// Creates the pdi when what abilities field have more than400 character retun error.
-        /// </summary>
-        [TestMethod, TestCategory("PdiBI")]
-        public void CreatePDI_WhenWhatAbilitiesFieldHaveMoreThan400Char_RetunError()
-        {
-            /// Arrange
-            PdiRequestMock.WhatAbilities = "1234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "123456789012345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890123456789012345678901234567890" +
-                "12345678901234567890";
-            var errorsMessage = PdiRequestMock.Validate().ToList();
-            var expected = ResponseBadRequest<PDI>(errorsMessage);
-            /// Action
-            var result = pdiBusinessLogic.CreatePDI(PdiRequestMock);
-            /// Assert
-            Assert.AreEqual(expected.Message.ToString(), result.Message.ToString());
-            Assert.AreEqual(expected.CodeResponse, result.CodeResponse);
-            Assert.IsFalse(result.TransactionMade);
-            Assert.IsNull(result.Data);
-        }
+       
+ 
 
         /// <summary>
         /// Creates the pdi when pdi user not exist retun error.

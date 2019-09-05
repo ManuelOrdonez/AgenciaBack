@@ -41,6 +41,12 @@
         /// <summary>
         /// Agents Repository
         /// </summary>
+        private readonly IGenericRep<AgentAviability> _agentAviabilityRepository;
+
+
+        /// <summary>
+        /// Agents Repository
+        /// </summary>
         private readonly IGenericRep<Parameters> _parametersRepository;
 
         /// <summary>
@@ -56,13 +62,15 @@
         /// <param name="openTokService"></param>
         /// <param name="busyAgentRepository"></param>
         public AgentBl(IGenericRep<User> AgentRepository, IGenericRep<User> userRepository, IOpenTokExternalService openTokService,
-            IGenericRep<BusyAgent> busyAgentRepository, IGenericRep<Parameters> parametersRepository)
+            IGenericRep<BusyAgent> busyAgentRepository, IGenericRep<Parameters> parametersRepository,
+            IGenericRep<AgentAviability> agentAviabilityRepository)
         {
             _userRepository = userRepository;
             _agentRepository = AgentRepository;
             _openTokExternalService = openTokService;
             _busyAgentRepository = busyAgentRepository;
             _parametersRepository = parametersRepository;
+            _agentAviabilityRepository = agentAviabilityRepository;
         }
 
         private static readonly Object obj = new Object();
@@ -74,8 +82,8 @@
         private Response<GetAgentAvailableResponse> ValidateShedule()
         {
             var parameters = _parametersRepository.GetByPatitionKeyAsync("horario").Result;
-            string[] days = {  "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" };
-            string dayIni = parameters.FirstOrDefault(x => x.RowKey == "diainicio").Value.Replace("á","a").Replace("é", "e");
+            string[] days = { "lunes", "martes", "miercoles", "jueves", "viernes", "sabado", "domingo" };
+            string dayIni = parameters.FirstOrDefault(x => x.RowKey == "diainicio").Value.Replace("á", "a").Replace("é", "e");
             string dayEnd = parameters.FirstOrDefault(x => x.RowKey == "diafin").Value.Replace("á", "a").Replace("é", "e");
             string hourIni = parameters.FirstOrDefault(x => x.RowKey == "horainicio").Value;
             string hourEnd = parameters.FirstOrDefault(x => x.RowKey == "horafin").Value;
@@ -175,11 +183,13 @@
                 var Agent = advisors.OrderBy(x => x.CountCallAttendedDaily).FirstOrDefault();
                 try
                 {
-                    if(!_busyAgentRepository.Add(new BusyAgent {
+                    if (!_busyAgentRepository.Add(new BusyAgent
+                    {
                         PartitionKey = Agent.OpenTokSessionId.ToLower(new CultureInfo("es-CO")),
                         RowKey = Agent.UserName,
                         UserNameAgent = Agent.UserName,
-                        UserNameCaller = agentAvailableRequest.UserName}).Result)
+                        UserNameCaller = agentAvailableRequest.UserName
+                    }).Result)
                     {
                         return ResponseFail<GetAgentAvailableResponse>();
                     }
@@ -194,6 +204,8 @@
                 {
                     return ResponseFail<GetAgentAvailableResponse>();
                 }
+
+                this.SaveAgentAviability(Agent);
                 var response = new GetAgentAvailableResponse();
                 response.IDToken = _openTokExternalService.CreateToken(Agent.OpenTokSessionId, agentAvailableRequest.UserName);
                 if (string.IsNullOrEmpty(response.IDToken))
@@ -209,6 +221,26 @@
         }
 
         /// <summary>
+        /// Save Aviability agent
+        /// </summary>
+        /// <param name="agent"></param>
+        private void SaveAgentAviability(User agent)
+        {
+            var now = DateTime.Now;
+            AgentAviability agentAviability = new AgentAviability()
+            {
+                Available = agent.Available,
+                Date = now,
+                DateLog = agent.UserName + now.Year + now.Month + now.Day + now.Hour + now.Minute + now.Second,
+                LastName = agent.LastName,
+                Name = agent.Name,
+                OpenTokSessionId = agent.OpenTokSessionId,
+                Username = agent.UserName,
+            };
+            _agentAviabilityRepository.AddOrUpdate(agentAviability);
+        }
+
+        /// <summary>
         /// Method to identify if an agent is aviable
         /// </summary>
         /// <param name="RequestAviable"></param>
@@ -216,7 +248,7 @@
         public Response<AuthenticateUserResponse> ImAviable(AviableUserRequest RequestAviable)
         {
             User user = new User();
-            
+
             if (RequestAviable == null)
             {
                 throw new ArgumentNullException(nameof(RequestAviable));
@@ -226,7 +258,7 @@
                 return ResponseFail<AuthenticateUserResponse>(ServiceResponseCode.BadRequest);
             }
             var lUser = _agentRepository.GetAsyncAll(RequestAviable.UserName).Result;
-            if(lUser is null)
+            if (lUser is null)
             {
                 return ResponseFail<AuthenticateUserResponse>();
             }
@@ -238,8 +270,8 @@
                     user = item;
                 }
             }
-            
-            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);            
+
+            var token = _openTokExternalService.CreateToken(user.OpenTokSessionId, user.UserName);
             var response = new List<AuthenticateUserResponse>
                 {
                     new AuthenticateUserResponse
@@ -258,15 +290,15 @@
             try
             {
                 var agents = _agentRepository.GetByPatitionKeyAsync(UsersTypes.Funcionario.ToString().ToLower()).Result;
-                foreach(var agent in agents)
+                foreach (var agent in agents)
                 {
                     agent.CountCallAttendedDaily = default(int);
-                    result = _agentRepository.AddOrUpdate(agent).Result;                    
+                    result = _agentRepository.AddOrUpdate(agent).Result;
                 }
 
                 return result;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }

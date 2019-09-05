@@ -34,10 +34,16 @@
         /// Report Call History Trace Repository Mock
         /// </summary>
         protected readonly Mock<IGenericRep<PreCallResult>> PreCallResultRepositoryMoq;
+
         /// <summary>
         /// Agents Repository Mock
         /// </summary>
         protected readonly Mock<IGenericRep<User>> UserRepositoryMoq;
+
+        /// <summary>
+        /// Agents Repository Mock
+        /// </summary>
+        protected readonly Mock<IGenericRep<AgentAviability>> AgentAvRepositoryMoq;
 
         /// <summary>
         /// Call History Trace Business logic
@@ -95,6 +101,7 @@
             CallHistoryRepositoryMoq = new Mock<IGenericRep<CallHistoryTrace>>();
             UserRepositoryMoq = new Mock<IGenericRep<User>>();
             OpenTokExternalService = new Mock<IOpenTokExternalService>();
+            AgentAvRepositoryMoq = new Mock<IGenericRep<AgentAviability>>();
             IOptions<UserSecretSettings> options = Options.Create<UserSecretSettings>(new UserSecretSettings());
 
             CallHistoryTraceBusinessLogic = new CallHistoryTraceBl(
@@ -104,7 +111,8 @@
                 OpenTokExternalService.Object,
                 options,
                 ReportCallRepositoryMoq.Object,
-                PreCallResultRepositoryMoq.Object);
+                PreCallResultRepositoryMoq.Object,
+                AgentAvRepositoryMoq.Object);
             LoadMoqsEntities();
 
         }

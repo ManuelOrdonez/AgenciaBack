@@ -58,6 +58,11 @@
         private readonly IGenericRep<User> _agentRepository;
 
         /// <summary>
+        /// Agents Repository
+        /// </summary>
+        private readonly IGenericRep<AgentAviability> _agentAviabilityRepository;        
+
+        /// <summary>
         /// The open tok service
         /// </summary>
         private readonly IOpenTokExternalService _openTokService;
@@ -76,7 +81,8 @@
         public CallHistoryTraceBl(IGenericRep<CallHistoryTrace> callHistoryRepository,
             IGenericRep<User> agentRepository, IGenericRep<BusyAgent> busyAgentRepository,
             IOpenTokExternalService openTokService, IOptions<UserSecretSettings> options,
-            IGenericRep<ReportCall> reportCallRepository, IGenericRep<PreCallResult> preCallResultRepository)
+            IGenericRep<ReportCall> reportCallRepository, IGenericRep<PreCallResult> preCallResultRepository,
+            IGenericRep<AgentAviability> agentAviabilityRepository)
         {
             if (options != null)
             {
@@ -88,6 +94,7 @@
                 _UserSecretSettings = options.Value;
                 _reportCaller = reportCallRepository;
                 _preCallResult = preCallResultRepository;
+                _agentAviabilityRepository = agentAviabilityRepository;
             }
         }
 
@@ -399,6 +406,27 @@
             };
         }
 
+
+        /// <summary>
+        /// Save Aviability agent
+        /// </summary>
+        /// <param name="agent"></param>
+        private void SaveAgentAviability(User agent)
+        {
+            var now = DateTime.Now;
+            AgentAviability agentAviability = new AgentAviability()
+            {
+                Available = agent.Available,
+                Date = now,
+                DateLog = agent.UserName + now.Year + now.Month + now.Day + now.Hour + now.Minute + now.Second,
+                LastName = agent.LastName,
+                Name = agent.Name,
+                OpenTokSessionId = agent.OpenTokSessionId,
+                Username = agent.UserName,
+            };
+            _agentAviabilityRepository.AddOrUpdate(agentAviability);
+        }
+
         /// <summary>
         /// Validate Agent to answered call
         /// </summary>
@@ -421,6 +449,7 @@
                 {
                     return false;
                 }
+                this.SaveAgentAviability(agent);
             }
             return true;
         }

@@ -47,6 +47,11 @@
         protected Mock<IOpenTokExternalService> OpenTokExternalService;
 
         /// <summary>
+        /// Agents Repository Mock
+        /// </summary>
+        protected readonly Mock<IGenericRep<AgentAviability>> AgentAvRepositoryMoq;
+
+        /// <summary>
         /// The user business
         /// </summary>
         protected UserBl UserBusiness;
@@ -139,6 +144,7 @@
             LdapServicesMoq = new Mock<ILdapServices>();
             SendMailServiceMoq = new Mock<ISendGridExternalService>();
             OpenTokExternalService = new Mock<IOpenTokExternalService>();
+            AgentAvRepositoryMoq = new Mock<IGenericRep<AgentAviability>>();
             UserBusiness = new UserBl(
                 UserRepMoq.Object,
                 LdapServicesMoq.Object, 
@@ -146,7 +152,8 @@
                 options, 
                 OpenTokExternalService.Object,
                 PDIRepMoq.Object,
-                BusyRepMoq.Object);
+                BusyRepMoq.Object,
+                AgentAvRepositoryMoq.Object);
             LoadEntitiesMock();
         }
 

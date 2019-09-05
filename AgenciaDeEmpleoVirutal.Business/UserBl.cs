@@ -36,6 +36,13 @@
         /// </summary>
         private readonly IGenericRep<User> _userRep;
 
+
+        /// <summary>
+        /// User repository
+        /// </summary>
+        private readonly IGenericRep<AgentAviability> _agentAviabilityRepository;
+        
+
         /// <summary>
         /// Interface of ldap services
         /// </summary>
@@ -83,7 +90,8 @@
         /// <param name="busyAgentRepository">The busy agent repository.</param>
         public UserBl(IGenericRep<User> userRep, ILdapServices LdapServices, ISendGridExternalService sendMailService,
                         IOptions<UserSecretSettings> options, IOpenTokExternalService _openTokExternalService,
-                        IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository)
+                        IGenericRep<PDI> pdiRep, IGenericRep<BusyAgent> busyAgentRepository,
+                        IGenericRep<AgentAviability> agentAviabilityRepository)
         {
             _sendMailService = sendMailService;
             _userRep = userRep;
@@ -91,6 +99,7 @@
             _settings = options?.Value;
             _openTokService = _openTokExternalService;
             _busyAgentRepository = busyAgentRepository;
+            _agentAviabilityRepository = agentAviabilityRepository;
         }
 
         /// <summary>
@@ -607,6 +616,26 @@
         }
 
         /// <summary>
+        /// Save Aviability agent
+        /// </summary>
+        /// <param name="agent"></param>
+        private void SaveAgentAviability(User agent)
+        {
+            var now = DateTime.Now;
+            AgentAviability agentAviability = new AgentAviability()
+            {
+                Available = agent.Available,
+                Date = now,
+                DateLog = agent.UserName + now.Year + now.Month + now.Day + now.Hour + now.Minute + now.Second,
+                LastName = agent.LastName,
+                Name = agent.Name,
+                OpenTokSessionId = agent.OpenTokSessionId,
+                Username = agent.UserName,
+            };
+            _agentAviabilityRepository.AddOrUpdate(agentAviability);
+        }
+
+        /// <summary>
         /// Get user authenticate
         /// </summary>
         /// <param name="RequestAviable"></param>
@@ -623,6 +652,7 @@
                 token = _openTokService.CreateToken(userAviable.OpenTokSessionId, userAviable.UserName);
             }
             _userRep.AddOrUpdate(userAviable);
+            this.SaveAgentAviability(userAviable);
 
             var busy = _busyAgentRepository.GetSomeAsync("UserNameAgent", userAviable.UserName).Result;
             if (busy.Any())
@@ -671,6 +701,7 @@
                 _busyAgentRepository.DeleteRowAsync(busy.FirstOrDefault());
             }
             var result = _userRep.AddOrUpdate(user).Result;
+            this.SaveAgentAviability(user);
             return result ? ResponseSuccess(new List<AuthenticateUserResponse>()) : ResponseFail<AuthenticateUserResponse>();
         }
 
@@ -857,7 +888,8 @@
             List<User> lUser = _userRep.GetAsyncAll(string.Format(new CultureInfo(cultureInfo), formatString, userReq.NoDocument, userReq.TypeDocument)).Result;
             foreach (var item in lUser)
             {
-                if (item.State == UserStates.Enable.ToString() && item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
+                if (item.State == UserStates.Enable.ToString() && 
+                    item.UserType.Equals(UsersTypes.Funcionario.ToString().ToLower(new CultureInfo(cultureInfo)), StringComparison.CurrentCulture))
                 {
                     return item;
                 }

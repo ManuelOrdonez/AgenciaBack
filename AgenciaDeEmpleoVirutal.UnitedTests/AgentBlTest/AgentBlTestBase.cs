@@ -23,6 +23,7 @@
         protected Mock<IGenericRep<User>> UserRepMoq;
 
         protected Mock<IGenericRep<User>> AgentRepMoq;
+        protected Mock<IGenericRep<AgentAviability>> AgentAvRepMoq;
 
         protected Mock<IOpenTokExternalService> OpenTokExternalServiceMoq;
 
@@ -46,7 +47,10 @@
             ParametersRepMock = new Mock<IGenericRep<Parameters>>();
             OpenTokExternalServiceMoq = new Mock<IOpenTokExternalService>();
             BusyRepMoq = new Mock<IGenericRep<BusyAgent>>();
-            AgentBussinesLogic = new AgentBl(AgentRepMoq.Object, UserRepMoq.Object, OpenTokExternalServiceMoq.Object, BusyRepMoq.Object, ParametersRepMock.Object);
+            AgentAvRepMoq = new Mock<IGenericRep<AgentAviability>>();
+            AgentBussinesLogic = new AgentBl(AgentRepMoq.Object,
+                UserRepMoq.Object, OpenTokExternalServiceMoq.Object, BusyRepMoq.Object, ParametersRepMock.Object,
+                AgentAvRepMoq.Object);
             LoadMoqsEntityes();
         }
 
@@ -57,7 +61,7 @@
                 new Parameters()
                 {
                     RowKey = "diainicio",
-                    Value = "lunes",                    
+                    Value = "lunes",
                 },
                 new Parameters()
                 {
