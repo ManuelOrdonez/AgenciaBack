@@ -43,7 +43,7 @@
         [HttpPost]
         [Route("GetAgentAvailable")]
         [Produces(typeof(Response<GetAgentAvailableResponse>))]
-        [Authorize]
+        //[Authorize]
         public IActionResult GetAgentAvailable([FromBody] GetAgentAvailableRequest request)
         {
             return Ok(_agentBusiness.GetAgentAvailable(request));
