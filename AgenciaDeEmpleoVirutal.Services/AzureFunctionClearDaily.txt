@@ -1,0 +1,13 @@
+﻿using System;
+
+public static async Task Run(TimerInfo myTimer, ILogger log)
+{
+    using(var client = new HttpClient())
+    {
+        client.BaseAddress = new Uri("http://colsagenciavirtualservicesprod.azurewebsites.net/api/Agent/ResetCountDailyCalls");
+        var result = await client.GetAsync("");
+        string resultContent = await result.Content.ReadAsStringAsync();
+        log.LogInformation(resultContent);
+    }
+    log.LogInformation($"C# Timer trigger function executed at: {DateTime.Now}");
+}
